@@ -90,48 +90,58 @@ app.use(
         defaultSrc: ["'self'"],
         scriptSrc: [
           "'self'",
+          "'unsafe-inline'",
+          "'unsafe-eval'",
           "https://cdn.tailwindcss.com",
           "https://cdn.quilljs.com",
           "https://cdn.jsdelivr.net",
-          "https://unpkg.com/tailwindcss@%5E2/dist/tailwind.min.css",
-          "https://cdnjs.cloudflare.com/ajax/libs/quill/1.0.0/quill.snow.css",
-          "https://cdnjs.cloudflare.com/ajax/libs/quill/1.0.0/quill.js",
-          "'unsafe-inline'",
+          "https://unpkg.com",
+          "https://cdnjs.cloudflare.com",
         ],
         styleSrc: [
           "'self'",
+          "'unsafe-inline'",
           "https://cdn.tailwindcss.com",
           "https://cdnjs.cloudflare.com",
           "https://fonts.googleapis.com",
           "https://cdn.quilljs.com",
-          "https://unpkg.com/tailwindcss@%5E2/dist/tailwind.min.css",
-          "https://cdnjs.cloudflare.com/ajax/libs/quill/1.0.0/quill.snow.css",
-          "https://cdnjs.cloudflare.com/ajax/libs/quill/1.0.0/quill.js",
-          "'unsafe-inline'",
+          "https://unpkg.com",
         ],
         fontSrc: [
           "'self'",
           "data:",
           "https://cdnjs.cloudflare.com",
           "https://fonts.gstatic.com",
-          "https://unpkg.com/tailwindcss@%5E2/dist/tailwind.min.css",
-          "https://cdnjs.cloudflare.com/ajax/libs/quill/1.0.0/quill.snow.css",
-          "https://cdnjs.cloudflare.com/ajax/libs/quill/1.0.0/quill.js",
+          "https://unpkg.com",
         ],
-        formAction: ["'self'", "https://www.zarinpal.com"],
-        frameSrc: ["https://www.zarinpal.com"],
-        imgSrc: ["'self'", "data:", "https:"],
         connectSrc: [
           "'self'",
-          "https://www.zarinpal.com", // اضافه کردن زرین‌پال
-          "https://sandbox.zarinpal.com", // برای محیط تست
-          "https://payment.zarinpal.com", // برای API پرداخت
+          "https://www.zarinpal.com",
+          "https://sandbox.zarinpal.com",
+          "https://payment.zarinpal.com",
+          "https://api.odour.ir", // آدرس دامنه خودت رو بذار
+          process.env.SITE_URL, // آدرس سایت
         ],
-        scriptSrcAttr: ["'self'", "'unsafe-inline'", "'unsafe-hashes'"],
+        imgSrc: ["'self'", "data:", "https:", "http:"], // http رو هم اضافه کن
+        frameSrc: ["https://www.zarinpal.com"],
+        formAction: ["'self'", "https://www.zarinpal.com"],
+        scriptSrcAttr: ["'self'", "'unsafe-inline'"],
       },
     },
   })
 );
+
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", req.headers.origin);
+  res.header("Access-Control-Allow-Credentials", "true");
+  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, PATCH");
+  res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
+  
+  if (req.method === "OPTIONS") {
+    return res.sendStatus(200);
+  }
+  next();
+});
 
 app.use(flash());
 
