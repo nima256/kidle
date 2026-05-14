@@ -11,6 +11,9 @@
     content="فروشگاه اینترنتی اودور منبع فروش محصولات شیگلم و فروش محصولات آرایشی"
   />
   <meta name="keywords" content="محصولات شیگلم, خرید فروش محصولات شیگلم , خرید محصولات شیگلم , محصولات آرایشی" />
+  <script>
+     window.API_BASE_URL = window.location.origin;
+  </script>
   <link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet" type="text/css" />
@@ -1246,7 +1249,7 @@
                     }
                   });
 
-                  fetch("/api/mobile/sendOtp", {
+                  fetch(`${window.API_BASE_URL}/api/mobile/sendOtp`, {
                     method: "POST",
                     headers: {
                       "Content-Type": "application/json",
@@ -1271,7 +1274,7 @@
                               .split("")
                               .reverse()
                               .join("");
-                            fetch("/api/mobile/verifyOtp", {
+                            fetch(`${window.API_BASE_URL}/api/mobile/verifyOtp`, {
                               method: "POST",
                               headers: {
                                 "Content-Type": "application/json",
@@ -1284,7 +1287,7 @@
                               .then((res) => res.json())
                               .then((data) => {
                                 if (data.success) {
-                                  fetch("/api/authentication/signUp", {
+                                  fetch(`${window.API_BASE_URL}/api/authentication/signUp`, {
                                     method: "POST",
                                     body: formDataRegister,
                                   })
@@ -1350,7 +1353,7 @@
               forgotForm.addEventListener("submit", function (e) {
                 e.preventDefault();
                 const phone = document.getElementById("forgot-phone").value;                
-                fetch("/api/authentication/forgotPassword", {
+                fetch(`${window.API_BASE_URL}/api/authentication/forgotPassword`, {
                   method: "POST",
                   headers: {
                     "Content-Type": "application/json",
@@ -1428,7 +1431,7 @@
                       .reverse()
                       .join("");
                   
-                  fetch("/api/authentication/verifyPasswordResetOtp", {
+                  fetch(`${window.API_BASE_URL}/api/authentication/verifyPasswordResetOtp`, {
                     method: "POST",
                     headers: {
                       "Content-Type": "application/json",
@@ -1465,7 +1468,7 @@
                 loginForm.addEventListener("submit", function (e) {
                   const formDataLogin = new FormData(loginForm);
                   e.preventDefault();
-                  fetch("/api/authentication/signIn", {
+                  fetch(`${window.API_BASE_URL}/api/authentication/signIn`, {
                     method: "POST",
                     body: formDataLogin,
                   })
@@ -1503,7 +1506,7 @@
                     return;
                   }
                   
-                  fetch(`/api/authentication/resetPassword/${resetToken}`, {
+                  fetch(`${window.API_BASE_URL}/api/authentication/resetPassword/${resetToken}`, {
                     method: "PATCH",
                     headers: {
                       "Content-Type": "application/json",
@@ -1575,7 +1578,7 @@
                     return;
                   }
 
-                  fetch("/api/mobile/sendOtp", {
+                  fetch(`${window.API_BASE_URL}/api/mobile/sendOtp`, {
                     method: "POST",
                     headers: {
                       "Content-Type": "application/json",
