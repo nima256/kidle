@@ -14,6 +14,8 @@ const Product = require("../models/Product");
 const Order = require("../models/Order");
 const Category = require("../models/Category");
 const Brand = require("../models/Brand");
+const DiscountCode = require("../models/DiscountCode");
+
 const { getPersianDate } = require("../helper/getPersianDate");
 
 router.use(express.json());
@@ -216,7 +218,8 @@ router.get("/", async (req, res) => {
   const categories = await Category.find({ categoryType: "product" });
   const orders = await Order.find({}).populate("user").populate("products");
   const brands = await Brand.find({});
-
+  const discounts = await DiscountCode.find({});
+  
   const statusCounts = {
     pendingProcessing: await Order.countDocuments({ status: "در حال پردازش" }),
     inShipping: await Order.countDocuments({ status: "در حال ارسال" }),
@@ -232,6 +235,7 @@ router.get("/", async (req, res) => {
     orders,
     brands,
     statusCounts,
+    discounts
   });
 });
 
@@ -914,5 +918,171 @@ router.post("/products/duplicate/:id", async (req, res) => {
     });
   }
 });
+
+router.post("/discounts/add", async (req, res) => {
+    try {
+        const { 
+            code, 
+            type, 
+            amount, 
+            minOrderAmount, 
+            usageLimit, 
+            expireDate, 
+            isActive, 
+            description,
+            maxDiscountAmount 
+        } = req.body;
+        
+        // بررسی وجود کد تکراری
+        const existingDiscount = await DiscountCode.findOne({ code: code.toUpperCase() });
+        if (existingDiscount) {
+            return res.status(400).json({ message: "این کد تخفیف قبلاً وجود دارد" });
+        }
+        
+        const newDiscountData = {
+            code: code.toUpperCase(),
+            type,
+            amount,
+            minOrderAmount: minOrderAmount || null,
+            usageLimit: usageLimit || null,
+            expireDate: expireDate || null,
+            isActive: isActive !== undefined ? isActive : true,
+            description: description || null,
+            usedCount: 0
+        };
+        
+        // اضافه کردن maxDiscountAmount برای تخفیف درصدی
+        if (type === 'percent' && maxDiscountAmount) {
+            newDiscountData.maxDiscountAmount = maxDiscountAmount;
+        }
+        
+        const newDiscount = new DiscountCode(newDiscountData);
+        
+        await newDiscount.save();
+        
+        res.status(201).json({ 
+            success: true, 
+            message: "کد تخفیف با موفقیت اضافه شد",
+            discount: newDiscount 
+        });
+        
+    } catch (error) {
+        console.error("Error adding discount:", error);
+        
+        if (error.name === 'ValidationError') {
+            const messages = Object.values(error.errors).map(e => e.message);
+            return res.status(400).json({ message: messages.join(', ') });
+        }
+        
+        res.status(500).json({ message: "خطا در افزودن کد تخفیف", error: error.message });
+    }
+});
+
+// ویرایش کد تخفیف
+router.put("/discounts/edit/:id", async (req, res) => {
+    try {
+        const { id } = req.params;
+        
+        // بررسی معتبر بودن ID
+        if (!id || id === 'undefined') {
+            return res.status(400).json({ message: "شناسه تخفیف معتبر نیست" });
+        }
+        
+        const { 
+            code, 
+            type, 
+            amount, 
+            minOrderAmount, 
+            usageLimit, 
+            expireDate, 
+            isActive, 
+            description,
+            maxDiscountAmount 
+        } = req.body;
+        
+        // بررسی وجود کد تکراری (به غیر از خودش)
+        const existingDiscount = await DiscountCode.findOne({ 
+            code: code.toUpperCase(),
+            _id: { $ne: id }
+        });
+        
+        if (existingDiscount) {
+            return res.status(400).json({ message: "این کد تخفیف قبلاً وجود دارد" });
+        }
+        
+        const updateData = {
+            code: code.toUpperCase(),
+            type,
+            amount,
+            minOrderAmount: minOrderAmount || null,
+            usageLimit: usageLimit || null,
+            expireDate: expireDate || null,
+            isActive: isActive !== undefined ? isActive : true,
+            description: description || null
+        };
+        
+        // اضافه کردن maxDiscountAmount برای تخفیف درصدی
+        if (type === 'percent' && maxDiscountAmount) {
+            updateData.maxDiscountAmount = maxDiscountAmount;
+        } else if (type === 'amount') {
+            updateData.maxDiscountAmount = null;
+        }
+        
+        const updatedDiscount = await DiscountCode.findByIdAndUpdate(
+            id,
+            updateData,
+            { new: true, runValidators: true }
+        );
+        
+        if (!updatedDiscount) {
+            return res.status(404).json({ message: "کد تخفیف یافت نشد" });
+        }
+        
+        res.json({ 
+            success: true, 
+            message: "کد تخفیف با موفقیت ویرایش شد",
+            discount: updatedDiscount 
+        });
+        
+    } catch (error) {
+        console.error("Error editing discount:", error);
+        
+        if (error.name === 'ValidationError') {
+            const messages = Object.values(error.errors).map(e => e.message);
+            return res.status(400).json({ message: messages.join(', ') });
+        }
+        
+        res.status(500).json({ message: "خطا در ویرایش کد تخفیف", error: error.message });
+    }
+});
+
+// حذف کد تخفیف
+router.delete("/discounts/delete/:id", async (req, res) => {
+    try {
+        const { id } = req.params;
+        
+        // بررسی معتبر بودن ID
+        if (!id || id === 'undefined') {
+            return res.status(400).json({ message: "شناسه تخفیف معتبر نیست" });
+        }
+        
+        const deletedDiscount = await DiscountCode.findByIdAndDelete(id);
+        
+        if (!deletedDiscount) {
+            return res.status(404).json({ message: "کد تخفیف یافت نشد" });
+        }
+        
+        res.json({ 
+            success: true, 
+            message: "کد تخفیف با موفقیت حذف شد" 
+        });
+        
+    } catch (error) {
+        console.error("Error deleting discount:", error);
+        res.status(500).json({ message: "خطا در حذف کد تخفیف", error: error.message });
+    }
+});
+
+
 
 module.exports = router;

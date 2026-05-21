@@ -279,7 +279,7 @@
                 </button>
                 <button onclick="showSection('categories')" class="sidebar-item w-full text-right px-3 md:px-4 py-3 md:py-4 rounded-lg text-gray-700 transition-all duration-300 flex items-center space-x-reverse space-x-3">
                     <i class="fas fa-tags text-lg"></i>
-                    <span class="font-medium">دسته‌بندی‌ها</span>
+                    <span class="font-medium">مدیریت</span>
                 </button>
                 <button onclick="showSection('orders')" class="sidebar-item w-full text-right px-3 md:px-4 py-3 md:py-4 rounded-lg text-gray-700 transition-all duration-300 flex items-center space-x-reverse space-x-3">
                     <i class="fas fa-shopping-cart text-lg"></i>
@@ -419,8 +419,8 @@
         <!-- Categories Content -->
         <div id="categoriesContent" class="hidden">
             <div class="mb-4 md:mb-6">
-                <h2 class="text-2xl md:text-3xl font-bold text-gray-800 mb-2">مدیریت دسته‌بندی‌ها</h2>
-                <p class="text-gray-600">دسته‌بندی‌ها و برندهای محصولات</p>
+                <h2 class="text-2xl md:text-3xl font-bold text-gray-800 mb-2">مدیریت </h2>
+                <p class="text-gray-600">مدیریت دسته بندی‌ها ، برندها و کدهای تخفیف</p>
             </div>
             
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
@@ -448,6 +448,19 @@
                         </button>
                     </div>
                     <div class="space-y-3" id="brandsList">
+                        <!-- Brands will be populated here -->
+                    </div>
+                </div>
+
+                <div class="glass-card rounded-xl md:rounded-2xl p-4 md:p-6">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-lg md:text-xl font-bold text-gray-800">تخفیف ها</h3>
+                        <button onclick="addDiscount()" class="gradient-bg text-white px-3 md:px-4 py-2 rounded-lg hover:opacity-90 transition-all text-sm md:text-base">
+                            <i class="fas fa-plus ml-1"></i>
+                            افزودن
+                        </button>
+                    </div>
+                    <div class="space-y-3" id="discountList">
                         <!-- Brands will be populated here -->
                     </div>
                 </div>
@@ -1147,8 +1160,9 @@
         }
 
         let categories = <%- JSON.stringify(categories) %>;
-
         let brands = <%- JSON.stringify(brands) %>;
+        let discounts = <%- JSON.stringify(discounts) %>;
+
 
         let currentProductId = null;
         let currentProduct = {};
@@ -1562,6 +1576,334 @@
                 container.appendChild(item);
             });
         }
+        
+        function loadDiscounts() {
+            const container = document.getElementById('discountList');
+            if (!container) return;
+            
+            container.innerHTML = '';
+            
+            if (!discounts || discounts.length === 0) {
+                container.innerHTML = '<div class="text-center text-gray-500 p-4">هیچ کد تخفیفی وجود ندارد</div>';
+                return;
+            }
+            
+            discounts.forEach((discount, index) => {
+                console.log(discount)
+                const item = document.createElement('div');
+                item.className = 'category-item p-3 md:p-4 rounded-xl flex justify-between items-center';
+                
+                // تاریخ انقضا را فرمت کنید
+                const expiryDate = discount.expireDate ? new Date(discount.expireDate).toLocaleDateString('fa-IR') : 'نامحدود';
+                const discountType = discount.type === 'percent' ? `${discount.amount}%` : `${toPersianDigits(discount.amount)} تومان`;
+                
+                // وضعیت فعال/غیرفعال
+                const statusBadge = discount.isActive 
+                    ? '<span class="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full">فعال</span>'
+                    : '<span class="text-xs bg-red-100 text-red-800 px-2 py-1 rounded-full">غیرفعال</span>';
+                
+                item.innerHTML = `
+                    <div class="flex flex-col flex-1">
+                        <div class="flex items-center gap-2">
+                            <span class="font-medium text-sm md:text-base">${discount.code}</span>
+                            ${statusBadge}
+                        </div>
+                        <span class="text-xs text-gray-500">نوع: ${discountType} | انقضا: ${expiryDate}</span>
+                        ${discount.usageLimit ? `<span class="text-xs text-gray-500">حداکثر استفاده: ${toPersianDigits(discount.usageLimit)} | استفاده شده: ${toPersianDigits(discount.usedCount)}</span>` : ''}
+                        ${discount.minOrderAmount ? `<span class="text-xs text-gray-500">حداقل مبلغ سفارش: ${toPersianDigits(discount.minOrderAmount)} تومان</span>` : ''}
+                    </div>
+                    <div>
+                        <button onclick="editDiscount('${discount.id}')" class="text-blue-500 hover:text-blue-700 p-1">
+                            <i class="fas fa-pencil text-sm"></i>
+                        </button>
+                        <button onclick="deleteDiscount('${discount.id}')" class="text-red-500 hover:text-red-700 p-1">
+                            <i class="fas fa-trash text-sm"></i>
+                        </button>
+                    </div>
+                `;
+                container.appendChild(item);
+            });
+        }
+
+        function addDiscount() {
+            currentItemType = 'discount';
+            isEditing = false;
+            currentEditItem = null;
+            
+            showDiscountModal();
+        }
+
+        function editDiscount(id) {
+            const discount = discounts.find(d => d.id === id);
+            if (!discount) {
+                showNotification('کد تخفیف یافت نشد', 'error');
+                return;
+            }
+            
+            currentItemType = 'discount';
+            isEditing = true;
+            currentEditItem = id;
+            
+            showDiscountModal(discount);
+        }
+
+        function showDiscountModal(discount = null) {
+            // ابتدا مودال را اگر وجود دارد حذف کنید
+            const existingModal = document.getElementById('discountModal');
+            if (existingModal) {
+                existingModal.remove();
+            }
+            
+            // ایجاد مودال جدید
+            const modalHtml = `
+                <div id="discountModal" class="hidden fixed inset-0 bg-black bg-opacity-50 modal z-50 flex items-center justify-center p-4">
+                    <div class="glass-card rounded-xl md:rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+                        <div class="p-4 md:p-6 border-b border-gray-200 flex justify-between items-center">
+                            <h3 class="text-lg md:text-xl font-bold text-gray-800" id="discountModalTitle">
+                                ${discount ? 'ویرایش کد تخفیف' : 'افزودن کد تخفیف جدید'}
+                            </h3>
+                            <button onclick="closeDiscountModal()" class="text-gray-400 hover:text-gray-600">
+                                <i class="fas fa-times text-xl"></i>
+                            </button>
+                        </div>
+                        <form id="discountForm" class="p-4 md:p-6 space-y-4">
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">کد تخفیف <span class="text-red-500">*</span></label>
+                                <input type="text" id="discountCode" value="${discount ? discount.code : ''}" required
+                                    class="w-full px-3 md:px-4 py-2 md:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                    placeholder="مثال: SUMMER1403">
+                                <p class="text-xs text-gray-500 mt-1">فقط حروف انگلیسی و اعداد، حداقل 5 و حداکثر 20 کاراکتر</p>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">نوع تخفیف <span class="text-red-500">*</span></label>
+                                <select id="discountType" class="w-full px-3 md:px-4 py-2 md:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                    <option value="percent" ${discount && discount.type === 'percent' ? 'selected' : ''}>درصدی (%)</option>
+                                    <option value="amount" ${discount && discount.type === 'amount' ? 'selected' : ''}>مبلغ ثابت (تومان)</option>
+                                </select>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">مقدار تخفیف <span class="text-red-500">*</span></label>
+                                <input type="number" id="discountAmount" value="${discount ? discount.amount : ''}" required min="1"
+                                    class="w-full px-3 md:px-4 py-2 md:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                    placeholder="مثال: 20 برای درصد یا 50000 برای تومان">
+                                <p class="text-xs text-gray-500 mt-1" id="amountHint">برای تخفیف درصدی حداکثر 100%</p>
+                            </div>
+                            
+                            <div id="maxDiscountField" class="${discount && discount.type === 'percent' ? '' : 'hidden'}">
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">سقف تخفیف (تومان) <span class="text-red-500">*</span></label>
+                                <input type="number" id="maxDiscountAmount" value="${discount ? discount.maxDiscountAmount || '' : ''}" min="1"
+                                    class="w-full px-3 md:px-4 py-2 md:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                    placeholder="حداکثر مبلغ قابل تخفیف">
+                                <p class="text-xs text-gray-500 mt-1">برای تخفیف درصدی الزامی است</p>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">حداقل مبلغ سفارش (تومان)</label>
+                                <input type="number" id="minOrderAmount" value="${discount ? discount.minOrderAmount || '' : ''}" min="0"
+                                    class="w-full px-3 md:px-4 py-2 md:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                    placeholder="اختیاری - حداقل مبلغ برای استفاده از تخفیف">
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">حداکثر تعداد استفاده</label>
+                                <input type="number" id="usageLimit" value="${discount ? discount.usageLimit || '' : ''}" min="1"
+                                    class="w-full px-3 md:px-4 py-2 md:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                    placeholder="اختیاری - حداکثر تعداد دفعات استفاده">
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">تاریخ انقضا</label>
+                                <input type="date" id="expireDate" value="${discount && discount.expireDate ? new Date(discount.expireDate).toISOString().split('T')[0] : ''}"
+                                    class="w-full px-3 md:px-4 py-2 md:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">توضیحات</label>
+                                <textarea id="description" rows="3" maxlength="200"
+                                    class="w-full px-3 md:px-4 py-2 md:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                    placeholder="توضیحات اختیاری">${discount ? discount.description || '' : ''}</textarea>
+                                <p class="text-xs text-gray-500 mt-1">حداکثر 200 کاراکتر</p>
+                            </div>
+                            
+                            <div class="flex items-center">
+                                <input type="checkbox" id="isActive" ${discount && discount.isActive === false ? '' : 'checked'}
+                                    class="ml-2 w-4 h-4">
+                                <label for="isActive" class="text-sm font-semibold text-gray-700">فعال</label>
+                            </div>
+                            
+                            <div class="flex flex-col sm:flex-row justify-end space-y-2 sm:space-y-0 sm:space-x-reverse sm:space-x-4 pt-4 border-t border-gray-200">
+                                <button type="button" onclick="closeDiscountModal()" class="px-4 md:px-6 py-2 md:py-3 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-all">
+                                    انصراف
+                                </button>
+                                <button type="submit" class="px-4 md:px-6 py-2 md:py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all">
+                                    ${discount ? 'ذخیره تغییرات' : 'افزودن تخفیف'}
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            `;
+            
+            document.body.insertAdjacentHTML('beforeend', modalHtml);
+            document.getElementById('discountModal').classList.remove('hidden');
+            
+            // اضافه کردن event listener برای تغییر نوع تخفیف
+            const typeSelect = document.getElementById('discountType');
+            const amountHint = document.getElementById('amountHint');
+            const maxDiscountField = document.getElementById('maxDiscountField');
+            const discountAmount = document.getElementById('discountAmount');
+            
+            typeSelect.addEventListener('change', function() {
+                if (this.value === 'percent') {
+                    amountHint.textContent = 'برای تخفیف درصدی حداکثر 100%';
+                    discountAmount.max = 100;
+                    maxDiscountField.classList.remove('hidden');
+                } else {
+                    amountHint.textContent = 'مبلغ تخفیف به تومان';
+                    discountAmount.max = '';
+                    maxDiscountField.classList.add('hidden');
+                }
+            });
+            
+            // اضافه کردن event listener برای فرم
+            document.getElementById('discountForm').addEventListener('submit', saveDiscount);
+        }
+
+        function closeDiscountModal() {
+            const modal = document.getElementById('discountModal');
+            if (modal) {
+                modal.classList.add('hidden');
+                setTimeout(() => modal.remove(), 300);
+            }
+        }
+
+        async function saveDiscount(e) {
+            e.preventDefault();
+            
+            const type = document.getElementById('discountType').value;
+            const amount = parseFloat(document.getElementById('discountAmount').value);
+            
+            const data = {
+                code: document.getElementById('discountCode').value.trim().toUpperCase(),
+                type: type,
+                amount: amount,
+                minOrderAmount: document.getElementById('minOrderAmount').value ? parseFloat(document.getElementById('minOrderAmount').value) : null,
+                usageLimit: document.getElementById('usageLimit').value ? parseInt(document.getElementById('usageLimit').value) : null,
+                expireDate: document.getElementById('expireDate').value || null,
+                isActive: document.getElementById('isActive').checked,
+                description: document.getElementById('description').value || null
+            };
+            
+            // اضافه کردن maxDiscountAmount برای تخفیف درصدی
+            if (type === 'percent') {
+                const maxDiscountAmount = document.getElementById('maxDiscountAmount').value;
+                if (!maxDiscountAmount) {
+                    showNotification('برای تخفیف درصدی، سقف تخفیف الزامی است', 'error');
+                    return;
+                }
+                data.maxDiscountAmount = parseFloat(maxDiscountAmount);
+            }
+            
+            // اعتبارسنجی
+            if (!data.code) {
+                showNotification('کد تخفیف الزامی است', 'error');
+                return;
+            }
+            
+            if (!data.code.match(/^[A-Z0-9]+$/)) {
+                showNotification('کد تخفیف باید فقط شامل حروف انگلیسی و اعداد باشد', 'error');
+                return;
+            }
+            
+            if (data.code.length < 5 || data.code.length > 20) {
+                showNotification('کد تخفیف باید بین 5 تا 20 کاراکتر باشد', 'error');
+                return;
+            }
+            
+            if (!amount || amount <= 0) {
+                showNotification('مقدار تخفیف باید بیشتر از صفر باشد', 'error');
+                return;
+            }
+            
+            if (type === 'percent' && amount > 100) {
+                showNotification('تخفیف درصدی نمی‌تواند بیشتر از ۱۰۰ باشد', 'error');
+                return;
+            }
+            
+            try {
+                let response;
+                
+                if (isEditing && currentEditItem) {
+                    response = await fetch(`/admin/discounts/edit/${currentEditItem}`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(data)
+                    });
+                } else {
+                    response = await fetch('/admin/discounts/add', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(data)
+                    });
+                }
+                
+                const result = await response.json();
+                
+                if (!response.ok) {
+                    throw new Error(result.message || 'خطا در ذخیره تخفیف');
+                }
+                
+                // به‌روزرسانی لیست محلی
+                if (isEditing && currentEditItem) {
+                    const index = discounts.findIndex(d => d.id === currentEditItem);
+                    if (index !== -1) {
+                        discounts[index] = result.discount;
+                    }
+                } else {
+                    discounts.unshift(result.discount);
+                }
+                
+                loadDiscounts();
+                closeDiscountModal();
+                showNotification(isEditing ? 'تخفیف با موفقیت ویرایش شد' : 'تخفیف جدید با موفقیت اضافه شد', 'success');
+                
+            } catch (error) {
+                console.error('Error saving discount:', error);
+                showNotification(error.message || 'خطا در ذخیره تخفیف', 'error');
+            }
+        }
+
+        async function deleteDiscount(id) {
+            if (!id) {
+                showNotification('شناسه تخفیف معتبر نیست', 'error');
+                return;
+            }
+            
+            if (confirm('آیا از حذف این کد تخفیف اطمینان دارید؟')) {
+                try {
+                    const response = await fetch(`/admin/discounts/delete/${id}`, {
+                        method: 'DELETE'
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (!response.ok) {
+                        throw new Error(result.message || 'خطا در حذف تخفیف');
+                    }
+                    
+                    discounts = discounts.filter(d => d.id !== id);
+                    loadDiscounts();
+                    showNotification('کد تخفیف با موفقیت حذف شد', 'success');
+                    
+                } catch (error) {
+                    console.error('Error deleting discount:', error);
+                    showNotification(error.message || 'خطا در حذف تخفیف', 'error');
+                }
+            }
+        }
+
 
         function addCategory() {
             currentItemType = 'category';
@@ -2442,6 +2784,7 @@
             loadProducts();
             loadCategories();
             loadBrands();
+            loadDiscounts();
             loadOrders();
         });
     </script>
