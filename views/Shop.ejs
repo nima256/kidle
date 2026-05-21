@@ -331,8 +331,208 @@
         width: 24px;
         height: 24px;
       }
+/* ترتیب المان‌ها در موبایل */
+/* جایگزین کدهای CSS که در انتهای استایل‌ها وجود دارد */
+/* ترتیب المان‌ها در موبایل */
+@media (max-width: 1280px) {
+  .responsive-filters-layout {
+    display: flex;
+    flex-direction: column !important;
+  }
+  
+  .filters-sidebar-mobile {
+    order: 2 !important;
+    width: 100% !important;
+    margin-top: 2rem !important;
+  }
+  
+  .products-grid-mobile {
+    order: 1 !important;
+    width: 100% !important;
+  }
+}
+
+/* استایل جدید برای نمایش فیلترها در موبایل به صورت آکاردئونی */
+@media (max-width: 768px) {
+  .filters-toggle-btn {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: 12px 20px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-bottom: 16px;
+  }
+  
+  .filters-toggle-btn i {
+    transition: transform 0.3s ease;
+  }
+  
+  .filters-toggle-btn.active i {
+    transform: rotate(180deg);
+  }
+  
+  .filters-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+  }
+  
+  .filters-content.show {
+    max-height: 2000px;
+  }
+  
+  .glass-effect {
+    position: relative;
+    margin-bottom: 20px;
+  }
+}
+
+/* مخفی کردن دکمه اسکرول در موبایل */
+@media (max-width: 768px) {
+  #scrollCategoriesLeft,
+  #scrollCategoriesRight {
+    display: none !important;
+  }
+  
+  #categoriesSlider {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  .category-card {
+    width: calc(33.333% - 10.66px) !important;
+  }
+}
+
+/* بهبود فاصله‌ها در موبایل */
+@media (max-width: 640px) {
+  .container {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+  
+  .product-card {
+    margin-bottom: 16px;
+  }
+  
+  .glass-effect {
+    padding: 16px;
+  }
+}
     </style>
     <script>
+      // کد مدیریت نمایش فیلترها در موبایل
+document.addEventListener('DOMContentLoaded', function() {
+  // ایجاد دکمه toggle برای فیلترها در موبایل
+  const filtersContainer = document.querySelector('.glass-effect');
+  const filtersSidebar = document.querySelector('.xl\\:w-1\\/4');
+  const productsContainer = document.querySelector('.xl\\:w-3\\/4');
+  
+  if (window.innerWidth <= 768) {
+    createMobileFiltersToggle();
+  }
+  
+  window.addEventListener('resize', function() {
+    if (window.innerWidth <= 768) {
+      if (!document.querySelector('.filters-toggle-btn')) {
+        createMobileFiltersToggle();
+      }
+    } else {
+      const toggleBtn = document.querySelector('.filters-toggle-btn');
+      if (toggleBtn) {
+        toggleBtn.remove();
+        const filtersContent = document.querySelector('.filters-content');
+        if (filtersContent) {
+          filtersContent.classList.remove('show');
+          filtersContent.style.maxHeight = null;
+        }
+      }
+    }
+  });
+  
+  function createMobileFiltersToggle() {
+    // اگه دکمه قبلاً وجود داره، دوباره ایجاد نکن
+    if (document.querySelector('.filters-toggle-btn')) return;
+    
+    // گرفتن المان فیلترها
+    const filtersContainer = document.querySelector('.glass-effect');
+    if (!filtersContainer) return;
+    
+    // ذخیره محتوای اصلی فیلترها
+    const originalContent = filtersContainer.innerHTML;
+    
+    // ایجاد دکمه toggle
+    const toggleBtn = document.createElement('button');
+    toggleBtn.className = 'filters-toggle-btn';
+    toggleBtn.innerHTML = `
+      <span>
+        <i class="fas fa-filter ml-2"></i>
+        فیلترهای هوشمند
+      </span>
+      <i class="fas fa-chevron-down"></i>
+    `;
+    
+    // ایجاد کانتینر برای محتوای فیلترها
+    const filtersContent = document.createElement('div');
+    filtersContent.className = 'filters-content';
+    filtersContent.innerHTML = originalContent;
+    
+    // پاک کردن محتوای قبلی و اضافه کردن دکمه و محتوای جدید
+    filtersContainer.innerHTML = '';
+    filtersContainer.appendChild(toggleBtn);
+    filtersContainer.appendChild(filtersContent);
+    
+    // رویداد کلیک برای toggle
+    toggleBtn.addEventListener('click', function() {
+      this.classList.toggle('active');
+      filtersContent.classList.toggle('show');
+      
+      if (filtersContent.classList.contains('show')) {
+        filtersContent.style.maxHeight = filtersContent.scrollHeight + 'px';
+      } else {
+        filtersContent.style.maxHeight = null;
+      }
+    });
+    
+    // باز کردن خودکار فیلترها در حالت موبایل (اختیاری)
+    // setTimeout(() => {
+    //   toggleBtn.click();
+    // }, 100);
+  }
+  
+  // بهینه‌سازی اسکرول دسته‌بندی‌ها در موبایل
+  const categoriesSlider = document.getElementById('categoriesSlider');
+  if (categoriesSlider && window.innerWidth <= 768) {
+    let isScrolling = false;
+    let startX;
+    let scrollLeft;
+    
+    categoriesSlider.addEventListener('touchstart', (e) => {
+      isScrolling = true;
+      startX = e.touches[0].pageX - categoriesSlider.offsetLeft;
+      scrollLeft = categoriesSlider.scrollLeft;
+    });
+    
+    categoriesSlider.addEventListener('touchmove', (e) => {
+      if (!isScrolling) return;
+      e.preventDefault();
+      const x = e.touches[0].pageX - categoriesSlider.offsetLeft;
+      const walk = (x - startX) * 1.5;
+      categoriesSlider.scrollLeft = scrollLeft - walk;
+    });
+    
+    categoriesSlider.addEventListener('touchend', () => {
+      isScrolling = false;
+    });
+  }
+});
       document.addEventListener("DOMContentLoaded", function () {
         const selectedCategory = localStorage.getItem("selectedCategory");
         if (selectedCategory) {
@@ -360,132 +560,262 @@
     >
       <span id="notification-text">فیلتر اعمال شد!</span>
     </div>
-    <nav
-      class="fixed top-0 right-0 left-0 bg-white shadow-md z-50 px-4 md:px-6 py-3"
-    >
-      <div class="max-w-7xl mx-auto flex items-center justify-between">
-        <!-- Logo -->
-        <a href="#" class="flex items-center order-2 md:order-1 h-12 md:h-14">
-          <div class="h-full overflow-hidden flex items-center">
-            <img
-              src="logo.png"
-              alt="لوگوی اودور"
-              class="h-full w-auto object-contain"
-            />
-          </div>
+<nav style="background: white; box-shadow: 0 2px 10px rgba(0,0,0,0.1); position: fixed; top: 0; left: 0; right: 0; z-index: 50; padding: 12px 20px;">
+  <div style="max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
+    
+    <!-- لوگو -->
+    <a href="/" style="height: 48px;">
+      <img src="logo.png" alt="لوگو" style="height: 100%; width: auto;" />
+    </a>
+
+    <!-- منوی دسکتاپ با ساب‌منو -->
+    <div style="display: none; gap: 24px;" class="desktop-menu">
+      <a href="/" style="color: #333; text-decoration: none;">خانه</a>
+      
+      <!-- فروشگاه با ساب‌منو -->
+      <div style="position: relative;" class="dropdown">
+        <a href="/shop" style="color: #333; text-decoration: none; display: flex; align-items: center; gap: 5px;">
+           دسته بندی <i class="fas fa-chevron-down" style="font-size: 12px;"></i>
         </a>
-
-        <!-- Desktop Menu -->
-        <div
-          class="md:flex items-center space-x-8 space-x-reverse order-1 md:order-2"
-        >
-          <a
-            href="/"
-            class="nav-link text-gray-800 hover:text-pink-500 transition-colors"
-            >خانه</a
-          >
-          <a
-            href="/shop"
-            class="nav-link text-gray-800 hover:text-pink-500 transition-colors"
-            >فروشگاه</a
-          >
-          <a
-            href="#"
-            class="nav-link text-gray-800 hover:text-pink-500 transition-colors"
-            >دسته‌بندی‌ها</a
-          >
-          <a
-            href="/weblog"
-            class="nav-link text-gray-800 hover:text-pink-500 transition-colors"
-            >وبلاگ</a
-          >
-          <a
-            href="#"
-            class="nav-link text-gray-800 hover:text-pink-500 transition-colors"
-            >درباره ما</a
-          >
-          <a
-            href="#"
-            class="nav-link text-gray-800 hover:text-pink-500 transition-colors"
-            >تماس با ما</a
-          >
-        </div>
-
-        <!-- Icons -->
-        <div
-          class="flex items-center space-x-4 space-x-reverse order-1 md:order-3"
-        >
-          <div class="relative">
-            <button
-              onclick="window.location.href='/cart';"
-              class="relative text-gray-700 hover:text-pink-500 transition-colors"
-            >
-              <i class="fas fa-shopping-bag text-xl"></i>
-              <% if(user) { %>
-              <span
-                style="bottom: 15px; right: 7px"
-                class="absolute cart-count bg-pink-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center"
-                ><%= toPersianDigitsForSizes(cartCount) %></span
-              >
-              <% } else {%><% } %>
-            </button>
+        <div class="dropdown-menu" style="position: absolute; top: 100%; right: 0; background: white; box-shadow: 0 4px 12px rgba(0,0,0,0.15); border-radius: 8px; min-width: 200px; display: none; z-index: 100;">
+          <div class="submenu-item" style="position: relative;">
+            <a href="#" style="display: flex; justify-content: space-between; align-items: center; padding: 10px 16px; color: #333; text-decoration: none; border-bottom: 1px solid #eee;">
+              لباس زنانه <i class="fas fa-chevron-left" style="font-size: 10px;"></i>
+            </a>
+            <div class="submenu-level2" style="position: absolute; right: 100%; top: 0; background: white; box-shadow: 0 4px 12px rgba(0,0,0,0.15); border-radius: 8px; min-width: 180px; display: none;">
+              <a href="#" style="display: block; padding: 10px 16px; color: #333; text-decoration: none; border-bottom: 1px solid #eee;">پیراهن زنانه</a>
+              <a href="#" style="display: block; padding: 10px 16px; color: #333; text-decoration: none; border-bottom: 1px solid #eee;">شلوار زنانه</a>
+              <a href="#" style="display: block; padding: 10px 16px; color: #333; text-decoration: none;">مانتو و کت</a>
+            </div>
           </div>
-          <% if (!user) {%>
-          <button
-            id="user-auth-button"
-            class="text-gray-700 hover:text-pink-500 transition-colors"
-          >
+          <div class="submenu-item" style="position: relative;">
+            <a href="#" style="display: flex; justify-content: space-between; align-items: center; padding: 10px 16px; color: #333; text-decoration: none; border-bottom: 1px solid #eee;">
+              لباس مردانه <i class="fas fa-chevron-left" style="font-size: 10px;"></i>
+            </a>
+            <div class="submenu-level2" style="position: absolute; right: 100%; top: 0; background: white; box-shadow: 0 4px 12px rgba(0,0,0,0.15); border-radius: 8px; min-width: 180px; display: none;">
+              <a href="#" style="display: block; padding: 10px 16px; color: #333; text-decoration: none; border-bottom: 1px solid #eee;">پیراهن مردانه</a>
+              <a href="#" style="display: block; padding: 10px 16px; color: #333; text-decoration: none; border-bottom: 1px solid #eee;">شلوار مردانه</a>
+              <a href="#" style="display: block; padding: 10px 16px; color: #333; text-decoration: none;">کت و شلوار</a>
+            </div>
+          </div>
+          <a href="#" style="display: block; padding: 10px 16px; color: #333; text-decoration: none; border-bottom: 1px solid #eee;">اکسسوری</a>
+          <a href="#" style="display: block; padding: 10px 16px; color: #333; text-decoration: none;">کفش</a>
+        </div>
+      </div>
+      <a href="/shop" style="color: #333; text-decoration: none;">فروشگاه</a>
+      <a href="/weblog" style="color: #333; text-decoration: none;">وبلاگ</a>
+      <a href="#" style="color: #333; text-decoration: none;">درباره ما</a>
+      <a href="#" style="color: #333; text-decoration: none;">تماس با ما</a>
+    </div>
+
+    <!-- آیکون‌ها و همبرگر -->
+    <div class="flex items-center space-x-4 space-x-reverse order-1 md:order-3">
+      <div class="relative">
+        <button class="relative text-gray-700 hover:text-pink-500 transition-colors">
+          <a href="/cart">
+            <i class="fas fa-shopping-bag text-xl"></i>
+          </a>
+          <% if(user) { %>
+            <span id="cartCount" class="absolute cart-count bg-pink-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+              <%= toPersianDigitsForSizes(cartCount) %>
+            </span>
+          <% } %>
+        </button>
+      </div>
+      <% if (!user) {%>
+        <!-- مهم: این دکمه باید آیدی صحیح داشته باشه -->
+        <button id="user-auth-button" class="text-gray-700 hover:text-pink-500 transition-colors">
+          <i class="fas fa-user text-xl"></i>
+        </button>
+      <% } else { %>
+        <a href="/userProfile">
+          <button class="text-gray-700 hover:text-pink-500 transition-colors">
             <i class="fas fa-user text-xl"></i>
           </button>
-          <% } else { %>
-          <a href="/userProfile">
-            <button class="text-gray-700 hover:text-pink-500 transition-colors">
-              <i class="fas fa-user text-xl"></i>
-            </button>
-          </a>
-          <% } %>
-        </div>
-      </div>
+        </a>
+      <% } %>
+      <button id="menu-btn" style="color: #333; font-size: 24px; background: none; border: none; cursor: pointer; display: block;" class="hamburger">
+        <i class="fas fa-bars"></i>
+      </button>
+    </div>
+  </div>
 
-      <!-- Mobile Menu -->
-      <div
-        id="mobile-menu"
-        class="md:hidden hidden bg-white absolute right-0 left-0 top-full shadow-md"
-      >
-        <div class="flex flex-col px-4 py-2">
-          <a
-            href="/"
-            class="py-2 text-gray-800 hover:text-pink-500 transition-colors"
-            >خانه</a
-          >
-          <a
-            href="/shop"
-            class="py-2 text-gray-800 hover:text-pink-500 transition-colors"
-            >فروشگاه</a
-          >
-          <a
-            href="#"
-            class="py-2 text-gray-800 hover:text-pink-500 transition-colors"
-            >دسته‌بندی‌ها</a
-          >
-          <a
-            href="/weblog"
-            class="py-2 text-gray-800 hover:text-pink-500 transition-colors"
-            >وبلاگ</a
-          >
-          <a
-            href="#"
-            class="py-2 text-gray-800 hover:text-pink-500 transition-colors"
-            >درباره ما</a
-          >
-          <a
-            href="#"
-            class="py-2 text-gray-800 hover:text-pink-500 transition-colors"
-            >تماس با ما</a
-          >
-        </div>
+  <!-- منوی موبایل با ساب‌منو -->
+  <div id="mobile-menu" style="display: none; margin-top: 15px; padding-top: 15px; border-top: 1px solid #eee; flex-direction: column; gap: 10px;">
+    <a href="/" style="display: block; padding: 8px; color: #333; text-decoration: none;">خانه</a>
+    
+    <div class="mobile-dropdown">
+      <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px; cursor: pointer;" class="mobile-dropdown-trigger">
+        <span style="color: #333;">دسته بندی </span>
+        <i class="fas fa-chevron-down" style="font-size: 12px; transition: transform 0.3s;"></i>
       </div>
-    </nav>
+      <div class="mobile-dropdown-menu" style="display: none; padding-right: 15px;">
+        <div class="mobile-submenu">
+          <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px; cursor: pointer;" class="mobile-submenu-trigger">
+            <span style="color: #555;">لباس زنانه</span>
+            <i class="fas fa-chevron-left" style="font-size: 10px; transition: transform 0.3s;"></i>
+          </div>
+          <div class="mobile-submenu-level2" style="display: none; padding-right: 15px;">
+            <a href="#" style="display: block; padding: 8px; color: #666; text-decoration: none;">پیراهن زنانه</a>
+            <a href="#" style="display: block; padding: 8px; color: #666; text-decoration: none;">شلوار زنانه</a>
+            <a href="#" style="display: block; padding: 8px; color: #666; text-decoration: none;">مانتو و کت</a>
+          </div>
+        </div>
+        <div class="mobile-submenu">
+          <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px; cursor: pointer;" class="mobile-submenu-trigger">
+            <span style="color: #555;">لباس مردانه</span>
+            <i class="fas fa-chevron-left" style="font-size: 10px; transition: transform 0.3s;"></i>
+          </div>
+          <div class="mobile-submenu-level2" style="display: none; padding-right: 15px;">
+            <a href="#" style="display: block; padding: 8px; color: #666; text-decoration: none;">پیراهن مردانه</a>
+            <a href="#" style="display: block; padding: 8px; color: #666; text-decoration: none;">شلوار مردانه</a>
+            <a href="#" style="display: block; padding: 8px; color: #666; text-decoration: none;">کت و شلوار</a>
+          </div>
+        </div>
+        <a href="#" style="display: block; padding: 8px; color: #555; text-decoration: none;">اکسسوری</a>
+        <a href="#" style="display: block; padding: 8px; color: #555; text-decoration: none;">کفش</a>
+      </div>
+    </div>
+    <a href="/shop" style="display: block; padding: 8px; color: #333; text-decoration: none;">فروشگاه</a>
+    <a href="/weblog" style="display: block; padding: 8px; color: #333; text-decoration: none;">وبلاگ</a>
+    <a href="#" style="display: block; padding: 8px; color: #333; text-decoration: none;">درباره ما</a>
+    <a href="#" style="display: block; padding: 8px; color: #333; text-decoration: none;">تماس با ما</a>
+  </div>
+</nav>
+
+<style>
+  @media (min-width: 768px) {
+    .desktop-menu {
+      display: flex !important;
+    }
+    .hamburger {
+      display: none !important;
+    }
+  }
+  
+  .dropdown:hover .dropdown-menu {
+    display: block !important;
+  }
+  
+  .submenu-item:hover .submenu-level2 {
+    display: block !important;
+  }
+  
+  .dropdown-menu a:hover,
+  .submenu-level2 a:hover {
+    background-color: #f5f5f5;
+  }
+  
+  .mobile-dropdown-menu,
+  .mobile-submenu-level2 {
+    transition: all 0.3s ease;
+  }
+  
+  /* استایل برای موبایل */
+  @media (max-width: 768px) {
+    .flex.items-center.space-x-4 {
+      gap: 12px;
+    }
+  }
+</style>
+
+<script>
+  // تابع کمکی برای اطمینان از وجود المنت‌ها
+  function waitForElement(selector, callback) {
+    if (document.querySelector(selector)) {
+      callback();
+      return;
+    }
+    const observer = new MutationObserver(function(mutations) {
+      if (document.querySelector(selector)) {
+        observer.disconnect();
+        callback();
+      }
+    });
+    observer.observe(document.body, { childList: true, subtree: true });
+  }
+  
+  document.addEventListener("DOMContentLoaded", function() {
+    // منوی همبرگری موبایل
+    var menuBtn = document.getElementById('menu-btn');
+    var mobileMenu = document.getElementById('mobile-menu');
+    
+    if (menuBtn && mobileMenu) {
+      menuBtn.onclick = function(e) {
+        e.stopPropagation();
+        if (mobileMenu.style.display === 'none' || mobileMenu.style.display === '') {
+          mobileMenu.style.display = 'flex';
+        } else {
+          mobileMenu.style.display = 'none';
+        }
+      };
+    }
+    
+    // ساب‌منوی موبایل
+    var mobileTriggers = document.querySelectorAll('.mobile-dropdown-trigger');
+    mobileTriggers.forEach(function(trigger) {
+      trigger.onclick = function(e) {
+        e.stopPropagation();
+        var menu = this.nextElementSibling;
+        var icon = this.querySelector('i');
+        if (menu.style.display === 'none' || menu.style.display === '') {
+          menu.style.display = 'block';
+          icon.style.transform = 'rotate(180deg)';
+        } else {
+          menu.style.display = 'none';
+          icon.style.transform = 'rotate(0deg)';
+        }
+      };
+    });
+    
+    var subTriggers = document.querySelectorAll('.mobile-submenu-trigger');
+    subTriggers.forEach(function(trigger) {
+      trigger.onclick = function(e) {
+        e.stopPropagation();
+        var submenu = this.nextElementSibling;
+        var icon = this.querySelector('i');
+        if (submenu.style.display === 'none' || submenu.style.display === '') {
+          submenu.style.display = 'block';
+          icon.style.transform = 'rotate(180deg)';
+        } else {
+          submenu.style.display = 'none';
+          icon.style.transform = 'rotate(0deg)';
+        }
+      };
+    });
+    
+    // ====== بخش مهم: مدیریت پاپ‌آپ احراز هویت ======
+    var authButton = document.getElementById('user-auth-button');
+    var authPopup = document.getElementById('auth-popup');
+    
+    // اگر پاپ‌آپ در DOM وجود داشت، مدیریت کن
+    if (authButton && authPopup) {
+      authButton.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        console.log('دکمه کاربر کلیک شد - باز کردن پاپ‌آپ');
+        authPopup.classList.remove('hidden');
+        // تابع switchTab باید قبلاً تعریف شده باشد
+        if (typeof switchTab === 'function') {
+          switchTab('login');
+        }
+      });
+      
+      // بستن پاپ‌آپ با کلیک روی پس‌زمینه
+      authPopup.addEventListener('click', function(e) {
+        if (e.target === authPopup) {
+          authPopup.classList.add('hidden');
+        }
+      });
+    } else {
+      console.warn('دکمه user-auth-button یا پاپ‌آپ auth-popup در صفحه پیدا نشد!');
+      
+      // اگر پاپ‌آپ وجود نداشت، می‌توانیم یک هشدار نمایش دهیم یا لاگ بگیریم
+      if (!authButton) console.warn('عنصر با آیدی user-auth-button یافت نشد');
+      if (!authPopup) console.warn('عنصر با آیدی auth-popup یافت نشد');
+    }
+  });
+</script>
     <script>
       document.addEventListener("DOMContentLoaded", function () {
         const mobileMenuButton = document.getElementById("mobile-menu-button");
@@ -507,7 +837,7 @@
       });
     </script>
     <br /><br /><br />
-    <div class="container mx-auto px-4 py-8">
+    <div style="padding-top: 0rem;" class="container mx-auto px-4 py-8">
       <div
         id="auth-popup"
         class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden"
@@ -899,132 +1229,188 @@
         </div>
       </div>
       <!-- Header Section -->
-      <div class="text-center mb-12">
+      <!-- <div class="text-center mb-12">
         <h1
           class="text-5xl font-bold bg-gradient-to-r from-purple-600 via-pink-600 to-red-600 bg-clip-text text-transparent mb-4"
         >
           مجموعه زیبایی لوکس
         </h1>
         <p class="text-gray-600 text-lg">کشف کنید، زیبا باشید، درخشان شوید</p>
-      </div>
+      </div> -->
+<section class="py-12 px-4 bg-gradient-to-b from-gray-50  overflow-hidden">
+    <div class="max-w-7xl mx-auto">
+        <!-- عنوان بخش -->
+        <div class="text-center mb-10 fade-in">
+            <h2 class="text-3xl md:text-4xl font-bold text-gray-800 mb-2">دسته بندی های ویژه</h2>
+            <div class="w-24 h-1 bg-gradient-to-l from-pink-500 to-purple-600 mx-auto rounded-full"></div>
+            <p class="text-gray-500 mt-4">محصولات اورجینال و با کیفیت برای حرفه‌ای‌ها</p>
+        </div>
 
-      <div class="flex flex-col xl:flex-row gap-8">
-        <!-- Advanced Filters Section -->
-        <div class="xl:w-1/4 order-2 xl:order-1">
-          <div class="glass-effect rounded-3xl p-8 sticky top-4 shadow-2xl">
-            <div class="flex items-center mb-8">
-              <div
-                class="w-3 h-8 bg-gradient-to-b from-purple-500 to-pink-500 rounded-full ml-3"
-              ></div>
-              <h2 class="text-2xl font-bold text-gray-800">فیلترهای هوشمند</h2>
+        <!-- محفظه اسلایدر -->
+        <div class="relative group">
+            <!-- دکمه اسکرول به راست (بعدی) -->
+            <button id="scrollCategoriesRight" 
+                class="absolute -right-4 top-1/2 transform -translate-y-1/2 bg-white rounded-full p-3 shadow-xl hover:shadow-2xl z-20 opacity-0 group-hover:opacity-100 transition-all duration-300 hover:scale-110 hidden md:block">
+                <i class="fas fa-chevron-left text-gray-700 text-xl"></i>
+            </button>
+            
+            <!-- دکمه اسکرول به چپ (قبلی) -->
+            <button id="scrollCategoriesLeft" 
+                class="absolute -left-4 top-1/2 transform -translate-y-1/2 bg-white rounded-full p-3 shadow-xl hover:shadow-2xl z-20 opacity-0 group-hover:opacity-100 transition-all duration-300 hover:scale-110 hidden md:block">
+                <i class="fas fa-chevron-right text-gray-700 text-xl"></i>
+            </button>
+
+            <!-- اسلایدر -->
+            <div id="categoriesSlider" class="overflow-x-auto scrollbar-hide" style="scrollbar-width: thin; scroll-behavior: smooth;">
+                <div style="margin-bottom: 10px;" class="flex gap-4 md:gap-6" id="categoriesTrack">
+                    <% for(let category of categories) {%>
+                    <div onclick="setSelectedCategory('<%= category.name %>')" class="category-card flex-shrink-0 w-[calc(50%-8px)] sm:w-[calc(33.333%-10.66px)] md:w-[calc(20%-19.2px)] lg:w-[calc(14.285%-17.14px)] bg-white rounded-2xl p-4 text-center shadow-md hover:shadow-xl transition-all duration-300 cursor-pointer hover:-translate-y-1 border border-gray-100">
+                        <div class="w-16 h-16 mx-auto mb-3 rounded-full bg-gradient-to-br from-red-400 to-red-600 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+                            <i class="fas fa-couch text-white text-2xl"></i>
+                        </div>
+                        <h3 class="font-bold text-gray-800 text-sm md:text-base">
+                            <%= category.name %>
+                        </h3>
+                        <span class="text-gray-400 text-xs">
+                              <%= toPersianDigits(category.productCount) %> محصول
+                        </span>
+                    </div>
+                    <% } %>
+                </div>
             </div>
+        </div>
+
+        <!-- دکمه مشاهده همه -->
+        
+
+</section>
+<script>
+  // اسلایدر دسته‌بندی‌ها
+const slider = document.getElementById('categoriesSlider');
+const track = document.getElementById('categoriesTrack');
+const scrollLeftBtn = document.getElementById('scrollCategoriesLeft');
+const scrollRightBtn = document.getElementById('scrollCategoriesRight');
+
+if (scrollLeftBtn && scrollRightBtn && slider) {
+    // اسکرول به چپ (رفتن به آیتم‌های قبلی)
+    scrollLeftBtn.addEventListener('click', () => {
+        const cardWidth = document.querySelector('.category-card')?.offsetWidth || 200;
+        const gap = 24; // مقدار gap بین کارت‌ها
+        const scrollAmount = cardWidth + gap;
+        slider.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
+    });
+
+    // اسکرول به راست (رفتن به آیتم‌های بعدی)
+    scrollRightBtn.addEventListener('click', () => {
+        const cardWidth = document.querySelector('.category-card')?.offsetWidth || 200;
+        const gap = 24;
+        const scrollAmount = cardWidth + gap;
+        slider.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+    });
+
+    // مخفی کردن دکمه‌ها در ابتدا و انتهای اسکرول
+    function checkScrollButtons() {
+        const scrollLeft = slider.scrollLeft;
+        const maxScroll = slider.scrollWidth - slider.clientWidth;
+        
+        if (scrollLeft <= 10) {
+            scrollLeftBtn.style.opacity = '0.3';
+            scrollLeftBtn.style.pointerEvents = 'none';
+        } else {
+            scrollLeftBtn.style.opacity = '1';
+            scrollLeftBtn.style.pointerEvents = 'auto';
+        }
+        
+        if (scrollLeft >= maxScroll - 10) {
+            scrollRightBtn.style.opacity = '0.3';
+            scrollRightBtn.style.pointerEvents = 'none';
+        } else {
+            scrollRightBtn.style.opacity = '1';
+            scrollRightBtn.style.pointerEvents = 'auto';
+        }
+    }
+
+    slider.addEventListener('scroll', checkScrollButtons);
+    window.addEventListener('resize', checkScrollButtons);
+    setTimeout(checkScrollButtons, 100);
+}
+</script>
+<div class="flex flex-col xl:flex-row gap-8">
+  <!-- Advanced Filters Section - در دسکتاپ کنار، در موبایل بالای محصولات -->
+  <div class="xl:w-1/4 filters-sidebar">
+    <div class="glass-effect rounded-3xl p-8 sticky top-4 shadow-2xl">
+      <div class="flex items-center mb-8">
+        <div class="w-3 h-8 bg-gradient-to-b from-purple-500 to-pink-500 rounded-full ml-3"></div>
+        <h2 class="text-2xl font-bold text-gray-800">فیلترهای هوشمند</h2>
+      </div>
 
             <!-- Search Bar -->
             <div class="relative mb-8">
-              <input
-                type="text"
-                id="search-input"
-                placeholder="جستجو در محصولات..."
-                class="w-full bg-white/70 border-0 rounded-2xl px-6 py-4 text-right shadow-lg focus:ring-4 focus:ring-purple-200 transition-all"
-              />
-              <div class="absolute left-4 top-1/2 transform -translate-y-1/2">
-                <svg
-                  class="w-5 h-5 text-gray-400"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                  ></path>
-                </svg>
-              </div>
-            </div>
+        <input
+          type="text"
+          id="search-input"
+          placeholder="جستجو در محصولات..."
+          class="w-full bg-white/70 border-0 rounded-2xl px-6 py-4 text-right shadow-lg focus:ring-4 focus:ring-purple-200 transition-all"
+        />
+        <div class="absolute left-4 top-1/2 transform -translate-y-1/2">
+          <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+          </svg>
+        </div>
+      </div>
 
-            <!-- Category Pills -->
+
             <div class="mb-8">
-              <h3 class="font-bold text-gray-700 mb-4 text-lg">دسته‌بندی‌ها</h3>
-              <div class="space-y-3">
-                <% for(let category of categories) { %>
-                <div
-                  class="category-chip rounded-2xl p-4 shadow-md"
-                  data-category="<%= category.name %>"
-                >
-                  <div class="flex justify-between items-center">
-                    <span class="font-medium"
-                      ><%= category.name %> <%= category.emoji %></span
-                    >
-                    <span class="bg-white/50 rounded-full px-3 py-1 text-sm"
-                      ><%= toPersianDigits(category.productCount) %></span
-                    >
-                  </div>
-                </div>
-                <% } %>
-              </div>
+        <h3 class="font-bold text-gray-700 mb-4 text-lg">دسته‌بندی‌ها</h3>
+        <div class="space-y-3">
+          <% for(let category of categories) { %>
+          <div class="category-chip rounded-2xl p-4 shadow-md" data-category="<%= category.name %>">
+            <div class="flex justify-between items-center">
+              <span class="font-medium"><%= category.name %> <%= category.emoji %></span>
+              <span class="bg-white/50 rounded-full px-3 py-1 text-sm"><%= toPersianDigits(category.productCount) %></span>
             </div>
+          </div>
+          <% } %>
+        </div>
+      </div>
 
-            <!-- Price Range Slider -->
-            <div class="mb-8">
-              <h3 class="font-bold text-gray-700 mb-4 text-lg">محدوده قیمت</h3>
-              <div class="bg-white/70 rounded-2xl p-6 shadow-lg">
-                <div class="flex justify-between mb-4">
-                  <span class="text-sm text-gray-600" id="min-price-display"
-                    >۵۰,۰۰۰ تومان</span
-                  >
-                  <span class="text-sm text-gray-600" id="max-price-display"
-                    >۲,۰۰۰,۰۰۰ تومان</span
-                  >
-                </div>
-                <div class="relative mb-4">
-                  <input
-                    type="range"
-                    id="price-range"
-                    min="50000"
-                    max="2000000"
-                    value="1000000"
-                    class="price-range-slider w-full cursor-pointer"
-                  />
-                </div>
-                <div class="text-center">
-                  <span
-                    class="bg-purple-100 text-purple-800 px-4 py-2 rounded-full text-sm font-medium"
-                    id="current-price"
-                  >
-                    تا ۱,۰۰۰,۰۰۰ تومان
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            <!-- Brand Selection -->
-            <div class="mb-8">
-              <h3 class="font-bold text-gray-700 mb-4 text-lg">
-                برندهای محبوب
-              </h3>
-              <div class="grid grid-cols-2 gap-3">
-                <% for(let brand of brands) { %>
-                <div
-                  class="brand-filter bg-white/70 rounded-xl p-3 text-center cursor-pointer hover:bg-white transition-all shadow-md"
-                  data-brand="<%= brand.name %>"
-                >
-                  <div class="text-2xl mb-1"><%= brand.emoji %></div>
-                  <div class="text-sm font-medium"><%= brand.name %></div>
-                </div>
-                <% } %>
-              </div>
-            </div>
-
-            <button
-              id="apply-filters"
-              class="filter-btn w-full text-white py-4 rounded-2xl font-bold text-lg shadow-xl"
-            >
-              اعمال فیلترها
-            </button>
+      <!-- Price Range Slider -->
+      <div class="mb-8">
+        <h3 class="font-bold text-gray-700 mb-4 text-lg">محدوده قیمت</h3>
+        <div class="bg-white/70 rounded-2xl p-6 shadow-lg">
+          <div class="flex justify-between mb-4">
+            <span class="text-sm text-gray-600" id="min-price-display">۵۰,۰۰۰ تومان</span>
+            <span class="text-sm text-gray-600" id="max-price-display">۲,۰۰۰,۰۰۰ تومان</span>
+          </div>
+          <div class="relative mb-4">
+            <input type="range" id="price-range" min="50000" max="2000000" value="1000000" class="price-range-slider w-full cursor-pointer" />
+          </div>
+          <div class="text-center">
+            <span class="bg-purple-100 text-purple-800 px-4 py-2 rounded-full text-sm font-medium" id="current-price">
+              تا ۱,۰۰۰,۰۰۰ تومان
+            </span>
           </div>
         </div>
+      </div>
+
+      <!-- Brand Selection -->
+      <div class="mb-8">
+        <h3 class="font-bold text-gray-700 mb-4 text-lg">برندهای محبوب</h3>
+        <div class="grid grid-cols-2 gap-3">
+          <% for(let brand of brands) { %>
+          <div class="brand-filter bg-white/70 rounded-xl p-3 text-center cursor-pointer hover:bg-white transition-all shadow-md" data-brand="<%= brand.name %>">
+            <div class="text-2xl mb-1"><%= brand.emoji %></div>
+            <div class="text-sm font-medium"><%= brand.name %></div>
+          </div>
+          <% } %>
+        </div>
+      </div>
+
+      <button id="apply-filters" class="filter-btn w-full text-white py-4 rounded-2xl font-bold text-lg shadow-xl">
+        اعمال فیلترها
+      </button>
+    </div>
+  </div>
 
         <!-- Premium Products Grid -->
         <div class="xl:w-3/4 order-1 xl:order-2">
@@ -1107,125 +1493,170 @@
     >
       <span id="toast-message"></span>
     </div>
-    <footer class="bg-gray-900 text-white py-12">
-      <div class="container mx-auto px-4">
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
-          <div>
-            <div class="flex items-center space-x-reverse space-x-3 mb-4">
-              <div
-                class="w-10 h-10 bg-gradient-to-r from-purple-600 to-blue-600 rounded-lg flex items-center justify-center"
-              >
-                <svg
-                  class="w-6 h-6 text-white"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                >
-                  <path
-                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                  ></path>
-                </svg>
-              </div>
-              <h3 class="text-xl font-bold">وبلاگ مدرن</h3>
-            </div>
-            <p class="text-gray-400 text-sm leading-relaxed">
-              مرجع آموزش تکنولوژی، طراحی وب و برنامه‌نویسی در ایران
-            </p>
-            <p class="text-gray-400 text-sm leading-relaxed mt-2">
-              شماره تلفن: ۰۹۰۵۴۲۴۳۴۶۴
-            </p>
+    <!-- بخش توضیحات سئو -->
+<section class="container mx-auto px-4 py-12 mt-8 border-t border-gray-200">
+  <div class="max-w-5xl mx-auto text-right">
+    <h1 class="text-2xl md:text-3xl font-bold text-gray-800 mb-4">
+      فروشگاه اینترنتی اودور - مرجع تخصصی محصولات آرایشی و بهداشتی
+    </h1>
+    
+    <div class="prose prose-lg text-gray-600 space-y-4">
+      <p>
+        فروشگاه اینترنتی اودور با سال‌ها تجربه در زمینه فروش محصولات آرایشی و بهداشتی، 
+        همواره تلاش کرده است بهترین و باکیفیت‌ترین محصولات برندهای معتبر جهان را به مشتریان 
+        عزیز ارائه دهد. ما در اودور به اصلالت کالا اهمیت ویژه‌ای می‌دهیم و تمامی محصولات 
+        ما دارای ضمانت اصالت و سلامت فیزیکی می‌باشند.
+      </p>
+      
+      <p>
+        مجموعه ما شامل انواع محصولات شیگلم، لوازم آرایشی حرفه‌ای، محصولات مراقبت از پوست و مو، 
+        عطر و ادکلن و اکسسوری‌های زیبایی می‌باشد. خرید آنلاین از اودور به معنای تجربه خریدی 
+        امن، سریع و لذت‌بخش است.
+      </p>
+      
+      <h2 class="text-xl font-bold text-gray-800 mt-6 mb-3">
+        چرا اودور را انتخاب کنیم؟
+      </h2>
+      
+      <ul class="list-disc list-inside space-y-2 pr-4">
+        <li>✅ تضمین اصالت کالا و ضمانت بازگشت وجه</li>
+        <li>✅ ارسال سریع به تمام نقاط کشور در کمترین زمان ممکن</li>
+        <li>✅ پشتیبانی ۲۴ ساعته و مشاوره رایگان قبل از خرید</li>
+        <li>✅ مناسب‌ترین قیمت‌ها با تخفیف‌های ویژه و شگفت‌انگیز</li>
+        <li>✅ تنوع بی‌نظیر محصولات از برندهای تراز اول جهانی</li>
+      </ul>
+      
+      <p>
+        مشتریان عزیز می‌توانند با ثبت‌نام در سایت اودور از آخرین تخفیف‌ها و جشنواره‌های 
+        فروش مطلع شده و خریدی هوشمندانه را تجربه کنند. کیفیت، اعتماد و رضایت شما 
+        اولویت اصلی ماست.
+      </p>
+      
+      <div class="bg-gradient-to-r from-purple-50 to-pink-50 p-6 rounded-2xl mt-6">
+        <h3 class="font-bold text-lg text-gray-800 mb-2">نمادهای اعتماد و افتخارات</h3>
+        <p class="text-sm text-gray-600">
+          فروشگاه اینترنتی اودور دارای نماد اعتماد الکترونیک از وزارت صنعت، معدن و تجارت 
+          بوده و تمامی تراکنش‌های مالی آن از طریق درگاه‌های امن بانکی انجام می‌شود.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+<footer class="bg-gray-900 text-white py-12">
+  <div class="container mx-auto px-4">
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+      <!-- درباره فروشگاه -->
+      <div>
+        <div class="flex items-center space-x-reverse space-x-3 mb-4">
+          <div
+            class="w-10 h-10 bg-gradient-to-r from-pink-500 to-rose-500 rounded-lg flex items-center justify-center"
+          >
+            <svg
+              class="w-6 h-6 text-white"
+              fill="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+            </svg>
           </div>
-          <div>
-            <h4 class="font-bold mb-4">دسته‌بندی‌ها</h4>
-            <ul class="space-y-2 text-sm text-gray-400">
-              <li>
-                <a href="#" class="hover:text-white transition-colors"
-                  >طراحی وب</a
-                >
-              </li>
-              <li>
-                <a href="#" class="hover:text-white transition-colors"
-                  >برنامه‌نویسی</a
-                >
-              </li>
-              <li>
-                <a href="#" class="hover:text-white transition-colors">UI/UX</a>
-              </li>
-              <li>
-                <a href="#" class="hover:text-white transition-colors"
-                  >هوش مصنوعی</a
-                >
-              </li>
-            </ul>
-          </div>
-          <div>
-            <h4 class="font-bold mb-4">لینک‌های مفید</h4>
-            <ul class="space-y-2 text-sm text-gray-400">
-              <li>
-                <a href="#" class="hover:text-white transition-colors"
-                  >درباره ما</a
-                >
-              </li>
-              <li>
-                <a href="#" class="hover:text-white transition-colors"
-                  >تماس با ما</a
-                >
-              </li>
-              <li>
-                <a href="#" class="hover:text-white transition-colors"
-                  >حریم خصوصی</a
-                >
-              </li>
-              <li>
-                <a href="#" class="hover:text-white transition-colors"
-                  >شرایط استفاده</a
-                >
-              </li>
-            </ul>
-          </div>
-          <div>
-            <h4 class="font-bold mb-4">شبکه‌های اجتماعی</h4>
-            <div class="flex space-x-reverse space-x-4">
-              <a
-                href="#"
-                class="w-10 h-10 bg-gray-800 rounded-lg flex items-center justify-center hover:bg-gray-700 transition-colors"
-              >
-                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                  <path
-                    d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z"
-                  />
-                </svg>
-              </a>
-              <a
-                href="#"
-                class="w-10 h-10 bg-gray-800 rounded-lg flex items-center justify-center hover:bg-gray-700 transition-colors"
-              >
-                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                  <path
-                    d="M22.46 6c-.77.35-1.6.58-2.46.69.88-.53 1.56-1.37 1.88-2.38-.83.5-1.75.85-2.72 1.05C18.37 4.5 17.26 4 16 4c-2.35 0-4.27 1.92-4.27 4.29 0 .34.04.67.11.98C8.28 9.09 5.11 7.38 3 4.79c-.37.63-.58 1.37-.58 2.15 0 1.49.75 2.81 1.91 3.56-.71 0-1.37-.2-1.95-.5v.03c0 2.08 1.48 3.82 3.44 4.21a4.22 4.22 0 0 1-1.93.07 4.28 4.28 0 0 0 4 2.98 8.521 8.521 0 0 1-5.33 1.84c-.34 0-.68-.02-1.02-.06C3.44 20.29 5.7 21 8.12 21 16 21 20.33 14.46 20.33 8.79c0-.19 0-.37-.01-.56.84-.6 1.56-1.36 2.14-2.23z"
-                  />
-                </svg>
-              </a>
-              <a
-                href="#"
-                class="w-10 h-10 bg-gray-800 rounded-lg flex items-center justify-center hover:bg-gray-700 transition-colors"
-              >
-                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                  <path
-                    d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"
-                  />
-                </svg>
-              </a>
-            </div>
-          </div>
+          <h3 class="text-xl font-bold">کیدل | فروشگاه لباس کودک</h3>
         </div>
-        <div
-          class="border-t border-gray-800 mt-8 pt-8 text-center text-sm text-gray-400"
-        >
-          <p>&amp;copy; ۱۴۰۳ وبلاگ مدرن. تمامی حقوق محفوظ است.</p>
+        <p class="text-gray-400 text-sm leading-relaxed">
+          فروشگاه تخصصی پوشاک کودک و نوزاد، با بهترین کیفیت و مناسب‌ترین قیمت
+        </p>
+        <p class="text-gray-400 text-sm leading-relaxed mt-3">
+          <i class="fas fa-phone ml-2"></i> تماس: 0905424346
+        </p>
+        <p class="text-gray-400 text-sm leading-relaxed mt-1">
+          <i class="fas fa-map-marker-alt ml-2"></i> گرگان خیابان پاسداران پاساژ وارکانا پلاک 51
+        </p>
+      </div>
+
+      <!-- دسته‌بندی محصولات -->
+      <div>
+        <h4 class="font-bold mb-4 text-pink-400">دسته‌بندی‌ها</h4>
+        <ul class="space-y-2 text-sm text-gray-400">
+          <li>
+            <a href="#" class="hover:text-pink-400 transition-colors">لباس نوزاد (۰-۲۴ ماه)</a>
+          </li>
+          <li>
+            <a href="#" class="hover:text-pink-400 transition-colors">لباس کودک (۲-۷ سال)</a>
+          </li>
+          <li>
+            <a href="#" class="hover:text-pink-400 transition-colors">لباس پسرانه</a>
+          </li>
+          <li>
+            <a href="#" class="hover:text-pink-400 transition-colors">لباس دخترانه</a>
+          </li>
+          <li>
+            <a href="#" class="hover:text-pink-400 transition-colors">ست و اکسسوری کودک</a>
+          </li>
+        </ul>
+      </div>
+
+      <!-- لینک‌های مفید -->
+      <div>
+        <h4 class="font-bold mb-4 text-pink-400">لینک‌های مفید</h4>
+        <ul class="space-y-2 text-sm text-gray-400">
+          <li>
+            <a href="#" class="hover:text-pink-400 transition-colors">درباره ما</a>
+          </li>
+          <li>
+            <a href="#" class="hover:text-pink-400 transition-colors">تماس با ما</a>
+          </li>
+          <li>
+            <a href="#" class="hover:text-pink-400 transition-colors">فروشگاه </a>
+          </li>
+        </ul>
+      </div>
+
+      <!-- شبکه‌های اجتماعی و نمادها -->
+      <div>
+        <h4 class="font-bold mb-4 text-pink-400">ما را دنبال کنید</h4>
+        <div class="flex space-x-reverse space-x-4 mb-6">
+          <a
+            href="#"
+            class="w-10 h-10 bg-gray-800 rounded-lg flex items-center justify-center hover:bg-pink-500 transition-colors"
+          >
+            <i class="fab fa-instagram text-xl"></i>
+          </a>
+          <a
+            href="#"
+            class="w-10 h-10 bg-gray-800 rounded-lg flex items-center justify-center hover:bg-pink-500 transition-colors"
+          >
+            <i class="fab fa-telegram text-xl"></i>
+          </a>
+          <a
+            href="#"
+            class="w-10 h-10 bg-gray-800 rounded-lg flex items-center justify-center hover:bg-pink-500 transition-colors"
+          >
+            <i class="fab fa-whatsapp text-xl"></i>
+          </a>
+        </div>
+        <div class="mt-4">
+          <p class="text-gray-400 text-sm mb-2">ایمیل:</p>
+          <p class="text-gray-400 text-sm">info@kidland.com</p>
         </div>
       </div>
-    </footer>
+    </div>
+            <a referrerpolicy='origin' target='_blank' href='https://trustseal.enamad.ir/?id=731837&Code=jSMW53UKTzbJlysi5bIKHLWgBO1HddCW'><img referrerpolicy='origin' src='https://trustseal.enamad.ir/logo.aspx?id=731837&Code=jSMW53UKTzbJlysi5bIKHLWgBO1HddCW' alt='' style='cursor:pointer' code='jSMW53UKTzbJlysi5bIKHLWgBO1HddCW'></a>
 
+    <!-- کپی‌رایت و نمادهای اعتماد -->
+    <div class="border-t border-gray-800 mt-8 pt-8">
+      <div class="flex flex-col md:flex-row justify-between items-center gap-4">
+          
+        <div class="text-center text-sm text-gray-400">
+          <p>© 1406 فروشگاه کیدل. تمامی حقوق محفوظ است.</p>
+        </div>
+        <div class="flex space-x-reverse space-x-3">
+          <span class="text-xs text-gray-500">پشتیبانی ۲۴ ساعته</span>
+          <span class="text-xs text-gray-500">ارسال سریع</span>
+          <span class="text-xs text-gray-500">تضمین اصالت کالا</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
     <script>
         function showNotificationInPopUp(message, type = 'info') {
             const authPopup = document.getElementById('auth-popup');
@@ -1421,7 +1852,7 @@
           function toPersianDigits(str) {
             return str.toString().replace(/\d/g, d => '۰۱۲۳۴۵۶۷۸۹'[d]);
           }
-          function renderProducts() {
+            function renderProducts() {
             const container = document.getElementById("products-container");
             const isListView = currentView === "list";
 
@@ -1437,6 +1868,7 @@
               updatePaginationControls();
               return;
             }
+            
 
             container.className = isListView
               ? "space-y-6 list-view"
@@ -1444,6 +1876,13 @@
 
             container.innerHTML = displayedProducts
               .map((product) => {
+             const categoryBadges = product.category && product.category.length > 0 
+                ? product.category.map(cat => 
+                    `<span class="inline-block bg-gray-100 text-gray-800 text-xs px-2 py-1 rounded-full mr-1 mb-1">
+                        ${cat.name || (typeof cat === 'string' ? 'در حال بارگذاری...' : 'بدون نام')}
+                    </span>`
+                ).join('')
+            : '<span class="text-gray-500 text-xs">بدون دسته‌بندی</span>';
                 return `
                 <div class="product-card rounded-3xl overflow-hidden shadow-xl floating-animation">
 
@@ -1467,7 +1906,7 @@
                             <div class="p-6 ${isListView ? "flex-1" : ""}">
                                 <div class="flex justify-between items-start mb-3">
                                     <div class="bg-orange-100 text-orange-800 px-3 py-1 rounded-full text-xs font-medium">
-                                        ${product.catName}
+                                        ${categoryBadges}
                                     </div>
                                     <button class="text-gray-400 hover:text-red-500 transition-colors">
                                         <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
@@ -1920,7 +2359,6 @@
                                 })
                                 .catch((err) => {
                                   console.error("Error:", err);
-                                  console.log(err)
                                   showNotificationInPopUp("مشکلی در ارتباط با سرور به وجود آمده است", 'error');
                                 });
                             }
@@ -1932,7 +2370,6 @@
                       })
                       .catch((err) => {
                         console.error("Error:", err);
-                        console.log(err)
                         showNotificationInPopUp("مشکلی در ارتباط با سرور به وجود آمده است", 'error')
                       });
                   });
@@ -2038,7 +2475,6 @@
                     })
                     .catch((err) => {
                       console.error("Error:", err);
-                      console.log(err)
                       showNotificationInPopUp("مشکلی در ارتباط با سرور به وجود آمده است", 'error');
                     });
                 });

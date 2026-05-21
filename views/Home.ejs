@@ -4,19 +4,14 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="robots" content="noindex, nofollow">
-  <title>فروشگاه اینترنتی اودور</title>
+  <title>فروشگاه کیدل</title>
     <meta
     name="description"
-    content="فروشگاه اینترنتی اودور منبع فروش محصولات شیگلم و فروش محصولات آرایشی"
+    content="فروشگاه اینترنتی کیدل، فروش لباس بچگانه از سنین 1 تا 15 سال"
   />
   <meta name="keywords" content="محصولات شیگلم, خرید فروش محصولات شیگلم , خرید محصولات شیگلم , محصولات آرایشی" />
-  <script>
-     window.API_BASE_URL = window.location.origin;
-  </script>
   <link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-<link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet" type="text/css" />
   <style>
     @font-face {
       font-family: "MyFont";
@@ -81,7 +76,7 @@
       opacity: 1;
     }
 
-    .hero-slider {
+    /* .hero-slider {
       height: 80vh;
       min-height: 500px;
     }
@@ -100,7 +95,7 @@
 
     .slide.active {
       opacity: 1;
-    }
+    } */
 
     .discount-card:hover,
     .category-item:hover,
@@ -347,170 +342,619 @@
             background: #f8fafc;
             color: #7c3aed;
             transform: scale(1.02);
+        
         }
+    
   </style>
   </head>
 
 <body class="bg-gray-50">
   <!-- Navigation Bar -->
-  <nav class="fixed top-0 right-0 left-0 bg-white shadow-md z-50 px-4 md:px-6 py-3">
-    <div class="max-w-7xl mx-auto flex items-center justify-between">
-      <!-- Logo -->
-      <a href="#" class="flex items-center order-2 md:order-1 h-12 md:h-14">
-        <div class="h-full overflow-hidden flex items-center">
-          <img src="logo.png" alt="لوگوی اودور" class="h-full w-auto object-contain" />
-        </div>
-      </a>
+<nav style="background: white; box-shadow: 0 2px 10px rgba(0,0,0,0.1); position: fixed; top: 0; left: 0; right: 0; z-index: 50; padding: 12px 20px;">
+  <div style="max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
+    
+    <!-- لوگو -->
+    <a href="/" style="height: 48px;">
 
-      <!-- Desktop Menu -->
-      <div class=" md:flex items-center space-x-8 space-x-reverse order-1 md:order-2">
-        <a href="/" class="nav-link text-gray-800 hover:text-pink-500 transition-colors">خانه</a>
-        <a href="/shop" class="nav-link text-gray-800 hover:text-pink-500 transition-colors">فروشگاه</a>
-        <a href="#" class="nav-link text-gray-800 hover:text-pink-500 transition-colors">دسته‌بندی‌ها</a>
-        <a href="/weblog" class="nav-link text-gray-800 hover:text-pink-500 transition-colors">وبلاگ</a>
-        <a href="#" class="nav-link text-gray-800 hover:text-pink-500 transition-colors">درباره ما</a>
-        <a href="#" class="nav-link text-gray-800 hover:text-pink-500 transition-colors">تماس با ما</a>
-      </div>
+    </a>
 
-      <!-- Icons -->
-      <div class="flex items-center space-x-4 space-x-reverse order-1 md:order-3">
-        <div class="relative">
-          <button 
-            class="relative text-gray-700 hover:text-pink-500 transition-colors">
-            <a href="/cart">
-            <i class="fas fa-shopping-bag text-xl"></i>
+    <!-- منوی دسکتاپ با ساب‌منو -->
+    <div style="display: none; gap: 24px;" class="desktop-menu">
+      <a href="/" style="color: #333; text-decoration: none;">خانه</a>
+      
+      <!-- فروشگاه با ساب‌منو -->
+      <div style="position: relative;" class="dropdown">
+        <a href="/shop" style="color: #333; text-decoration: none; display: flex; align-items: center; gap: 5px;">
+           دسته بندی <i class="fas fa-chevron-down" style="font-size: 12px;"></i>
+        </a>
+        <div class="dropdown-menu" style="position: absolute; top: 100%; right: 0; background: white; box-shadow: 0 4px 12px rgba(0,0,0,0.15); border-radius: 8px; min-width: 200px; display: none; z-index: 100;">
+          <div class="submenu-item" style="position: relative;">
+            <a href="#" style="display: flex; justify-content: space-between; align-items: center; padding: 10px 16px; color: #333; text-decoration: none; border-bottom: 1px solid #eee;">
+              لباس زنانه <i class="fas fa-chevron-left" style="font-size: 10px;"></i>
             </a>
-            <% if(user) { %>
-              <span id="cartCount"
-                class="absolute cart-count bg-pink-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-                <%= toPersianDigits(cartCount) %>
-              </span>
-              <% } %>
-          </button>
+            <div class="submenu-level2" style="position: absolute; right: 100%; top: 0; background: white; box-shadow: 0 4px 12px rgba(0,0,0,0.15); border-radius: 8px; min-width: 180px; display: none;">
+              <a href="#" style="display: block; padding: 10px 16px; color: #333; text-decoration: none; border-bottom: 1px solid #eee;">پیراهن زنانه</a>
+              <a href="#" style="display: block; padding: 10px 16px; color: #333; text-decoration: none; border-bottom: 1px solid #eee;">شلوار زنانه</a>
+              <a href="#" style="display: block; padding: 10px 16px; color: #333; text-decoration: none;">مانتو و کت</a>
+            </div>
+          </div>
+          <div class="submenu-item" style="position: relative;">
+            <a href="#" style="display: flex; justify-content: space-between; align-items: center; padding: 10px 16px; color: #333; text-decoration: none; border-bottom: 1px solid #eee;">
+              لباس مردانه <i class="fas fa-chevron-left" style="font-size: 10px;"></i>
+            </a>
+            <div class="submenu-level2" style="position: absolute; right: 100%; top: 0; background: white; box-shadow: 0 4px 12px rgba(0,0,0,0.15); border-radius: 8px; min-width: 180px; display: none;">
+              <a href="#" style="display: block; padding: 10px 16px; color: #333; text-decoration: none; border-bottom: 1px solid #eee;">پیراهن مردانه</a>
+              <a href="#" style="display: block; padding: 10px 16px; color: #333; text-decoration: none; border-bottom: 1px solid #eee;">شلوار مردانه</a>
+              <a href="#" style="display: block; padding: 10px 16px; color: #333; text-decoration: none;">کت و شلوار</a>
+            </div>
+          </div>
+          <a href="#" style="display: block; padding: 10px 16px; color: #333; text-decoration: none; border-bottom: 1px solid #eee;">اکسسوری</a>
+          <a href="#" style="display: block; padding: 10px 16px; color: #333; text-decoration: none;">کفش</a>
         </div>
-        <% if (!user) {%>
-          <button id="user-auth-button" class="text-gray-700 hover:text-pink-500 transition-colors">
+      </div>
+      <a href="/shop" style="color: #333; text-decoration: none;">فروشگاه</a>
+      <a href="/weblog" style="color: #333; text-decoration: none;">وبلاگ</a>
+      <a href="#" style="color: #333; text-decoration: none;">درباره ما</a>
+      <a href="#" style="color: #333; text-decoration: none;">تماس با ما</a>
+    </div>
+
+    <!-- آیکون‌ها و همبرگر -->
+    <div class="flex items-center space-x-4 space-x-reverse order-1 md:order-3">
+      <div class="relative">
+        <button class="relative text-gray-700 hover:text-pink-500 transition-colors">
+          <a href="/cart">
+            <i class="fas fa-shopping-bag text-xl"></i>
+          </a>
+          <% if(user) { %>
+            <span id="cartCount" class="absolute cart-count bg-pink-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+              <%= toPersianDigitsForSizes(cartCount) %>
+            </span>
+          <% } %>
+        </button>
+      </div>
+      <% if (!user) {%>
+        <!-- مهم: این دکمه باید آیدی صحیح داشته باشه -->
+        <button id="user-auth-button" class="text-gray-700 hover:text-pink-500 transition-colors">
+          <i class="fas fa-user text-xl"></i>
+        </button>
+      <% } else { %>
+        <a href="/userProfile">
+          <button class="text-gray-700 hover:text-pink-500 transition-colors">
             <i class="fas fa-user text-xl"></i>
           </button>
-          <% } else { %>
-            <a href="/userProfile">
-              <button class="text-gray-700 hover:text-pink-500 transition-colors">
-                <i class="fas fa-user text-xl"></i>
-              </button>
-            </a>
-            <% } %>
-      </div>
-    </div>
-
-    <!-- Mobile Menu -->
-    <div id="mobile-menu" class="md:hidden hidden bg-white absolute right-0 left-0 top-full shadow-md">
-      <div class="flex flex-col px-4 py-2">
-        <a href="/" class="py-2 text-gray-800 hover:text-pink-500 transition-colors">خانه</a>
-        <a href="/shop" class="py-2 text-gray-800 hover:text-pink-500 transition-colors">فروشگاه</a>
-        <a href="#" class="py-2 text-gray-800 hover:text-pink-500 transition-colors">دسته‌بندی‌ها</a>
-        <a href="/weblog" class="py-2 text-gray-800 hover:text-pink-500 transition-colors">وبلاگ</a>
-        <a href="#" class="py-2 text-gray-800 hover:text-pink-500 transition-colors">درباره ما</a>
-        <a href="#" class="py-2 text-gray-800 hover:text-pink-500 transition-colors">تماس با ما</a>
-      </div>
-    </div>
-  </nav>
-  <script>
-    document.addEventListener("DOMContentLoaded", function () {
-      const mobileMenuButton = document.getElementById("mobile-menu-button");
-      const mobileMenu = document.getElementById("mobile-menu");
-
-      mobileMenuButton.addEventListener("click", function () {
-        mobileMenu.classList.toggle("hidden");
-      });
-
-      // بستن منو هنگام کلیک خارج از آن
-      document.addEventListener("click", function (event) {
-        if (
-          !mobileMenu.contains(event.target) &&
-          event.target !== mobileMenuButton
-        ) {
-          mobileMenu.classList.add("hidden");
-        }
-      });
-    });
-  </script>
-
-  <!-- Hero Slider -->
-  <div class="hero-slider relative overflow-hidden mt-16">
-    <div class="slide active" style="
-          background-image: linear-gradient(
-              rgba(0, 0, 0, 0.3),
-              rgba(0, 0, 0, 0.3)
-            ),
-            url('data:image/svg+xml;utf8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%221200%22 height=%22600%22 viewBox=%220 0 1200 600%22%3E%3Crect width=%221200%22 height=%22600%22 fill=%22%23c4b5fd%22/%3E%3Cpath d=%22M0,400 Q300,300 600,450 T1200,400 L1200,600 L0,600 Z%22 fill=%22%23ddd6fe%22/%3E%3C/svg%3E');
-        ">
-      <div class="container mx-auto px-6 h-full flex items-center">
-        <div class="max-w-lg">
-          <h1 class="text-4xl md:text-5xl font-bold text-white mb-4">
-            زیبایی طبیعی خود را کشف کنید
-          </h1>
-          <p class="text-white text-lg mb-8">
-            لوازم آرایشی با کیفیت برای بانوی امروزی. زیبایی طبیعی خود را با
-            مجموعه انحصاری ما تقویت کنید.
-          </p>
-          <button class="bg-pink-500 hover:bg-pink-600 text-white px-8 py-3 rounded-full font-medium transition-colors">
-            خرید کنید
-          </button>
-        </div>
-      </div>
-    </div>
-    <div class="slide" style="
-          background-image: linear-gradient(
-              rgba(0, 0, 0, 0.3),
-              rgba(0, 0, 0, 0.3)
-            ),
-            url('data:image/svg+xml;utf8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%221200%22 height=%22600%22 viewBox=%220 0 1200 600%22%3E%3Crect width=%221200%22 height=%22600%22 fill=%22%23c4b5fd%22/%3E%3Cpath d=%22M0,400 Q300,300 600,450 T1200,400 L1200,600 L0,600 Z%22 fill=%22%23ddd6fe%22/%3E%3C/svg%3E');
-        ">
-      <div class="container mx-auto px-6 h-full flex items-center">
-        <div class="max-w-lg">
-          <h1 class="text-4xl md:text-5xl font-bold text-white mb-4">
-            مجموعه جدید تابستانی
-          </h1>
-          <p class="text-white text-lg mb-8">
-            رنگ‌های شاد و فرمول‌های سبک مناسب برای فصل تابستان.
-          </p>
-          <button
-            class="bg-purple-500 hover:bg-purple-600 text-white px-8 py-3 rounded-full font-medium transition-colors">
-            مشاهده مجموعه
-          </button>
-        </div>
-      </div>
-    </div>
-    <div class="slide" style="
-          background-image: linear-gradient(
-              rgba(0, 0, 0, 0.3),
-              rgba(0, 0, 0, 0.3)
-            ),
-            url('data:image/svg+xml;utf8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%221200%22 height=%22600%22 viewBox=%220 0 1200 600%22%3E%3Crect width=%221200%22 height=%22600%22 fill=%22%23c4b5fd%22/%3E%3Cpath d=%22M0,400 Q300,300 600,450 T1200,400 L1200,600 L0,600 Z%22 fill=%22%23ddd6fe%22/%3E%3C/svg%3E');
-        ">
-      <div class="container mx-auto px-6 h-full flex items-center">
-        <div class="max-w-lg">
-          <h1 class="text-4xl md:text-5xl font-bold text-white mb-4">
-            زیبایی سازگار با محیط زیست
-          </h1>
-          <p class="text-white text-lg mb-8">
-            محصولات پایدار و بدون آزمایش روی حیوانات که از پوست شما و سیاره
-            مراقبت می‌کنند.
-          </p>
-          <button class="bg-blue-500 hover:bg-blue-600 text-white px-8 py-3 rounded-full font-medium transition-colors">
-            بیشتر بدانید
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Slider Controls -->
-    <div class="absolute bottom-5 right-0 left-0 flex justify-center space-x-2 space-x-reverse">
-      <button class="w-3 h-3 rounded-full bg-white opacity-50 slider-dot active" data-index="0"></button>
-      <button class="w-3 h-3 rounded-full bg-white opacity-50 slider-dot" data-index="1"></button>
-      <button class="w-3 h-3 rounded-full bg-white opacity-50 slider-dot" data-index="2"></button>
+        </a>
+      <% } %>
+      <button id="menu-btn" style="color: #333; font-size: 24px; background: none; border: none; cursor: pointer; display: block;" class="hamburger">
+        <i class="fas fa-bars"></i>
+      </button>
     </div>
   </div>
+
+  <!-- منوی موبایل با ساب‌منو -->
+  <div id="mobile-menu" style="display: none; margin-top: 15px; padding-top: 15px; border-top: 1px solid #eee; flex-direction: column; gap: 10px;">
+    <a href="/" style="display: block; padding: 8px; color: #333; text-decoration: none;">خانه</a>
+    
+    <div class="mobile-dropdown">
+      <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px; cursor: pointer;" class="mobile-dropdown-trigger">
+        <span style="color: #333;">دسته بندی </span>
+        <i class="fas fa-chevron-down" style="font-size: 12px; transition: transform 0.3s;"></i>
+      </div>
+      <div class="mobile-dropdown-menu" style="display: none; padding-right: 15px;">
+        <div class="mobile-submenu">
+          <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px; cursor: pointer;" class="mobile-submenu-trigger">
+            <span style="color: #555;">لباس زنانه</span>
+            <i class="fas fa-chevron-left" style="font-size: 10px; transition: transform 0.3s;"></i>
+          </div>
+          <div class="mobile-submenu-level2" style="display: none; padding-right: 15px;">
+            <a href="#" style="display: block; padding: 8px; color: #666; text-decoration: none;">پیراهن زنانه</a>
+            <a href="#" style="display: block; padding: 8px; color: #666; text-decoration: none;">شلوار زنانه</a>
+            <a href="#" style="display: block; padding: 8px; color: #666; text-decoration: none;">مانتو و کت</a>
+          </div>
+        </div>
+        <div class="mobile-submenu">
+          <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px; cursor: pointer;" class="mobile-submenu-trigger">
+            <span style="color: #555;">لباس مردانه</span>
+            <i class="fas fa-chevron-left" style="font-size: 10px; transition: transform 0.3s;"></i>
+          </div>
+          <div class="mobile-submenu-level2" style="display: none; padding-right: 15px;">
+            <a href="#" style="display: block; padding: 8px; color: #666; text-decoration: none;">پیراهن مردانه</a>
+            <a href="#" style="display: block; padding: 8px; color: #666; text-decoration: none;">شلوار مردانه</a>
+            <a href="#" style="display: block; padding: 8px; color: #666; text-decoration: none;">کت و شلوار</a>
+          </div>
+        </div>
+        <a href="#" style="display: block; padding: 8px; color: #555; text-decoration: none;">اکسسوری</a>
+        <a href="#" style="display: block; padding: 8px; color: #555; text-decoration: none;">کفش</a>
+      </div>
+    </div>
+    <a href="/shop" style="display: block; padding: 8px; color: #333; text-decoration: none;">فروشگاه</a>
+    <a href="/weblog" style="display: block; padding: 8px; color: #333; text-decoration: none;">وبلاگ</a>
+    <a href="#" style="display: block; padding: 8px; color: #333; text-decoration: none;">درباره ما</a>
+    <a href="#" style="display: block; padding: 8px; color: #333; text-decoration: none;">تماس با ما</a>
+  </div>
+</nav>
+
+
+<style>
+  @media (min-width: 768px) {
+    .desktop-menu {
+      display: flex !important;
+    }
+    .hamburger {
+      display: none !important;
+    }
+  }
+  
+  .dropdown:hover .dropdown-menu {
+    display: block !important;
+  }
+  
+  .submenu-item:hover .submenu-level2 {
+    display: block !important;
+  }
+  
+  .dropdown-menu a:hover,
+  .submenu-level2 a:hover {
+    background-color: #f5f5f5;
+  }
+  
+  .mobile-dropdown-menu,
+  .mobile-submenu-level2 {
+    transition: all 0.3s ease;
+  }
+  
+  /* استایل برای موبایل */
+  @media (max-width: 768px) {
+    .flex.items-center.space-x-4 {
+      gap: 12px;
+    }
+  }
+  /* قفل کردن اسکرول بدن */
+body.menu-open {
+    overflow: hidden;
+    position: fixed;
+    width: 100%;
+    height: 100%;
+}
+</style>
+
+<script>
+  // تابع کمکی برای اطمینان از وجود المنت‌ها
+  function waitForElement(selector, callback) {
+    if (document.querySelector(selector)) {
+      callback();
+      return;
+    }
+    const observer = new MutationObserver(function(mutations) {
+      if (document.querySelector(selector)) {
+        observer.disconnect();
+        callback();
+      }
+    });
+    observer.observe(document.body, { childList: true, subtree: true });
+  }
+  
+  document.addEventListener("DOMContentLoaded", function() {
+    // منوی همبرگری موبایل
+    var menuBtn = document.getElementById('menu-btn');
+    var mobileMenu = document.getElementById('mobile-menu');
+    
+    if (menuBtn && mobileMenu) {
+      menuBtn.onclick = function(e) {
+        e.stopPropagation();
+        if (mobileMenu.style.display === 'none' || mobileMenu.style.display === '') {
+          mobileMenu.style.display = 'flex';
+                  document.body.classList.add('menu-open'); // اضافه کنید
+
+        } else {
+          mobileMenu.style.display = 'none';
+          document.body.classList.remove('menu-open'); // اضافه کنید
+        }
+      };
+    }
+    
+    // ساب‌منوی موبایل
+    var mobileTriggers = document.querySelectorAll('.mobile-dropdown-trigger');
+    mobileTriggers.forEach(function(trigger) {
+      trigger.onclick = function(e) {
+        e.stopPropagation();
+        var menu = this.nextElementSibling;
+        var icon = this.querySelector('i');
+        if (menu.style.display === 'none' || menu.style.display === '') {
+          menu.style.display = 'block';
+          icon.style.transform = 'rotate(180deg)';
+        } else {
+          menu.style.display = 'none';
+          icon.style.transform = 'rotate(0deg)';
+        }
+      };
+    });
+    
+    var subTriggers = document.querySelectorAll('.mobile-submenu-trigger');
+    subTriggers.forEach(function(trigger) {
+      trigger.onclick = function(e) {
+        e.stopPropagation();
+        var submenu = this.nextElementSibling;
+        var icon = this.querySelector('i');
+        if (submenu.style.display === 'none' || submenu.style.display === '') {
+          submenu.style.display = 'block';
+          icon.style.transform = 'rotate(180deg)';
+        } else {
+          submenu.style.display = 'none';
+          icon.style.transform = 'rotate(0deg)';
+        }
+      };
+    });
+    
+    // ====== بخش مهم: مدیریت پاپ‌آپ احراز هویت ======
+    var authButton = document.getElementById('user-auth-button');
+    var authPopup = document.getElementById('auth-popup');
+    
+    // اگر پاپ‌آپ در DOM وجود داشت، مدیریت کن
+    if (authButton && authPopup) {
+      authButton.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        console.log('دکمه کاربر کلیک شد - باز کردن پاپ‌آپ');
+        authPopup.classList.remove('hidden');
+        // تابع switchTab باید قبلاً تعریف شده باشد
+        if (typeof switchTab === 'function') {
+          switchTab('login');
+        }
+      });
+      
+      // بستن پاپ‌آپ با کلیک روی پس‌زمینه
+      authPopup.addEventListener('click', function(e) {
+        if (e.target === authPopup) {
+          authPopup.classList.add('hidden');
+        }
+      });
+    } else {
+      console.warn('دکمه user-auth-button یا پاپ‌آپ auth-popup در صفحه پیدا نشد!');
+      
+      // اگر پاپ‌آپ وجود نداشت، می‌توانیم یک هشدار نمایش دهیم یا لاگ بگیریم
+      if (!authButton) console.warn('عنصر با آیدی user-auth-button یافت نشد');
+      if (!authPopup) console.warn('عنصر با آیدی auth-popup یافت نشد');
+    }
+  });
+</script>
+
+  <!-- Hero Slider -->
+<style>
+  /* استایل‌های اسلایدر */
+  .hero-slider {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    margin-top: 70px;
+  }
+  
+  .slide {
+    position: relative;
+    width: 100%;
+    height: 85vh;
+    min-height: 500px;
+    display: none;
+    opacity: 0;
+    transition: opacity 0.5s ease-in-out;
+  }
+  
+  .slide.active {
+    display: block;
+    opacity: 1;
+  }
+  
+  .slide-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    transition: transform 0.3s ease;
+  }
+  
+  /* لایه تیره */
+  .slide-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.2) 100%);
+  }
+   .hero-slider {
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  
+  .slide,
+  .slide-bg {
+    border-radius: 10px;
+  }
+  /* محتوای اسلاید */
+  .slide-content {
+    position: relative;
+    z-index: 10;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+  
+  /* دکمه‌های navigation */
+  .slider-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 45px;
+    height: 45px;
+    background: rgba(255,255,255,0.2);
+    backdrop-filter: blur(5px);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    z-index: 20;
+    color: white;
+    font-size: 20px;
+    border: 1px solid rgba(255,255,255,0.3);
+  }
+  
+  .slider-nav:hover {
+    background: rgba(255,255,255,0.4);
+    transform: translateY(-50%) scale(1.1);
+  }
+  
+  .slider-prev {
+    left: 20px;
+  }
+  
+  .slider-next {
+    right: 20px;
+  }
+  
+  /* دات‌های پایین */
+  .slider-dots {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 10px;
+    z-index: 20;
+  }
+  
+  .dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.5);
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  
+  .dot.active {
+    width: 30px;
+    border-radius: 10px;
+    background: white;
+  }
+  
+  /* ریسپانسیو */
+  @media (max-width: 768px) {
+    .slide {
+      height: 70vh;
+      min-height: 400px;
+    }
+    
+    .slider-nav {
+      width: 35px;
+      height: 35px;
+      font-size: 16px;
+    }
+    
+    .slide-content h1 {
+      font-size: 28px !important;
+    }
+    
+    .slide-content p {
+      font-size: 14px !important;
+    }
+  }
+  
+  /* انیمیشن متن */
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  .slide.active .slide-content {
+    animation: fadeInUp 0.8s ease-out;
+  }
+</style>
+
+<div class="hero-slider">
+  <!-- اسلاید 1 -->
+<div class="slide active" data-slide="0">
+  <div class="slide-bg" data-mobile="./uploads/mobile.webp" data-desktop="/uploads/Untitled.webp"></div>
+  
+  <div class="slide-content">
+    <div class="text-white">
+      <!-- <button id="heroShopBtn" class="bg-pink-500 hover:bg-pink-600 text-white px-8 py-3 rounded-full font-medium transition-all duration-300 transform hover:scale-105">
+        خرید کنید 🛍️
+      </button>  -->
+    </div>
+  </div>
+</div>
+
+  <!-- اسلاید 2 -->
+  <div class="slide" data-slide="1">
+    <div class="slide-bg" data-mobile="./uploads/mobile.webp" data-desktop="./uploads/Untitled.webp"></div>
+    
+    <div class="slide-content">
+      <div class="text-white text-right">
+        <!-- <h1 class="text-5xl md:text-6xl font-bold mb-4">مجموعه جدید<br>تابستانی</h1> -->
+        <!-- <p class="text-lg md:text-xl mb-8 max-w-lg">رنگ‌های شاد و فرمول‌های سبک، مناسب برای فصل گرما</p>
+        <button class="bg-purple-500 hover:bg-purple-600 text-white px-8 py-3 rounded-full font-medium transition-all duration-300 transform hover:scale-105">
+          مشاهده مجموعه ✨
+        </button> -->
+      </div>
+    </div>
+  </div>
+
+  <!-- اسلاید 3 -->
+  <div class="slide" data-slide="2">
+    <div class="slide-bg" data-mobile="./uploads/mobile.webp" data-desktop="/uploads/Untitled.webp"></div>
+    
+    <div class="slide-content">
+      <div class="text-white">
+        <!-- <h1 class="text-5xl md:text-6xl font-bold mb-4">زیبایی پایدار<br>و سازگار با محیط زیست</h1> -->
+        <!-- <p class="text-lg md:text-xl mb-8 max-w-lg">محصولات وگان، بدون تست حیوانی، مناسب برای سیاره ما</p> -->
+        <!-- <button class="bg-blue-500 hover:bg-blue-600 text-white px-8 py-3 rounded-full font-medium transition-all duration-300 transform hover:scale-105">
+          بیشتر بدانید 🌍
+        </button> -->
+      </div>
+    </div>
+  </div>
+
+  <!-- دکمه‌های navigation -->
+  <div class="slider-nav slider-prev">
+    ❮
+  </div>
+  <div class="slider-nav slider-next">
+    ❯
+  </div>
+
+  <!-- دات‌های پایین -->
+  <div class="slider-dots">
+    <div class="dot active" data-dot="0"></div>
+    <div class="dot" data-dot="1"></div>
+    <div class="dot" data-dot="2"></div>
+  </div>
+</div>
+
+<script>
+  // اسکریپت اسلایدر
+  document.addEventListener('DOMContentLoaded', function() {
+    const slides = document.querySelectorAll('.slide');
+    const dots = document.querySelectorAll('.dot');
+    const prevBtn = document.querySelector('.slider-prev');
+    const nextBtn = document.querySelector('.slider-next');
+    let currentSlide = 0;
+    let autoPlayInterval;
+    
+    // تابع تغییر تصویر بر اساس سایز صفحه
+    function setResponsiveBackgrounds() {
+      const isMobile = window.innerWidth <= 768;
+      
+      slides.forEach(slide => {
+        const bgDiv = slide.querySelector('.slide-bg');
+        if (bgDiv) {
+          const mobileImg = bgDiv.getAttribute('data-mobile');
+          const desktopImg = bgDiv.getAttribute('data-desktop');
+          const imageUrl = isMobile ? mobileImg : desktopImg;
+          bgDiv.style.backgroundImage = `url('${imageUrl}')`;
+        }
+      });
+    }
+    
+    // تابع نمایش اسلاید
+    function showSlide(index) {
+      slides.forEach(slide => slide.classList.remove('active'));
+      dots.forEach(dot => dot.classList.remove('active'));
+      
+      slides[index].classList.add('active');
+      dots[index].classList.add('active');
+      currentSlide = index;
+    }
+    
+    // اسلاید بعدی
+    function nextSlide() {
+      let newIndex = currentSlide + 1;
+      if (newIndex >= slides.length) newIndex = 0;
+      showSlide(newIndex);
+    }
+    
+    // اسلاید قبلی
+    function prevSlide() {
+      let newIndex = currentSlide - 1;
+      if (newIndex < 0) newIndex = slides.length - 1;
+      showSlide(newIndex);
+    }
+    
+    // شروع auto-play
+    function startAutoPlay() {
+      if (autoPlayInterval) clearInterval(autoPlayInterval);
+      autoPlayInterval = setInterval(nextSlide, 5000);
+    }
+    
+    // توقف auto-play
+    function stopAutoPlay() {
+      if (autoPlayInterval) clearInterval(autoPlayInterval);
+    }
+    
+    // رویدادها
+    nextBtn.addEventListener('click', () => {
+      nextSlide();
+      stopAutoPlay();
+      startAutoPlay();
+    });
+    
+    prevBtn.addEventListener('click', () => {
+      prevSlide();
+      stopAutoPlay();
+      startAutoPlay();
+    });
+    
+    dots.forEach(dot => {
+      dot.addEventListener('click', () => {
+        const slideIndex = parseInt(dot.getAttribute('data-dot'));
+        showSlide(slideIndex);
+        stopAutoPlay();
+        startAutoPlay();
+      });
+    });
+    
+    // وقتی پنجره resize میشود
+    let resizeTimer;
+    window.addEventListener('resize', function() {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(() => {
+        setResponsiveBackgrounds();
+      }, 250);
+    });
+    
+    // اجرا در شروع
+    setResponsiveBackgrounds();
+    startAutoPlay();
+    
+    // توقف auto-play وقتی موس روی اسلایدر است
+    const slider = document.querySelector('.hero-slider');
+    slider.addEventListener('mouseenter', stopAutoPlay);
+    slider.addEventListener('mouseleave', startAutoPlay);
+  });
+  // اضافه کردن event listener برای دکمه خرید اسلایدر
+document.addEventListener('DOMContentLoaded', function() {
+  const heroShopBtn = document.getElementById('heroShopBtn');
+  if (heroShopBtn) {
+    heroShopBtn.addEventListener('click', function(e) {
+      e.preventDefault();
+      openModal(); // تابع openModal که قبلاً در کد شما وجود دارد
+    });
+  }
+});
+</script>
 
   <!-- پاپ‌آپ احراز هویت -->
   <div id="auth-popup" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
@@ -710,10 +1154,109 @@
       </div>
     </div>
   </div>
+  <!-- ================= بخش دسته بندی های ویژه اسلایدری ================= -->
+<section class="py-12 px-4 bg-gradient-to-b from-gray-50 to-white overflow-hidden">
+    <div class="max-w-7xl mx-auto">
+        <!-- عنوان بخش -->
+        <div class="text-center mb-10 fade-in">
+            <h2 class="text-3xl md:text-4xl font-bold text-gray-800 mb-2">دسته بندی های ویژه</h2>
+            <div class="w-24 h-1 bg-gradient-to-l from-pink-500 to-purple-600 mx-auto rounded-full"></div>
+            <p class="text-gray-500 mt-4">محصولات اورجینال و با کیفیت برای حرفه‌ای‌ها</p>
+        </div>
+
+        <!-- محفظه اسلایدر -->
+        <div class="relative group">
+            <!-- دکمه اسکرول به راست (بعدی) -->
+            <button id="scrollCategoriesRight" 
+                class="absolute -right-4 top-1/2 transform -translate-y-1/2 bg-white rounded-full p-3 shadow-xl hover:shadow-2xl z-20 opacity-0 group-hover:opacity-100 transition-all duration-300 hover:scale-110 hidden md:block">
+                <i class="fas fa-chevron-left text-gray-700 text-xl"></i>
+            </button>
+            
+            <!-- دکمه اسکرول به چپ (قبلی) -->
+            <button id="scrollCategoriesLeft" 
+                class="absolute -left-4 top-1/2 transform -translate-y-1/2 bg-white rounded-full p-3 shadow-xl hover:shadow-2xl z-20 opacity-0 group-hover:opacity-100 transition-all duration-300 hover:scale-110 hidden md:block">
+                <i class="fas fa-chevron-right text-gray-700 text-xl"></i>
+            </button>
+
+            <!-- اسلایدر -->
+            <div id="categoriesSlider" class="overflow-x-auto scrollbar-hide" style="scrollbar-width: thin; scroll-behavior: smooth;">
+                <div style="margin-bottom:10px" class="flex gap-4 md:gap-6" id="categoriesTrack">
+                    <% for(let category of categories) {%>
+                    <div onclick="setSelectedCategory('<%= category.name %>')" class="category-card flex-shrink-0 w-[calc(50%-8px)] sm:w-[calc(33.333%-10.66px)] md:w-[calc(20%-19.2px)] lg:w-[calc(14.285%-17.14px)] bg-white rounded-2xl p-4 text-center shadow-md hover:shadow-xl transition-all duration-300 cursor-pointer hover:-translate-y-1 border border-gray-100">
+                        <div class="w-16 h-16 mx-auto mb-3 rounded-full bg-gradient-to-br from-red-400 to-red-600 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+                            <i class="fas fa-couch text-white text-2xl"></i>
+                        </div>
+                        <h3 class="font-bold text-gray-800 text-sm md:text-base">
+                            <%= category.name %>
+                        </h3>
+                        <span class="text-gray-400 text-xs">
+                              <%= toPersianDigits(category.productCount) %> محصول
+                        </span>
+                    </div>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+
+        <!-- دکمه مشاهده همه -->
+        
+
+</section>
+<script>
+  // اسلایدر دسته‌بندی‌ها
+const slider = document.getElementById('categoriesSlider');
+const track = document.getElementById('categoriesTrack');
+const scrollLeftBtn = document.getElementById('scrollCategoriesLeft');
+const scrollRightBtn = document.getElementById('scrollCategoriesRight');
+
+if (scrollLeftBtn && scrollRightBtn && slider) {
+    // اسکرول به چپ (رفتن به آیتم‌های قبلی)
+    scrollLeftBtn.addEventListener('click', () => {
+        const cardWidth = document.querySelector('.category-card')?.offsetWidth || 200;
+        const gap = 24; // مقدار gap بین کارت‌ها
+        const scrollAmount = cardWidth + gap;
+        slider.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
+    });
+
+    // اسکرول به راست (رفتن به آیتم‌های بعدی)
+    scrollRightBtn.addEventListener('click', () => {
+        const cardWidth = document.querySelector('.category-card')?.offsetWidth || 200;
+        const gap = 24;
+        const scrollAmount = cardWidth + gap;
+        slider.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+    });
+
+    // مخفی کردن دکمه‌ها در ابتدا و انتهای اسکرول
+    function checkScrollButtons() {
+        const scrollLeft = slider.scrollLeft;
+        const maxScroll = slider.scrollWidth - slider.clientWidth;
+        
+        if (scrollLeft <= 10) {
+            scrollLeftBtn.style.opacity = '0.3';
+            scrollLeftBtn.style.pointerEvents = 'none';
+        } else {
+            scrollLeftBtn.style.opacity = '1';
+            scrollLeftBtn.style.pointerEvents = 'auto';
+        }
+        
+        if (scrollLeft >= maxScroll - 10) {
+            scrollRightBtn.style.opacity = '0.3';
+            scrollRightBtn.style.pointerEvents = 'none';
+        } else {
+            scrollRightBtn.style.opacity = '1';
+            scrollRightBtn.style.pointerEvents = 'auto';
+        }
+    }
+
+    slider.addEventListener('scroll', checkScrollButtons);
+    window.addEventListener('resize', checkScrollButtons);
+    setTimeout(checkScrollButtons, 100);
+}
+</script>
   <!-- Special Discounts Section -->
-  <section class="py-12 px-4 bg-white">
+  <section style="padding-top: 0rem;" class="py-12 px-4 bg-white">
       <div class="relative">
-      <section class="py-12 px-4 bg-white">
+      <section style="padding-top: 0rem;" class="py-12 px-4 bg-white">
        <div class="max-w-7xl mx-auto">
           <h2 class="text-3xl font-bold text-gray-800 mb-2 fade-in">
             پیشنهادات ویژه
@@ -780,7 +1323,7 @@
 
       <script>
           function loadMoreProducts() {
-              alert('در حال بارگذاری محصولات بیشتر...\n\nمحصولات جدید به زودی اضافه خواهند شد!');
+            window.location.href = '/shop';
           }
 
           // اضافه کردن انیمیشن به دکمه‌های مشاهده
@@ -810,36 +1353,87 @@
   </section>
 
   <!-- Product Categories -->
-  <section class="py-12 px-4 bg-gray-50">
+ <section style="padding-top: 0rem;"  class="py-12 px-4 bg-white">
     <div class="max-w-7xl mx-auto">
       <h2 class="text-3xl font-bold text-gray-800 mb-2 fade-in">
-        خرید بر اساس دسته‌ بندی
+        پرفروش‌ ترین‌ ها
       </h2>
       <p class="text-gray-600 mb-8 fade-in delay-100">
-        مجموعه گسترده محصولات زیبایی ما را کاوش کنید
+        محبوب‌ترین محصولات ما که مشتریان دوست دارند
       </p>
 
-      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 fade-in delay-200">
-        <% for(let category of categories) {%>
-          <a href="/shop" onclick="setSelectedCategory('<%= category.name %>')">
-            <div
-              class="category-item bg-white rounded-lg p-6 text-center shadow-md hover:shadow-lg transition-transform duration-300">
-              <div class="w-16 h-16 mx-auto mb-4 rounded-full flex items-center justify-center"
-                style="background-color: <%= category.color %>">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24"
-                  stroke="currentColor" style="color: <%= category.textColor %>">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="<%= category.imgSvgForHome  %>" />
-                </svg>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 fade-in delay-200">
+        <!-- Product 1 -->
+        <% for (let product of products) {%>
+          <div
+            class="product-card bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-transform duration-300">
+            <a href="/productDetails/<%= product.slug %>">
+              <div class="relative">
+                <div class="h-64 bg-pink-100 flex items-center justify-center">
+                  <img src="<%= product?.images[0]?.url %>" alt="" style="height: 100%; width: 100%" />
+                </div>
               </div>
-              <h3 class="text-lg font-semibold text-gray-800">
-                <%= category.name %>
+            </a>
+            <div class="p-4">
+              <div class="flex items-center mb-1">
+                <% const fullStars=Math.floor(product.rating); const hasHalfStar=product.rating % 1>= 0.5; const
+                  emptyStars = 5 -
+                  fullStars - (hasHalfStar ? 1 : 0); %>
+
+                  <div class="flex text-yellow-400">
+                    <% for (let i=0; i < fullStars; i++) { %>
+                      <i class="fas fa-star"></i>
+                      <% } %>
+                        <% if (hasHalfStar) { %>
+                          <i class="fas fa-star-half-alt"></i>
+                          <% } %>
+                            <% for (let i=0; i < emptyStars; i++) { %>
+                              <i class="far fa-star"></i>
+                              <% } %>
+                  </div>
+                  <span class="text-gray-500 text-sm mr-1">(<%= toPersianDigits(product.reviewsNum) %>)</span>
+              </div>
+              <h3 class="text-lg font-semibold text-gray-800 mb-1">
+                <%= product.name %>
               </h3>
-              <p class="text-gray-500 text-sm mt-1">
-                <%= toPersianDigits(category.productCount) %> محصول
+              <p class="text-gray-600 text-sm mb-3">
+                <%= product.lilDescription %>
               </p>
+              <div class="flex items-center justify-between">
+                <% if(product.offerPrice) {%>
+                  <div>
+                    <span class="text-pink-500 font-bold">
+                      <%= toPersianDigits(product.offerPrice) %> تومان
+                    </span>
+                    <span class="text-gray-400 line-through text-sm mr-2">
+                      <%= toPersianDigits(product.price) %> تومان
+                    </span>
+                  </div>
+                  <% } else {%>
+                    <div>
+                      <span class="text-pink-500 font-bold">
+                        <%= toPersianDigits(product.price) %> تومان
+                      </span>
+                    </div>
+                    <% } %>
+                      <div class="icon-container">
+                        <!-- آیکون سبد خرید -->
+
+                        <svg id="cartIcon" onclick="location.href='/productDetails/<%= product.slug %>';"
+                          class="cart-icon icon cursor-pointer" viewBox="0 0 24 24">
+                          <path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"></path>
+                          <circle cx="9" cy="20" r="1"></circle>
+                          <circle cx="20" cy="20" r="1"></circle>
+                        </svg>
+
+                        <!-- آیکون تیک (مخفی شده) -->
+                        <svg id="successIcon" class="success-icon icon hidden" viewBox="0 0 24 24">
+                          <path d="M5 13l4 4L19 7"></path>
+                        </svg>
+                      </div>
+              </div>
             </div>
-          </a>
+          </div>
           <% } %>
       </div>
     </div>
@@ -929,39 +1523,578 @@
           </div>
           <% } %>
 
-          <script>
-              function showNotification(message, type = 'info') {
-                const notification = document.createElement('div');
-                notification.className = `fixed z-50 px-4 py-3 rounded-lg shadow-lg text-white text-sm sm:text-base ${
-                    type === 'success' ? 'bg-green-500' : 
-                    type === 'error' ? 'bg-red-500' : 
-                    'bg-blue-500'
-                }`;
+                    <script>
+  // ==========================================
+  // توابع گلوبال (قبل از DOMContentLoaded)
+  // ==========================================
+  
+  function showNotification(message, type = 'info') {
+    const notification = document.createElement('div');
+    notification.className = `fixed z-50 px-4 py-3 rounded-lg shadow-lg text-white text-sm sm:text-base ${
+      type === 'success' ? 'bg-green-500' : 
+      type === 'error' ? 'bg-red-500' : 
+      'bg-blue-500'
+    }`;
+    
+    notification.className += ' top-4 left-1/2 -translate-x-1/2 sm:left-auto sm:translate-x-0 sm:top-6 sm:right-6';
+    notification.className += ' w-[calc(100%-2rem)] max-w-xs sm:max-w-sm';
+    notification.textContent = message;
+    
+    document.body.appendChild(notification);
+    notification.classList.add('transform', 'transition-all', 'duration-300');
+    notification.classList.add('translate-y-2', 'opacity-0');
+    
+    setTimeout(() => {
+      notification.classList.remove('translate-y-2', 'opacity-0');
+    }, 10);
+    
+    setTimeout(() => {
+      notification.classList.add('opacity-0', 'translate-y-2');
+      setTimeout(() => notification.remove(), 300);
+    }, 2000);
+  }
+  
+  function showNotificationInPopUp(message, type = 'info') {
+    const authPopup = document.getElementById('auth-popup');
+    if (!authPopup) return;
+    
+    const notification = document.createElement('div');
+    notification.className = `fixed z-50 px-4 py-3 rounded-lg shadow-lg text-white text-sm sm:text-base ${
+      type === 'success' ? 'bg-green-500' : 
+      type === 'error' ? 'bg-red-500' : 
+      'bg-blue-500'
+    }`;
+    
+    notification.textContent = message;
+    notification.classList.add('transform', 'transition-all', 'duration-300');
+    notification.classList.add('-translate-y-[100px]', 'opacity-0');
+    
+    authPopup.appendChild(notification);
+    
+    setTimeout(() => {
+      notification.classList.remove('-translate-y-[100px]', 'opacity-0');
+    }, 10);
+    
+    setTimeout(() => {
+      notification.classList.add('opacity-0', 'translate-y-2');
+      setTimeout(() => notification.remove(), 300);
+    }, 2000);
+  }
+  
+  function switchTab(activeTab) {
+    const tabs = {
+      login: document.getElementById("login-tab"),
+      register: document.getElementById("register-tab"),
+      forgot: document.getElementById("forgot-tab"),
+    };
+    const contents = {
+      login: document.getElementById("login-content"),
+      register: document.getElementById("register-content"),
+      forgot: document.getElementById("forgot-content"),
+    };
+    
+    if (!tabs[activeTab] || !contents[activeTab]) return;
+    
+    Object.values(tabs).forEach((tab) => {
+      if (tab) {
+        tab.classList.remove("border-pink-500", "text-pink-500");
+        tab.classList.add("text-gray-500");
+      }
+    });
+    
+    Object.values(contents).forEach((content) => {
+      if (content) content.classList.remove("active");
+    });
+    
+    tabs[activeTab].classList.add("border-pink-500", "text-pink-500");
+    tabs[activeTab].classList.remove("text-gray-500");
+    contents[activeTab].classList.add("active");
+  }
+  
+  function setupOtpInputs(containerSelector) {
+    const inputs = Array.from(document.querySelectorAll(`${containerSelector} .otp-input`));
+    if (inputs.length === 0) return;
+    
+    inputs[inputs.length - 1].focus();
+    
+    inputs.forEach((input, index) => {
+      input.addEventListener("input", function() {
+        if (this.value.length === 1 && index > 0) {
+          inputs[index - 1].focus();
+        }
+      });
+      
+      input.addEventListener("keydown", function(e) {
+        if (e.key === "Backspace" && this.value.length === 0 && index < inputs.length - 1) {
+          inputs[index + 1].focus();
+        }
+      });
+    });
+  }
+  
+  function getOtpValue(containerSelector) {
+    const inputs = Array.from(document.querySelectorAll(`${containerSelector} .otp-input`));
+    return inputs.map((input) => input.value).join("");
+  }
+  
+  function startCountdown(elementId, seconds) {
+    const timerElement = document.getElementById(elementId);
+    if (!timerElement) return;
+    
+    const timerSpan = timerElement.querySelector("span");
+    if (!timerSpan) return;
+    
+    let remaining = seconds;
+    
+    const interval = setInterval(() => {
+      const minutes = Math.floor(remaining / 60);
+      const secs = remaining % 60;
+      
+      timerSpan.textContent = `${minutes.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
+      
+      if (remaining <= 0) {
+        clearInterval(interval);
+        timerElement.innerHTML = '<a href="#" class="text-pink-500 resend-link">ارسال مجدد کد</a>';
+        
+        const resendLink = timerElement.querySelector('.resend-link');
+        if (resendLink) {
+          resendLink.addEventListener('click', function(e) {
+            e.preventDefault();
+            handleResendOtp(elementId);
+          });
+        }
+      }
+      remaining--;
+    }, 1000);
+  }
+  
+  function handleResendOtp(elementId) {
+    const isRegister = elementId.includes('register');
+    const phone = isRegister 
+      ? document.getElementById('register-phone')?.value
+      : document.getElementById('forgot-phone')?.value;
+    
+    if (!phone) {
+      showNotificationInPopUp('شماره موبایل یافت نشد', 'error');
+      return;
+    }
+    
+    fetch("/api/mobile/sendOtp", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ mobile: phone }),
+    })
+    .then((res) => res.json())
+    .then((data) => {
+      if (data.success) {
+        showNotificationInPopUp('کد تأیید جدید ارسال شد', 'success');
+        startCountdown(elementId, 120);
+      } else {
+        showNotificationInPopUp(data.message || 'خطا در ارسال کد تأیید', 'error');
+      }
+    })
+    .catch((err) => {
+      console.error("Error:", err);
+      showNotificationInPopUp('مشکلی در ارتباط با سرور به وجود آمده است', 'error');
+    });
+  }
+  
+  function setSelectedCategory(categoryName) {
+    localStorage.setItem("selectedCategory", categoryName);
+  }
+  
+  // ==========================================
+  // DOMContentLoaded
+  // ==========================================
+  
+  document.addEventListener("DOMContentLoaded", function() {
+    
+    // Hero Slider
+    const heroSlides = document.querySelectorAll(".hero-slider .slide");
+    const heroDots = document.querySelectorAll(".hero-slider .slider-dot");
+    let heroCurrentSlide = 0;
+    
+    function showHeroSlide(index) {
+      heroSlides.forEach((slide) => slide.classList.remove("active"));
+      heroDots.forEach((dot) => dot.classList.remove("active"));
+      heroSlides[index].classList.add("active");
+      heroDots[index].classList.add("active");
+      heroCurrentSlide = index;
+    }
+    
+    heroDots.forEach((dot, index) => {
+      dot.addEventListener("click", () => {
+        showHeroSlide(index);
+      });
+    });
+    
+    function nextHeroSlide() {
+      heroCurrentSlide = (heroCurrentSlide + 1) % heroSlides.length;
+      showHeroSlide(heroCurrentSlide);
+    }
+    
+    setInterval(nextHeroSlide, 5000);
+    
+    // مدیریت پاپ‌آپ احراز هویت
+    const authButton = document.getElementById("user-auth-button");
+    const authPopup = document.getElementById("auth-popup");
+    
+    if (authButton && authPopup) {
+      authButton.addEventListener("click", function(e) {
+        e.preventDefault();
+        authPopup.classList.remove("hidden");
+        switchTab("login");
+      });
+      
+      authPopup.addEventListener("click", function(e) {
+        if (e.target === authPopup) {
+          authPopup.classList.add("hidden");
+        }
+      });
+    }
+    
+    // Tab Switching Events
+    const loginTab = document.getElementById("login-tab");
+    const registerTab = document.getElementById("register-tab");
+    const forgotTab = document.getElementById("forgot-tab");
+    
+    if (loginTab) loginTab.addEventListener("click", () => switchTab("login"));
+    if (registerTab) registerTab.addEventListener("click", () => switchTab("register"));
+    if (forgotTab) forgotTab.addEventListener("click", () => switchTab("forgot"));
+    
+    // Registration Process
+    const registerForm = document.getElementById("register-form");
+    const registerStep1 = document.getElementById("register-step-1");
+    const registerStep2 = document.getElementById("register-step-2");
+    const registerPhoneDisplay = document.getElementById("register-phone-display");
+    
+    if (registerForm) {
+      registerForm.addEventListener("submit", function(e) {
+        e.preventDefault();
+        
+        const fullName = document.getElementById("register-name")?.value || "";
+        const mobile = document.getElementById("register-phone")?.value.trim() || "";
+        const email = document.getElementById("register-email")?.value.trim() || "";
+        const password = document.getElementById("register-password")?.value || "";
+        const confirmPassword = document.getElementById("register-confirm-password")?.value || "";
+        
+        const iranMobileRegex = /^09\d{9}$/;
+        const emailRegex = /^\S+@\S+\.\S+$/;
+        
+        if (fullName.length < 3) {
+          showNotificationInPopUp("نام کامل باید حداقل ۳ کاراکتر باشد", 'error');
+          return;
+        }
+        
+        if (!iranMobileRegex.test(mobile)) {
+          showNotificationInPopUp("شماره موبایل وارد شده معتبر نیست (مثال: 09123456789)", 'error');
+          return;
+        }
+        
+        if (email && !emailRegex.test(email)) {
+          showNotificationInPopUp("ایمیل وارد شده معتبر نیست", 'error');
+          return;
+        }
+        
+        if (password.length < 8) {
+          showNotificationInPopUp("رمز عبور باید حداقل ۸ کاراکتر باشد", 'error');
+          return;
+        }
+        
+        if (password !== confirmPassword) {
+          showNotificationInPopUp("رمز عبور و تکرار آن یکسان نیستند", 'error');
+          return;
+        }
+        
+        const formDataRegister = new FormData(registerForm);
+        const phone = mobile;
+        
+        if (registerPhoneDisplay) registerPhoneDisplay.textContent = phone;
+        if (registerStep1) registerStep1.classList.remove("active");
+        if (registerStep2) registerStep2.classList.add("active");
+        
+        startCountdown("register-resend-timer", 120);
+        setupOtpInputs("#register-step-2");
+        
+        fetch("/api/mobile/sendOtp", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ mobile: phone }),
+        })
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.success) {
+            const registerVerificationForm = document.getElementById("register-verification-form");
+            
+            if (registerVerificationForm) {
+              registerVerificationForm.addEventListener("submit", function(e) {
+                e.preventDefault();
+                const otpValue = getOtpValue("#register-step-2");
+                const reversedOtpValue = otpValue.split("").reverse().join("");
                 
-                // Mobile: centered at top, Desktop: top-right
-                notification.className += ' top-4 left-1/2 -translate-x-1/2 sm:left-auto sm:translate-x-0 sm:top-6 sm:right-6';
-                
-                // Width control
-                notification.className += ' w-[calc(100%-2rem)] max-w-xs sm:max-w-sm';
-                
-                notification.textContent = message;
-                
-                document.body.appendChild(notification);
-                
-                // Animation in
-                notification.classList.add('transform', 'transition-all', 'duration-300');
-                notification.classList.add('translate-y-2', 'opacity-0');
-                
-                setTimeout(() => {
-                    notification.classList.remove('translate-y-2', 'opacity-0');
-                }, 10);
-                
-                setTimeout(() => {
-                    notification.classList.add('opacity-0', 'translate-y-2');
-                    setTimeout(() => notification.remove(), 300);
-                }, 2000);
-              }
-          </script>
+                fetch("/api/mobile/verifyOtp", {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({ mobile: phone, otp: reversedOtpValue }),
+                })
+                .then((res) => res.json())
+                .then((data) => {
+                  if (data.success) {
+                    fetch("/api/authentication/signUp", {
+                      method: "POST",
+                      body: formDataRegister,
+                    })
+                    .then((res) => res.json())
+                    .then((data) => {
+                      if (data.success) {
+                        showNotification(data.message, 'success');
+                        if (authPopup) authPopup.classList.add("hidden");
+                        setTimeout(() => location.reload(), 1000);
+                      } else {
+                        showNotificationInPopUp(data.message, 'error');
+                      }
+                    })
+                    .catch((err) => {
+                      console.error("Error:", err);
+                      showNotificationInPopUp("مشکلی در ارتباط با سرور به وجود آمده است", 'error');
+                    });
+                  } else {
+                    showNotificationInPopUp(data.message, 'error');
+                  }
+                })
+                .catch((err) => {
+                  console.error("Error:", err);
+                  showNotificationInPopUp("مشکلی در ارتباط با سرور به وجود آمده است", 'error');
+                });
+              }, { once: true });
+            }
+          } else {
+            showNotificationInPopUp(data.message, 'error');
+          }
+        })
+        .catch((err) => {
+          console.error("Error:", err);
+          showNotificationInPopUp("مشکلی در ارتباط با سرور به وجود آمده است", 'error');
+        });
+      });
+    }
+    
+    const registerBackBtn = document.getElementById("register-back-btn");
+    if (registerBackBtn) {
+      registerBackBtn.addEventListener("click", function() {
+        const step1 = document.getElementById("register-step-1");
+        const step2 = document.getElementById("register-step-2");
+        if (step2) step2.classList.remove("active");
+        if (step1) step1.classList.add("active");
+      });
+    }
+    
+    // Forgot Password Process
+    const forgotForm = document.getElementById("forgot-form");
+    const forgotStep1 = document.getElementById("forgot-step-1");
+    const forgotStep2 = document.getElementById("forgot-step-2");
+    const forgotStep3 = document.getElementById("forgot-step-3");
+    const forgotPhoneDisplay = document.getElementById("forgot-phone-display");
+    
+    if (forgotForm) {
+      forgotForm.addEventListener("submit", function(e) {
+        e.preventDefault();
+        const phone = document.getElementById("forgot-phone")?.value || "";
+        
+        fetch("/api/authentication/forgotPassword", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ mobile: phone }),
+        })
+        .then(res => res.json())
+        .then(data => {
+          if (data.success) {
+            if (forgotPhoneDisplay) forgotPhoneDisplay.textContent = phone;
+            if (forgotStep1) forgotStep1.classList.remove("active");
+            if (forgotStep2) forgotStep2.classList.add("active");
+            startCountdown("forgot-resend-timer", 120);
+            setupOtpInputs("#forgot-step-2");
+            if (data.otp) console.log("OTP for testing:", data.otp);
+          } else {
+            showNotificationInPopUp(data.message, 'error');
+          }
+        })
+        .catch(err => {
+          console.error("Error:", err);
+          showNotificationInPopUp("مشکلی در ارتباط با سرور به وجود آمده است", 'error');
+        });
+      });
+    }
+    
+    const forgotBackBtn = document.getElementById("forgot-back-btn");
+    if (forgotBackBtn) {
+      forgotBackBtn.addEventListener("click", function() {
+        if (forgotStep2) forgotStep2.classList.remove("active");
+        if (forgotStep1) forgotStep1.classList.add("active");
+      });
+    }
+    
+    // Forgot password verification form
+    const forgotVerificationForm = document.getElementById("forgot-verification-form");
+    if (forgotVerificationForm) {
+      forgotVerificationForm.addEventListener("submit", function(e) {
+        e.preventDefault();
+        const otpValue = getOtpValue("#forgot-step-2");
+        const reversedOtpValue = otpValue.split("").reverse().join("");
+        
+        fetch("/api/authentication/verifyPasswordResetOtp", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            mobile: forgotPhoneDisplay?.textContent || "",
+            otp: reversedOtpValue
+          }),
+        })
+        .then(res => res.json())
+        .then(data => {
+          if (data.success) {
+            if (forgotStep2) forgotStep2.classList.remove("active");
+            if (forgotStep3) forgotStep3.classList.add("active");
+            if (data.resetToken) {
+              const resetTokenInput = document.getElementById("reset-token");
+              if (resetTokenInput) resetTokenInput.value = data.resetToken;
+            }
+          } else {
+            showNotificationInPopUp(data.message, 'error');
+          }
+        })
+        .catch(err => {
+          console.error("Error:", err);
+          showNotificationInPopUp("مشکلی در ارتباط با سرور به وجود آمده است", 'error');
+        });
+      });
+    }
+    
+    // Login form submission
+    const loginForm = document.getElementById("login-form");
+    if (loginForm) {
+      loginForm.addEventListener("submit", function(e) {
+        e.preventDefault();
+        const formDataLogin = new FormData(loginForm);
+        
+        fetch("/api/authentication/signIn", {
+          method: "POST",
+          body: formDataLogin,
+        })
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.success) {
+            showNotification(data.message, 'success');
+            setTimeout(() => location.reload(), 2000);
+            if (authPopup) authPopup.classList.add("hidden");
+          } else {
+            showNotificationInPopUp(data.message, 'error');
+          }
+        })
+        .catch((err) => {
+          console.error("Error:", err);
+          showNotificationInPopUp("مشکلی در ارتباط با سرور به وجود آمده است", 'error');
+        });
+      });
+    }
+    
+    // New password form submission
+    const newPasswordForm = document.getElementById("new-password-form");
+    if (newPasswordForm) {
+      newPasswordForm.addEventListener("submit", function(e) {
+        e.preventDefault();
+        const password = document.getElementById("new-password")?.value || "";
+        const confirmPassword = document.getElementById("confirm-new-password")?.value || "";
+        const resetToken = document.getElementById("reset-token")?.value || "";
+        
+        if (password !== confirmPassword) {
+          showNotificationInPopUp("رمز عبور و تکرار آن یکسان نیستند", 'error');
+          return;
+        }
+        
+        fetch(`/api/authentication/resetPassword/${resetToken}`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ password }),
+        })
+        .then(res => res.json())
+        .then(data => {
+          if (data.success) {
+            showNotification("رمز عبور با موفقیت تغییر یافت! اکنون وارد شوید", 'success');
+            if (authPopup) authPopup.classList.add("hidden");
+            if (data.token) localStorage.setItem('token', data.token);
+          } else {
+            showNotificationInPopUp(data.message, 'error');
+          }
+        })
+        .catch(err => {
+          console.error("Error:", err);
+          showNotificationInPopUp("مشکلی در ارتباط با سرور به وجود آمده است", 'error');
+        });
+      });
+    }
+    
+    // Phone number input validation
+    const phoneInputs = document.querySelectorAll('input[type="tel"]');
+    phoneInputs.forEach((input) => {
+      input.addEventListener("input", function(e) {
+        this.value = this.value.replace(/\D/g, "");
+      });
+      
+      input.addEventListener("blur", function() {
+        if (!this.value.startsWith("0") && this.value.length > 0) {
+          this.value = "0" + this.value;
+        }
+      });
+    });
+    
+    // Initialize OTP inputs
+    setupOtpInputs("#register-step-2");
+    setupOtpInputs("#forgot-step-2");
+    
+    // Discount Slider Scroll
+    const scrollLeftBtn = document.getElementById("scroll-left");
+    const scrollRightBtn = document.getElementById("scroll-right");
+    const discountSlider = document.querySelector(".discount-slider");
+    
+    if (scrollLeftBtn && discountSlider) {
+      scrollLeftBtn.addEventListener("click", () => {
+        discountSlider.scrollBy({ left: 300, behavior: "smooth" });
+      });
+    }
+    
+    if (scrollRightBtn && discountSlider) {
+      scrollRightBtn.addEventListener("click", () => {
+        discountSlider.scrollBy({ left: -300, behavior: "smooth" });
+      });
+    }
+    
+    // Fade-in animation on scroll
+    const fadeElements = document.querySelectorAll(".fade-in");
+    
+    function checkFade() {
+      fadeElements.forEach((element) => {
+        const elementTop = element.getBoundingClientRect().top;
+        const windowHeight = window.innerHeight;
+        if (elementTop < windowHeight - 100) {
+          element.classList.add("fade-visible");
+        }
+      });
+    }
+    
+    window.addEventListener("scroll", checkFade);
+    checkFade();
+  });
+  
+  // نمایش نوتیفیکیشن از سمت سرور
+  <% if (typeof success !== 'undefined' && success.length) { %>
+    showNotification('<%= TEXT %>', '<%= ICON %>');
+  <% } %>
+  
+  <% if (typeof error !== 'undefined' && error.length) { %>
+    showNotification('<%= TEXT %>', '<%= ICON %>');
+  <% } %>
+</script>
 
           <% if(success.length) {%>
           <script>
@@ -1249,7 +2382,7 @@
                     }
                   });
 
-                  fetch(`${window.API_BASE_URL}/api/mobile/sendOtp`, {
+                  fetch("/api/mobile/sendOtp", {
                     method: "POST",
                     headers: {
                       "Content-Type": "application/json",
@@ -1274,7 +2407,7 @@
                               .split("")
                               .reverse()
                               .join("");
-                            fetch(`${window.API_BASE_URL}/api/mobile/verifyOtp`, {
+                            fetch("/api/mobile/verifyOtp", {
                               method: "POST",
                               headers: {
                                 "Content-Type": "application/json",
@@ -1287,7 +2420,7 @@
                               .then((res) => res.json())
                               .then((data) => {
                                 if (data.success) {
-                                  fetch(`${window.API_BASE_URL}/api/authentication/signUp`, {
+                                  fetch("/api/authentication/signUp", {
                                     method: "POST",
                                     body: formDataRegister,
                                   })
@@ -1317,7 +2450,6 @@
                               })
                               .catch((err) => {
                                 console.error("Error:", err);
-                                console.log(err)
                                 showNotificationInPopUp("مشکلی در ارتباط با سرور به وجود آمده است", 'error');
                               });
                           }
@@ -1329,7 +2461,6 @@
                     })
                     .catch((err) => {
                       console.error("Error:", err);
-                      console.log(err)
                       showNotificationInPopUp("مشکلی در ارتباط با سرور به وجود آمده است", 'error')
                     });
                 });
@@ -1353,7 +2484,7 @@
               forgotForm.addEventListener("submit", function (e) {
                 e.preventDefault();
                 const phone = document.getElementById("forgot-phone").value;                
-                fetch(`${window.API_BASE_URL}/api/authentication/forgotPassword`, {
+                fetch("/api/authentication/forgotPassword", {
                   method: "POST",
                   headers: {
                     "Content-Type": "application/json",
@@ -1368,14 +2499,17 @@
                     forgotStep2.classList.add("active");
                     startCountdown("forgot-resend-timer", 120);
                     setupOtpInputs("#forgot-step-2");
-
+                    
+                    // For development only - show OTP in console
+                    if (data.otp) {
+                      console.log("OTP for testing:", data.otp);
+                    }
                   } else {
                     showNotificationInPopUp(data.message, 'error');
                   }
                 })
                 .catch(err => {
                   console.error("Error:", err);
-                  console.log(err)
                   showNotificationInPopUp("مشکلی در ارتباط با سرور به وجود آمده است", 'error');
                 });
               }); 
@@ -1431,7 +2565,7 @@
                       .reverse()
                       .join("");
                   
-                  fetch(`${window.API_BASE_URL}/api/authentication/verifyPasswordResetOtp`, {
+                  fetch("/api/authentication/verifyPasswordResetOtp", {
                     method: "POST",
                     headers: {
                       "Content-Type": "application/json",
@@ -1457,7 +2591,6 @@
                   })
                   .catch(err => {
                     console.error("Error:", err);
-                    console.log(err)
                     showNotificationInPopUp("مشکلی در ارتباط با سرور به وجود آمده است", 'error');
                   });
                 });
@@ -1468,7 +2601,7 @@
                 loginForm.addEventListener("submit", function (e) {
                   const formDataLogin = new FormData(loginForm);
                   e.preventDefault();
-                  fetch(`${window.API_BASE_URL}/api/authentication/signIn`, {
+                  fetch("/api/authentication/signIn", {
                     method: "POST",
                     body: formDataLogin,
                   })
@@ -1488,7 +2621,6 @@
                     })
                     .catch((err) => {
                       console.error("Error:", err);
-                      console.log(err)
                       showNotificationInPopUp("مشکلی در ارتباط با سرور به وجود آمده است", 'error');
                     });
                 });
@@ -1506,7 +2638,7 @@
                     return;
                   }
                   
-                  fetch(`${window.API_BASE_URL}/api/authentication/resetPassword/${resetToken}`, {
+                  fetch(`/api/authentication/resetPassword/${resetToken}`, {
                     method: "PATCH",
                     headers: {
                       "Content-Type": "application/json",
@@ -1530,7 +2662,6 @@
                   })
                   .catch(err => {
                     console.error("Error:", err);
-                    console.log(err)
                     showNotificationInPopUp("مشکلی در ارتباط با سرور به وجود آمده است", 'error');
                   });
                 });
@@ -1578,7 +2709,7 @@
                     return;
                   }
 
-                  fetch(`${window.API_BASE_URL}/api/mobile/sendOtp`, {
+                  fetch("/api/mobile/sendOtp", {
                     method: "POST",
                     headers: {
                       "Content-Type": "application/json",
@@ -1608,7 +2739,6 @@
                   })
                   .catch((err) => {
                     console.error("Error:", err);
-                    console.log(err)
                     showNotificationInPopUp('مشکلی در ارتباط با سرور به وجود آمده است', 'error');
                   });
                 }                
@@ -1632,6 +2762,122 @@
       </div>
     </div>
   </section>
+<footer class="bg-gray-900 text-white py-12">
+  <div class="container mx-auto px-4">
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+      <!-- درباره فروشگاه -->
+      <div>
+        <div class="flex items-center space-x-reverse space-x-3 mb-4">
+          <div
+            class="w-10 h-10 bg-gradient-to-r from-pink-500 to-rose-500 rounded-lg flex items-center justify-center"
+          >
+            <svg
+              class="w-6 h-6 text-white"
+              fill="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+            </svg>
+          </div>
+          <h3 class="text-xl font-bold">کیدل | فروشگاه لباس کودک</h3>
+        </div>
+        <p class="text-gray-400 text-sm leading-relaxed">
+          فروشگاه تخصصی پوشاک کودک و نوزاد، با بهترین کیفیت و مناسب‌ترین قیمت
+        </p>
+        <p class="text-gray-400 text-sm leading-relaxed mt-3">
+          <i class="fas fa-phone ml-2"></i> تماس: 0905424346
+        </p>
+        <p class="text-gray-400 text-sm leading-relaxed mt-1">
+          <i class="fas fa-map-marker-alt ml-2"></i> گرگان خیابان پاسداران پاساژ وارکانا پلاک 51
+        </p>
+      </div>
+
+      <!-- دسته‌بندی محصولات -->
+      <div>
+        <h4 class="font-bold mb-4 text-pink-400">دسته‌بندی‌ها</h4>
+        <ul class="space-y-2 text-sm text-gray-400">
+          <li>
+            <a href="#" class="hover:text-pink-400 transition-colors">لباس نوزاد (۰-۲۴ ماه)</a>
+          </li>
+          <li>
+            <a href="#" class="hover:text-pink-400 transition-colors">لباس کودک (۲-۷ سال)</a>
+          </li>
+          <li>
+            <a href="#" class="hover:text-pink-400 transition-colors">لباس پسرانه</a>
+          </li>
+          <li>
+            <a href="#" class="hover:text-pink-400 transition-colors">لباس دخترانه</a>
+          </li>
+          <li>
+            <a href="#" class="hover:text-pink-400 transition-colors">ست و اکسسوری کودک</a>
+          </li>
+        </ul>
+      </div>
+
+      <!-- لینک‌های مفید -->
+      <div>
+        <h4 class="font-bold mb-4 text-pink-400">لینک‌های مفید</h4>
+        <ul class="space-y-2 text-sm text-gray-400">
+          <li>
+            <a href="#" class="hover:text-pink-400 transition-colors">درباره ما</a>
+          </li>
+          <li>
+            <a href="#" class="hover:text-pink-400 transition-colors">تماس با ما</a>
+          </li>
+          <li>
+            <a href="#" class="hover:text-pink-400 transition-colors">فروشگاه </a>
+          </li>
+        </ul>
+      </div>
+
+      <!-- شبکه‌های اجتماعی و نمادها -->
+      <div>
+        <h4 class="font-bold mb-4 text-pink-400">ما را دنبال کنید</h4>
+        <div class="flex space-x-reverse space-x-4 mb-6">
+          <a
+            href="#"
+            class="w-10 h-10 bg-gray-800 rounded-lg flex items-center justify-center hover:bg-pink-500 transition-colors"
+          >
+            <i class="fab fa-instagram text-xl"></i>
+          </a>
+          <a
+            href="#"
+            class="w-10 h-10 bg-gray-800 rounded-lg flex items-center justify-center hover:bg-pink-500 transition-colors"
+          >
+            <i class="fab fa-telegram text-xl"></i>
+          </a>
+          <a
+            href="#"
+            class="w-10 h-10 bg-gray-800 rounded-lg flex items-center justify-center hover:bg-pink-500 transition-colors"
+          >
+            <i class="fab fa-whatsapp text-xl"></i>
+          </a>
+        </div>
+        <div class="mt-4">
+          <p class="text-gray-400 text-sm mb-2">ایمیل:</p>
+          <p class="text-gray-400 text-sm">info@kidland.com</p>
+        </div>
+      </div>
+    </div>
+            <a referrerpolicy='origin' target='_blank' href='https://trustseal.enamad.ir/?id=731837&Code=jSMW53UKTzbJlysi5bIKHLWgBO1HddCW'><img referrerpolicy='origin' src='https://trustseal.enamad.ir/logo.aspx?id=731837&Code=jSMW53UKTzbJlysi5bIKHLWgBO1HddCW' alt='' style='cursor:pointer' code='jSMW53UKTzbJlysi5bIKHLWgBO1HddCW'></a>
+
+    <!-- کپی‌رایت و نمادهای اعتماد -->
+    <div class="border-t border-gray-800 mt-8 pt-8">
+      <div class="flex flex-col md:flex-row justify-between items-center gap-4">
+          
+        <div class="text-center text-sm text-gray-400">
+          <p>© 1406 فروشگاه کیدل. تمامی حقوق محفوظ است.</p>
+        </div>
+        <div class="flex space-x-reverse space-x-3">
+          <span class="text-xs text-gray-500">پشتیبانی ۲۴ ساعته</span>
+          <span class="text-xs text-gray-500">ارسال سریع</span>
+          <span class="text-xs text-gray-500">تضمین اصالت کالا</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+
 </body>
 
 </html>

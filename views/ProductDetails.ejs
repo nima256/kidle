@@ -10,11 +10,18 @@
       content="<%= product?.lilDescription %>"
     />
     <meta name="keywords" content="<%= product?.tags.join(", ") %>" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lightgallery/2.7.1/css/lightgallery.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lightgallery/2.7.1/lightgallery.min.js"></script>
+
     <link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
     />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lightgallery/2.7.1/css/lightgallery-bundle.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lightgallery/2.7.1/lightgallery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lightgallery/2.7.1/plugins/zoom/lg-zoom.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lightgallery/2.7.1/plugins/thumbnail/lg-thumbnail.min.js"></script>
 
     <!-- <link
       href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700&display=swap"
@@ -64,6 +71,10 @@
         border-color: #ec4899;
         box-shadow: 0 0 0 3px rgba(236, 72, 153, 0.3);
       }
+          .cart-count {
+      top: -8px;
+      left: -8px;
+    }
       .color-swatch {
         transition: all 0.3s ease;
         cursor: pointer;
@@ -237,7 +248,56 @@
       .text-gray-700 strong {
         font-weight: bold;
       }
+/* برای تمام المان‌های متنی در دسکتاپ */
+.text-gray-700, 
+.prose, 
+[class*="text-"] {
+  word-wrap: break-word !important;
+  overflow-wrap: break-word !important;
+  word-break: break-word !important;
+  white-space: normal !important;
+}
 
+/* مخصوص بخش توضیحات محصول */
+.section-card .text-gray-700 {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+/* برای متن‌های داخل دیوهای مختلف */
+div, p, span, h1, h2, h3, h4, h5, h6 {
+  max-width: 100%;
+  overflow-wrap: break-word;
+}
+
+/* برای محتوای تولید شده توسط Quill یا ویرایشگرهای متن */
+.ql-editor,
+.ql-container {
+  word-wrap: break-word !important;
+  white-space: normal !important;
+}
+@media (max-width: 768px) {
+  /* نسخه قوی‌تر برای رفع مشکل */
+  .section-card .text-gray-700 {
+    word-break: break-word !important;
+    overflow-wrap: break-word !important;
+    word-wrap: break-word !important;
+    white-space: normal !important;
+    hyphens: auto !important;
+  }
+}
+/* نسخه قوی‌تر برای دسکتاپ - رفع مشکل خروج متن */
+.section-card .text-gray-700,
+.product-description,
+[class*="description"] {
+  word-break: break-word !important;
+  overflow-wrap: break-word !important;
+  word-wrap: break-word !important;
+  white-space: normal !important;
+  hyphens: auto !important;
+  max-width: 100% !important;
+  overflow-x: hidden !important;
+}
       .text-gray-700 em {
         font-style: italic;
       }
@@ -259,130 +319,632 @@
       .text-gray-700 p {
         margin: 1em 0;
       }
+      /* جلوگیری از اسکرول وقتی منو بازه */
+body.menu-open {
+  overflow: hidden;
+  position: fixed;
+  width: 100%;
+  height: 100%;
+} 
+      /* اضافه کنید به استایل‌ها */
+.gallery-popup-container {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.95);
+  z-index: 9999;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(5px);
+}
+
+.gallery-popup-container.active {
+  display: flex;
+}
+
+.gallery-popup-content {
+  position: relative;
+  width: 90%;
+  max-width: 1200px;
+  height: 90vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.gallery-popup-image {
+  max-width: 90%;
+  max-height: 85vh;
+  object-fit: contain;
+  border-radius: 12px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+}
+
+.gallery-popup-close {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  width: 40px;
+  height: 40px;
+  background: rgba(0, 0, 0, 0.7);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 24px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  z-index: 10;
+}
+
+.gallery-popup-close:hover {
+  background: rgba(0, 0, 0, 0.9);
+  transform: scale(1.1);
+}
+
+.gallery-popup-prev,
+.gallery-popup-next {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 50px;
+  height: 50px;
+  background: rgba(0, 0, 0, 0.7);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 28px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  z-index: 10;
+}
+
+.gallery-popup-prev {
+  left: 20px;
+}
+.pb-4 {
+    padding-bottom: 2rem;
+}
+.gallery-popup-next {
+  right: 20px;
+}
+
+.gallery-popup-prev:hover,
+.gallery-popup-next:hover {
+  background: rgba(0, 0, 0, 0.9);
+  transform: translateY(-50%) scale(1.1);
+}
+
+.gallery-popup-counter {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.7);
+  padding: 8px 16px;
+  border-radius: 30px;
+  color: white;
+  font-size: 14px;
+  z-index: 10;
+}
+
+.gallery-popup-thumbnails {
+  position: absolute;
+  bottom: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 10px;
+  padding: 10px;
+  background: rgba(0, 0, 0, 0.5);
+  border-radius: 12px;
+  overflow-x: auto;
+  max-width: 80%;
+  z-index: 10;
+}
+
+.gallery-popup-thumbnails img {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+}
+
+.gallery-popup-thumbnails img:hover {
+  transform: scale(1.05);
+  border-color: #ec4899;
+}
+
+.gallery-popup-thumbnails img.active {
+  border-color: #ec4899;
+  box-shadow: 0 0 0 2px rgba(236, 72, 153, 0.5);
+}
+
+@media (max-width: 768px) {
+  .gallery-popup-prev,
+  .gallery-popup-next {
+    width: 40px;
+    height: 40px;
+    font-size: 20px;
+  }
+  
+  .gallery-popup-thumbnails {
+    bottom: 70px;
+  }
+  
+  .gallery-popup-thumbnails img {
+    width: 45px;
+    height: 45px;
+  }
+}
+/* استایل‌های ریسپانسیو برای موبایل */
+@media (max-width: 768px) {
+  /* کاهش فاصله‌ها و padding در کارت‌ها */
+  .section-card {
+    padding: 16px !important;
+    margin-bottom: 12px !important;
+  }
+  
+  /* کوچک‌تر کردن عنوان محصول */
+  .section-card h1 {
+    font-size: 20px !important;
+    margin-bottom: 8px !important;
+  }
+  
+  /* کوچک‌تر کردن قیمت */
+  .section-card .text-3xl {
+    font-size: 22px !important;
+  }
+  
+  /* رنگ‌ها - تبدیل به 3 ستون با دایره‌های کوچک‌تر */
+  .grid-cols-4 {
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 12px !important;
+  }
+  
+  .color-swatch {
+    width: 45px !important;
+    height: 45px !important;
+  }
+  
+  .color-swatch.selected::after {
+    font-size: 10px !important;
+  }
+  
+  /* حجم‌ها - تبدیل به 2 ستون */
+  .grid-cols-3 {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 10px !important;
+  }
+  
+  .volume-option {
+    padding: 8px 12px !important;
+  }
+  
+  .volume-option .text-lg {
+    font-size: 14px !important;
+  }
+  
+  .volume-option .text-xs {
+    font-size: 10px !important;
+  }
+  
+  /* ویژگی‌ها - تبدیل به 2 ستون در موبایل */
+  .grid-cols-1.sm\:grid-cols-2 {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 8px !important;
+  }
+  
+  .feature-card {
+    padding: 10px !important;
+  }
+  
+  .feature-card .w-12 {
+    width: 32px !important;
+    height: 32px !important;
+  }
+  
+  .feature-card h4 {
+    font-size: 12px !important;
+  }
+  
+  .feature-card p {
+    font-size: 10px !important;
+  }
+  /* نسخه قوی‌تر برای رفع مشکل */
+.section-card .text-gray-700 {
+  word-break: break-word !important;
+  overflow-wrap: break-word !important;
+  word-wrap: break-word !important;
+  white-space: normal !important;
+  hyphens: auto !important;
+}
+  /* دکمه افزودن به سبد خرید */
+  #add-to-cart {
+    padding: 12px 16px !important;
+    font-size: 14px !important;
+  }
+  
+  /* عنوان‌های بخش‌ها */
+  .section-card h3 {
+    font-size: 16px !important;
+    margin-bottom: 12px !important; 
+  }
+  
+  /* متن رنگ و حجم انتخابی */
+  .text-sm.text-gray-600 {
+    font-size: 12px !important;
+    margin-top: 8px !important;
+  }
+  
+  /* توضیحات محصول */
+  .text-gray-700 {
+    font-size: 13px !important;
+    line-height: 1.5 !important;
+  }
+  
+  /* کاهش فضای خالی بین بخش‌ها */
+  .space-y-8 {
+    gap: 12px !important;
+    display: flex !important;
+    flex-direction: column !important;
+  }
+  
+  /* فاصله بین المنت‌ها در main */
+  main .grid {
+    gap: 20px !important;
+  }
+  
+  /* کوچک‌تر کردن thumbnails */
+  .thumbnail {
+    padding: 8px !important;
+  }
+  
+  .thumbnail img {
+    width: 40px !important;
+    height: 40px !important;
+  }
+  
+  /* تصویر اصلی */
+  .main-image {
+    height: 250px !important;
+  }
+  
+  .section-card.p-8 {
+    padding: 15px !important;
+  }
+}
+
+/* فشرده‌سازی کل صفحه در موبایل */
+@media (max-width: 768px) {
+  main {
+    padding-top: 20px !important;
+    padding-bottom: 20px !important;
+  }
+  
+  main .px-6 {
+    padding-left: 12px !important;
+    padding-right: 12px !important;
+  }
+  
+  /* حذف padding اضافی از header */
+  header .px-6 {
+    padding-left: 12px !important;
+    padding-right: 12px !important;
+  }
+  
+  header .py-5 {
+    padding-top: 12px !important;
+    padding-bottom: 12px !important;
+  }
+  
+  /* کوچک‌تر کردن دکمه بازگشت */
+  header .w-6 {
+    width: 20px !important;
+    height: 20px !important;
+  }
+  
+  header .text-lg {
+    font-size: 14px !important;
+  }
+  
+  /* حذف فضای اضافی nav */
+  nav {
+    padding: 8px 12px !important;
+  }
+  
+  nav img {
+    height: 36px !important;
+  }
+  
+  /* کاهش فضای خالی در footer */
+  footer .py-12 {
+    padding-top: 24px !important;
+    padding-bottom: 24px !important;
+  }
+  
+  footer .gap-8 {
+    gap: 20px !important;
+  }
+  
+  /* حذف فاصله اضافی اول صفحه */
+  br {
+    display: none !important;
+  }
+  
+  /* فاصله بین ستون اصلی محصولات */
+  .grid-cols-1.lg\:grid-cols-2 {
+    gap: 16px !important;
+  }
+}
     </style>
   </head>
   <body class="bg-white min-h-screen">
     <!-- Header -->
-    <nav
-      class="fixed top-0 right-0 left-0 bg-white shadow-md z-50 px-4 md:px-6 py-3"
-    >
-      <div class="max-w-7xl mx-auto flex items-center justify-between">
-        <!-- Logo -->
-        <a href="#" class="flex items-center order-2 md:order-1 h-12 md:h-14">
-          <div class="h-full overflow-hidden flex items-center">
-            <img
-              src="/logo.png"
-              alt="لوگوی اودور"
-              class="h-full w-auto object-contain"
-            />
-          </div>
+<nav style="background: white; box-shadow: 0 2px 10px rgba(0,0,0,0.1); position: fixed; top: 0; left: 0; right: 0; z-index: 50; padding: 12px 20px;">
+  <div style="max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
+    
+    <!-- لوگو -->
+    <a href="/" style="height: 48px;">
+      <img src="logo.png" alt="لوگو" style="height: 100%; width: auto;" />
+    </a>
+
+    <!-- منوی دسکتاپ با ساب‌منو -->
+    <div style="display: none; gap: 24px;" class="desktop-menu">
+      <a href="/" style="color: #333; text-decoration: none;">خانه</a>
+      
+      <!-- فروشگاه با ساب‌منو -->
+      <div style="position: relative;" class="dropdown">
+        <a href="/shop" style="color: #333; text-decoration: none; display: flex; align-items: center; gap: 5px;">
+           دسته بندی <i class="fas fa-chevron-down" style="font-size: 12px;"></i>
         </a>
-
-        <!-- Desktop Menu -->
-        <div
-          class="md:flex items-center space-x-8 space-x-reverse order-1 md:order-2"
-        >
-          <a
-            href="/"
-            class="nav-link text-gray-800 hover:text-pink-500 transition-colors"
-            >خانه</a
-          >
-          <a
-            href="/shop"
-            class="nav-link text-gray-800 hover:text-pink-500 transition-colors"
-            >فروشگاه</a
-          >
-          <a
-            href="#"
-            class="nav-link text-gray-800 hover:text-pink-500 transition-colors"
-            >دسته‌بندی‌ها</a
-          >
-          <a
-            href="/weblog"
-            class="nav-link text-gray-800 hover:text-pink-500 transition-colors"
-            >وبلاگ</a
-          >
-          <a
-            href="#"
-            class="nav-link text-gray-800 hover:text-pink-500 transition-colors"
-            >درباره ما</a
-          >
-          <a
-            href="#"
-            class="nav-link text-gray-800 hover:text-pink-500 transition-colors"
-            >تماس با ما</a
-          >
-        </div>
-
-        <!-- Icons -->
-        <div
-          class="flex items-center space-x-4 space-x-reverse order-1 md:order-3"
-        >
-          <div class="relative">
-            <button
-              onclick="window.location.href='/cart';"
-              class="relative text-gray-700 hover:text-pink-500 transition-colors"
-            >
-              <i class="fas fa-shopping-bag text-xl"></i>
-              <% if(user) { %>
-              <span
-                id="cartCount"
-                style="top: -8px; left: 8px"
-                class="absolute cart-count bg-pink-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center"
-              >
-                <%= toPersianDigits(cartCount) %>
-              </span>
-              <% } %>
-            </button>
+        <div class="dropdown-menu" style="position: absolute; top: 100%; right: 0; background: white; box-shadow: 0 4px 12px rgba(0,0,0,0.15); border-radius: 8px; min-width: 200px; display: none; z-index: 100;">
+          <div class="submenu-item" style="position: relative;">
+            <a href="#" style="display: flex; justify-content: space-between; align-items: center; padding: 10px 16px; color: #333; text-decoration: none; border-bottom: 1px solid #eee;">
+              لباس زنانه <i class="fas fa-chevron-left" style="font-size: 10px;"></i>
+            </a>
+            <div class="submenu-level2" style="position: absolute; right: 100%; top: 0; background: white; box-shadow: 0 4px 12px rgba(0,0,0,0.15); border-radius: 8px; min-width: 180px; display: none;">
+              <a href="#" style="display: block; padding: 10px 16px; color: #333; text-decoration: none; border-bottom: 1px solid #eee;">پیراهن زنانه</a>
+              <a href="#" style="display: block; padding: 10px 16px; color: #333; text-decoration: none; border-bottom: 1px solid #eee;">شلوار زنانه</a>
+              <a href="#" style="display: block; padding: 10px 16px; color: #333; text-decoration: none;">مانتو و کت</a>
+            </div>
           </div>
-          <button
-            id="user-auth-button"
-            class="text-gray-700 hover:text-pink-500 transition-colors"
-          >
+          <div class="submenu-item" style="position: relative;">
+            <a href="#" style="display: flex; justify-content: space-between; align-items: center; padding: 10px 16px; color: #333; text-decoration: none; border-bottom: 1px solid #eee;">
+              لباس مردانه <i class="fas fa-chevron-left" style="font-size: 10px;"></i>
+            </a>
+            <div class="submenu-level2" style="position: absolute; right: 100%; top: 0; background: white; box-shadow: 0 4px 12px rgba(0,0,0,0.15); border-radius: 8px; min-width: 180px; display: none;">
+              <a href="#" style="display: block; padding: 10px 16px; color: #333; text-decoration: none; border-bottom: 1px solid #eee;">پیراهن مردانه</a>
+              <a href="#" style="display: block; padding: 10px 16px; color: #333; text-decoration: none; border-bottom: 1px solid #eee;">شلوار مردانه</a>
+              <a href="#" style="display: block; padding: 10px 16px; color: #333; text-decoration: none;">کت و شلوار</a>
+            </div>
+          </div>
+          <a href="#" style="display: block; padding: 10px 16px; color: #333; text-decoration: none; border-bottom: 1px solid #eee;">اکسسوری</a>
+          <a href="#" style="display: block; padding: 10px 16px; color: #333; text-decoration: none;">کفش</a>
+        </div>
+      </div>
+      <a href="/shop" style="color: #333; text-decoration: none;">فروشگاه</a>
+      <a href="/weblog" style="color: #333; text-decoration: none;">وبلاگ</a>
+      <a href="#" style="color: #333; text-decoration: none;">درباره ما</a>
+      <a href="#" style="color: #333; text-decoration: none;">تماس با ما</a>
+    </div>
+
+    <!-- آیکون‌ها و همبرگر -->
+    <div class="flex items-center space-x-4 space-x-reverse order-1 md:order-3">
+      <div class="relative">
+        <button class="relative text-gray-700 hover:text-pink-500 transition-colors">
+          <a href="/cart">
+            <i style="color: #374151;" class="fas fa-shopping-bag text-xl"></i>
+          </a>
+          <% if(user) { %>
+            <span id="cartCount" class="absolute cart-count bg-pink-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+              <%= toPersianDigitsForSizes(cartCount) %>
+            </span>
+          <% } %>
+        </button>
+      </div>
+      <% if (!user) {%>
+        <!-- مهم: این دکمه باید آیدی صحیح داشته باشه -->
+        <button id="user-auth-button" class="text-gray-700 hover:text-pink-500 transition-colors">
+          <i class="fas fa-user text-xl"></i>
+        </button>
+      <% } else { %>
+        <a href="/userProfile">
+          <button class="text-gray-700 hover:text-pink-500 transition-colors">
             <i class="fas fa-user text-xl"></i>
           </button>
-        </div>
-      </div>
+        </a>
+      <% } %>
+      <button id="menu-btn" style="color: #333; font-size: 24px; background: none; border: none; cursor: pointer; display: block;" class="hamburger">
+        <i class="fas fa-bars"></i>
+      </button>
+    </div>
+  </div>
 
-      <!-- Mobile Menu -->
-      <div
-        id="mobile-menu"
-        class="md:hidden hidden bg-white absolute right-0 left-0 top-full shadow-md"
-      >
-        <div class="flex flex-col px-4 py-2">
-          <a
-            href="/"
-            class="py-2 text-gray-800 hover:text-pink-500 transition-colors"
-            >خانه</a
-          >
-          <a
-            href="/shop"
-            class="py-2 text-gray-800 hover:text-pink-500 transition-colors"
-            >فروشگاه</a
-          >
-          <a
-            href=""
-            class="py-2 text-gray-800 hover:text-pink-500 transition-colors"
-            >دسته‌بندی‌ها</a
-          >
-          <a
-            href="/weblog"
-            class="py-2 text-gray-800 hover:text-pink-500 transition-colors"
-            >وبلاگ</a
-          >
-          <a
-            href="#"
-            class="py-2 text-gray-800 hover:text-pink-500 transition-colors"
-            >درباره ما</a
-          >
-          <a
-            href="#"
-            class="py-2 text-gray-800 hover:text-pink-500 transition-colors"
-            >تماس با ما</a
-          >
-        </div>
+  <!-- منوی موبایل با ساب‌منو -->
+  <div id="mobile-menu" style="display: none; margin-top: 15px; padding-top: 15px; border-top: 1px solid #eee; flex-direction: column; gap: 10px;">
+    <a href="/" style="display: block; padding: 8px; color: #333; text-decoration: none;">خانه</a>
+    
+    <div class="mobile-dropdown">
+      <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px; cursor: pointer;" class="mobile-dropdown-trigger">
+        <span style="color: #333;">دسته بندی </span>
+        <i class="fas fa-chevron-down" style="font-size: 12px; transition: transform 0.3s;"></i>
       </div>
-    </nav>
+      <div class="mobile-dropdown-menu" style="display: none; padding-right: 15px;">
+        <div class="mobile-submenu">
+          <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px; cursor: pointer;" class="mobile-submenu-trigger">
+            <span style="color: #555;">لباس زنانه</span>
+            <i class="fas fa-chevron-left" style="font-size: 10px; transition: transform 0.3s;"></i>
+          </div>
+          <div class="mobile-submenu-level2" style="display: none; padding-right: 15px;">
+            <a href="#" style="display: block; padding: 8px; color: #666; text-decoration: none;">پیراهن زنانه</a>
+            <a href="#" style="display: block; padding: 8px; color: #666; text-decoration: none;">شلوار زنانه</a>
+            <a href="#" style="display: block; padding: 8px; color: #666; text-decoration: none;">مانتو و کت</a>
+          </div>
+        </div>
+        <div class="mobile-submenu">
+          <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px; cursor: pointer;" class="mobile-submenu-trigger">
+            <span style="color: #555;">لباس مردانه</span>
+            <i class="fas fa-chevron-left" style="font-size: 10px; transition: transform 0.3s;"></i>
+          </div>
+          <div class="mobile-submenu-level2" style="display: none; padding-right: 15px;">
+            <a href="#" style="display: block; padding: 8px; color: #666; text-decoration: none;">پیراهن مردانه</a>
+            <a href="#" style="display: block; padding: 8px; color: #666; text-decoration: none;">شلوار مردانه</a>
+            <a href="#" style="display: block; padding: 8px; color: #666; text-decoration: none;">کت و شلوار</a>
+          </div>
+        </div>
+        <a href="#" style="display: block; padding: 8px; color: #555; text-decoration: none;">اکسسوری</a>
+        <a href="#" style="display: block; padding: 8px; color: #555; text-decoration: none;">کفش</a>
+      </div>
+    </div>
+    <a href="/shop" style="display: block; padding: 8px; color: #333; text-decoration: none;">فروشگاه</a>
+    <a href="/weblog" style="display: block; padding: 8px; color: #333; text-decoration: none;">وبلاگ</a>
+    <a href="#" style="display: block; padding: 8px; color: #333; text-decoration: none;">درباره ما</a>
+    <a href="#" style="display: block; padding: 8px; color: #333; text-decoration: none;">تماس با ما</a>
+  </div>
+</nav>
+
+
+<style>
+  @media (min-width: 768px) {
+    .desktop-menu {
+      display: flex !important;
+    }
+    .hamburger {
+      display: none !important;
+    }
+  }
+  
+  .dropdown:hover .dropdown-menu {
+    display: block !important;
+  }
+  
+  .submenu-item:hover .submenu-level2 {
+    display: block !important;
+  }
+  
+  .dropdown-menu a:hover,
+  .submenu-level2 a:hover {
+    background-color: #f5f5f5;
+  }
+  
+  .mobile-dropdown-menu,
+  .mobile-submenu-level2 {
+    transition: all 0.3s ease;
+  }
+  
+  /* استایل برای موبایل */
+  @media (max-width: 768px) {
+    .flex.items-center.space-x-4 {
+      gap: 12px;
+    }
+  }
+</style>
+
+<script>
+  // تابع کمکی برای اطمینان از وجود المنت‌ها
+  function waitForElement(selector, callback) {
+    if (document.querySelector(selector)) {
+      callback();
+      return;
+    }
+    const observer = new MutationObserver(function(mutations) {
+      if (document.querySelector(selector)) {
+        observer.disconnect();
+        callback();
+      }
+    });
+    observer.observe(document.body, { childList: true, subtree: true });
+  }
+  
+  document.addEventListener("DOMContentLoaded", function() {
+    // منوی همبرگری موبایل
+    var menuBtn = document.getElementById('menu-btn');
+    var mobileMenu = document.getElementById('mobile-menu');
+    
+    if (menuBtn && mobileMenu) {
+      menuBtn.onclick = function(e) {
+        e.stopPropagation();
+        if (mobileMenu.style.display === 'none' || mobileMenu.style.display === '') {
+          mobileMenu.style.display = 'flex';
+        } else {
+          mobileMenu.style.display = 'none';
+        }
+      };
+    }
+    
+    
+    // ساب‌منوی موبایل
+    var mobileTriggers = document.querySelectorAll('.mobile-dropdown-trigger');
+    mobileTriggers.forEach(function(trigger) {
+      trigger.onclick = function(e) {
+        e.stopPropagation();
+        var menu = this.nextElementSibling;
+        var icon = this.querySelector('i');
+        if (menu.style.display === 'none' || menu.style.display === '') {
+          menu.style.display = 'block';
+          icon.style.transform = 'rotate(180deg)';
+        } else {
+          menu.style.display = 'none';
+          icon.style.transform = 'rotate(0deg)';
+        }
+      };
+    });
+    
+    var subTriggers = document.querySelectorAll('.mobile-submenu-trigger');
+    subTriggers.forEach(function(trigger) {
+      trigger.onclick = function(e) {
+        e.stopPropagation();
+        var submenu = this.nextElementSibling;
+        var icon = this.querySelector('i');
+        if (submenu.style.display === 'none' || submenu.style.display === '') {
+          submenu.style.display = 'block';
+          icon.style.transform = 'rotate(180deg)';
+        } else {
+          submenu.style.display = 'none';
+          icon.style.transform = 'rotate(0deg)';
+        }
+      };
+    });
+    
+    // ====== بخش مهم: مدیریت پاپ‌آپ احراز هویت ======
+    var authButton = document.getElementById('user-auth-button');
+    var authPopup = document.getElementById('auth-popup');
+    
+    // اگر پاپ‌آپ در DOM وجود داشت، مدیریت کن
+    if (authButton && authPopup) {
+      authButton.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        console.log('دکمه کاربر کلیک شد - باز کردن پاپ‌آپ');
+        authPopup.classList.remove('hidden');
+        // تابع switchTab باید قبلاً تعریف شده باشد
+        if (typeof switchTab === 'function') {
+          switchTab('login');
+        }
+      });
+      
+      // بستن پاپ‌آپ با کلیک روی پس‌زمینه
+      authPopup.addEventListener('click', function(e) {
+        if (e.target === authPopup) {
+          authPopup.classList.add('hidden');
+        }
+      });
+    } else {
+      console.warn('دکمه user-auth-button یا پاپ‌آپ auth-popup در صفحه پیدا نشد!');
+      
+      // اگر پاپ‌آپ وجود نداشت، می‌توانیم یک هشدار نمایش دهیم یا لاگ بگیریم
+      if (!authButton) console.warn('عنصر با آیدی user-auth-button یافت نشد');
+      if (!authPopup) console.warn('عنصر با آیدی auth-popup یافت نشد');
+    }
+  });
+</script>
     <script>
       document.addEventListener("DOMContentLoaded", function () {
         const mobileMenuButton = document.getElementById("mobile-menu-button");
@@ -403,97 +965,385 @@
         });
       });
     </script>
-    <header
-      class="bg-white/90 backdrop-blur-md shadow-lg border-b border-pink-100 rounded-b-3xl"
-    >
-      <div class="max-w-7xl mx-auto px-6 py-5">
-        <div class="flex items-center justify-between">
-          <div class="flex items-center space-x-4 space-x-reverse">
-            <button
-              class="text-pink-600 hover:text-pink-800 transition-colors p-2 rounded-2xl hover:bg-pink-50"
-            >
-              <svg
-                class="w-6 h-6"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M15 19l-7-7 7-7"
-                ></path>
-              </svg>
-            </button>
-            <h1 class="text-lg font-semibold text-gray-800">
-              بازگشت به فروشگاه
-            </h1>
-          </div>
-          <div class="flex items-center space-x-4 space-x-reverse">
-            <button
-              class="text-pink-600 hover:text-pink-800 transition-colors p-2 rounded-2xl hover:bg-pink-50"
-            >
-              <svg
-                class="w-6 h-6"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
-                ></path>
-              </svg>
-            </button>
-          </div>
+    <div id="auth-popup" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+  <div class="bg-white rounded-xl shadow-lg w-full max-w-md mx-4 modal-content">
+    <!-- Tab Navigation -->
+    <div class="flex border-b">
+      <button id="login-tab" class="tab-btn flex-1 py-4 text-center font-medium text-pink-500 border-b-2 border-pink-500">
+        ورود
+      </button>
+      <button id="register-tab" class="tab-btn flex-1 py-4 text-center font-medium text-gray-500">
+        ثبت نام
+      </button>
+      <button id="forgot-tab" class="tab-btn flex-1 py-4 text-center font-medium text-gray-500">
+        بازیابی رمز
+      </button>
+    </div>
+
+    <!-- Login Form -->
+    <div id="login-content" class="tab-content active p-6">
+      <h2 class="text-xl font-bold text-gray-800 mb-5 text-center">ورود به حساب کاربری</h2>
+      <form action="/api/authentication/signIn" method="post" id="login-form" class="space-y-5">
+        <div>
+          <label class="block text-gray-700 mb-2" for="login-phone">شماره موبایل</label>
+          <input type="tel" name="mobile" id="login-phone" class="w-full px-4 py-3 rounded-lg border" placeholder="09xxxxxxxxx" required />
         </div>
+        <div>
+          <label class="block text-gray-700 mb-2" for="login-password">رمز عبور</label>
+          <input type="password" name="password" id="login-password" class="w-full px-4 py-3 rounded-lg border" placeholder="رمز عبور خود را وارد کنید" required />
+        </div>
+        <button type="submit" class="w-full bg-pink-500 hover:bg-pink-600 text-white py-3 rounded-lg font-medium transition-colors">
+          ورود
+        </button>
+      </form>
+    </div>
+
+    <!-- Registration Form -->
+    <div id="register-content" class="tab-content p-6">
+      <div id="register-step-1" class="form-step active">
+        <h2 class="text-xl font-bold text-gray-800 mb-5 text-center">ایجاد حساب کاربری</h2>
+        <form action="/api/authentication/signUp" method="post" id="register-form" class="space-y-4">
+          <div>
+            <label class="block text-gray-700 mb-2" for="register-name">نام و نام خانوادگی</label>
+            <input type="text" name="fullName" id="register-name" class="w-full px-4 py-3 rounded-lg border" placeholder="نام کامل خود را وارد کنید" required />
+          </div>
+          <div>
+            <label class="block text-gray-700 mb-2" for="register-phone">شماره موبایل</label>
+            <input type="tel" name="mobile" id="register-phone" class="w-full px-4 py-3 rounded-lg border" placeholder="09xxxxxxxxx" required />
+          </div>
+          <div>
+            <label class="block text-gray-700 mb-2" for="register-email">ایمیل</label>
+            <input type="email" name="email" id="register-email" class="w-full px-4 py-3 rounded-lg border" placeholder="email@example.com" />
+          </div>
+          <div>
+            <label class="block text-gray-700 mb-2" for="register-password">رمز عبور</label>
+            <input type="password" name="password" id="register-password" class="w-full px-4 py-3 rounded-lg border" placeholder="حداقل 8 کاراکتر" required />
+          </div>
+          <div>
+            <label class="block text-gray-700 mb-2" for="register-confirm-password">تکرار رمز عبور</label>
+            <input type="password" name="confirmPassword" id="register-confirm-password" class="w-full px-4 py-3 rounded-lg border" placeholder="تکرار رمز عبور" required />
+          </div>
+          <button type="submit" class="w-full bg-pink-500 hover:bg-pink-600 text-white py-3 rounded-lg font-medium transition-colors mt-2">
+            ثبت نام
+          </button>
+        </form>
       </div>
-    </header>
+
+      <div id="register-step-2" class="form-step">
+        <h2 class="text-xl font-bold text-gray-800 mb-2 text-center">تایید شماره موبایل</h2>
+        <p class="text-gray-600 text-center mb-5">
+          کد تایید به شماره <span id="register-phone-display" class="font-bold"></span> ارسال شد
+        </p>
+        <form id="register-verification-form" class="space-y-5">
+          <div class="text-center">
+            <label class="block text-gray-700 mb-4 text-center">کد تایید را وارد کنید</label>
+            <div class="flex justify-center gap-2 mb-3">
+              <input type="text" maxlength="1" class="otp-input w-12 h-14 text-center text-xl border rounded-lg" dir="ltr" required />
+              <input type="text" maxlength="1" class="otp-input w-12 h-14 text-center text-xl border rounded-lg" dir="ltr" required />
+              <input type="text" maxlength="1" class="otp-input w-12 h-14 text-center text-xl border rounded-lg" dir="ltr" required />
+              <input type="text" maxlength="1" class="otp-input w-12 h-14 text-center text-xl border rounded-lg" dir="ltr" required />
+              <input type="text" maxlength="1" class="otp-input w-12 h-14 text-center text-xl border rounded-lg" dir="ltr" required />
+            </div>
+            <div id="register-resend-timer" class="text-sm text-gray-500 mb-3">ارسال مجدد کد تا <span>۰۲:۰۰</span></div>
+          </div>
+          <button type="submit" class="w-full bg-pink-500 hover:bg-pink-600 text-white py-3 rounded-lg font-medium transition-colors">
+            تایید و ورود
+          </button>
+          <button type="button" id="register-back-btn" class="w-full bg-white text-pink-500 py-3 rounded-lg font-medium border border-pink-500 hover:bg-pink-50 transition-colors">
+            بازگشت
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Forgot Password Form -->
+    <div id="forgot-content" class="tab-content p-6">
+      <div id="forgot-step-1" class="form-step active">
+        <h2 class="text-xl font-bold text-gray-800 mb-5 text-center">بازیابی رمز عبور</h2>
+        <form id="forgot-form" class="space-y-5">
+          <div>
+            <label class="block text-gray-700 mb-2" for="forgot-phone">شماره موبایل</label>
+            <input type="tel" id="forgot-phone" class="w-full px-4 py-3 rounded-lg border" placeholder="09xxxxxxxxx" required />
+          </div>
+          <button type="submit" class="w-full bg-pink-500 hover:bg-pink-600 text-white py-3 rounded-lg font-medium transition-colors">
+            ارسال کد تایید
+          </button>
+        </form>
+      </div>
+
+      <div id="forgot-step-2" class="form-step">
+        <h2 class="text-xl font-bold text-gray-800 mb-2 text-center">تایید کد</h2>
+        <p class="text-gray-600 text-center mb-5">
+          کد تایید به شماره <span id="forgot-phone-display" class="font-bold"></span> ارسال شد
+        </p>
+        <form id="forgot-verification-form" class="space-y-5">
+          <div class="text-center">
+            <label class="block text-gray-700 mb-4 text-center">کد تایید را وارد کنید</label>
+            <div class="flex justify-center gap-2 mb-3">
+              <input type="text" maxlength="1" class="otp-input w-12 h-14 text-center text-xl border rounded-lg" dir="ltr" required />
+              <input type="text" maxlength="1" class="otp-input w-12 h-14 text-center text-xl border rounded-lg" dir="ltr" required />
+              <input type="text" maxlength="1" class="otp-input w-12 h-14 text-center text-xl border rounded-lg" dir="ltr" required />
+              <input type="text" maxlength="1" class="otp-input w-12 h-14 text-center text-xl border rounded-lg" dir="ltr" required />
+              <input type="text" maxlength="1" class="otp-input w-12 h-14 text-center text-xl border rounded-lg" dir="ltr" required />
+            </div>
+            <div id="forgot-resend-timer" class="text-sm text-gray-500 mb-3">ارسال مجدد کد تا <span>۰۲:۰۰</span></div>
+          </div>
+          <button type="submit" class="w-full bg-pink-500 hover:bg-pink-600 text-white py-3 rounded-lg font-medium transition-colors">
+            تایید
+          </button>
+          <button type="button" id="forgot-back-btn" class="w-full bg-white text-pink-500 py-3 rounded-lg font-medium border border-pink-500 hover:bg-pink-50 transition-colors">
+            بازگشت
+          </button>
+        </form>
+      </div>
+
+      <div id="forgot-step-3" class="form-step">
+        <h2 class="text-xl font-bold text-gray-800 mb-5 text-center">تعیین رمز عبور جدید</h2>
+        <form id="new-password-form" class="space-y-5">
+          <div>
+            <label class="block text-gray-700 mb-2" for="new-password">رمز عبور جدید</label>
+            <input type="password" id="new-password" class="w-full px-4 py-3 rounded-lg border" placeholder="حداقل 6 کاراکتر" required />
+          </div>
+          <div>
+            <label class="block text-gray-700 mb-2" for="confirm-new-password">تکرار رمز عبور جدید</label>
+            <input type="password" id="confirm-new-password" class="w-full px-4 py-3 rounded-lg border" placeholder="تکرار رمز عبور جدید" required />
+          </div>
+          <button type="submit" class="w-full bg-pink-500 hover:bg-pink-600 text-white py-3 rounded-lg font-medium transition-colors">
+            ذخیره و ورود
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .tab-content {
+    display: none;
+  }
+  .tab-content.active {
+    display: block;
+  }
+  .form-step {
+    display: none;
+  }
+  .form-step.active {
+    display: block;
+  }
+  .otp-input {
+    width: 3rem;
+    height: 3.5rem;
+    font-size: 1.5rem;
+    text-align: center;
+    border: 1px solid #d1d5db;
+    border-radius: 0.5rem;
+  }
+  .modal-content {
+    animation: modalFadeIn 0.3s ease-out;
+  }
+  @keyframes modalFadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+</style>
+
+<script>
+// توابع مدیریت پاپ‌آپ و احراز هویت
+document.addEventListener('DOMContentLoaded', function() {
+  const authPopup = document.getElementById('auth-popup');
+  const authButton = document.getElementById('user-auth-button');
+  
+  // Tab Switching
+  const tabs = {
+    login: document.getElementById('login-tab'),
+    register: document.getElementById('register-tab'),
+    forgot: document.getElementById('forgot-tab')
+  };
+  
+  const contents = {
+    login: document.getElementById('login-content'),
+    register: document.getElementById('register-content'),
+    forgot: document.getElementById('forgot-content')
+  };
+  
+  function switchTab(activeTab) {
+    Object.values(tabs).forEach(tab => {
+      tab.classList.remove('border-pink-500', 'text-pink-500');
+      tab.classList.add('text-gray-500');
+    });
+    Object.values(contents).forEach(content => {
+      content.classList.remove('active');
+    });
+    tabs[activeTab].classList.add('border-pink-500', 'text-pink-500');
+    tabs[activeTab].classList.remove('text-gray-500');
+    contents[activeTab].classList.add('active');
+  }
+  
+  if (tabs.login) tabs.login.addEventListener('click', () => switchTab('login'));
+  if (tabs.register) tabs.register.addEventListener('click', () => switchTab('register'));
+  if (tabs.forgot) tabs.forgot.addEventListener('click', () => switchTab('forgot'));
+  
+  // باز کردن پاپ‌آپ
+  if (authButton && authPopup) {
+    authButton.addEventListener('click', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      authPopup.classList.remove('hidden');
+      switchTab('login');
+    });
+    
+    authPopup.addEventListener('click', function(e) {
+      if (e.target === authPopup) {
+        authPopup.classList.add('hidden');
+      }
+    });
+  }
+  
+  // OTP inputs setup
+  function setupOtpInputs(containerSelector) {
+    const inputs = Array.from(document.querySelectorAll(`${containerSelector} .otp-input`));
+    if (inputs.length === 0) return;
+    
+    inputs[inputs.length - 1].focus();
+    inputs.forEach((input, index) => {
+      input.addEventListener('input', function() {
+        if (this.value.length === 1 && index > 0) {
+          inputs[index - 1].focus();
+        }
+      });
+      input.addEventListener('keydown', function(e) {
+        if (e.key === 'Backspace' && this.value.length === 0 && index < inputs.length - 1) {
+          inputs[index + 1].focus();
+        }
+      });
+    });
+  }
+  
+  setupOtpInputs('#register-step-2');
+  setupOtpInputs('#forgot-step-2');
+  
+  // Register form
+  const registerForm = document.getElementById('register-form');
+  const registerStep1 = document.getElementById('register-step-1');
+  const registerStep2 = document.getElementById('register-step-2');
+  const registerPhoneDisplay = document.getElementById('register-phone-display');
+  
+  if (registerForm) {
+    registerForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      const phone = document.getElementById('register-phone').value;
+      registerPhoneDisplay.textContent = phone;
+      registerStep1.classList.remove('active');
+      registerStep2.classList.add('active');
+      
+      fetch('/api/mobile/sendOtp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ mobile: phone })
+      });
+    });
+  }
+  
+  const registerBackBtn = document.getElementById('register-back-btn');
+  if (registerBackBtn) {
+    registerBackBtn.addEventListener('click', function() {
+      registerStep2.classList.remove('active');
+      registerStep1.classList.add('active');
+    });
+  }
+  
+  // Login form
+  const loginForm = document.getElementById('login-form');
+  if (loginForm) {
+    loginForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      const formData = new FormData(loginForm);
+      fetch('/api/authentication/signIn', {
+        method: 'POST',
+        body: formData
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          showNotification(data.message, 'success');
+          setTimeout(() => location.reload(), 1500);
+          authPopup.classList.add('hidden');
+        } else {
+          showNotification(data.message, 'error');
+        }
+      });
+    });
+  }
+});
+</script>
+<br><br><br>
 
     <!-- Main Content -->
-    <main class="max-w-7xl mx-auto px-6 py-10">
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
-        <!-- Product Images (Right Side) -->
-        <div class="order-1 lg:order-2">
-          <!-- Main Image -->
-          <div class="mb-8">
-            <div
-              class="section-card bg-white rounded-3xl p-8 shadow-xl border border-gray-100"
-            >
-              <img
-                id="main-image"
-                src="<%= product.images[0].url %>"
-                alt="<%= product.name %>"
-                class="main-image w-full h-80 lg:h-96 object-contain rounded-2xl"
-              />
-            </div>
-          </div>
+<main class="max-w-7xl mx-auto px-6 py-10">
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+<!-- Product Images (Right Side) -->
+<div class="order-1 lg:order-2">
+  <!-- Main Image با قابلیت کلیک برای باز شدن پاپ‌آپ -->
+  <div class="mb-8">
+    <div style="margin-top: 64px" class="section-card bg-white rounded-3xl p-8 shadow-xl border border-gray-100">
+      <img
+        id="main-image"
+        src="<%= product.images[0].url %>"
+        alt="<%= product.name %>"
+        class="main-image w-full h-80 lg:h-96 object-contain rounded-2xl cursor-pointer"
+        onclick="openGallery(0)"
+      />
+    </div>
+  </div>
 
-          <!-- Thumbnail Gallery -->
-          <div
-            class="flex space-x-4 space-x-reverse overflow-x-auto pb-4 pt-1 ps-1"
-          >
-            <% for (let image of product.images) {%>
-            <div
-              class="thumbnail active bg-white rounded-2xl p-4 shadow-xl border-2 border-transparent flex-shrink-0"
-            >
-              <img
-                src="<%= image.url %>"
-                alt="<%= product.name %>"
-                class="w-16 h-16 object-contain rounded-xl"
-              />
-            </div>
-            <% } %>
-          </div>
-        </div>
+  <!-- Thumbnail Gallery -->
+  <div class="flex space-x-4 space-x-reverse overflow-x-auto pb-4 pt-1 ps-1">
+    <% for (let i = 0; i < product.images.length; i++) { %>
+    <div class="thumbnail bg-white rounded-2xl p-4 shadow-xl border-2 border-transparent flex-shrink-0" onclick="openGallery(<%= i %>)">
+      <img
+        src="<%= product.images[i].url %>"
+        alt="<%= product.name %>"
+        class="w-16 h-16 object-contain rounded-xl cursor-pointer"
+      />
+    </div>
+    <% } %>
+  </div>
+  <!-- Product Description - توضیحات محصول -->
+ 
+</div>
 
+<!-- پاپ‌آپ گالری مخفی -->
+<!-- پاپ‌آپ گالری جدید -->
+<div id="gallery-popup" class="gallery-popup-container">
+  <div class="gallery-popup-content">
+    <div class="gallery-popup-close" onclick="closeGallery()">✕</div>
+    <div class="gallery-popup-prev" onclick="prevImage()">❯</div>
+    <div class="gallery-popup-next" onclick="nextImage()">❮</div>
+    
+    <img id="gallery-image" class="gallery-popup-image" src="" alt="">
+    
+    <div class="gallery-popup-counter">
+      <span id="gallery-counter"></span>
+    </div>
+    
+    <div id="gallery-thumbnails" class="gallery-popup-thumbnails">
+      <!-- thumbnails به صورت داینامیک ساخته می‌شوند -->
+    </div>
+  </div>
+</div>
         <!-- Product Details (Left Side) -->
-        <div class="order-2 lg:order-1 space-y-8">
-          <!-- Product Title & Price -->
-          <div
+<!-- Product Details (Left Side) -->
+<div class="order-2 lg:order-1 space-y-8">
+  
+  <!-- Color Selector & Volume & Add to Cart (بخش خرید) -->
+  <div class="bg-white rounded-2xl p-4 shadow-md border border-gray-100 space-y-5">
+              <div
             class="section-card bg-white rounded-3xl p-8 shadow-xl border border-gray-100"
           >
             <h1 class="text-3xl font-bold text-gray-900 mb-4">
@@ -564,332 +1414,523 @@
               >
             </div>
           </div>
-
-          <!-- Color Selector -->
-          <div
-            class="section-card bg-white rounded-3xl p-8 shadow-xl border border-gray-100"
-          >
-            <h3 class="text-xl font-semibold text-gray-900 mb-6">
-              انتخاب رنگ:
-            </h3>
-            <div class="grid grid-cols-4 gap-6 mb-6">
-              <% product.colors.forEach((color, index) => { %>
-              <div class="text-center">
-                <div
-                  style="background-color: <%= color.rgb %>"
-                  class="color-swatch w-14 h-14 rounded-full mx-auto mb-3 shadow-lg border-2 border-white <%= index === 0 ? 'selected' : '' %>"
-                  data-color="<%= color.name %>"
-                ></div>
-                <span class="text-sm text-gray-600 font-medium"
-                  ><%= color.name %></span
-                >
-              </div>
-              <% }) %>
-            </div>
-            <p class="text-sm text-gray-600">
-              رنگ انتخابی:
-              <span id="selected-color" class="font-semibold text-pink-600"
-                ><%= product.colors[0].name %></span
-              >
-            </p>
-          </div>
-
-          <!-- Volume Selector -->
-          <div
-            class="section-card bg-white rounded-3xl p-8 shadow-xl border border-gray-100"
-          >
-            <h3 class="text-xl font-semibold text-gray-900 mb-6">
-              انتخاب حجم:
-            </h3>
-            <div class="grid grid-cols-3 gap-4 mb-6">
-              <% product.sizes.forEach((size, index) => { %>
-              <button
-                class="volume-option bg-gray-50 hover:bg-gray-100 px-5 py-4 rounded-2xl text-center font-medium border-2 border-transparent <%= (index === 0 || product.sizes.length === 1) ? 'selected bg-gradient-to-r from-pink-500 to-rose-500 text-white' : '' %>"
-                data-volume="<%= toPersianDigitsForSizes(size.size) %>"
-              >
-                <div class="text-lg font-bold">
-                  <%= toPersianDigitsForSizes(size.size) %>
-                </div>
-                <div
-                  class="volume-usage text-xs <%= (index === 0 || product.sizes.length === 1) ? 'text-white' : 'text-gray-500' %> mt-1"
-                >
-                  <%= size.usage %>
-                </div>
-              </button>
-              <% }) %>
-            </div>
-            <p class="text-sm text-gray-600">
-              حجم انتخابی:
-              <span id="selected-volume" class="font-semibold text-pink-600"
-                ><%= toPersianDigitsForSizes(product.sizes[0].size) %></span
-              >
-            </p>
-          </div>
-
-          <!-- Key Features -->
-          <div
-            class="section-card bg-white rounded-3xl p-8 shadow-xl border border-gray-100"
-          >
-            <h3 class="text-xl font-semibold text-gray-900 mb-6">
-              ویژگی‌های کلیدی:
-            </h3>
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
-              <div
-                class="feature-card bg-gradient-to-r from-pink-50 to-rose-50 p-5 rounded-2xl border border-pink-100"
-              >
-                <div class="flex items-center space-x-4 space-x-reverse">
-                  <div
-                    class="w-12 h-12 bg-pink-100 rounded-2xl flex items-center justify-center"
-                  >
-                    <svg
-                      class="w-6 h-6 text-pink-600"
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
-                    >
-                      <path
-                        d="M10 2L3 7v11a1 1 0 001 1h3a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1h3a1 1 0 001-1V7l-7-5z"
-                      />
-                    </svg>
-                  </div>
-                  <div>
-                    <h4 class="font-semibold text-gray-800 text-lg">
-                      ماندگاری بالا
-                    </h4>
-                    <p class="text-sm text-gray-600">تا ۱۲ ساعت</p>
-                  </div>
-                </div>
-              </div>
-              <div
-                class="feature-card bg-gradient-to-r from-green-50 to-emerald-50 p-5 rounded-2xl border border-green-100"
-              >
-                <div class="flex items-center space-x-4 space-x-reverse">
-                  <div
-                    class="w-12 h-12 bg-green-100 rounded-2xl flex items-center justify-center"
-                  >
-                    <svg
-                      class="w-6 h-6 text-green-600"
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
-                    >
-                      <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                  </div>
-                  <div>
-                    <h4 class="font-semibold text-gray-800 text-lg">
-                      فینیش مات
-                    </h4>
-                    <p class="text-sm text-gray-600">بدون براق شدن</p>
-                  </div>
-                </div>
-              </div>
-              <div
-                class="feature-card bg-gradient-to-r from-purple-50 to-violet-50 p-5 rounded-2xl border border-purple-100"
-              >
-                <div class="flex items-center space-x-4 space-x-reverse">
-                  <div
-                    class="w-12 h-12 bg-purple-100 rounded-2xl flex items-center justify-center"
-                  >
-                    <svg
-                      class="w-6 h-6 text-purple-600"
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
-                    >
-                      <path
-                        d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z"
-                      />
-                    </svg>
-                  </div>
-                  <div>
-                    <h4 class="font-semibold text-gray-800 text-lg">
-                      وگان فرندلی
-                    </h4>
-                    <p class="text-sm text-gray-600">بدون مواد حیوانی</p>
-                  </div>
-                </div>
-              </div>
-              <div
-                class="feature-card bg-gradient-to-r from-blue-50 to-cyan-50 p-5 rounded-2xl border border-blue-100"
-              >
-                <div class="flex items-center space-x-4 space-x-reverse">
-                  <div
-                    class="w-12 h-12 bg-blue-100 rounded-2xl flex items-center justify-center"
-                  >
-                    <svg
-                      class="w-6 h-6 text-blue-600"
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
-                    >
-                      <path
-                        d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3z"
-                      />
-                    </svg>
-                  </div>
-                  <div>
-                    <h4 class="font-semibold text-gray-800 text-lg">
-                      مرطوب کننده
-                    </h4>
-                    <p class="text-sm text-gray-600">حاوی ویتامین E</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Add to Cart Button -->
-          <div
-            class="section-card bg-white rounded-3xl p-8 shadow-xl border border-gray-100"
-          >
-            <button
-              onclick="addToCart('<%= product.name %>', '<%= product._id %>')"
-              id="add-to-cart"
-              class="w-full bg-gradient-to-r from-pink-500 to-rose-500 text-white py-5 px-8 rounded-2xl font-semibold text-lg hover:from-pink-600 hover:to-rose-600 transition duration-300 shadow-lg hover:shadow-2xl transform hover:scale-105"
-            >
-              افزودن به سبد خرید
-            </button>
-          </div>
-
-          <!-- Product Description -->
-          <div
-            class="section-card bg-white rounded-3xl p-8 shadow-xl border border-gray-100"
-          >
-            <h3 class="text-xl font-semibold text-gray-900 mb-6">
-              توضیحات محصول
-            </h3>
-            <div class="prose prose-gray max-w-none">
-              <div class="text-gray-700 leading-relaxed mb-5 text-base">
-                <%- product.description %>
-              </div>
-            </div>
-          </div>
+    <!-- رنگ -->
+    <div>
+      <h3 class="text-base font-semibold text-gray-900 mb-3">انتخاب رنگ:</h3>
+      <div class="grid grid-cols-4 gap-3 mb-2">
+        <% product.colors.forEach((color, index) => { %>
+        <div class="text-center">
+          <div style="background-color: <%= color.rgb %>" 
+               class="color-swatch w-10 h-10 rounded-full mx-auto mb-1 shadow border-2 border-white <%= index === 0 ? 'selected ring-2 ring-pink-400' : '' %>" 
+               data-color="<%= color.name %>"></div>
+          <span class="text-xs text-gray-600"><%= color.name %></span>
         </div>
+        <% }) %>
       </div>
+      <p class="text-xs text-gray-600">رنگ انتخابی: <span id="selected-color" class="font-semibold text-pink-600"><%= product.colors[0].name %></span></p>
+    </div>
+
+    <!-- حجم -->
+    <div>
+      <h3 class="text-base font-semibold text-gray-900 mb-3">انتخاب حجم:</h3>
+      <div class="grid grid-cols-3 gap-2 mb-2">
+        <% product.sizes.forEach((size, index) => { %>
+        <button class="volume-option bg-gray-50 hover:bg-gray-100 py-2 rounded-xl text-center font-medium border border-gray-200 <%= (index === 0 || product.sizes.length === 1) ? 'selected bg-gradient-to-r from-pink-500 to-rose-500 text-white border-transparent' : '' %>" 
+                data-volume="<%= toPersianDigitsForSizes(size.size) %>">
+          <div class="text-base font-bold"><%= toPersianDigitsForSizes(size.size) %></div>
+          <div class="volume-usage text-xs <%= (index === 0 || product.sizes.length === 1) ? 'text-white/90' : 'text-gray-500' %>"><%= size.usage %></div>
+        </button>
+        <% }) %>
+      </div>
+      <p class="text-xs text-gray-600">حجم انتخابی: <span id="selected-volume" class="font-semibold text-pink-600"><%= toPersianDigitsForSizes(product.sizes[0].size) %></span></p>
+    </div>
+
+    <!-- دکمه افزودن به سبد خرید -->
+    <button onclick="addToCart('<%= product.name %>', '<%= product._id %>')" 
+            id="add-to-cart" 
+            class="w-full bg-gradient-to-r from-pink-500 to-rose-500 text-white py-3 rounded-xl font-semibold text-sm hover:from-pink-600 hover:to-rose-600 transition duration-300 shadow hover:shadow-md active:scale-[0.98]">
+      افزودن به سبد خرید
+    </button>
+  </div>
+
+  <!-- Product Description - توضیحات محصول (انتقال به پایین بخش خرید) -->
+<!-- Product Description - توضیحات محصول (انتقال به پایین بخش خرید) -->
+
+
     </main>
-    <footer class="bg-gray-900 text-white py-12">
-      <div class="container mx-auto px-4">
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
-          <div>
-            <div class="flex items-center space-x-reverse space-x-3 mb-4">
-              <div
-                class="w-10 h-10 bg-gradient-to-r from-purple-600 to-blue-600 rounded-lg flex items-center justify-center"
-              >
-                <svg
-                  class="w-6 h-6 text-white"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                >
-                  <path
-                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                  ></path>
-                </svg>
-              </div>
-              <h3 class="text-xl font-bold">وبلاگ مدرن</h3>
-            </div>
-            <p class="text-gray-400 text-sm leading-relaxed">
-              مرجع آموزش تکنولوژی، طراحی وب و برنامه‌نویسی در ایران
-            </p>
-            <p class="text-gray-400 text-sm leading-relaxed mt-2">
-              شماره تلفن: ۰۹۰۵۴۲۴۳۴۶۴
-            </p>
-          </div>
-          <div>
-            <h4 class="font-bold mb-4">دسته‌بندی‌ها</h4>
-            <ul class="space-y-2 text-sm text-gray-400">
-              <li>
-                <a href="#" class="hover:text-white transition-colors"
-                  >طراحی وب</a
-                >
-              </li>
-              <li>
-                <a href="#" class="hover:text-white transition-colors"
-                  >برنامه‌نویسی</a
-                >
-              </li>
-              <li>
-                <a href="#" class="hover:text-white transition-colors">UI/UX</a>
-              </li>
-              <li>
-                <a href="#" class="hover:text-white transition-colors"
-                  >هوش مصنوعی</a
-                >
-              </li>
-            </ul>
-          </div>
-          <div>
-            <h4 class="font-bold mb-4">لینک‌های مفید</h4>
-            <ul class="space-y-2 text-sm text-gray-400">
-              <li>
-                <a href="#" class="hover:text-white transition-colors"
-                  >درباره ما</a
-                >
-              </li>
-              <li>
-                <a href="#" class="hover:text-white transition-colors"
-                  >تماس با ما</a
-                >
-              </li>
-              <li>
-                <a href="#" class="hover:text-white transition-colors"
-                  >حریم خصوصی</a
-                >
-              </li>
-              <li>
-                <a href="#" class="hover:text-white transition-colors"
-                  >شرایط استفاده</a
-                >
-              </li>
-            </ul>
-          </div>
-          <div>
-            <h4 class="font-bold mb-4">شبکه‌های اجتماعی</h4>
-            <div class="flex space-x-reverse space-x-4">
-              <a
-                href="#"
-                class="w-10 h-10 bg-gray-800 rounded-lg flex items-center justify-center hover:bg-gray-700 transition-colors"
-              >
-                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                  <path
-                    d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z"
-                  />
-                </svg>
-              </a>
-              <a
-                href="#"
-                class="w-10 h-10 bg-gray-800 rounded-lg flex items-center justify-center hover:bg-gray-700 transition-colors"
-              >
-                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                  <path
-                    d="M22.46 6c-.77.35-1.6.58-2.46.69.88-.53 1.56-1.37 1.88-2.38-.83.5-1.75.85-2.72 1.05C18.37 4.5 17.26 4 16 4c-2.35 0-4.27 1.92-4.27 4.29 0 .34.04.67.11.98C8.28 9.09 5.11 7.38 3 4.79c-.37.63-.58 1.37-.58 2.15 0 1.49.75 2.81 1.91 3.56-.71 0-1.37-.2-1.95-.5v.03c0 2.08 1.48 3.82 3.44 4.21a4.22 4.22 0 0 1-1.93.07 4.28 4.28 0 0 0 4 2.98 8.521 8.521 0 0 1-5.33 1.84c-.34 0-.68-.02-1.02-.06C3.44 20.29 5.7 21 8.12 21 16 21 20.33 14.46 20.33 8.79c0-.19 0-.37-.01-.56.84-.6 1.56-1.36 2.14-2.23z"
-                  />
-                </svg>
-              </a>
-              <a
-                href="#"
-                class="w-10 h-10 bg-gray-800 rounded-lg flex items-center justify-center hover:bg-gray-700 transition-colors"
-              >
-                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                  <path
-                    d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"
-                  />
-                </svg>
-              </a>
-            </div>
-          </div>
-        </div>
-        <div
-          class="border-t border-gray-800 mt-8 pt-8 text-center text-sm text-gray-400"
-        >
-          <p>&amp;copy; ۱۴۰۳ وبلاگ مدرن. تمامی حقوق محفوظ است.</p>
+    <div style="
+    margin: 20px;" class="section-card bg-white rounded-3xl p-8 shadow-xl border border-gray-100">
+  <h3 class="text-xl font-semibold text-gray-900 mb-6">توضیحات محصول</h3>
+  <div class="prose prose-gray max-w-none">
+    <div class="text-gray-700 leading-relaxed mb-5 text-base">
+      <%- product.description %>
+    </div>
+  </div>
+</div>  
+    <!-- بخش نظرات محصول -->
+<!-- بخش نظرات محصول -->
+<!-- بخش نظرات محصول -->
+<div class="section-card bg-white rounded-3xl p-8 shadow-xl border border-gray-100 mt-8">
+  <div class="flex items-center justify-between border-b border-gray-200 pb-4 mb-6">
+    <h3 class="text-xl font-semibold text-gray-900">نظرات کاربران</h3>
+    <div class="flex items-center gap-2 text-sm text-gray-500">
+      <i class="fas fa-star text-yellow-400"></i>
+      <span id="average-rating-display">۰</span>
+      <span>از ۵</span>
+      <span class="mx-2">|</span>
+      <i class="far fa-comment"></i>
+      <span id="comments-count-display">۰</span>
+      <span>نظر</span>
+    </div>
+  </div>
+
+  <!-- فرم ثبت نظر -->
+  <div class="bg-gray-50 rounded-2xl p-6 mb-8">
+    <h4 class="font-semibold text-gray-800 mb-4 flex items-center gap-2">
+      <i class="far fa-edit text-pink-500"></i>
+      ثبت نظر جدید
+    </h4>
+    
+    <form id="comment-form" class="space-y-4">
+      <!-- امتیازدهی با ستاره -->
+      <div>
+        <label class="block text-gray-700 mb-2 text-sm">امتیاز شما به این محصول</label>
+        <div class="flex flex-row-reverse justify-end gap-1 rating-stars">
+          <input type="radio" name="rating" value="5" id="star5" class="hidden">
+          <label for="star5" class="cursor-pointer text-3xl text-gray-300 hover:text-yellow-400 transition-colors">★</label>
+          
+          <input type="radio" name="rating" value="4" id="star4" class="hidden">
+          <label for="star4" class="cursor-pointer text-3xl text-gray-300 hover:text-yellow-400 transition-colors">★</label>
+          
+          <input type="radio" name="rating" value="3" id="star3" class="hidden">
+          <label for="star3" class="cursor-pointer text-3xl text-gray-300 hover:text-yellow-400 transition-colors">★</label>
+          
+          <input type="radio" name="rating" value="2" id="star2" class="hidden">
+          <label for="star2" class="cursor-pointer text-3xl text-gray-300 hover:text-yellow-400 transition-colors">★</label>
+          
+          <input type="radio" name="rating" value="1" id="star1" class="hidden">
+          <label for="star1" class="cursor-pointer text-3xl text-gray-300 hover:text-yellow-400 transition-colors">★</label>
         </div>
       </div>
-    </footer>
+      
+      <!-- نام کاربر -->
+      <div>
+        <label for="comment-name" class="block text-gray-700 mb-2 text-sm">نام شما</label>
+        <input type="text" id="comment-name" placeholder="نام خود را وارد کنید" class="w-full px-4 py-2 rounded-xl border border-gray-200 focus:border-pink-400 focus:outline-none focus:ring-2 focus:ring-pink-200 transition">
+      </div>
+      
+      <!-- متن نظر -->
+      <div>
+        <label for="comment-text" class="block text-gray-700 mb-2 text-sm">متن نظر</label>
+        <textarea id="comment-text" rows="3" placeholder="نظر خود را بنویسید..." class="w-full px-4 py-2 rounded-xl border border-gray-200 focus:border-pink-400 focus:outline-none focus:ring-2 focus:ring-pink-200 transition resize-none"></textarea>
+      </div>
+      
+      <!-- دکمه ثبت -->
+      <button type="submit" class="bg-gradient-to-r from-pink-500 to-rose-500 text-white px-6 py-2 rounded-xl font-medium hover:from-pink-600 hover:to-rose-600 transition shadow-md hover:shadow-lg">
+        ثبت نظر
+      </button>
+    </form>
+  </div>
+
+  <!-- لیست نظرات -->
+  <div id="comments-list" class="space-y-4">
+    <div class="text-center text-gray-400 py-8" id="no-comments-message">
+      <i class="far fa-comment-dots text-4xl mb-2 block"></i>
+      <p>هنوز نظری ثبت نشده است. اولین نفری باشید که نظر می‌دهید!</p>
+    </div>
+  </div>
+  
+  <!-- دکمه بارگذاری بیشتر -->
+  <div class="text-center mt-6 hidden" id="load-more-container">
+    <button id="load-more-comments" class="text-pink-500 hover:text-pink-600 text-sm font-medium transition">
+      مشاهده نظرات بیشتر <i class="fas fa-chevron-down mr-1"></i>
+    </button>
+  </div>
+</div>
+<footer class="bg-gray-900 text-white py-12">
+  <div class="container mx-auto px-4">
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+      <!-- درباره فروشگاه -->
+      <div>
+        <div class="flex items-center space-x-reverse space-x-3 mb-4">
+          <div
+            class="w-10 h-10 bg-gradient-to-r from-pink-500 to-rose-500 rounded-lg flex items-center justify-center"
+          >
+            <svg
+              class="w-6 h-6 text-white"
+              fill="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+            </svg>
+          </div>
+          <h3 class="text-xl font-bold">کیدل | فروشگاه لباس کودک</h3>
+        </div>
+        <p class="text-gray-400 text-sm leading-relaxed">
+          فروشگاه تخصصی پوشاک کودک و نوزاد، با بهترین کیفیت و مناسب‌ترین قیمت
+        </p>
+        <p class="text-gray-400 text-sm leading-relaxed mt-3">
+          <i class="fas fa-phone ml-2"></i> تماس: 0905424346
+        </p>
+        <p class="text-gray-400 text-sm leading-relaxed mt-1">
+          <i class="fas fa-map-marker-alt ml-2"></i> گرگان خیابان پاسداران پاساژ وارکانا پلاک 51
+        </p>
+      </div>
+
+      <!-- دسته‌بندی محصولات -->
+      <div>
+        <h4 class="font-bold mb-4 text-pink-400">دسته‌بندی‌ها</h4>
+        <ul class="space-y-2 text-sm text-gray-400">
+          <li>
+            <a href="#" class="hover:text-pink-400 transition-colors">لباس نوزاد (۰-۲۴ ماه)</a>
+          </li>
+          <li>
+            <a href="#" class="hover:text-pink-400 transition-colors">لباس کودک (۲-۷ سال)</a>
+          </li>
+          <li>
+            <a href="#" class="hover:text-pink-400 transition-colors">لباس پسرانه</a>
+          </li>
+          <li>
+            <a href="#" class="hover:text-pink-400 transition-colors">لباس دخترانه</a>
+          </li>
+          <li>
+            <a href="#" class="hover:text-pink-400 transition-colors">ست و اکسسوری کودک</a>
+          </li>
+        </ul>
+      </div>
+
+      <!-- لینک‌های مفید -->
+      <div>
+        <h4 class="font-bold mb-4 text-pink-400">لینک‌های مفید</h4>
+        <ul class="space-y-2 text-sm text-gray-400">
+          <li>
+            <a href="#" class="hover:text-pink-400 transition-colors">درباره ما</a>
+          </li>
+          <li>
+            <a href="#" class="hover:text-pink-400 transition-colors">تماس با ما</a>
+          </li>
+          <li>
+            <a href="#" class="hover:text-pink-400 transition-colors">فروشگاه </a>
+          </li>
+        </ul>
+      </div>
+
+      <!-- شبکه‌های اجتماعی و نمادها -->
+      <div>
+        <h4 class="font-bold mb-4 text-pink-400">ما را دنبال کنید</h4>
+        <div class="flex space-x-reverse space-x-4 mb-6">
+          <a
+            href="#"
+            class="w-10 h-10 bg-gray-800 rounded-lg flex items-center justify-center hover:bg-pink-500 transition-colors"
+          >
+            <i class="fab fa-instagram text-xl"></i>
+          </a>
+          <a
+            href="#"
+            class="w-10 h-10 bg-gray-800 rounded-lg flex items-center justify-center hover:bg-pink-500 transition-colors"
+          >
+            <i class="fab fa-telegram text-xl"></i>
+          </a>
+          <a
+            href="#"
+            class="w-10 h-10 bg-gray-800 rounded-lg flex items-center justify-center hover:bg-pink-500 transition-colors"
+          >
+            <i class="fab fa-whatsapp text-xl"></i>
+          </a>
+        </div>
+        <div class="mt-4">
+          <p class="text-gray-400 text-sm mb-2">ایمیل:</p>
+          <p class="text-gray-400 text-sm">info@kidland.com</p>
+        </div>
+      </div>
+    </div>
+            <a referrerpolicy='origin' target='_blank' href='https://trustseal.enamad.ir/?id=731837&Code=jSMW53UKTzbJlysi5bIKHLWgBO1HddCW'><img referrerpolicy='origin' src='https://trustseal.enamad.ir/logo.aspx?id=731837&Code=jSMW53UKTzbJlysi5bIKHLWgBO1HddCW' alt='' style='cursor:pointer' code='jSMW53UKTzbJlysi5bIKHLWgBO1HddCW'></a>
+
+    <!-- کپی‌رایت و نمادهای اعتماد -->
+    <div class="border-t border-gray-800 mt-8 pt-8">
+      <div class="flex flex-col md:flex-row justify-between items-center gap-4">
+          
+        <div class="text-center text-sm text-gray-400">
+          <p>© 1406 فروشگاه کیدل. تمامی حقوق محفوظ است.</p>
+        </div>
+        <div class="flex space-x-reverse space-x-3">
+          <span class="text-xs text-gray-500">پشتیبانی ۲۴ ساعته</span>
+          <span class="text-xs text-gray-500">ارسال سریع</span>
+          <span class="text-xs text-gray-500">تضمین اصالت کالا</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
 
     <script>
+    // ==================== بخش نظرات محصول ====================
+const productIdForComments = '<%= product?._id %>';
+
+let allComments = [];
+let currentPage = 1;
+const commentsPerPage = 5;
+
+// تبدیل اعداد به فارسی
+function toPersianDigitsForComments(num) {
+  if (num === undefined || num === null) return '۰';
+  return num.toString().replace(/\d/g, d => '۰۱۲۳۴۵۶۷۸۹'[d]);
+}
+
+// تابع escape برای جلوگیری از XSS
+function escapeHtmlForComments(text) {
+  if (!text) return '';
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}
+
+// بارگذاری نظرات از سرور
+async function loadComments(page = 1) {
+  try {
+    const response = await fetch(`/api/comments/product/${productIdForComments}?page=${page}&limit=${commentsPerPage}`);
+    const data = await response.json();
+    
+    if (data.success) {
+      if (page === 1) {
+        allComments = data.comments;
+      } else {
+        allComments = [...allComments, ...data.comments];
+      }
+      
+      currentPage = page;
+      
+      // به‌روزرسانی نمایش امتیاز و تعداد نظرات
+      const commentsCountDisplay = document.getElementById('comments-count-display');
+      const averageRatingDisplay = document.getElementById('average-rating-display');
+      
+      if (commentsCountDisplay) {
+        commentsCountDisplay.textContent = toPersianDigitsForComments(data.totalComments);
+      }
+      
+      if (averageRatingDisplay) {
+        averageRatingDisplay.textContent = data.averageRating ? data.averageRating.toFixed(1) : '۰';
+      }
+      
+      // نمایش نظرات
+      renderComments(allComments);
+      
+      // مدیریت دکمه بارگذاری بیشتر
+      const loadMoreContainer = document.getElementById('load-more-container');
+      if (data.hasMore) {
+        loadMoreContainer.classList.remove('hidden');
+      } else {
+        loadMoreContainer.classList.add('hidden');
+      }
+    }
+  } catch (error) {
+    console.error('خطا در بارگذاری نظرات:', error);
+  }
+}
+
+// رندر کردن نظرات
+function renderComments(comments) {
+  const commentsList = document.getElementById('comments-list');
+  const noCommentsMessage = document.getElementById('no-comments-message');
+  
+  if (!commentsList) return;
+  
+  if (comments.length === 0) {
+    if (noCommentsMessage) noCommentsMessage.style.display = 'block';
+    commentsList.innerHTML = '';
+    if (noCommentsMessage) commentsList.appendChild(noCommentsMessage);
+    return;
+  }
+  
+  if (noCommentsMessage) noCommentsMessage.style.display = 'none';
+  
+  let commentsHtml = '';
+  
+  comments.forEach(comment => {
+    // ساخت ستاره‌های امتیاز
+    let starsHtml = '';
+    const rating = comment.rating || 0;
+    for (let i = 1; i <= 5; i++) {
+      if (i <= rating) {
+        starsHtml += '<i class="fas fa-star text-yellow-400 text-sm"></i>';
+      } else {
+        starsHtml += '<i class="far fa-star text-gray-300 text-sm"></i>';
+      }
+    }
+    
+    // تاریخ
+    const commentDate = new Date(comment.createdAt);
+    const persianDate = `${toPersianDigitsForComments(commentDate.getFullYear())}/${toPersianDigitsForComments(commentDate.getMonth() + 1)}/${toPersianDigitsForComments(commentDate.getDate())}`;
+    
+    commentsHtml += `
+      <div class="bg-white rounded-xl p-4 shadow-sm border border-gray-100 hover:shadow-md transition">
+        <div class="flex justify-between items-start mb-2">
+          <div class="flex items-center gap-2">
+            <div class="w-8 h-8 bg-gradient-to-r from-pink-400 to-rose-400 rounded-full flex items-center justify-center text-white text-sm font-bold">
+              ${comment.userName ? comment.userName.charAt(0).toUpperCase() : 'ک'}
+            </div>
+            <div>
+              <span class="font-semibold text-gray-800">${escapeHtmlForComments(comment.userName || 'کاربر مهمان')}</span>
+              <div class="flex items-center gap-1 mt-0.5">
+                ${starsHtml}
+              </div>
+            </div>
+          </div>
+          <span class="text-xs text-gray-400">${persianDate}</span>
+        </div>
+        <p class="text-gray-600 text-sm leading-relaxed pr-10 mr-1">${escapeHtmlForComments(comment.text)}</p>
+      </div>
+    `;
+  });
+  
+  commentsList.innerHTML = commentsHtml;
+}
+
+// ثبت نظر جدید
+async function submitComment(event) {
+  event.preventDefault();
+  
+  const ratingInput = document.querySelector('input[name="rating"]:checked');
+  const rating = ratingInput ? parseInt(ratingInput.value) : 0;
+  const userName = document.getElementById('comment-name')?.value.trim();
+  const commentText = document.getElementById('comment-text')?.value.trim();
+  
+  // اعتبارسنجی
+  if (rating === 0) {
+    showNotificationForComments('لطفاً به محصول امتیاز دهید', 'error');
+    return;
+  }
+  
+  if (!userName) {
+    showNotificationForComments('لطفاً نام خود را وارد کنید', 'error');
+    return;
+  }
+  
+  if (!commentText) {
+    showNotificationForComments('لطفاً متن نظر را وارد کنید', 'error');
+    return;
+  }
+  
+  if (commentText.length < 5) {
+    showNotificationForComments('متن نظر باید حداقل ۵ کاراکتر باشد', 'error');
+    return;
+  }
+  
+  try {
+    const response = await fetch('/api/comments/add', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        productId: productIdForComments,
+        userName: userName,
+        rating: rating,
+        text: commentText
+      })
+    });
+    
+    const data = await response.json();
+    
+    if (data.success) {
+      showNotificationForComments('نظر شما با موفقیت ثبت شد', 'success');
+      
+      document.getElementById('comment-form').reset();
+      document.querySelectorAll('.rating-stars label').forEach(label => {
+        label.classList.remove('text-yellow-400');
+        label.classList.add('text-gray-300');
+      });
+      
+      await loadComments(1);
+    } else {
+      showNotificationForComments(data.message || 'خطا در ثبت نظر', 'error');
+    }
+  } catch (error) {
+    console.error('خطا در ثبت نظر:', error);
+    showNotificationForComments('مشکلی در ارتباط با سرور به وجود آمده است', 'error');
+  }
+}
+
+// نوتیفیکیشن
+function showNotificationForComments(message, type = 'info') {
+  const notification = document.createElement('div');
+  notification.className = `fixed z-50 px-4 py-3 rounded-lg shadow-lg text-white text-sm sm:text-base ${
+    type === 'success' ? 'bg-green-500' :
+    type === 'error' ? 'bg-red-500' :
+    'bg-blue-500'
+  } top-4 left-1/2 -translate-x-1/2 sm:left-auto sm:translate-x-0 sm:top-6 sm:right-6 w-[calc(100%-2rem)] max-w-xs sm:max-w-sm`;
+  
+  notification.textContent = message;
+  document.body.appendChild(notification);
+  
+  notification.classList.add('transform', 'transition-all', 'duration-300', 'translate-y-2', 'opacity-0');
+  setTimeout(() => {
+    notification.classList.remove('translate-y-2', 'opacity-0');
+  }, 10);
+  
+  setTimeout(() => {
+    notification.classList.add('opacity-0', 'translate-y-2');
+    setTimeout(() => notification.remove(), 300);
+  }, 2000);
+}
+
+// راه‌اندازی ستاره‌های ریتینگ
+function setupRatingStars() {
+  const starsContainer = document.querySelector('.rating-stars');
+  if (!starsContainer) return;
+  
+  const stars = starsContainer.querySelectorAll('label');
+  
+  stars.forEach((star, index) => {
+    star.addEventListener('click', () => {
+      stars.forEach(s => {
+        s.classList.remove('text-yellow-400');
+        s.classList.add('text-gray-300');
+      });
+      for (let i = stars.length - 1; i >= index; i--) {
+        stars[i].classList.remove('text-gray-300');
+        stars[i].classList.add('text-yellow-400');
+      }
+    });
+  });
+}
+
+// مقداردهی اولیه
+function initCommentsSection() {
+  if (!productIdForComments || productIdForComments === 'undefined') {
+    console.warn('productId برای بخش نظرات موجود نیست');
+    return;
+  }
+  
+  setupRatingStars();
+  loadComments(1);
+  
+  const commentForm = document.getElementById('comment-form');
+  if (commentForm) {
+    commentForm.addEventListener('submit', submitComment);
+  }
+  
+  const loadMoreBtn = document.getElementById('load-more-comments');
+  if (loadMoreBtn) {
+    loadMoreBtn.addEventListener('click', () => {
+      loadComments(currentPage + 1);
+    });
+  }
+}
+
+// اجرا بعد از بارگذاری صفحه
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initCommentsSection);
+} else {
+  initCommentsSection();
+}
       document.addEventListener('DOMContentLoaded', function() {
           // Image gallery functionality
           const thumbnails = document.querySelectorAll('.thumbnail');
           const mainImage = document.getElementById('main-image');
 
-          const productImages = <%- JSON.stringify(product.images) %>;
+          const productImages = <%- JSON.stringify(product.images.map(img => img.url)) %>;
+          console.log(productImages)
 
           thumbnails.forEach((thumb, index) => {
               thumb.addEventListener('click', () => {
@@ -996,7 +2037,6 @@
           })
           .catch((err) => {
               console.error("Error:", err);
-              console.log(err)
               showNotification('مشکلی در ارتباط با سرور به وجود آمده است', 'error');
           });
       }
@@ -1032,6 +2072,106 @@
               setTimeout(() => notification.remove(), 300);
           }, 2000);
       }
+      
     </script>
+    <script>
+document.addEventListener('DOMContentLoaded', function() {
+  if (document.getElementById('product-gallery')) {
+    lightGallery(document.getElementById('product-gallery'), {
+      selector: '.gallery-item',
+      thumbnail: true,
+      download: false,
+      counter: true,
+      zoom: true,
+      speed: 500,
+      actualSize: false
+    });
+  }
+});
+// گالری تصاویر
+// گالری تصاویر پیشرفته
+let currentImageIndex = 0;
+let galleryImages = <%- JSON.stringify(product.images.map(img => img.url)) %>;
+console.log(galleryImages[0])
+
+function openGallery(index) {
+  currentImageIndex = index;
+  const mainImage = document.getElementById('main-image');
+  mainImage.src = galleryImages[currentImageIndex];
+  
+  // آپدیت کردن کلاس active تامبنیل‌ها
+  const thumbnails = document.querySelectorAll('.thumbnail');
+  thumbnails.forEach((thumb, i) => {
+    if (i === currentImageIndex) {
+      thumb.classList.add('active');
+    } else {
+      thumb.classList.remove('active');
+    }
+  });
+    openGalleryPopup(currentImageIndex);
+}
+  
+  // نمایش پاپ‌آپ با انیمیشن
+  popup.style.display = 'flex';
+  popup.classList.add('active');
+  document.body.style.overflow = 'hidden';
+  
+  // اضافه کردن event listener برای کلیدهای کیبورد
+  document.addEventListener('keydown', handleGalleryKeydown);
+}
+
+function closeGallery() {
+  const popup = document.getElementById('gallery-popup');
+  popup.classList.remove('active');
+  popup.style.display = 'none';
+  document.body.style.overflow = 'auto';
+  document.removeEventListener('keydown', handleGalleryKeydown);
+}
+
+function nextImage() {
+  currentImageIndex = (currentImageIndex + 1) % galleryImages.length;
+  updateGalleryImage();
+}
+
+function prevImage() {
+  currentImageIndex = (currentImageIndex - 1 + galleryImages.length) % galleryImages.length;
+  updateGalleryImage();
+}
+
+function updateGalleryImage() {
+  const galleryImage = document.getElementById('gallery-image');
+  const galleryCounter = document.getElementById('gallery-counter');
+  const thumbnails = document.querySelectorAll('#gallery-thumbnails img');
+  
+  galleryImage.src = galleryImages[currentImageIndex];
+  galleryCounter.textContent = `${toPersianDigits(currentImageIndex + 1)} از ${toPersianDigits(galleryImages.length)}`;
+  
+  // آپدیت active thumbnail
+  thumbnails.forEach((thumb, i) => {
+    if (i === currentImageIndex) {
+      thumb.classList.add('active');
+    } else {
+      thumb.classList.remove('active');
+    }
+  });
+}
+
+function handleGalleryKeydown(e) {
+  if (e.key === 'Escape') {
+    closeGallery();
+  } else if (e.key === 'ArrowRight') {
+    nextImage();
+  } else if (e.key === 'ArrowLeft') {
+    prevImage();
+  }
+}
+
+// تابع toPersianDigits
+function toPersianDigits(str) {
+  if (!str) return '';
+  const num = str.toString();
+  return num.replace(/\d/g, d => '۰۱۲۳۴۵۶۷۸۹'[d]);
+}
+</script>
   </body>
 </html>

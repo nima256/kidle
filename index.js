@@ -7,11 +7,8 @@ const rateLimit = require("express-rate-limit");
 const helmet = require("helmet");
 const flash = require("connect-flash");
 const fs = require("fs");
-const MongoStore = require("connect-mongo");
 const { SitemapStream, streamToPromise } = require("sitemap");
 const { createGzip } = require("zlib");
-const ZarinPal = require("zarinpal-checkout");
-const zarinpal = ZarinPal.create("ZP.1722858", false);
 
 require("dotenv").config();
 
@@ -211,6 +208,9 @@ app.get("/", async (req, res) => {
   const isFeaturedProducts = await Product.find({ isFeatured: true })
     .sort({ createdAt: -1 })
     .limit(6);
+    const isNewProduct = await Product.find({ isNewProduct: true })
+    .sort({ createdAt: -1 })
+    .limit(4);
   const weblogs = await Weblog.find({}).sort({ createdAt: -1 }).limit(4);
   const user = await User.findById(req.session.userId);
 
@@ -233,6 +233,7 @@ app.get("/", async (req, res) => {
     user,
     cartCount,
     isFeaturedProducts,
+    isNewProduct,
   });
 });
 
@@ -267,6 +268,7 @@ app.get(
         };
       })
     );
+    
 
     res.render("Shop", {
       products,

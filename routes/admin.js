@@ -774,4 +774,145 @@ router.put("/orders/edit/:id", async (req, res) => {
   }
 });
 
+// Duplicate product route
+router.post("/products/duplicate/:id", async (req, res) => {
+  try {
+    const productId = req.params.id;
+    
+    if (!mongoose.Types.ObjectId.isValid(productId)) {
+      return res.status(400).json({
+        success: false,
+        message: "شناسه محصول نامعتبر است",
+      });
+    }
+    
+    // پیدا کردن محصول اصلی
+    const originalProduct = await Product.findById(productId)
+      .populate("category")
+      .populate("brand");
+    
+    if (!originalProduct) {
+      return res.status(404).json({
+        success: false,
+        message: "محصول یافت نشد",
+      });
+    }
+    
+    // آماده‌سازی داده‌های محصول جدید
+    const duplicateData = originalProduct.toObject();
+    
+    // حذف فیلدهایی که نباید کپی شوند
+    delete duplicateData._id;
+    delete duplicateData.__v;
+    delete duplicateData.createdAt;
+    delete duplicateData.updatedAt;
+    delete duplicateData.slug; // اسلاگ جدید در pre-hook ساخته می‌شود
+    
+    // تغییر نام محصول
+    duplicateData.name = `${originalProduct.name} (کپی)`;
+    
+    // تنظیم تاریخ‌های جدید
+    duplicateData.createTarikh = getPersianDate();
+    duplicateData.updateTarikh = getPersianDate();
+    
+    // بازنشانی آمارها
+    duplicateData.rating = 0;
+    duplicateData.reviewsNum = 0;
+    duplicateData.isNewProduct = true;
+    duplicateData.isFeatured = false;
+    duplicateData.isPopular = false;
+    
+    if (duplicateData.weight) {
+      // اگر weight از نوع string بود و شامل "گرم" بود
+      if (typeof duplicateData.weight === 'string') {
+        const weightMatch = duplicateData.weight.match(/(\d+)/);
+        if (weightMatch) {
+          duplicateData.weight = parseInt(weightMatch[1]);
+        } else {
+          duplicateData.weight = null;
+        }
+      }
+      // اگر عدد بود، همان را نگه می‌داریم
+    }
+    
+    // کپی کردن تصاویر (اختیاری - می‌توانید مسیرهای جدیدی بسازید)
+    // در اینجا تصاویر قبلی را reuse می‌کنیم
+    if (originalProduct.images && originalProduct.images.length > 0) {
+      duplicateData.images = originalProduct.images.map(img => ({
+        url: img.url,
+        filename: img.filename
+      }));
+    } else {
+      duplicateData.images = [];
+    }
+        // اطمینان از اینکه price عدد است
+    if (duplicateData.price && typeof duplicateData.price === 'string') {
+      duplicateData.price = parseFloat(duplicateData.price);
+    }
+    
+    // اطمینان از اینکه offerPrice عدد است (اگر وجود دارد)
+    if (duplicateData.offerPrice) {
+      if (typeof duplicateData.offerPrice === 'string') {
+        duplicateData.offerPrice = parseFloat(duplicateData.offerPrice);
+      }
+    } else {
+      duplicateData.offerPrice = undefined;
+    }
+    
+    // اطمینان از اینکه countInStock عدد است
+    if (duplicateData.countInStock && typeof duplicateData.countInStock === 'string') {
+      duplicateData.countInStock = parseInt(duplicateData.countInStock);
+    }
+    
+    // اطمینان از اینکه discount عدد است
+    if (duplicateData.discount && typeof duplicateData.discount === 'string') {
+      duplicateData.discount = parseInt(duplicateData.discount);
+    }
+    
+    // محاسبه مجدد discount اگر offerPrice وجود دارد
+    if (duplicateData.offerPrice && duplicateData.price) {
+      duplicateData.discount = Math.round(
+        ((duplicateData.price - duplicateData.offerPrice) / duplicateData.price) * 100
+      );
+    }
+    
+    // اطمینان از فرمت صحیح آرایه‌ها
+    const arrayFields = ['colors', 'sizes', 'specifications', 'tags', 'category'];
+    arrayFields.forEach(field => {
+      if (!duplicateData[field] || !Array.isArray(duplicateData[field])) {
+        duplicateData[field] = [];
+      }
+    });
+    
+    // حذف فیلدهای virtual که ممکن است مشکل ایجاد کنند
+    delete duplicateData.discountPrice;
+    delete duplicateData.categoryDetails;
+    delete duplicateData.brandDetails;
+
+    
+    // ایجاد محصول جدید
+    const newProduct = new Product(duplicateData);
+    await newProduct.save();
+    
+    // populate کردن اطلاعات مورد نیاز
+    const populatedProduct = await Product.findById(newProduct._id)
+      .populate("brand", "name")
+      .populate("category", "name");
+    
+    res.status(201).json({
+      success: true,
+      message: "محصول با موفقیت کپی شد",
+      product: populatedProduct,
+    });
+    
+  } catch (error) {
+    console.error("Error duplicating product:", error);
+    res.status(500).json({
+      success: false,
+      message: "خطای سرور در کپی کردن محصول",
+      error: error.message,
+    });
+  }
+});
+
 module.exports = router;
