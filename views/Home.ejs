@@ -292,7 +292,7 @@
         
         @media (max-width: 768px) {
             .product-card {
-                min-width: 150px;
+                min-width: 250px;
             }
             
             .slider-track {
@@ -344,84 +344,7 @@
             transform: scale(1.02);
         
         }
-    /* تنظیم گرید ریسپانسیو */
-.products-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 1rem;
-}
-
-@media (min-width: 768px) {
-  .products-grid {
-    grid-template-columns: repeat(4, 1fr);
-    gap: 1.5rem;
-  }
-}
-
-@media (min-width: 1024px) {
-  .products-grid {
-    gap: 2rem;
-  }
-}
-
-/* تنظیم سایز 800x800 برای تصاویر */
-.product-image-wrapper {
-  position: relative;
-  width: 100%;
-  padding-bottom: 100%; /* نسبت 1:1 */
-  overflow: hidden;
-  background: linear-gradient(135deg, #f3e8ff 0%, #fce7f3 100%);
-}
-
-.product-image {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  background-color: #f8f9fa;
-  padding: 12px;
-  transition: transform 0.3s ease;
-}
-
-.product-image:hover {
-  transform: scale(1.05);
-}
-
-/* تنظیمات کارت محصول */
-.product-card {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  background: white;
-  border-radius: 0.75rem;
-  overflow: hidden;
-  transition: all 0.3s ease;
-}
-
-.product-card-content {
-  padding: 0.75rem;
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-}
-
-@media (min-width: 768px) {
-  .product-card-content {
-    padding: 1rem;
-  }
-}
-
-/* محدود کردن متن */
-.line-clamp-2 {
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  word-break: break-word;
-}
+    
   </style>
   </head>
 
@@ -591,35 +514,6 @@ body.menu-open {
     position: fixed;
     width: 100%;
     height: 100%;
-}
-/* اضافه کنید به استایل‌های موجود */
-.line-clamp-1 {
-  display: -webkit-box;
-  -webkit-line-clamp: 1;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  word-break: break-word;
-}
-
-.line-clamp-2 {
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  word-break: break-word;
-}
-
-/* برای اطمینان از عدم خروج از کادر */
-.product-card {
-  overflow: hidden;
-}
-
-.product-card h3,
-.product-card p {
-  max-width: 100%;
-  overflow-wrap: break-word;
 }
 </style>
 
@@ -893,7 +787,7 @@ body.menu-open {
 <div class="hero-slider">
   <!-- اسلاید 1 -->
 <div class="slide active" data-slide="0">
-  <div  class="slide-bg" data-mobile="./uploads/mobile.webp" data-desktop="/uploads/Untitled.webp"></div>
+  <div class="slide-bg" data-mobile="./uploads/mobile.webp" data-desktop="/uploads/Untitled.webp"></div>
   
   <div class="slide-content">
     <div class="text-white">
@@ -1360,7 +1254,10 @@ if (scrollLeftBtn && scrollRightBtn && slider) {
 }
 </script>
   <!-- Special Discounts Section -->
-<!-- Special Discounts Section با سایز تصویر 800x800 -->
+<!-- Best Selling Products -->
+
+  <!-- Product Categories -->
+<!-- Special Discounts Section با متن‌های محدود شده -->
 <section class="py-6 sm:py-12 px-2 sm:px-4 bg-white">
   <div class="max-w-7xl mx-auto">
     <div class="text-center sm:text-right mb-4 sm:mb-8">
@@ -1381,21 +1278,26 @@ if (scrollLeftBtn && scrollRightBtn && slider) {
                 <div class="special-tag absolute top-2 right-2 bg-red-500 text-white px-2 py-0.5 rounded-full text-xs font-medium z-10">
                   پیشنهاد ویژه
                 </div>
-                <!-- کانتینر تصویر با نسبت 1:1 (مربع) -->
-                <div class="image-container" style="border-radius: 20px; position: relative; width: 100%; padding-bottom: 100%; background: linear-gradient(135deg, #f3e8ff 0%, #fce7f3 100%); overflow: hidden;">
+                <div class="image-container" style="position: relative; width: 100%; padding-bottom: 100%; background: linear-gradient(135deg, #f3e8ff 0%, #fce7f3 100%); overflow: hidden;">
                   <img 
                     src="<%= product.images[0].url %>" 
                     alt="<%= product.name %>" 
                     style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; background-color: #f8f9fa; padding: 8px;"
                     loading="lazy"
-                    onerror="this.src='/images/placeholder.jpg'"
                   >
                 </div>
               </div>
             </a>
             <div class="p-3 sm:p-4">
-              <h3 class="font-semibold text-sm sm:text-base text-gray-800 mb-1 line-clamp-1"><%= product.name %></h3>
-              <p class="text-gray-600 text-xs sm:text-sm mb-2 line-clamp-2"><%= product.lilDescription %></p>
+              <!-- نام محصول - حداکثر 2 خط -->
+              <h3 class="font-semibold text-sm sm:text-base text-gray-800 mb-1 line-clamp-2" style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; text-overflow: ellipsis; min-height: 40px;">
+                <%= product.name %>
+              </h3>
+              
+              <!-- توضیحات کوتاه - حداکثر 2 خط -->
+              <p class="text-gray-600 text-xs sm:text-sm mb-2 line-clamp-2" style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; text-overflow: ellipsis; min-height: 32px;">
+                <%= product.lilDescription %>
+              </p>
               
               <div class="flex items-center justify-between mb-3">
                 <div class="flex items-center gap-1 sm:gap-2">
@@ -1435,84 +1337,78 @@ if (scrollLeftBtn && scrollRightBtn && slider) {
     </div>
   </div>
 </section>
-  <!-- Product Categories -->
-   <!-- Best Selling Products با گرید ریسپانسیو -->
 <section class="py-12 px-4 bg-white">
   <div class="max-w-7xl mx-auto">
-    <h2 class="text-2xl sm:text-3xl font-bold text-gray-800 mb-2 fade-in text-center sm:text-right">
-      پرفروش‌ترین‌ها
-    </h2>
-    <p class="text-sm sm:text-base text-gray-600 mb-6 sm:mb-8 fade-in delay-100 text-center sm:text-right">
-      محبوب‌ترین محصولات ما که مشتریان دوست دارند
-    </p>
+    <div class="flex justify-between items-center mb-8">
+      <div>
+        <h2 class="text-3xl font-bold text-gray-800">
+          پرفروش‌ترین‌ها
+        </h2>
+        <p class="text-gray-600">
+          محبوب‌ترین محصولات ما که مشتریان دوست دارند
+        </p>
+      </div>
+      <a href="/shop" class="text-pink-500 hover:text-pink-600 font-medium flex items-center gap-1">
+        مشاهده همه
+        <i class="fas fa-arrow-left"></i>
+      </a>
+    </div>
 
-    <div class="products-grid">
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
       <% for (let product of products) {%>
-        <div class="product-card shadow-md hover:shadow-xl transition-all duration-300">
+        <div class="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
           <a href="/productDetails/<%= product.slug %>">
-            <div class="product-image-wrapper">
+            <div class="relative bg-gray-50" style="padding-bottom: 100%;">
               <img 
                 src="<%= product?.images[0]?.url %>" 
                 alt="<%= product.name %>" 
-                class="product-image"
+                class="absolute top-0 left-0 w-full h-full object-contain p-2"
                 loading="lazy"
               />
+              <% if(product.offerPrice) {%>
+                <span class="absolute top-2 right-2 bg-red-500 text-white text-xs px-2 py-0.5 rounded-full">
+                  <%= toPersianDigitsForSizes(Math.round((1 - product.offerPrice/product.price) * 100)) %>% 
+                </span>
+              <% } %>
             </div>
           </a>
-          
-          <div class="product-card-content">
-            <!-- رتبه‌بندی -->
+          <div class="p-2 sm:p-3">
             <div class="flex items-center mb-1">
               <% const fullStars = Math.floor(product.rating); const hasHalfStar = product.rating % 1 >= 0.5; const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0); %>
-              <div class="flex text-yellow-400 text-xs sm:text-sm">
-                <% for (let i=0; i < fullStars; i++) { %>
-                  <i class="fas fa-star"></i>
-                <% } %>
-                <% if (hasHalfStar) { %>
-                  <i class="fas fa-star-half-alt"></i>
-                <% } %>
-                <% for (let i=0; i < emptyStars; i++) { %>
-                  <i class="far fa-star"></i>
-                <% } %>
+              <div class="flex text-yellow-400 text-xs">
+                <% for (let i=0; i < fullStars; i++) { %><i class="fas fa-star"></i><% } %>
+                <% if (hasHalfStar) { %><i class="fas fa-star-half-alt"></i><% } %>
+                <% for (let i=0; i < emptyStars; i++) { %><i class="far fa-star"></i><% } %>
               </div>
               <span class="text-gray-500 text-xs mr-1">(<%= toPersianDigits(product.reviewsNum) %>)</span>
             </div>
             
-            <!-- نام محصول -->
-            <h3 class="text-sm sm:text-base font-semibold text-gray-800 mb-1 line-clamp-2" style="min-height: 40px;">
+            <h3 class="font-semibold text-sm text-gray-800 mb-1 line-clamp-2" style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; min-height: 38px;">
               <%= product.name %>
             </h3>
             
-            <!-- توضیحات کوتاه -->
-            <p class="text-gray-600 text-xs sm:text-sm mb-3 line-clamp-2 flex-grow" style="min-height: 32px;">
-              <%= product.lilDescription %>
-            </p>
-            
-            <!-- قیمت و دکمه -->
-            <div class="flex items-center justify-between mt-auto">
+            <div class="flex items-center justify-between mt-2">
               <div>
                 <% if(product.offerPrice) {%>
-                  <div class="flex flex-col sm:flex-row sm:items-center gap-1">
-                    <span class="text-pink-500 font-bold text-sm sm:text-base">
-                      <%= toPersianDigits(product.offerPrice) %> تومان
-                    </span>
-                    <span class="text-gray-400 line-through text-xs">
-                      <%= toPersianDigits(product.price) %> تومان
-                    </span>
-                  </div>
+                  <span class="text-pink-500 font-bold text-sm">
+                    <%= toPersianDigits(product.offerPrice) %> تومان
+                  </span>
+                  <span class="text-gray-400 line-through text-xs mr-1 hidden sm:inline">
+                    <%= toPersianDigits(product.price) %>
+                  </span>
                 <% } else {%>
-                  <span class="text-pink-500 font-bold text-sm sm:text-base">
+                  <span class="text-pink-500 font-bold text-sm">
                     <%= toPersianDigits(product.price) %> تومان
                   </span>
                 <% } %>
               </div>
               
-              <button onclick="location.href='/productDetails/<%= product.slug %>';" 
-                class="bg-pink-500 hover:bg-pink-600 text-white p-2 rounded-lg transition-colors">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-2.5 5M7 13l2.5 5m0 0h8"/>
+              <a href="/productDetails/<%= product.slug %>" class="bg-pink-500 hover:bg-pink-600 text-white p-1.5 rounded-full transition-colors inline-flex items-center">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
                 </svg>
-              </button>
+              </a>
             </div>
           </div>
         </div>
@@ -1520,112 +1416,1329 @@ if (scrollLeftBtn && scrollRightBtn && slider) {
     </div>
   </div>
 </section>
-<!-- Product Categories - نسخه کاملاً بهینه برای موبایل -->
-<!-- Best Selling Products با گرید ریسپانسیو -->
-<section class="py-12 px-4 bg-white">
-  <div class="max-w-7xl mx-auto">
-    <h2 class="text-2xl sm:text-3xl font-bold text-gray-800 mb-2 fade-in text-center sm:text-right">
-      محبوب ترین ها
-    </h2>
-    <p class="text-sm sm:text-base text-gray-600 mb-6 sm:mb-8 fade-in delay-100 text-center sm:text-right">
-      محبوب‌ترین محصولات ما که مشتریان دوست دارند
-    </p>
+  <!-- Best Selling Products -->
+  <section class="py-12 px-4 bg-white">
+    <div class="max-w-7xl mx-auto">
+      <h2 class="text-3xl font-bold text-gray-800 mb-2 fade-in">
+        پرفروش‌ ترین‌ ها
+      </h2>
+      <p class="text-gray-600 mb-8 fade-in delay-100">
+        محبوب‌ترین محصولات ما که مشتریان دوست دارند
+      </p>
 
-    <div class="products-grid">
-      <% for (let product of products) {%>
-        <div class="product-card shadow-md hover:shadow-xl transition-all duration-300">
-          <a href="/productDetails/<%= product.slug %>">
-            <div class="product-image-wrapper">
-              <img 
-                src="<%= product?.images[0]?.url %>" 
-                alt="<%= product.name %>" 
-                class="product-image"
-                loading="lazy"
-              />
-            </div>
-          </a>
-          
-          <div class="product-card-content">
-            <!-- رتبه‌بندی -->
-            <div class="flex items-center mb-1">
-              <% const fullStars = Math.floor(product.rating); const hasHalfStar = product.rating % 1 >= 0.5; const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0); %>
-              <div class="flex text-yellow-400 text-xs sm:text-sm">
-                <% for (let i=0; i < fullStars; i++) { %>
-                  <i class="fas fa-star"></i>
-                <% } %>
-                <% if (hasHalfStar) { %>
-                  <i class="fas fa-star-half-alt"></i>
-                <% } %>
-                <% for (let i=0; i < emptyStars; i++) { %>
-                  <i class="far fa-star"></i>
-                <% } %>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 fade-in delay-200">
+        <!-- Product 1 -->
+        <% for (let product of products) {%>
+          <div
+            class="product-card bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-transform duration-300">
+            <a href="/productDetails/<%= product.slug %>">
+              <div class="relative">
+                <div class="h-64 bg-pink-100 flex items-center justify-center">
+                  <img src="<%= product?.images[0]?.url %>" alt="" style="height: 100%; width: 100%" />
+                </div>
               </div>
-              <span class="text-gray-500 text-xs mr-1">(<%= toPersianDigits(product.reviewsNum) %>)</span>
-            </div>
-            
-            <!-- نام محصول -->
-            <h3 class="text-sm sm:text-base font-semibold text-gray-800 mb-1 line-clamp-2" style="min-height: 40px;">
-              <%= product.name %>
-            </h3>
-            
-            <!-- توضیحات کوتاه -->
-            <p class="text-gray-600 text-xs sm:text-sm mb-3 line-clamp-2 flex-grow" style="min-height: 32px;">
-              <%= product.lilDescription %>
-            </p>
-            
-            <!-- قیمت و دکمه -->
-            <div class="flex items-center justify-between mt-auto">
-              <div>
+            </a>
+            <div class="p-4">
+              <div class="flex items-center mb-1">
+                <% const fullStars=Math.floor(product.rating); const hasHalfStar=product.rating % 1>= 0.5; const
+                  emptyStars = 5 -
+                  fullStars - (hasHalfStar ? 1 : 0); %>
+
+                  <div class="flex text-yellow-400">
+                    <% for (let i=0; i < fullStars; i++) { %>
+                      <i class="fas fa-star"></i>
+                      <% } %>
+                        <% if (hasHalfStar) { %>
+                          <i class="fas fa-star-half-alt"></i>
+                          <% } %>
+                            <% for (let i=0; i < emptyStars; i++) { %>
+                              <i class="far fa-star"></i>
+                              <% } %>
+                  </div>
+                  <span class="text-gray-500 text-sm mr-1">(<%= toPersianDigits(product.reviewsNum) %>)</span>
+              </div>
+              <h3 class="text-lg font-semibold text-gray-800 mb-1">
+                <%= product.name %>
+              </h3>
+              <p class="text-gray-600 text-sm mb-3">
+                <%= product.lilDescription %>
+              </p>
+              <div class="flex items-center justify-between">
                 <% if(product.offerPrice) {%>
-                  <div class="flex flex-col sm:flex-row sm:items-center gap-1">
-                    <span class="text-pink-500 font-bold text-sm sm:text-base">
+                  <div>
+                    <span class="text-pink-500 font-bold">
                       <%= toPersianDigits(product.offerPrice) %> تومان
                     </span>
-                    <span class="text-gray-400 line-through text-xs">
+                    <span class="text-gray-400 line-through text-sm mr-2">
                       <%= toPersianDigits(product.price) %> تومان
                     </span>
                   </div>
-                <% } else {%>
-                  <span class="text-pink-500 font-bold text-sm sm:text-base">
-                    <%= toPersianDigits(product.price) %> تومان
-                  </span>
-                <% } %>
+                  <% } else {%>
+                    <div>
+                      <span class="text-pink-500 font-bold">
+                        <%= toPersianDigits(product.price) %> تومان
+                      </span>
+                    </div>
+                    <% } %>
+                      <div class="icon-container">
+                        <!-- آیکون سبد خرید -->
+
+                        <svg id="cartIcon" onclick="location.href='/productDetails/<%= product.slug %>';"
+                          class="cart-icon icon cursor-pointer" viewBox="0 0 24 24">
+                          <path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"></path>
+                          <circle cx="9" cy="20" r="1"></circle>
+                          <circle cx="20" cy="20" r="1"></circle>
+                        </svg>
+
+                        <!-- آیکون تیک (مخفی شده) -->
+                        <svg id="successIcon" class="success-icon icon hidden" viewBox="0 0 24 24">
+                          <path d="M5 13l4 4L19 7"></path>
+                        </svg>
+                      </div>
               </div>
-              
-              <button onclick="location.href='/productDetails/<%= product.slug %>';" 
-                class="bg-pink-500 hover:bg-pink-600 text-white p-2 rounded-lg transition-colors">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-2.5 5M7 13l2.5 5m0 0h8"/>
-                </svg>
-              </button>
             </div>
           </div>
-        </div>
-      <% } %>
+          <% } %>
+
+                    <script>
+  // ==========================================
+  // توابع گلوبال (قبل از DOMContentLoaded)
+  // ==========================================
+  
+  function showNotification(message, type = 'info') {
+    const notification = document.createElement('div');
+    notification.className = `fixed z-50 px-4 py-3 rounded-lg shadow-lg text-white text-sm sm:text-base ${
+      type === 'success' ? 'bg-green-500' : 
+      type === 'error' ? 'bg-red-500' : 
+      'bg-blue-500'
+    }`;
     
-    </div>
-  </div>
-</section>
-
-<style>
-  /* محدود کردن خطوط متن */
-  .line-clamp-1 {
-    display: -webkit-box;
-    -webkit-line-clamp: 1;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
+    notification.className += ' top-4 left-1/2 -translate-x-1/2 sm:left-auto sm:translate-x-0 sm:top-6 sm:right-6';
+    notification.className += ' w-[calc(100%-2rem)] max-w-xs sm:max-w-sm';
+    notification.textContent = message;
+    
+    document.body.appendChild(notification);
+    notification.classList.add('transform', 'transition-all', 'duration-300');
+    notification.classList.add('translate-y-2', 'opacity-0');
+    
+    setTimeout(() => {
+      notification.classList.remove('translate-y-2', 'opacity-0');
+    }, 10);
+    
+    setTimeout(() => {
+      notification.classList.add('opacity-0', 'translate-y-2');
+      setTimeout(() => notification.remove(), 300);
+    }, 2000);
   }
   
-  /* برای موبایل - مخفی کردن توضیحات اضافی */
-  @media (max-width: 640px) {
-    .line-clamp-1 {
-      -webkit-line-clamp: 1;
-    }
+  function showNotificationInPopUp(message, type = 'info') {
+    const authPopup = document.getElementById('auth-popup');
+    if (!authPopup) return;
+    
+    const notification = document.createElement('div');
+    notification.className = `fixed z-50 px-4 py-3 rounded-lg shadow-lg text-white text-sm sm:text-base ${
+      type === 'success' ? 'bg-green-500' : 
+      type === 'error' ? 'bg-red-500' : 
+      'bg-blue-500'
+    }`;
+    
+    notification.textContent = message;
+    notification.classList.add('transform', 'transition-all', 'duration-300');
+    notification.classList.add('-translate-y-[100px]', 'opacity-0');
+    
+    authPopup.appendChild(notification);
+    
+    setTimeout(() => {
+      notification.classList.remove('-translate-y-[100px]', 'opacity-0');
+    }, 10);
+    
+    setTimeout(() => {
+      notification.classList.add('opacity-0', 'translate-y-2');
+      setTimeout(() => notification.remove(), 300);
+    }, 2000);
   }
-</style>
+  
+  function switchTab(activeTab) {
+    const tabs = {
+      login: document.getElementById("login-tab"),
+      register: document.getElementById("register-tab"),
+      forgot: document.getElementById("forgot-tab"),
+    };
+    const contents = {
+      login: document.getElementById("login-content"),
+      register: document.getElementById("register-content"),
+      forgot: document.getElementById("forgot-content"),
+    };
+    
+    if (!tabs[activeTab] || !contents[activeTab]) return;
+    
+    Object.values(tabs).forEach((tab) => {
+      if (tab) {
+        tab.classList.remove("border-pink-500", "text-pink-500");
+        tab.classList.add("text-gray-500");
+      }
+    });
+    
+    Object.values(contents).forEach((content) => {
+      if (content) content.classList.remove("active");
+    });
+    
+    tabs[activeTab].classList.add("border-pink-500", "text-pink-500");
+    tabs[activeTab].classList.remove("text-gray-500");
+    contents[activeTab].classList.add("active");
+  }
+  
+  function setupOtpInputs(containerSelector) {
+    const inputs = Array.from(document.querySelectorAll(`${containerSelector} .otp-input`));
+    if (inputs.length === 0) return;
+    
+    inputs[inputs.length - 1].focus();
+    
+    inputs.forEach((input, index) => {
+      input.addEventListener("input", function() {
+        if (this.value.length === 1 && index > 0) {
+          inputs[index - 1].focus();
+        }
+      });
+      
+      input.addEventListener("keydown", function(e) {
+        if (e.key === "Backspace" && this.value.length === 0 && index < inputs.length - 1) {
+          inputs[index + 1].focus();
+        }
+      });
+    });
+  }
+  
+  function getOtpValue(containerSelector) {
+    const inputs = Array.from(document.querySelectorAll(`${containerSelector} .otp-input`));
+    return inputs.map((input) => input.value).join("");
+  }
+  
+  function startCountdown(elementId, seconds) {
+    const timerElement = document.getElementById(elementId);
+    if (!timerElement) return;
+    
+    const timerSpan = timerElement.querySelector("span");
+    if (!timerSpan) return;
+    
+    let remaining = seconds;
+    
+    const interval = setInterval(() => {
+      const minutes = Math.floor(remaining / 60);
+      const secs = remaining % 60;
+      
+      timerSpan.textContent = `${minutes.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
+      
+      if (remaining <= 0) {
+        clearInterval(interval);
+        timerElement.innerHTML = '<a href="#" class="text-pink-500 resend-link">ارسال مجدد کد</a>';
+        
+        const resendLink = timerElement.querySelector('.resend-link');
+        if (resendLink) {
+          resendLink.addEventListener('click', function(e) {
+            e.preventDefault();
+            handleResendOtp(elementId);
+          });
+        }
+      }
+      remaining--;
+    }, 1000);
+  }
+  
+  function handleResendOtp(elementId) {
+    const isRegister = elementId.includes('register');
+    const phone = isRegister 
+      ? document.getElementById('register-phone')?.value
+      : document.getElementById('forgot-phone')?.value;
+    
+    if (!phone) {
+      showNotificationInPopUp('شماره موبایل یافت نشد', 'error');
+      return;
+    }
+    
+    fetch("/api/mobile/sendOtp", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ mobile: phone }),
+    })
+    .then((res) => res.json())
+    .then((data) => {
+      if (data.success) {
+        showNotificationInPopUp('کد تأیید جدید ارسال شد', 'success');
+        startCountdown(elementId, 120);
+      } else {
+        showNotificationInPopUp(data.message || 'خطا در ارسال کد تأیید', 'error');
+      }
+    })
+    .catch((err) => {
+      console.error("Error:", err);
+      showNotificationInPopUp('مشکلی در ارتباط با سرور به وجود آمده است', 'error');
+    });
+  }
+  
+  function setSelectedCategory(categoryName) {
+    localStorage.setItem("selectedCategory", categoryName);
+  }
+  
+  // ==========================================
+  // DOMContentLoaded
+  // ==========================================
+  
+  document.addEventListener("DOMContentLoaded", function() {
+    
+    // Hero Slider
+    const heroSlides = document.querySelectorAll(".hero-slider .slide");
+    const heroDots = document.querySelectorAll(".hero-slider .slider-dot");
+    let heroCurrentSlide = 0;
+    
+    function showHeroSlide(index) {
+      heroSlides.forEach((slide) => slide.classList.remove("active"));
+      heroDots.forEach((dot) => dot.classList.remove("active"));
+      heroSlides[index].classList.add("active");
+      heroDots[index].classList.add("active");
+      heroCurrentSlide = index;
+    }
+    
+    heroDots.forEach((dot, index) => {
+      dot.addEventListener("click", () => {
+        showHeroSlide(index);
+      });
+    });
+    
+    function nextHeroSlide() {
+      heroCurrentSlide = (heroCurrentSlide + 1) % heroSlides.length;
+      showHeroSlide(heroCurrentSlide);
+    }
+    
+    setInterval(nextHeroSlide, 5000);
+    
+    // مدیریت پاپ‌آپ احراز هویت
+    const authButton = document.getElementById("user-auth-button");
+    const authPopup = document.getElementById("auth-popup");
+    
+    if (authButton && authPopup) {
+      authButton.addEventListener("click", function(e) {
+        e.preventDefault();
+        authPopup.classList.remove("hidden");
+        switchTab("login");
+      });
+      
+      authPopup.addEventListener("click", function(e) {
+        if (e.target === authPopup) {
+          authPopup.classList.add("hidden");
+        }
+      });
+    }
+    
+    // Tab Switching Events
+    const loginTab = document.getElementById("login-tab");
+    const registerTab = document.getElementById("register-tab");
+    const forgotTab = document.getElementById("forgot-tab");
+    
+    if (loginTab) loginTab.addEventListener("click", () => switchTab("login"));
+    if (registerTab) registerTab.addEventListener("click", () => switchTab("register"));
+    if (forgotTab) forgotTab.addEventListener("click", () => switchTab("forgot"));
+    
+    // Registration Process
+    const registerForm = document.getElementById("register-form");
+    const registerStep1 = document.getElementById("register-step-1");
+    const registerStep2 = document.getElementById("register-step-2");
+    const registerPhoneDisplay = document.getElementById("register-phone-display");
+    
+    if (registerForm) {
+      registerForm.addEventListener("submit", function(e) {
+        e.preventDefault();
+        
+        const fullName = document.getElementById("register-name")?.value || "";
+        const mobile = document.getElementById("register-phone")?.value.trim() || "";
+        const email = document.getElementById("register-email")?.value.trim() || "";
+        const password = document.getElementById("register-password")?.value || "";
+        const confirmPassword = document.getElementById("register-confirm-password")?.value || "";
+        
+        const iranMobileRegex = /^09\d{9}$/;
+        const emailRegex = /^\S+@\S+\.\S+$/;
+        
+        if (fullName.length < 3) {
+          showNotificationInPopUp("نام کامل باید حداقل ۳ کاراکتر باشد", 'error');
+          return;
+        }
+        
+        if (!iranMobileRegex.test(mobile)) {
+          showNotificationInPopUp("شماره موبایل وارد شده معتبر نیست (مثال: 09123456789)", 'error');
+          return;
+        }
+        
+        if (email && !emailRegex.test(email)) {
+          showNotificationInPopUp("ایمیل وارد شده معتبر نیست", 'error');
+          return;
+        }
+        
+        if (password.length < 8) {
+          showNotificationInPopUp("رمز عبور باید حداقل ۸ کاراکتر باشد", 'error');
+          return;
+        }
+        
+        if (password !== confirmPassword) {
+          showNotificationInPopUp("رمز عبور و تکرار آن یکسان نیستند", 'error');
+          return;
+        }
+        
+        const formDataRegister = new FormData(registerForm);
+        const phone = mobile;
+        
+        if (registerPhoneDisplay) registerPhoneDisplay.textContent = phone;
+        if (registerStep1) registerStep1.classList.remove("active");
+        if (registerStep2) registerStep2.classList.add("active");
+        
+        startCountdown("register-resend-timer", 120);
+        setupOtpInputs("#register-step-2");
+        
+        fetch("/api/mobile/sendOtp", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ mobile: phone }),
+        })
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.success) {
+            const registerVerificationForm = document.getElementById("register-verification-form");
+            
+            if (registerVerificationForm) {
+              registerVerificationForm.addEventListener("submit", function(e) {
+                e.preventDefault();
+                const otpValue = getOtpValue("#register-step-2");
+                const reversedOtpValue = otpValue.split("").reverse().join("");
+                
+                fetch("/api/mobile/verifyOtp", {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({ mobile: phone, otp: reversedOtpValue }),
+                })
+                .then((res) => res.json())
+                .then((data) => {
+                  if (data.success) {
+                    fetch("/api/authentication/signUp", {
+                      method: "POST",
+                      body: formDataRegister,
+                    })
+                    .then((res) => res.json())
+                    .then((data) => {
+                      if (data.success) {
+                        showNotification(data.message, 'success');
+                        if (authPopup) authPopup.classList.add("hidden");
+                        setTimeout(() => location.reload(), 1000);
+                      } else {
+                        showNotificationInPopUp(data.message, 'error');
+                      }
+                    })
+                    .catch((err) => {
+                      console.error("Error:", err);
+                      showNotificationInPopUp("مشکلی در ارتباط با سرور به وجود آمده است", 'error');
+                    });
+                  } else {
+                    showNotificationInPopUp(data.message, 'error');
+                  }
+                })
+                .catch((err) => {
+                  console.error("Error:", err);
+                  showNotificationInPopUp("مشکلی در ارتباط با سرور به وجود آمده است", 'error');
+                });
+              }, { once: true });
+            }
+          } else {
+            showNotificationInPopUp(data.message, 'error');
+          }
+        })
+        .catch((err) => {
+          console.error("Error:", err);
+          showNotificationInPopUp("مشکلی در ارتباط با سرور به وجود آمده است", 'error');
+        });
+      });
+    }
+    
+    const registerBackBtn = document.getElementById("register-back-btn");
+    if (registerBackBtn) {
+      registerBackBtn.addEventListener("click", function() {
+        const step1 = document.getElementById("register-step-1");
+        const step2 = document.getElementById("register-step-2");
+        if (step2) step2.classList.remove("active");
+        if (step1) step1.classList.add("active");
+      });
+    }
+    
+    // Forgot Password Process
+    const forgotForm = document.getElementById("forgot-form");
+    const forgotStep1 = document.getElementById("forgot-step-1");
+    const forgotStep2 = document.getElementById("forgot-step-2");
+    const forgotStep3 = document.getElementById("forgot-step-3");
+    const forgotPhoneDisplay = document.getElementById("forgot-phone-display");
+    
+    if (forgotForm) {
+      forgotForm.addEventListener("submit", function(e) {
+        e.preventDefault();
+        const phone = document.getElementById("forgot-phone")?.value || "";
+        
+        fetch("/api/authentication/forgotPassword", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ mobile: phone }),
+        })
+        .then(res => res.json())
+        .then(data => {
+          if (data.success) {
+            if (forgotPhoneDisplay) forgotPhoneDisplay.textContent = phone;
+            if (forgotStep1) forgotStep1.classList.remove("active");
+            if (forgotStep2) forgotStep2.classList.add("active");
+            startCountdown("forgot-resend-timer", 120);
+            setupOtpInputs("#forgot-step-2");
+            if (data.otp) console.log("OTP for testing:", data.otp);
+          } else {
+            showNotificationInPopUp(data.message, 'error');
+          }
+        })
+        .catch(err => {
+          console.error("Error:", err);
+          showNotificationInPopUp("مشکلی در ارتباط با سرور به وجود آمده است", 'error');
+        });
+      });
+    }
+    
+    const forgotBackBtn = document.getElementById("forgot-back-btn");
+    if (forgotBackBtn) {
+      forgotBackBtn.addEventListener("click", function() {
+        if (forgotStep2) forgotStep2.classList.remove("active");
+        if (forgotStep1) forgotStep1.classList.add("active");
+      });
+    }
+    
+    // Forgot password verification form
+    const forgotVerificationForm = document.getElementById("forgot-verification-form");
+    if (forgotVerificationForm) {
+      forgotVerificationForm.addEventListener("submit", function(e) {
+        e.preventDefault();
+        const otpValue = getOtpValue("#forgot-step-2");
+        const reversedOtpValue = otpValue.split("").reverse().join("");
+        
+        fetch("/api/authentication/verifyPasswordResetOtp", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            mobile: forgotPhoneDisplay?.textContent || "",
+            otp: reversedOtpValue
+          }),
+        })
+        .then(res => res.json())
+        .then(data => {
+          if (data.success) {
+            if (forgotStep2) forgotStep2.classList.remove("active");
+            if (forgotStep3) forgotStep3.classList.add("active");
+            if (data.resetToken) {
+              const resetTokenInput = document.getElementById("reset-token");
+              if (resetTokenInput) resetTokenInput.value = data.resetToken;
+            }
+          } else {
+            showNotificationInPopUp(data.message, 'error');
+          }
+        })
+        .catch(err => {
+          console.error("Error:", err);
+          showNotificationInPopUp("مشکلی در ارتباط با سرور به وجود آمده است", 'error');
+        });
+      });
+    }
+    
+    // Login form submission
+    const loginForm = document.getElementById("login-form");
+    if (loginForm) {
+      loginForm.addEventListener("submit", function(e) {
+        e.preventDefault();
+        const formDataLogin = new FormData(loginForm);
+        
+        fetch("/api/authentication/signIn", {
+          method: "POST",
+          body: formDataLogin,
+        })
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.success) {
+            showNotification(data.message, 'success');
+            setTimeout(() => location.reload(), 2000);
+            if (authPopup) authPopup.classList.add("hidden");
+          } else {
+            showNotificationInPopUp(data.message, 'error');
+          }
+        })
+        .catch((err) => {
+          console.error("Error:", err);
+          showNotificationInPopUp("مشکلی در ارتباط با سرور به وجود آمده است", 'error');
+        });
+      });
+    }
+    
+    // New password form submission
+    const newPasswordForm = document.getElementById("new-password-form");
+    if (newPasswordForm) {
+      newPasswordForm.addEventListener("submit", function(e) {
+        e.preventDefault();
+        const password = document.getElementById("new-password")?.value || "";
+        const confirmPassword = document.getElementById("confirm-new-password")?.value || "";
+        const resetToken = document.getElementById("reset-token")?.value || "";
+        
+        if (password !== confirmPassword) {
+          showNotificationInPopUp("رمز عبور و تکرار آن یکسان نیستند", 'error');
+          return;
+        }
+        
+        fetch(`/api/authentication/resetPassword/${resetToken}`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ password }),
+        })
+        .then(res => res.json())
+        .then(data => {
+          if (data.success) {
+            showNotification("رمز عبور با موفقیت تغییر یافت! اکنون وارد شوید", 'success');
+            if (authPopup) authPopup.classList.add("hidden");
+            if (data.token) localStorage.setItem('token', data.token);
+          } else {
+            showNotificationInPopUp(data.message, 'error');
+          }
+        })
+        .catch(err => {
+          console.error("Error:", err);
+          showNotificationInPopUp("مشکلی در ارتباط با سرور به وجود آمده است", 'error');
+        });
+      });
+    }
+    
+    // Phone number input validation
+    const phoneInputs = document.querySelectorAll('input[type="tel"]');
+    phoneInputs.forEach((input) => {
+      input.addEventListener("input", function(e) {
+        this.value = this.value.replace(/\D/g, "");
+      });
+      
+      input.addEventListener("blur", function() {
+        if (!this.value.startsWith("0") && this.value.length > 0) {
+          this.value = "0" + this.value;
+        }
+      });
+    });
+    
+    // Initialize OTP inputs
+    setupOtpInputs("#register-step-2");
+    setupOtpInputs("#forgot-step-2");
+    
+    // Discount Slider Scroll
+    const scrollLeftBtn = document.getElementById("scroll-left");
+    const scrollRightBtn = document.getElementById("scroll-right");
+    const discountSlider = document.querySelector(".discount-slider");
+    
+    if (scrollLeftBtn && discountSlider) {
+      scrollLeftBtn.addEventListener("click", () => {
+        discountSlider.scrollBy({ left: 300, behavior: "smooth" });
+      });
+    }
+    
+    if (scrollRightBtn && discountSlider) {
+      scrollRightBtn.addEventListener("click", () => {
+        discountSlider.scrollBy({ left: -300, behavior: "smooth" });
+      });
+    }
+    
+    // Fade-in animation on scroll
+    const fadeElements = document.querySelectorAll(".fade-in");
+    
+    function checkFade() {
+      fadeElements.forEach((element) => {
+        const elementTop = element.getBoundingClientRect().top;
+        const windowHeight = window.innerHeight;
+        if (elementTop < windowHeight - 100) {
+          element.classList.add("fade-visible");
+        }
+      });
+    }
+    
+    window.addEventListener("scroll", checkFade);
+    checkFade();
+  });
+  
+  // نمایش نوتیفیکیشن از سمت سرور
+  <% if (typeof success !== 'undefined' && success.length) { %>
+    showNotification('<%= TEXT %>', '<%= ICON %>');
+  <% } %>
+  
+  <% if (typeof error !== 'undefined' && error.length) { %>
+    showNotification('<%= TEXT %>', '<%= ICON %>');
+  <% } %>
+</script>
 
-  <!-- Best Selling Products -->
+          <% if(success.length) {%>
+          <script>
+            showNotification('<%= TEXT %>', '<%= ICON %>')
+          </script>
+          <% } %>
+          <% if(error.length) {%>
+            <script>
+                showNotification('<%= TEXT %>', '<%= ICON %>')
+            </script>
+          <% } %>
 
+            <script>
+              function showNotificationInPopUp(message, type = 'info') {
+                  const authPopup = document.getElementById('auth-popup');
+                  const notification = document.createElement('div'); // Create element on document, not authPopup
+                  notification.className = `fixed z-50 px-4 py-3 rounded-lg shadow-lg text-white text-sm sm:text-base ${
+                      type === 'success' ? 'bg-green-500' : 
+                      type === 'error' ? 'bg-red-500' : 
+                      'bg-blue-500'
+                  }`;
+                  
+                  notification.textContent = message;
+                  
+                  // Animation in
+                  notification.classList.add('transform', 'transition-all', 'duration-300');
+                  notification.classList.add('-translate-y-[100px]', 'opacity-0');
+                  
+                  // Append the notification to the authPopup
+                  authPopup.appendChild(notification);
+                  
+                  setTimeout(() => {
+                      notification.classList.remove('translate-y-2', 'opacity-0');
+                  }, 10);
+                  
+                  setTimeout(() => {
+                      notification.classList.add('opacity-0', 'translate-y-2');
+                      setTimeout(() => notification.remove(), 300);
+                  }, 2000);
+              }
+
+              function showNotification(message, type = 'info') {
+                const notification = document.createElement('div');
+                notification.className = `fixed z-50 px-4 py-3 rounded-lg shadow-lg text-white text-sm sm:text-base ${
+                    type === 'success' ? 'bg-green-500' : 
+                    type === 'error' ? 'bg-red-500' : 
+                    'bg-blue-500'
+                }`;
+                
+                // Mobile: centered at top, Desktop: top-right
+                notification.className += ' top-4 left-1/2 -translate-x-1/2 sm:left-auto sm:translate-x-0 sm:top-6 sm:right-6';
+                
+                // Width control
+                notification.className += ' w-[calc(100%-2rem)] max-w-xs sm:max-w-sm';
+                
+                notification.textContent = message;
+                
+                document.body.appendChild(notification);
+                
+                // Animation in
+                notification.classList.add('transform', 'transition-all', 'duration-300');
+                notification.classList.add('translate-y-2', 'opacity-0');
+                
+                setTimeout(() => {
+                    notification.classList.remove('translate-y-2', 'opacity-0');
+                }, 10);
+                
+                setTimeout(() => {
+                    notification.classList.add('opacity-0', 'translate-y-2');
+                    setTimeout(() => notification.remove(), 300);
+                }, 2000);
+            }
+              
+              function setSelectedCategory(categoryName) {
+                localStorage.setItem("selectedCategory", categoryName);
+              }
+
+              // Hero Slider
+              const slides = document.querySelectorAll(".slide");
+              const dots = document.querySelectorAll(".slider-dot");
+              let currentSlide = 0;
+
+              function showSlide(index) {
+                slides.forEach((slide) => slide.classList.remove("active"));
+                dots.forEach((dot) => dot.classList.remove("active"));
+                slides[index].classList.add("active");
+                dots[index].classList.add("active");
+                currentSlide = index;
+              }
+
+              dots.forEach((dot, index) => {
+                dot.addEventListener("click", () => {
+                  showSlide(index);
+                });
+              });
+
+              function nextSlide() {
+                currentSlide = (currentSlide + 1) % slides.length;
+                showSlide(currentSlide);
+              }
+
+              // Auto slide every 5 seconds
+              setInterval(nextSlide, 5000);
+
+              // Discount Slider Scroll - Note: Reversed for RTL
+              const scrollLeftBtn = document.getElementById("scroll-left");
+              const scrollRightBtn = document.getElementById("scroll-right");
+              const discountSlider = document.querySelector(".discount-slider");
+
+              scrollLeftBtn.addEventListener("click", () => {
+                discountSlider.scrollBy({ left: 300, behavior: "smooth" }); // Reversed for RTL
+              });
+
+              scrollRightBtn.addEventListener("click", () => {
+                discountSlider.scrollBy({ left: -300, behavior: "smooth" }); // Reversed for RTL
+              });
+
+              // Fade-in animation on scroll
+              const fadeElements = document.querySelectorAll(".fade-in");
+
+              function checkFade() {
+                fadeElements.forEach((element) => {
+                  const elementTop = element.getBoundingClientRect().top;
+                  const windowHeight = window.innerHeight;
+
+                  if (elementTop < windowHeight - 100) {
+                    element.classList.add("fade-visible");
+                  }
+                });
+              }
+
+              window.addEventListener("scroll", checkFade);
+              window.addEventListener("load", checkFade);
+
+              document.addEventListener("DOMContentLoaded", function () {
+                // مدیریت اسلایدر هیرو
+                const slides = document.querySelectorAll(".slide");
+                const dots = document.querySelectorAll(".slider-dot");
+                let currentSlide = 0;
+
+                function showSlide(index) {
+                  slides.forEach((slide) => slide.classList.remove("active"));
+                  dots.forEach((dot) => dot.classList.remove("active"));
+
+                  slides[index].classList.add("active");
+                  dots[index].classList.add("active");
+                  currentSlide = index;
+                }
+
+                dots.forEach((dot) => {
+                  dot.addEventListener("click", function () {
+                    showSlide(parseInt(this.dataset.index));
+                  });
+                });
+
+                setInterval(() => {
+                  currentSlide = (currentSlide + 1) % slides.length;
+                  showSlide(currentSlide);
+                }, 5000);
+
+                // مدیریت پاپ‌آپ احراز هویت
+                const authButton = document.getElementById("user-auth-button");
+                const authPopup = document.getElementById("auth-popup");
+
+                authButton.addEventListener("click", function (e) {
+                  e.preventDefault();
+                  authPopup.classList.remove("hidden");
+                  switchTab("login");
+                });
+
+                authPopup.addEventListener("click", function (e) {
+                  if (e.target === authPopup) {
+                    authPopup.classList.add("hidden");
+                  }
+                });
+
+                // Tab Switching
+                const tabs = {
+                  login: document.getElementById("login-tab"),
+                  register: document.getElementById("register-tab"),
+                  forgot: document.getElementById("forgot-tab"),
+                };
+
+                const contents = {
+                  login: document.getElementById("login-content"),
+                  register: document.getElementById("register-content"),
+                  forgot: document.getElementById("forgot-content"),
+                };
+
+                function switchTab(activeTab) {
+                  Object.values(tabs).forEach((tab) => {
+                    tab.classList.remove("border-pink-500", "text-pink-500");
+                    tab.classList.add("text-gray-500");
+                  });
+
+                  Object.values(contents).forEach((content) => {
+                    content.classList.remove("active");
+                  });
+
+                  tabs[activeTab].classList.add(
+                    "border-pink-500",
+                    "text-pink-500"
+                  );
+                  tabs[activeTab].classList.remove("text-gray-500");
+                  contents[activeTab].classList.add("active");
+                }
+
+                tabs.login.addEventListener("click", () => switchTab("login"));
+                tabs.register.addEventListener("click", () =>
+                  switchTab("register")
+                );
+                tabs.forgot.addEventListener("click", () => switchTab("forgot"));
+
+                // Improved OTP input handling (LTR focus movement)
+                function getOtpValue(containerSelector) {
+                  const inputs = Array.from(
+                    document.querySelectorAll(`${containerSelector} .otp-input`)
+                  );
+                  return inputs.map((input) => input.value).join("");
+                }
+
+                // Registration Process
+                const registerForm = document.getElementById("register-form");
+                const registerStep1 = document.getElementById("register-step-1");
+                const registerStep2 = document.getElementById("register-step-2");
+                const registerPhoneDisplay = document.getElementById(
+                  "register-phone-display"
+                );
+
+                registerForm.addEventListener("submit", function (e) {
+                  e.preventDefault();
+
+                  const fullName = document.getElementById("register-name").value
+                  const mobile = document.getElementById("register-phone").value.trim();
+                  const email = document.getElementById("register-email").value.trim();
+                  const password = document.getElementById("register-password").value;
+                  const confirmPassword = document.getElementById("register-confirm-password").value;
+
+                  
+                  const iranMobileRegex = /^09\d{9}$/;
+                  const emailRegex = /^\S+@\S+\.\S+$/;
+
+
+                      if (fullName.length < 3) {
+                      showNotificationInPopUp("نام کامل باید حداقل ۳ کاراکتر باشد", 'error');
+                      return;
+                    }
+
+                    // ✅ Mobile number format
+                    if (!iranMobileRegex.test(mobile)) {
+                      showNotificationInPopUp("شماره موبایل وارد شده معتبر نیست (مثال: 09123456789)", 'error');
+                      return;
+                    }
+
+                    // ✅ Email (if entered)
+                    if (email && !emailRegex.test(email)) {
+                      showNotificationInPopUp("ایمیل وارد شده معتبر نیست", 'error');
+                      return;
+                    }
+
+                    // ✅ Password rules
+                    if (password.length < 8) {
+                      showNotificationInPopUp("رمز عبور باید حداقل ۸ کاراکتر باشد", 'error');
+                      return;
+                    }
+
+                    if (password !== confirmPassword) {
+                      showNotificationInPopUp("رمز عبور و تکرار آن یکسان نیستند", 'error');
+                      return;
+                    }
+
+
+                  const formDataRegister = new FormData(registerForm);
+                  const phone = document.getElementById("register-phone").value;
+                  registerPhoneDisplay.textContent = phone;
+                  registerStep1.classList.remove("active");
+                  registerStep2.classList.add("active");
+                  startCountdown("register-resend-timer", 120);
+                  setupOtpInputs("#register-step-2");
+
+                  document.getElementById("register-resend-timer").addEventListener("click", function(e) {
+                    if (e.target.classList.contains("resend-link")) {
+                      e.preventDefault();
+                      handleResendOtp("register-resend-timer");
+                    }
+                  });
+
+                  fetch("/api/mobile/sendOtp", {
+                    method: "POST",
+                    headers: {
+                      "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({ mobile: phone }),
+                  })
+                    .then((res) => res.json())
+                    .then((data) => {
+                      if (data.success) {
+                        // Only run this if otp was successful
+                        // otp verification form
+                        const registerVerificationForm = document.getElementById(
+                          "register-verification-form"
+                        );
+
+                        registerVerificationForm.addEventListener(
+                          "submit",
+                          function (e) {
+                            e.preventDefault();
+                            const otpValue = getOtpValue("#register-step-2");
+                            const reversedOtpValue = otpValue
+                              .split("")
+                              .reverse()
+                              .join("");
+                            fetch("/api/mobile/verifyOtp", {
+                              method: "POST",
+                              headers: {
+                                "Content-Type": "application/json",
+                              },
+                              body: JSON.stringify({
+                                mobile: phone,
+                                otp: reversedOtpValue,
+                              }),
+                            })
+                              .then((res) => res.json())
+                              .then((data) => {
+                                if (data.success) {
+                                  fetch("/api/authentication/signUp", {
+                                    method: "POST",
+                                    body: formDataRegister,
+                                  })
+                                    .then((res) => res.json())
+                                    .then((data) => {
+                                      if (data.success) {
+                                        // Only run this if registration was successful
+                                        showNotification(data.message, 'success');
+                                        authPopup.classList.add("hidden");
+                                        setTimeout(() => {
+                                          location.reload();
+                                        }, 2000);
+                                      } else {
+                                        // Show error message
+                                        showNotificationInPopUp(data.message, 'error');
+                                        console.log(data.message)
+                                      }
+                                    })
+                                    .catch((err) => {
+                                      console.error("Error:", err);
+                                      showNotificationInPopUp(data.message, 'error');
+                                    });
+                                } else {
+                                  showNotificationInPopUp(data.message, 'error');
+                                  console.log(data.message)
+                                }
+                              })
+                              .catch((err) => {
+                                console.error("Error:", err);
+                                showNotificationInPopUp("مشکلی در ارتباط با سرور به وجود آمده است", 'error');
+                              });
+                          }
+                        );
+                      } else {
+                        // Show error message
+                        showNotificationInPopUp(data.message, 'error')
+                      }
+                    })
+                    .catch((err) => {
+                      console.error("Error:", err);
+                      showNotificationInPopUp("مشکلی در ارتباط با سرور به وجود آمده است", 'error')
+                    });
+                });
+
+                document
+                  .getElementById("register-back-btn")
+                  .addEventListener("click", function () {
+                    registerStep2.classList.remove("active");
+                    registerStep1.classList.add("active");
+                  });
+
+                // Forgot Password Process
+                const forgotStep1 = document.getElementById("forgot-step-1");
+                const forgotStep2 = document.getElementById("forgot-step-2");
+                const forgotStep3 = document.getElementById("forgot-step-3");
+                const forgotPhoneDisplay = document.getElementById(
+                  "forgot-phone-display"
+                );
+
+              const forgotForm = document.getElementById("forgot-form");
+              forgotForm.addEventListener("submit", function (e) {
+                e.preventDefault();
+                const phone = document.getElementById("forgot-phone").value;                
+                fetch("/api/authentication/forgotPassword", {
+                  method: "POST",
+                  headers: {
+                    "Content-Type": "application/json",
+                  },
+                  body: JSON.stringify({ mobile: phone }),
+                })
+                .then(res => res.json())
+                .then(data => {
+                  if (data.success) {
+                    forgotPhoneDisplay.textContent = phone;
+                    forgotStep1.classList.remove("active");
+                    forgotStep2.classList.add("active");
+                    startCountdown("forgot-resend-timer", 120);
+                    setupOtpInputs("#forgot-step-2");
+                    
+                    // For development only - show OTP in console
+                    if (data.otp) {
+                      console.log("OTP for testing:", data.otp);
+                    }
+                  } else {
+                    showNotificationInPopUp(data.message, 'error');
+                  }
+                })
+                .catch(err => {
+                  console.error("Error:", err);
+                  showNotificationInPopUp("مشکلی در ارتباط با سرور به وجود آمده است", 'error');
+                });
+              }); 
+
+                document
+                  .getElementById("forgot-back-btn")
+                  .addEventListener("click", function () {
+                    forgotStep2.classList.remove("active");
+                    forgotStep1.classList.add("active");
+                  });
+                function setupOtpInputs(containerSelector) {
+                  const inputs = Array.from(
+                    document.querySelectorAll(`${containerSelector} .otp-input`)
+                  );
+
+                  // فوکوس روی آخرین اینپوت (راست‌ترین)
+                  inputs[inputs.length - 1].focus();
+
+                  inputs.forEach((input, index) => {
+                    // حرکت به چپ هنگام وارد کردن عدد
+                    input.addEventListener("input", function () {
+                      if (this.value.length === 1) {
+                        if (index > 0) {
+                          inputs[index - 1].focus(); // حرکت به اینپوت قبلی (چپ)
+                        }
+                      }
+                    });
+
+                    // حرکت به راست هنگام پاک کردن
+                    input.addEventListener("keydown", function (e) {
+                      if (e.key === "Backspace" && this.value.length === 0) {
+                        if (index < inputs.length - 1) {
+                          inputs[index + 1].focus(); // حرکت به اینپوت بعدی (راست)
+                        }
+                      }
+                    });
+                  });
+                }
+
+                // Initialize OTP inputs for both forms
+                setupOtpInputs("#register-step-2");
+                setupOtpInputs("#forgot-step-2");
+
+                // Forgot password verification form
+                const forgotVerificationForm = document.getElementById(
+                  "forgot-verification-form"
+                );
+                forgotVerificationForm.addEventListener("submit", function (e) {
+                  e.preventDefault();
+                  const otpValue = getOtpValue("#forgot-step-2");
+                  const reversedOtpValue = otpValue
+                      .split("")
+                      .reverse()
+                      .join("");
+                  
+                  fetch("/api/authentication/verifyPasswordResetOtp", {
+                    method: "POST",
+                    headers: {
+                      "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                      mobile: forgotPhoneDisplay.textContent,
+                      otp: reversedOtpValue
+                    }),
+                  })
+                  .then(res => res.json())
+                  .then(data => {
+                    if (data.success) {
+                      forgotStep2.classList.remove("active");
+                      forgotStep3.classList.add("active");
+                      
+                      // Store the reset token in a hidden field or variable
+                      if (data.resetToken) {
+                        document.getElementById("reset-token").value = data.resetToken;
+                      }
+                    } else {
+                      showNotificationInPopUp(data.message, 'error');
+                    }
+                  })
+                  .catch(err => {
+                    console.error("Error:", err);
+                    showNotificationInPopUp("مشکلی در ارتباط با سرور به وجود آمده است", 'error');
+                  });
+                });
+
+                // Login form submission
+                const loginForm = document.getElementById("login-form");
+
+                loginForm.addEventListener("submit", function (e) {
+                  const formDataLogin = new FormData(loginForm);
+                  e.preventDefault();
+                  fetch("/api/authentication/signIn", {
+                    method: "POST",
+                    body: formDataLogin,
+                  })
+                    .then((res) => res.json())
+                    .then((data) => {
+                      if (data.success) {
+                      // Only run this if registration was successful
+                      showNotification(data.message, 'success');
+                      setTimeout(() => {
+                        location.reload();
+                      }, 2000);
+                      authPopup.classList.add("hidden");
+                      } else {
+                        // Show error message
+                        showNotificationInPopUp(data.message, 'error');
+                      }
+                    })
+                    .catch((err) => {
+                      console.error("Error:", err);
+                      showNotificationInPopUp("مشکلی در ارتباط با سرور به وجود آمده است", 'error');
+                    });
+                });
+
+                // New password form submission
+                const newPasswordForm = document.getElementById("new-password-form");
+                newPasswordForm.addEventListener("submit", function (e) {
+                  e.preventDefault();
+                  const password = document.getElementById("new-password").value;
+                  const confirmPassword = document.getElementById("confirm-new-password").value;
+                  const resetToken = document.getElementById("reset-token").value;
+                  
+                  if (password !== confirmPassword) {
+                    showNotificationInPopUp("رمز عبور و تکرار آن یکسان نیستند", 'error');
+                    return;
+                  }
+                  
+                  fetch(`/api/authentication/resetPassword/${resetToken}`, {
+                    method: "PATCH",
+                    headers: {
+                      "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({ password }),
+                  })
+                  .then(res => res.json())
+                  .then(data => {
+                    if (data.success) {
+                      showNotification("رمز عبور با موفقیت تغییر یافت! اکنون وارد شوید", 'success');
+                      authPopup.classList.add("hidden");
+                      
+                      // Optional: Automatically log the user in
+                      if (data.token) {
+                        localStorage.setItem('token', data.token);
+                        // Update UI to show user is logged in
+                      }
+                    } else {
+                      showNotificationInPopUp(data.message, 'error');
+                    }
+                  })
+                  .catch(err => {
+                    console.error("Error:", err);
+                    showNotificationInPopUp("مشکلی در ارتباط با سرور به وجود آمده است", 'error');
+                  });
+                });
+
+                function startCountdown(elementId, seconds) {
+                  const timerElement = document.getElementById(elementId);
+                  const timerSpan = timerElement.querySelector("span");
+
+                  let remaining = seconds;
+
+                  const interval = setInterval(() => {
+                    const minutes = Math.floor(remaining / 60);
+                    const secs = remaining % 60;
+
+                    timerSpan.textContent = `${minutes
+                      .toString()
+                      .padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
+
+                    if (remaining <= 0) {
+                      clearInterval(interval);
+                      timerElement.innerHTML =
+                        '<a href="#" class="text-pink-500 resend-link">ارسال مجدد کد</a>';
+                      
+                      // Add click event to resend link
+                      const resendLink = timerElement.querySelector('.resend-link');
+                      resendLink.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        handleResendOtp(elementId);
+                      });
+                    }
+
+                    remaining--;
+                  }, 1000);
+                }
+
+                function handleResendOtp(elementId) {
+                  // Determine which form we're in (register or forgot password)
+                  const isRegister = elementId.includes('register');
+                  const phone = isRegister 
+                    ? document.getElementById('register-phone').value
+                    : document.getElementById('forgot-phone').value;
+
+                  if (!phone) {
+                    showNotificationInPopUp('شماره موبایل یافت نشد', 'error');
+                    return;
+                  }
+
+                  fetch("/api/mobile/sendOtp", {
+                    method: "POST",
+                    headers: {
+                      "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({ mobile: phone }),
+                  })
+                  .then((res) => res.json())
+                  .then((data) => {
+                    if (data.success) {
+                      showNotificationInPopUp('کد تأیید جدید ارسال شد', 'success');
+                      startCountdown(elementId, 120); // Restart the countdown
+                    } else {
+                      showNotificationInPopUp(data.message || 'خطا در ارسال کد تأیید', 'error');
+                      if (data.retryAfter) {
+                        // If we need to wait before resending
+                        setTimeout(() => {
+                          document.getElementById(elementId).innerHTML =
+                            '<a href="#" class="text-pink-500 resend-link">ارسال مجدد کد</a>';
+                          const resendLink = document.querySelector(`#${elementId} .resend-link`);
+                          resendLink.addEventListener('click', function(e) {
+                            e.preventDefault();
+                            handleResendOtp(elementId);
+                          });
+                        }, data.retryAfter * 1000);
+                      }
+                    }
+                  })
+                  .catch((err) => {
+                    console.error("Error:", err);
+                    showNotificationInPopUp('مشکلی در ارتباط با سرور به وجود آمده است', 'error');
+                  });
+                }                
+
+                // Phone number input validation
+                const phoneInputs =
+                  document.querySelectorAll('input[type="tel"]');
+                phoneInputs.forEach((input) => {
+                  input.addEventListener("input", function (e) {
+                    this.value = this.value.replace(/\D/g, "");
+                  });
+
+                  input.addEventListener("blur", function () {
+                    if (!this.value.startsWith("0") && this.value.length > 0) {
+                      this.value = "0" + this.value;
+                    }
+                  });
+                });
+              });             
+            </script>
+      </div>
+    </div>
+  </section>
 <footer class="bg-gray-900 text-white py-12">
   <div class="container mx-auto px-4">
     <div class="grid grid-cols-1 md:grid-cols-4 gap-8">

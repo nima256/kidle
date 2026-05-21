@@ -1320,7 +1320,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
 <!-- پاپ‌آپ گالری مخفی -->
 <!-- پاپ‌آپ گالری جدید -->
-<div id="gallery-popup" class="gallery-popup-container">
+<!-- پاپ‌آپ گالری -->
+<div id="gallery-popup" class="gallery-popup-container" style="display: none;">
   <div class="gallery-popup-content">
     <div class="gallery-popup-close" onclick="closeGallery()">✕</div>
     <div class="gallery-popup-prev" onclick="prevImage()">❯</div>
@@ -2090,14 +2091,20 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 // گالری تصاویر
 // گالری تصاویر پیشرفته
+
+
+// گالری تصاویر پیشرفته با فول اسکرین
 let currentImageIndex = 0;
 let galleryImages = <%- JSON.stringify(product.images.map(img => img.url)) %>;
-console.log(galleryImages[0])
 
 function openGallery(index) {
   currentImageIndex = index;
+  
+  // به‌روزرسانی تصویر اصلی
   const mainImage = document.getElementById('main-image');
-  mainImage.src = galleryImages[currentImageIndex];
+  if (mainImage) {
+    mainImage.src = galleryImages[currentImageIndex];
+  }
   
   // آپدیت کردن کلاس active تامبنیل‌ها
   const thumbnails = document.querySelectorAll('.thumbnail');
@@ -2108,8 +2115,48 @@ function openGallery(index) {
       thumb.classList.remove('active');
     }
   });
-    openGalleryPopup(currentImageIndex);
+  
+  // باز کردن پاپ‌آپ گالری
+  openGalleryPopup(currentImageIndex);
 }
+
+function openGalleryPopup(index) {
+  const popup = document.getElementById('gallery-popup');
+  if (!popup) return;
+  
+  currentImageIndex = index;
+  
+  // ساخت thumbnails داخل پاپ‌آپ
+  const thumbnailsContainer = document.getElementById('gallery-thumbnails');
+  if (thumbnailsContainer && galleryImages.length > 0) {
+    thumbnailsContainer.innerHTML = '';
+    galleryImages.forEach((img, i) => {
+      const thumbImg = document.createElement('img');
+      thumbImg.src = img;
+      thumbImg.alt = `تصویر ${i + 1}`;
+      thumbImg.onclick = (function(idx) {
+        return function() { 
+          currentImageIndex = idx;
+          updateGalleryImage();
+        };
+      })(i);
+      if (i === currentImageIndex) {
+        thumbImg.classList.add('active');
+      }
+      thumbnailsContainer.appendChild(thumbImg);
+    });
+  }
+  
+  // تنظیم تصویر اصلی پاپ‌آپ
+  const galleryImage = document.getElementById('gallery-image');
+  const galleryCounter = document.getElementById('gallery-counter');
+  
+  if (galleryImage) {
+    galleryImage.src = galleryImages[currentImageIndex];
+  }
+  if (galleryCounter) {
+    galleryCounter.textContent = `${toPersianDigits(currentImageIndex + 1)} از ${toPersianDigits(galleryImages.length)}`;
+  }
   
   // نمایش پاپ‌آپ با انیمیشن
   popup.style.display = 'flex';
@@ -2122,18 +2169,22 @@ function openGallery(index) {
 
 function closeGallery() {
   const popup = document.getElementById('gallery-popup');
-  popup.classList.remove('active');
-  popup.style.display = 'none';
+  if (popup) {
+    popup.classList.remove('active');
+    popup.style.display = 'none';
+  }
   document.body.style.overflow = 'auto';
   document.removeEventListener('keydown', handleGalleryKeydown);
 }
 
 function nextImage() {
+  if (!galleryImages.length) return;
   currentImageIndex = (currentImageIndex + 1) % galleryImages.length;
   updateGalleryImage();
 }
 
 function prevImage() {
+  if (!galleryImages.length) return;
   currentImageIndex = (currentImageIndex - 1 + galleryImages.length) % galleryImages.length;
   updateGalleryImage();
 }
@@ -2143,8 +2194,12 @@ function updateGalleryImage() {
   const galleryCounter = document.getElementById('gallery-counter');
   const thumbnails = document.querySelectorAll('#gallery-thumbnails img');
   
-  galleryImage.src = galleryImages[currentImageIndex];
-  galleryCounter.textContent = `${toPersianDigits(currentImageIndex + 1)} از ${toPersianDigits(galleryImages.length)}`;
+  if (galleryImage) {
+    galleryImage.src = galleryImages[currentImageIndex];
+  }
+  if (galleryCounter) {
+    galleryCounter.textContent = `${toPersianDigits(currentImageIndex + 1)} از ${toPersianDigits(galleryImages.length)}`;
+  }
   
   // آپدیت active thumbnail
   thumbnails.forEach((thumb, i) => {
@@ -2166,12 +2221,14 @@ function handleGalleryKeydown(e) {
   }
 }
 
-// تابع toPersianDigits
+// تابع تبدیل اعداد به فارسی
 function toPersianDigits(str) {
-  if (!str) return '';
+  if (str === undefined || str === null) return '۰';
   const num = str.toString();
   return num.replace(/\d/g, d => '۰۱۲۳۴۵۶۷۸۹'[d]);
 }
+// تابع toPersianDigits
+
 </script>
   </body>
 </html>
