@@ -26,6 +26,18 @@ const orderSchema = new Schema(
         message: "کد پستی باید ۱۰ رقم باشد",
       },
     },
+    province: {
+      type: String,
+      required: [true, "استان الزامی است"],
+      trim: true,
+      index: true,
+    },
+    city: {
+      type: String,
+      required: [true, "شهر الزامی است"],
+      trim: true,
+      index: true,
+    },
     address: {
       type: String,
       required: [true, "آدرس الزامی است"],

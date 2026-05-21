@@ -277,7 +277,27 @@
                   placeholder="<%= user.fullName %>"
                 />
               </div>
-
+              <div class="flex flex-col">
+                <label class="text-gray-600 mb-1 text-right">استان <span class="text-red-500">*</span></label>
+                <select
+                  id="province"
+                  class="border border-gray-300 rounded-md px-3 py-2 text-right"
+                  required
+                >
+                  <option value="">انتخاب استان</option>
+                </select>
+              </div>
+              <div class="flex flex-col">
+                <label class="text-gray-600 mb-1 text-right">شهر <span class="text-red-500">*</span></label>
+                <select
+                  id="city"
+                  class="border border-gray-300 rounded-md px-3 py-2 text-right"
+                  required
+                  disabled
+                >
+                  <option value="">ابتدا استان را انتخاب کنید</option>
+                </select>
+              </div>
               <div class="flex flex-col">
                 <label class="text-gray-600 mb-1 text-right">کد پستی</label>
                 <input
@@ -539,6 +559,7 @@
   </div>
 </footer>
     
+    <script src="/js/iran-locations.js"></script>
     <script>
       function showNotification(message, type = 'info') {
         const notification = document.createElement('div');
@@ -695,6 +716,57 @@
 
       function toPersianDigits(str) {
           return str.toString().replace(/\d/g, d => '۰۱۲۳۴۵۶۷۸۹'[d]);
+      }
+
+      function loadProvinces() {
+          const provinceSelect = document.getElementById('province');
+          // حالا از iranLocations سراسری استفاده می‌کنیم
+          const provinces = Object.keys(window.iranLocations || iranLocations);
+          
+          provinces.forEach(province => {
+              const option = document.createElement('option');
+              option.value = province;
+              option.textContent = province;
+              provinceSelect.appendChild(option);
+          });
+      }
+
+      function validateProvinceAndCity() {
+          const province = document.getElementById('province').value;
+          const city = document.getElementById('city').value;
+          
+          if (!province) {
+              showNotification("لطفاً استان را انتخاب کنید", 'error');
+              return false;
+          }
+          if (!city) {
+              showNotification("لطفاً شهر را انتخاب کنید", 'error');
+              return false;
+          }
+          return true;
+      }
+
+      // بارگذاری شهرها بر اساس استان انتخاب شده
+      function loadCities(province) {
+          const citySelect = document.getElementById('city');
+          citySelect.innerHTML = '<option value="">انتخاب شهر</option>';
+          
+          // استفاده از دیتای سراسری
+          const locations = window.iranLocations || iranLocations;
+          
+          if (province && locations[province]) {
+              citySelect.disabled = false;
+              const cities = locations[province];
+              cities.forEach(city => {
+                  const option = document.createElement('option');
+                  option.value = city;
+                  option.textContent = city;
+                  citySelect.appendChild(option);
+              });
+          } else {
+              citySelect.disabled = true;
+              citySelect.innerHTML = '<option value="">ابتدا استان را انتخاب کنید</option>';
+          }
       }
 
       // Render cart items
@@ -893,6 +965,8 @@
       // Render summary page
       function renderSummary() {
         const fullName = document.getElementById("full-name").getAttribute("placeholder");
+        const province = document.getElementById("province").value;
+        const city = document.getElementById("city").value;
         const postalCode = document.getElementById("postal-code").value;
         const address = document.getElementById("address").value;
         let finalShiping;
@@ -910,6 +984,8 @@
 
         document.getElementById("summary-customer-info").innerHTML = `
             <p>${fullName}</p>
+            <p>استان: ${province}</p>
+            <p>شهر: ${city}</p>
             <p>کد پستی: ${postalCode}</p>
             <p>آدرس: ${address}</p>
             <p>تلفن: ${phone}</p>
@@ -998,6 +1074,10 @@
 
       // Initialize
       document.addEventListener("DOMContentLoaded", () => {
+        loadProvinces();
+        document.getElementById("province").addEventListener("change", (e) => {
+            loadCities(e.target.value);
+        });
         renderCartItems();
 
         document
@@ -1009,147 +1089,92 @@
         document
           .getElementById("back-to-cart")
           .addEventListener("click", () => showPage("cart-page"));
-        document
-          .getElementById("go-to-summary")
-          .addEventListener("click", () => {
-              // اعتبارسنجی فیلدها قبل از رفتن به خلاصه سفارش
-              const postalCode = document.getElementById("postal-code").value;
-              const address = document.getElementById("address").value;
-              
-              // تابع اعتبارسنجی کد پستی
-              function validatePostalCode(postalCode) {
+        document.getElementById("go-to-summary").addEventListener("click", () => {
+            // اعتبارسنجی فیلدها قبل از رفتن به خلاصه سفارش
+            const postalCode = document.getElementById("postal-code").value;
+            const address = document.getElementById("address").value;
+            
+            // اعتبارسنجی استان و شهر - این خط باید اول اجرا شود
+            if (!validateProvinceAndCity()) return;
+            
+            // تابع اعتبارسنجی کد پستی
+            function validatePostalCode(postalCode) {
                 const regex = /^\d{10}$/;
                 if (!postalCode) {
-                  showNotification("لطفاً کد پستی را وارد کنید", 'error');
-                  return false;
+                    showNotification("لطفاً کد پستی را وارد کنید", 'error');
+                    return false;
                 }
                 if (!regex.test(postalCode)) {
-                  showNotification("کد پستی باید دقیقاً ۱۰ رقم باشد", 'error');
-                  return false;
+                    showNotification("کد پستی باید دقیقاً ۱۰ رقم باشد", 'error');
+                    return false;
                 }
                 return true;
-              }
-              
-              // تابع اعتبارسنجی آدرس
-              function validateAddress(address) {
+            }
+            
+            // تابع اعتبارسنجی آدرس
+            function validateAddress(address) {
                 if (!address) {
-                  showNotification("لطفاً آدرس را وارد کنید", 'error');
-                  return false;
+                    showNotification("لطفاً آدرس را وارد کنید", 'error');
+                    return false;
                 }
                 if (address.length < 10) {
-                  showNotification("آدرس نمی‌تواند کمتر از ۱۰ کاراکتر باشد", 'error');
-                  return false;
+                    showNotification("آدرس نمی‌تواند کمتر از ۱۰ کاراکتر باشد", 'error');
+                    return false;
                 }
                 if (address.length > 500) {
-                  showNotification("آدرس نمی‌تواند بیشتر از ۵۰۰ کاراکتر باشد", 'error');
-                  return false;
+                    showNotification("آدرس نمی‌تواند بیشتر از ۵۰۰ کاراکتر باشد", 'error');
+                    return false;
                 }
                 return true;
-              }
-              
-              // انجام اعتبارسنجی
-              if (!validatePostalCode(postalCode)) {
+            }
+            
+            // انجام اعتبارسنجی
+            if (!validatePostalCode(postalCode)) {
                 return;
-              }
-              
-              if (!validateAddress(address)) {
+            }
+            
+            if (!validateAddress(address)) {
                 return;
-              }
-              
-              // اگر همه چیز درست بود، به صفحه خلاصه سفارش برو
-              showPage("summary-page");
-          });
+            }
+            
+            // اگر همه چیز درست بود، به صفحه خلاصه سفارش برو
+            showPage("summary-page");
+        });
+
 
         document
           .getElementById("back-to-shipping")
           .addEventListener("click", () => showPage("shipping-page"));
-        document
-          .getElementById("complete-purchase")
-          .addEventListener("click", () => {
+        document.getElementById("complete-purchase").addEventListener("click", () => {
             const orderForm = document.getElementById("order-form");
             const formDataOrder = new FormData(orderForm);
+            formDataOrder.append("province", document.getElementById("province").value);
+            formDataOrder.append("city", document.getElementById("city").value);
             
-            // دیگر نیازی به اعتبارسنجی مجدد نیست چون قبلاً در مرحله قبل انجام شده
+            // بدون اعتبارسنجی مجدد، مستقیماً به سرور ارسال کن
             fetch("/api/order", {
-              method: "POST",
-              body: formDataOrder,
+                method: "POST",
+                body: formDataOrder,
             })
             .then((res) => res.json())
             .then((data) => {
-              if (data.success) {
-                if (data.success && data.paymentUrl) {
-                  showNotification("درحال انتقال به درگاه پرداخت...");
-                  window.location.href = data.paymentUrl;
+                if (data.success) {
+                    if (data.paymentUrl) {
+                        showNotification("درحال انتقال به درگاه پرداخت...");
+                        window.location.href = data.paymentUrl;
+                    }
+                } else {
+                    showNotification(data.message, 'error');
                 }
-              } else {
-                showNotification(data.message, 'error');
-              }
             })
             .catch((err) => {
-              console.error("Error:", err);
-              showNotification("مشکلی در ارتباط با سرور به وجود آمده است", 'error');
+                console.error("Error:", err);
+                showNotification("مشکلی در ارتباط با سرور به وجود آمده است", 'error');
             });
-          });
-
-          // اعتبارسنجی آدرس
-          function validateAddress(address) {
-            if (address.length < 10) {
-              showNotification("آدرس نمی‌تواند کمتر از ۱۰ کاراکتر باشد", 'error');
-              return false;
-            }
-            
-            if (address.length > 500) {
-              showNotification("آدرس نمی‌تواند بیشتر از ۵۰۰ کاراکتر باشد", 'error');
-              return false;
-            }
-            
-            return true;
-            }
-
-
-            if (!postalCode || !address) {
-              showNotification("لطفاً تمام فیلدها را پر کنید", 'error');
-              return;
-            }
-
-
-            if (!validatePostalCode(postalCode)) {
-              return;
-            }
-
-            // اعتبارسنجی آدرس
-            if (!validateAddress(address)) {
-              return;
-            }
-
-
-              fetch("/api/order", {
-                method: "POST",
-                body: formDataOrder,
-              })
-                .then((res) => res.json())
-                .then((data) => {
-                  if (data.success) {
-                    // Only run this if registration was successful
-                    if (data.success && data.paymentUrl) {
-                      showNotification("درحال انتقال به درگاه پرداخت...");
-                      window.location.href = data.paymentUrl;
-                    }
-                  } else {
-                    // Show error message
-                    showNotification(data.message, 'error');
-                  }
-                })
-                .catch((err) => {
-                  console.error("Error:", err);
-                  console.log(err)
-                  showNotification("مشکلی در ارتباط با سرور به وجود آمده است", 'error');
-                });
-          });
-        document
-          .getElementById("back-to-shop")
-          .addEventListener("click", () => showPage("cart-page"));
-    </script>
+        });
+      });
+          
+      </script>
   </div>
   </body>
 </html>

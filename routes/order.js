@@ -20,8 +20,9 @@ const validateOrderInput = [
   body("postcode").trim().notEmpty().withMessage("کد پستی الزامی است"),
   body("address").trim().notEmpty().withMessage("آدرس الزامی است"),
   body("delivery").optional().trim(),
+  body("province").trim().notEmpty().withMessage("استان الزامی است"), // اضافه کن
+  body("city").trim().notEmpty().withMessage("شهر الزامی است"), // اضافه کن
 ];
-
 const errorResponse = (res, status, message, details = {}) => {
   return res.status(status).json({
     success: false,
@@ -45,7 +46,7 @@ router.post(
       }
 
       const userId = req.session.userId;
-      const { postcode, address, delivery } = req.body;
+      const { postcode, address, delivery, province, city } = req.body;
 
       const user = await User.findById(userId).populate("cart.productId");
       if (!user) {
@@ -147,6 +148,8 @@ router.post(
         OrderNum: req.session.OrderNum || `ORD-${Date.now()}`,
         postcode,
         address,
+        province,
+        city,
         user: userId,
         products: productsForOrder.filter((p) => p !== null), // استفاده از آرایه کامل محصولات
         delivery: delivery || "",
