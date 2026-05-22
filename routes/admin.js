@@ -15,6 +15,7 @@ const Order = require("../models/Order");
 const Category = require("../models/Category");
 const Brand = require("../models/Brand");
 const DiscountCode = require("../models/DiscountCode");
+const Visit = require("../models/Visit");
 
 const { getPersianDate } = require("../helper/getPersianDate");
 const Weblog = require("../models/Weblog");
@@ -226,7 +227,71 @@ router.get("/", async (req, res) => {
   const orders = await Order.find({}).populate("user").populate("products");
   const brands = await Brand.find({});
   const discounts = await DiscountCode.find({});
-  const weblogs = await Weblog.find({})
+  const weblogs = await Weblog.find({});
+
+  // ========== آمار بازدیدها ==========
+  
+  // کل بازدیدهای کل سایت
+  const totalVisits = await Visit.countDocuments();
+  
+  // بازدیدهای امروز
+  const today = getPersianDate();
+  const todayVisits = await Visit.countDocuments({ visitDate: today });
+  
+  // بازدیدهای دیروز
+  const yesterday = new Date();
+  yesterday.setDate(yesterday.getDate() - 1);
+  const yesterdayStr = getPersianDate(yesterday);
+  const yesterdayVisits = await Visit.countDocuments({ visitDate: yesterdayStr });
+  
+  // درصد تغییر بازدید نسبت به دیروز
+  let visitsChangePercent = 0;
+  if (yesterdayVisits > 0) {
+    visitsChangePercent = ((todayVisits - yesterdayVisits) / yesterdayVisits) * 100;
+  }
+  
+  // پربازدیدترین صفحات (آخرین 30 روز)
+  const topPages = await Visit.aggregate([
+    {
+      $match: {
+        visitTimestamp: { $gte: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000) }
+      }
+    },
+    {
+      $group: {
+        _id: "$path",
+        count: { $sum: 1 },
+        title: { $first: "$title" }
+      }
+    },
+    { $sort: { count: -1 } },
+    { $limit: 10 }
+  ]);
+  
+  // بازدیدهای 7 روز اخیر برای نمودار
+  const last7Days = [];
+  for (let i = 6; i >= 0; i--) {
+    const date = new Date();
+    date.setDate(date.getDate() - i);
+    const dateStr = getPersianDate(date);
+    const count = await Visit.countDocuments({ visitDate: dateStr });
+    last7Days.push({
+      date: dateStr,
+      count: count
+    });
+  }
+  
+  // بازدیدهای هر ماه (برای نمودار سالانه)
+  const monthlyVisits = await Visit.aggregate([
+    {
+      $group: {
+        _id: { $substrCP: ["$visitDate", 0, 7] }, // سال-ماه
+        count: { $sum: 1 }
+      }
+    },
+    { $sort: { _id: 1 } },
+    { $limit: 12 }
+  ]);
 
   const statusCounts = {
     pendingProcessing: await Order.countDocuments({ status: "در حال پردازش" }),
@@ -244,9 +309,20 @@ router.get("/", async (req, res) => {
     brands,
     statusCounts,
     discounts,
-    weblogs
+    weblogs,
+    // اضافه کردن آمار بازدیدها
+    visitStats: {
+      totalVisits,
+      todayVisits,
+      yesterdayVisits,
+      visitsChangePercent,
+      topPages,
+      last7Days,
+      monthlyVisits,
+    },
   });
 });
+
 
 router.post("/products/add", async (req, res) => {
   try {
