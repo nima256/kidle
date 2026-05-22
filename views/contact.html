@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>تماس با ما | کیدل</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;700;800&display=swap');
+    body { font-family: 'Vazirmatn', Tahoma, sans-serif; }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-pink-50 to-rose-50 min-h-screen">
+  
+  <!-- نوار ناوبری (مشابه صفحه اصلی) -->
+<!-- ==================== نوار ناوبری (در تمام صفحات ثابت) ==================== -->
+<nav id="main-navbar" style="background: white; box-shadow: 0 2px 10px rgba(0,0,0,0.1); position: fixed; top: 0; left: 0; right: 0; z-index: 50; padding: 12px 20px;">
+  <div style="max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
+    
+    <!-- لوگو -->
+    <a href="#" id="logo" style="display: flex; align-items: center; gap: 8px; text-decoration: none;">
+      <div class="w-10 h-10 rounded-2xl bg-pink-400 flex items-center justify-center shadow-lg">
+        <i class="fas fa-child text-white text-xl"></i>
+      </div>
+      <div>
+        <span class="block text-xl font-extrabold text-rose-800">کیدل</span>
+        <span class="block text-xs text-rose-600">فروشگاه لباس کودک</span>
+      </div>
+    </a>
+
+    <!-- منوی دسکتاپ با ساب‌منو -->
+    <div style="display: none; gap: 24px;" class="desktop-menu">
+      <a href="#" class="nav-home" style="color: #333; text-decoration: none;">خانه</a>
+      
+      <!-- فروشگاه با ساب‌منو -->
+      <div style="position: relative;" class="dropdown">
+        <a href="#" style="color: #333; text-decoration: none; display: flex; align-items: center; gap: 5px;">
+           دسته بندی <i class="fas fa-chevron-down" style="font-size: 12px;"></i>
+        </a>
+        <div class="dropdown-menu" style="position: absolute; top: 100%; right: 0; background: white; box-shadow: 0 4px 12px rgba(0,0,0,0.15); border-radius: 8px; min-width: 200px; display: none; z-index: 100;">
+          <div class="submenu-item" style="position: relative;">
+            <a href="#" style="display: flex; justify-content: space-between; align-items: center; padding: 10px 16px; color: #333; text-decoration: none; border-bottom: 1px solid #eee;">
+              لباس زنانه <i class="fas fa-chevron-left" style="font-size: 10px;"></i>
+            </a>
+            <div class="submenu-level2" style="position: absolute; right: 100%; top: 0; background: white; box-shadow: 0 4px 12px rgba(0,0,0,0.15); border-radius: 8px; min-width: 180px; display: none;">
+              <a href="#" style="display: block; padding: 10px 16px; color: #333; text-decoration: none; border-bottom: 1px solid #eee;">پیراهن زنانه</a>
+              <a href="#" style="display: block; padding: 10px 16px; color: #333; text-decoration: none; border-bottom: 1px solid #eee;">شلوار زنانه</a>
+              <a href="#" style="display: block; padding: 10px 16px; color: #333; text-decoration: none;">مانتو و کت</a>
+            </div>
+          </div>
+          <div class="submenu-item" style="position: relative;">
+            <a href="#" style="display: flex; justify-content: space-between; align-items: center; padding: 10px 16px; color: #333; text-decoration: none; border-bottom: 1px solid #eee;">
+              لباس مردانه <i class="fas fa-chevron-left" style="font-size: 10px;"></i>
+            </a>
+            <div class="submenu-level2" style="position: absolute; right: 100%; top: 0; background: white; box-shadow: 0 4px 12px rgba(0,0,0,0.15); border-radius: 8px; min-width: 180px; display: none;">
+              <a href="#" style="display: block; padding: 10px 16px; color: #333; text-decoration: none; border-bottom: 1px solid #eee;">پیراهن مردانه</a>
+              <a href="#" style="display: block; padding: 10px 16px; color: #333; text-decoration: none; border-bottom: 1px solid #eee;">شلوار مردانه</a>
+              <a href="#" style="display: block; padding: 10px 16px; color: #333; text-decoration: none;">کت و شلوار</a>
+            </div>
+          </div>
+          <a href="#" style="display: block; padding: 10px 16px; color: #333; text-decoration: none; border-bottom: 1px solid #eee;">اکسسوری</a>
+          <a href="#" style="display: block; padding: 10px 16px; color: #333; text-decoration: none;">کفش</a>
+        </div>
+      </div>
+      <a href="#" class="nav-shop" style="color: #333; text-decoration: none;">فروشگاه</a>
+      <a href="#" class="nav-blog" style="color: #333; text-decoration: none;">وبلاگ</a>
+      <a href="#" style="color: #333; text-decoration: none;">درباره ما</a>
+      <a href="#" style="color: #333; text-decoration: none;">تماس با ما</a>
+    </div>
+
+    <!-- آیکون‌ها و همبرگر -->
+    <div class="flex items-center space-x-4 space-x-reverse order-1 md:order-3">
+      <div class="relative">
+        <button class="relative text-gray-700 hover:text-pink-500 transition-colors">
+          <a href="/cart">
+            <i class="fas fa-shopping-bag text-xl"></i>
+          </a>
+          <span id="cartCount" class="absolute cart-count bg-pink-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center hidden">۰</span>
+        </button>
+      </div>
+      <!-- دکمه پروفایل کاربر -->
+      <button id="user-auth-button" class="text-gray-700 hover:text-pink-500 transition-colors">
+        <i class="fas fa-user text-xl"></i>
+      </button>
+      <button id="menu-btn" style="color: #333; font-size: 24px; background: none; border: none; cursor: pointer; display: block;" class="hamburger">
+        <i class="fas fa-bars"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- منوی موبایل -->
+  <div id="mobile-menu" style="display: none; margin-top: 15px; padding-top: 15px; border-top: 1px solid #eee; flex-direction: column; gap: 10px;">
+    <a href="#" class="mobile-nav-home" style="display: block; padding: 8px; color: #333; text-decoration: none;">خانه</a>
+    
+    <div class="mobile-dropdown">
+      <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px; cursor: pointer;" class="mobile-dropdown-trigger">
+        <span style="color: #333;">دسته بندی</span>
+        <i class="fas fa-chevron-down" style="font-size: 12px; transition: transform 0.3s;"></i>
+      </div>
+      <div class="mobile-dropdown-menu" style="display: none; padding-right: 15px;">
+        <div class="mobile-submenu">
+          <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px; cursor: pointer;" class="mobile-submenu-trigger">
+            <span style="color: #555;">لباس زنانه</span>
+            <i class="fas fa-chevron-left" style="font-size: 10px; transition: transform 0.3s;"></i>
+          </div>
+          <div class="mobile-submenu-level2" style="display: none; padding-right: 15px;">
+            <a href="#" style="display: block; padding: 8px; color: #666; text-decoration: none;">پیراهن زنانه</a>
+            <a href="#" style="display: block; padding: 8px; color: #666; text-decoration: none;">شلوار زنانه</a>
+            <a href="#" style="display: block; padding: 8px; color: #666; text-decoration: none;">مانتو و کت</a>
+          </div>
+        </div>
+        <div class="mobile-submenu">
+          <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px; cursor: pointer;" class="mobile-submenu-trigger">
+            <span style="color: #555;">لباس مردانه</span>
+            <i class="fas fa-chevron-left" style="font-size: 10px; transition: transform 0.3s;"></i>
+          </div>
+          <div class="mobile-submenu-level2" style="display: none; padding-right: 15px;">
+            <a href="#" style="display: block; padding: 8px; color: #666; text-decoration: none;">پیراهن مردانه</a>
+            <a href="#" style="display: block; padding: 8px; color: #666; text-decoration: none;">شلوار مردانه</a>
+            <a href="#" style="display: block; padding: 8px; color: #666; text-decoration: none;">کت و شلوار</a>
+          </div>
+        </div>
+        <a href="#" style="display: block; padding: 8px; color: #555; text-decoration: none;">اکسسوری</a>
+        <a href="#" style="display: block; padding: 8px; color: #555; text-decoration: none;">کفش</a>
+      </div>
+    </div>
+    <a href="#" class="mobile-nav-shop" style="display: block; padding: 8px; color: #333; text-decoration: none;">فروشگاه</a>
+    <a href="#" class="mobile-nav-blog" style="display: block; padding: 8px; color: #333; text-decoration: none;">وبلاگ</a>
+    <a href="#" style="display: block; padding: 8px; color: #333; text-decoration: none;">درباره ما</a>
+    <a href="#" style="display: block; padding: 8px; color: #333; text-decoration: none;">تماس با ما</a>
+  </div>
+</nav>
+
+<style>
+  @media (min-width: 768px) {
+    .desktop-menu {
+      display: flex !important;
+    }
+    .hamburger {
+      display: none !important;
+    }
+  }
+  .mobile-dropdown-menu,
+  .mobile-submenu-level2 {
+    transition: all 0.3s ease;
+  }
+  @media (max-width: 768px) {
+    .flex.items-center.space-x-4 {
+      gap: 12px;
+    }
+  }
+/* استایل‌های منو و پاپ‌آپ از سایت اصلی */
+.dropdown:hover .dropdown-menu {
+  display: block !important;
+}
+
+.submenu-item:hover .submenu-level2 {
+  display: block !important;
+}
+
+.dropdown-menu a:hover,
+.submenu-level2 a:hover {
+  background-color: #f5f5f5;
+}
+
+/* پاپ‌آپ احراز هویت */
+#auth-popup {
+  transition: opacity 0.3s ease;
+  z-index: 1000;
+}
+
+#auth-popup:not(.hidden) {
+  animation: modalFadeIn 0.3s ease;
+}
+
+.tab-content,
+.form-step {
+  display: none;
+}
+
+.tab-content.active,
+.form-step.active {
+  display: block;
+}
+
+input:focus {
+  outline: none;
+}
+
+.otp-input {
+  width: 3rem;
+  height: 3.5rem;
+  font-size: 1.5rem;
+  text-align: center;
+  border: 1px solid #d1d5db;
+  border-radius: 0.5rem;
+  direction: ltr;
+}
+
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.modal-content {
+  animation: modalFadeIn 0.3s ease-out;
+}
+
+body.menu-open {
+  overflow: hidden;
+  position: fixed;
+  width: 100%;
+  height: 100%;
+}
+
+.cart-count {
+  top: -8px;
+  left: -8px;
+}
+</style>
+<!-- ==================== پاپ‌آپ احراز هویت ==================== -->
+<div id="auth-popup" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+  <div class="bg-white rounded-xl shadow-lg w-full max-w-md mx-4 modal-content">
+    <!-- Tab Navigation -->
+    <div class="flex border-b">
+      <button id="login-tab" class="tab-btn flex-1 py-4 text-center font-medium text-pink-500 border-b-2 border-pink-500">
+        ورود
+      </button>
+      <button id="register-tab" class="tab-btn flex-1 py-4 text-center font-medium text-gray-500">
+        ثبت نام
+      </button>
+      <button id="forgot-tab" class="tab-btn flex-1 py-4 text-center font-medium text-gray-500">
+        بازیابی رمز
+      </button>
+    </div>
+
+    <!-- Login Form -->
+    <div id="login-content" class="tab-content active p-6">
+      <h2 class="text-xl font-bold text-gray-800 mb-5 text-center">ورود به حساب کاربری</h2>
+      <form id="login-form" class="space-y-5">
+        <div>
+          <label class="block text-gray-700 mb-2" for="login-phone">شماره موبایل</label>
+          <input type="tel" name="mobile" id="login-phone" class="w-full px-4 py-3 rounded-lg border" placeholder="09xxxxxxxxx" required />
+        </div>
+        <div>
+          <label class="block text-gray-700 mb-2" for="login-password">رمز عبور</label>
+          <input type="password" name="password" id="login-password" class="w-full px-4 py-3 rounded-lg border" placeholder="رمز عبور خود را وارد کنید" required />
+        </div>
+        <button type="submit" class="w-full bg-pink-500 hover:bg-pink-600 text-white py-3 rounded-lg font-medium transition-colors">
+          ورود
+        </button>
+      </form>
+    </div>
+
+    <!-- Registration Form -->
+    <div id="register-content" class="tab-content p-6">
+      <div id="register-step-1" class="form-step active">
+        <h2 class="text-xl font-bold text-gray-800 mb-5 text-center">ایجاد حساب کاربری</h2>
+        <form id="register-form" class="space-y-4">
+          <div>
+            <label class="block text-gray-700 mb-2" for="register-name">نام و نام خانوادگی</label>
+            <input type="text" name="fullName" id="register-name" class="w-full px-4 py-3 rounded-lg border" placeholder="نام کامل خود را وارد کنید" required />
+          </div>
+          <div>
+            <label class="block text-gray-700 mb-2" for="register-phone">شماره موبایل</label>
+            <input type="tel" name="mobile" id="register-phone" class="w-full px-4 py-3 rounded-lg border" placeholder="09xxxxxxxxx" required />
+          </div>
+          <div>
+            <label class="block text-gray-700 mb-2" for="register-email">ایمیل</label>
+            <input type="email" name="email" id="register-email" class="w-full px-4 py-3 rounded-lg border" placeholder="email@example.com" />
+          </div>
+          <div>
+            <label class="block text-gray-700 mb-2" for="register-password">رمز عبور</label>
+            <input type="password" name="password" id="register-password" class="w-full px-4 py-3 rounded-lg border" placeholder="حداقل 8 کاراکتر" required />
+          </div>
+          <div>
+            <label class="block text-gray-700 mb-2" for="register-confirm-password">تکرار رمز عبور</label>
+            <input type="password" name="confirmPassword" id="register-confirm-password" class="w-full px-4 py-3 rounded-lg border" placeholder="تکرار رمز عبور" required />
+          </div>
+          <button type="submit" class="w-full bg-pink-500 hover:bg-pink-600 text-white py-3 rounded-lg font-medium transition-colors mt-2">
+            ثبت نام
+          </button>
+        </form>
+      </div>
+
+      <div id="register-step-2" class="form-step">
+        <h2 class="text-xl font-bold text-gray-800 mb-2 text-center">تایید شماره موبایل</h2>
+        <p class="text-gray-600 text-center mb-5">کد تایید به شماره <span id="register-phone-display" class="font-bold"></span> ارسال شد</p>
+        <form id="register-verification-form" class="space-y-5">
+          <div class="text-center">
+            <label class="block text-gray-700 mb-4 text-center">کد تایید را وارد کنید</label>
+            <div class="flex justify-center gap-2 mb-3">
+              <input type="text" maxlength="1" class="otp-input" dir="ltr" required />
+              <input type="text" maxlength="1" class="otp-input" dir="ltr" required />
+              <input type="text" maxlength="1" class="otp-input" dir="ltr" required />
+              <input type="text" maxlength="1" class="otp-input" dir="ltr" required />
+              <input type="text" maxlength="1" class="otp-input" dir="ltr" required />
+            </div>
+            <div id="register-resend-timer" class="text-sm text-gray-500 mb-3">ارسال مجدد کد تا <span>۰۲:۰۰</span></div>
+          </div>
+          <button type="submit" class="w-full bg-pink-500 hover:bg-pink-600 text-white py-3 rounded-lg font-medium transition-colors">
+            تایید و ورود
+          </button>
+          <button type="button" id="register-back-btn" class="w-full bg-white text-pink-500 py-3 rounded-lg font-medium border border-pink-500 hover:bg-pink-50 transition-colors">
+            بازگشت
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Forgot Password Form -->
+    <div id="forgot-content" class="tab-content p-6">
+      <div id="forgot-step-1" class="form-step active">
+        <h2 class="text-xl font-bold text-gray-800 mb-5 text-center">بازیابی رمز عبور</h2>
+        <form id="forgot-form" class="space-y-5">
+          <div>
+            <label class="block text-gray-700 mb-2" for="forgot-phone">شماره موبایل</label>
+            <input type="tel" id="forgot-phone" class="w-full px-4 py-3 rounded-lg border" placeholder="09xxxxxxxxx" required />
+          </div>
+          <button type="submit" class="w-full bg-pink-500 hover:bg-pink-600 text-white py-3 rounded-lg font-medium transition-colors">
+            ارسال کد تایید
+          </button>
+        </form>
+      </div>
+
+      <div id="forgot-step-2" class="form-step">
+        <h2 class="text-xl font-bold text-gray-800 mb-2 text-center">تایید کد</h2>
+        <p class="text-gray-600 text-center mb-5">کد تایید به شماره <span id="forgot-phone-display" class="font-bold"></span> ارسال شد</p>
+        <form id="forgot-verification-form" class="space-y-5">
+          <div class="text-center">
+            <label class="block text-gray-700 mb-4 text-center">کد تایید را وارد کنید</label>
+            <div class="flex justify-center gap-2 mb-3">
+              <input type="text" maxlength="1" class="otp-input" dir="ltr" required />
+              <input type="text" maxlength="1" class="otp-input" dir="ltr" required />
+              <input type="text" maxlength="1" class="otp-input" dir="ltr" required />
+              <input type="text" maxlength="1" class="otp-input" dir="ltr" required />
+              <input type="text" maxlength="1" class="otp-input" dir="ltr" required />
+            </div>
+            <div id="forgot-resend-timer" class="text-sm text-gray-500 mb-3">ارسال مجدد کد تا <span>۰۲:۰۰</span></div>
+          </div>
+          <button type="submit" class="w-full bg-pink-500 hover:bg-pink-600 text-white py-3 rounded-lg font-medium transition-colors">
+            تایید
+          </button>
+          <button type="button" id="forgot-back-btn" class="w-full bg-white text-pink-500 py-3 rounded-lg font-medium border border-pink-500 hover:bg-pink-50 transition-colors">
+            بازگشت
+          </button>
+        </form>
+      </div>
+
+      <div id="forgot-step-3" class="form-step">
+        <h2 class="text-xl font-bold text-gray-800 mb-5 text-center">تعیین رمز عبور جدید</h2>
+        <form id="new-password-form" class="space-y-5">
+          <div>
+            <label class="block text-gray-700 mb-2" for="new-password">رمز عبور جدید</label>
+            <input type="password" id="new-password" class="w-full px-4 py-3 rounded-lg border" placeholder="حداقل 8 کاراکتر" required />
+          </div>
+          <div>
+            <label class="block text-gray-700 mb-2" for="confirm-new-password">تکرار رمز عبور جدید</label>
+            <input type="password" id="confirm-new-password" class="w-full px-4 py-3 rounded-lg border" placeholder="تکرار رمز عبور جدید" required />
+            <input type="hidden" id="reset-token" name="reset-token">
+          </div>
+          <button type="submit" class="w-full bg-pink-500 hover:bg-pink-600 text-white py-3 rounded-lg font-medium transition-colors">
+            ذخیره و ورود
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<br><br><br>
+  <div class="max-w-4xl mx-auto px-4 py-12">
+    <div class="bg-white/80 backdrop-blur-sm rounded-3xl p-8 shadow-xl border border-pink-100">
+      <div class="flex items-center gap-4 mb-6">
+        <div class="w-16 h-16 rounded-2xl bg-pink-100 flex items-center justify-center">
+          <i class="fas fa-phone-alt text-pink-500 text-2xl"></i>
+        </div>
+        <div>
+          <h1 class="text-3xl font-extrabold text-rose-800">تماس با ما</h1>
+          <p class="text-rose-600">ما همیشه آماده پاسخگویی به شما هستیم</p>
+        </div>
+      </div>
+      
+      <div class="grid md:grid-cols-2 gap-8 mt-8">
+        <div class="space-y-6">
+          <div class="flex items-start gap-4">
+            <i class="fas fa-map-marker-alt text-pink-500 text-xl mt-1"></i>
+            <div>
+              <h3 class="font-bold text-gray-800">آدرس</h3>
+              <p class="text-gray-600">گرگان، خیابان پاسداران، پاساژ وارکانا، پلاک 51</p>
+            </div>
+          </div>
+          <div class="flex items-start gap-4">
+            <i class="fas fa-phone text-pink-500 text-xl mt-1"></i>
+            <div>
+              <h3 class="font-bold text-gray-800">شماره تماس</h3>
+              <p class="text-gray-600">09054243464</p>
+              <p class="text-gray-500 text-sm">شنبه تا پنجشنبه 9 الی 18</p>
+            </div>
+          </div>
+          <div class="flex items-start gap-4">
+            <i class="fas fa-envelope text-pink-500 text-xl mt-1"></i>
+            <div>
+              <h3 class="font-bold text-gray-800">ایمیل</h3>
+              <p class="text-gray-600">info@kidle.ir</p>
+            </div>
+          </div>
+        </div>
+        
+        <div class="bg-pink-50 rounded-2xl p-6">
+          <h3 class="font-bold text-gray-800 mb-4">ارسال پیام سریع</h3>
+          <form>
+            <input type="text" placeholder="نام شما" class="w-full mb-3 p-3 rounded-xl border border-pink-200 focus:outline-none focus:ring-2 focus:ring-pink-400">
+            <input type="email" placeholder="ایمیل شما" class="w-full mb-3 p-3 rounded-xl border border-pink-200 focus:outline-none focus:ring-2 focus:ring-pink-400">
+            <textarea rows="4" placeholder="پیام شما..." class="w-full mb-3 p-3 rounded-xl border border-pink-200 focus:outline-none focus:ring-2 focus:ring-pink-400"></textarea>
+            <button class="w-full bg-pink-500 hover:bg-pink-600 text-white py-3 rounded-xl font-bold transition">ارسال پیام</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="bg-gray-900 text-white py-12">
+  <div class="container mx-auto px-4">
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+      <!-- درباره فروشگاه -->
+      <div>
+        <div class="flex items-center space-x-reverse space-x-3 mb-4">
+          <div
+            class="w-10 h-10 bg-gradient-to-r from-pink-500 to-rose-500 rounded-lg flex items-center justify-center"
+          >
+            <svg
+              class="w-6 h-6 text-white"
+              fill="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+            </svg>
+          </div>
+          <h3 class="text-xl font-bold">کیدل | فروشگاه لباس کودک</h3>
+        </div>
+        <p class="text-gray-400 text-sm leading-relaxed">
+          فروشگاه تخصصی پوشاک کودک و نوزاد، با بهترین کیفیت و مناسب‌ترین قیمت
+        </p>
+        <p class="text-gray-400 text-sm leading-relaxed mt-3">
+          <i class="fas fa-phone ml-2"></i> تماس: 0905424346
+        </p>
+        <p class="text-gray-400 text-sm leading-relaxed mt-1">
+          <i class="fas fa-map-marker-alt ml-2"></i> گرگان خیابان پاسداران پاساژ وارکانا پلاک 51
+        </p>
+      </div>
+
+      <!-- دسته‌بندی محصولات -->
+      <div>
+        <h4 class="font-bold mb-4 text-pink-400">دسته‌بندی‌ها</h4>
+        <ul class="space-y-2 text-sm text-gray-400">
+          <li>
+            <a href="#" class="hover:text-pink-400 transition-colors">لباس نوزاد (۰-۲۴ ماه)</a>
+          </li>
+          <li>
+            <a href="#" class="hover:text-pink-400 transition-colors">لباس کودک (۲-۷ سال)</a>
+          </li>
+          <li>
+            <a href="#" class="hover:text-pink-400 transition-colors">لباس پسرانه</a>
+          </li>
+          <li>
+            <a href="#" class="hover:text-pink-400 transition-colors">لباس دخترانه</a>
+          </li>
+          <li>
+            <a href="#" class="hover:text-pink-400 transition-colors">ست و اکسسوری کودک</a>
+          </li>
+        </ul>
+      </div>
+
+      <!-- لینک‌های مفید -->
+      <div>
+        <h4 class="font-bold mb-4 text-pink-400">لینک‌های مفید</h4>
+        <ul class="space-y-2 text-sm text-gray-400">
+          <li>
+            <a href="#" class="hover:text-pink-400 transition-colors">درباره ما</a>
+          </li>
+          <li>
+            <a href="#" class="hover:text-pink-400 transition-colors">تماس با ما</a>
+          </li>
+          <li>
+            <a href="#" class="hover:text-pink-400 transition-colors">فروشگاه </a>
+          </li>
+        </ul>
+      </div>
+
+      <!-- شبکه‌های اجتماعی و نمادها -->
+      <div>
+        <h4 class="font-bold mb-4 text-pink-400">ما را دنبال کنید</h4>
+        <div class="flex space-x-reverse space-x-4 mb-6">
+          <a
+            href="#"
+            class="w-10 h-10 bg-gray-800 rounded-lg flex items-center justify-center hover:bg-pink-500 transition-colors"
+          >
+            <i class="fab fa-instagram text-xl"></i>
+          </a>
+          <a
+            href="#"
+            class="w-10 h-10 bg-gray-800 rounded-lg flex items-center justify-center hover:bg-pink-500 transition-colors"
+          >
+            <i class="fab fa-telegram text-xl"></i>
+          </a>
+          <a
+            href="#"
+            class="w-10 h-10 bg-gray-800 rounded-lg flex items-center justify-center hover:bg-pink-500 transition-colors"
+          >
+            <i class="fab fa-whatsapp text-xl"></i>
+          </a>
+        </div>
+        <div class="mt-4">
+          <p class="text-gray-400 text-sm mb-2">ایمیل:</p>
+          <p class="text-gray-400 text-sm">info@kidland.com</p>
+        </div>
+      </div>
+    </div>
+            <a referrerpolicy='origin' target='_blank' href='https://trustseal.enamad.ir/?id=731837&Code=jSMW53UKTzbJlysi5bIKHLWgBO1HddCW'><img referrerpolicy='origin' src='https://trustseal.enamad.ir/logo.aspx?id=731837&Code=jSMW53UKTzbJlysi5bIKHLWgBO1HddCW' alt='' style='cursor:pointer' code='jSMW53UKTzbJlysi5bIKHLWgBO1HddCW'></a>
+
+    <!-- کپی‌رایت و نمادهای اعتماد -->
+    <div class="border-t border-gray-800 mt-8 pt-8">
+      <div class="flex flex-col md:flex-row justify-between items-center gap-4">
+          
+        <div class="text-center text-sm text-gray-400">
+          <p>© 1406 فروشگاه کیدل. تمامی حقوق محفوظ است.</p>
+        </div>
+        <div class="flex space-x-reverse space-x-3">
+          <span class="text-xs text-gray-500">پشتیبانی ۲۴ ساعته</span>
+          <span class="text-xs text-gray-500">ارسال سریع</span>
+          <span class="text-xs text-gray-500">تضمین اصالت کالا</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+<script>
+    // توابع کمکی پاپ‌آپ
+function showNotification(message, type = 'info') {
+  const notification = document.createElement('div');
+  notification.className = `fixed z-50 px-4 py-3 rounded-lg shadow-lg text-white text-sm sm:text-base ${
+    type === 'success' ? 'bg-green-500' : type === 'error' ? 'bg-red-500' : 'bg-blue-500'
+  } top-4 left-1/2 -translate-x-1/2 sm:left-auto sm:translate-x-0 sm:top-6 sm:right-6 w-[calc(100%-2rem)] max-w-xs sm:max-w-sm`;
+  notification.textContent = message;
+  document.body.appendChild(notification);
+  notification.classList.add('transform', 'transition-all', 'duration-300', 'translate-y-2', 'opacity-0');
+  setTimeout(() => notification.classList.remove('translate-y-2', 'opacity-0'), 10);
+  setTimeout(() => {
+    notification.classList.add('opacity-0', 'translate-y-2');
+    setTimeout(() => notification.remove(), 300);
+  }, 2000);
+}
+
+function showNotificationInPopUp(message, type = 'info') {
+  const authPopup = document.getElementById('auth-popup');
+  if (!authPopup) return;
+  const notification = document.createElement('div');
+  notification.className = `fixed z-50 px-4 py-3 rounded-lg shadow-lg text-white text-sm sm:text-base ${
+    type === 'success' ? 'bg-green-500' : type === 'error' ? 'bg-red-500' : 'bg-blue-500'
+  }`;
+  notification.textContent = message;
+  notification.classList.add('transform', 'transition-all', 'duration-300', '-translate-y-[100px]', 'opacity-0');
+  authPopup.appendChild(notification);
+  setTimeout(() => notification.classList.remove('-translate-y-[100px]', 'opacity-0'), 10);
+  setTimeout(() => {
+    notification.classList.add('opacity-0', 'translate-y-2');
+    setTimeout(() => notification.remove(), 300);
+  }, 2000);
+}
+
+function switchTab(activeTab) {
+  const tabs = { login: document.getElementById("login-tab"), register: document.getElementById("register-tab"), forgot: document.getElementById("forgot-tab") };
+  const contents = { login: document.getElementById("login-content"), register: document.getElementById("register-content"), forgot: document.getElementById("forgot-content") };
+  if (!tabs[activeTab] || !contents[activeTab]) return;
+  Object.values(tabs).forEach((tab) => { if(tab) { tab.classList.remove("border-pink-500", "text-pink-500"); tab.classList.add("text-gray-500"); } });
+  Object.values(contents).forEach((content) => { if(content) content.classList.remove("active"); });
+  tabs[activeTab].classList.add("border-pink-500", "text-pink-500");
+  tabs[activeTab].classList.remove("text-gray-500");
+  contents[activeTab].classList.add("active");
+}
+
+function setupOtpInputs(containerSelector) {
+  const inputs = Array.from(document.querySelectorAll(`${containerSelector} .otp-input`));
+  if (inputs.length === 0) return;
+  inputs[inputs.length - 1].focus();
+  inputs.forEach((input, index) => {
+    input.addEventListener("input", function() { if (this.value.length === 1 && index > 0) inputs[index - 1].focus(); });
+    input.addEventListener("keydown", function(e) { if (e.key === "Backspace" && this.value.length === 0 && index < inputs.length - 1) inputs[index + 1].focus(); });
+  });
+}
+
+function getOtpValue(containerSelector) {
+  const inputs = Array.from(document.querySelectorAll(`${containerSelector} .otp-input`));
+  return inputs.map((input) => input.value).join("");
+}
+
+function startCountdown(elementId, seconds) {
+  const timerElement = document.getElementById(elementId);
+  if (!timerElement) return;
+  const timerSpan = timerElement.querySelector("span");
+  if (!timerSpan) return;
+  let remaining = seconds;
+  const interval = setInterval(() => {
+    const minutes = Math.floor(remaining / 60);
+    const secs = remaining % 60;
+    timerSpan.textContent = `${minutes.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
+    if (remaining <= 0) {
+      clearInterval(interval);
+      timerElement.innerHTML = '<a href="#" class="text-pink-500 resend-link">ارسال مجدد کد</a>';
+      const resendLink = timerElement.querySelector('.resend-link');
+      if (resendLink) { resendLink.addEventListener('click', function(e) { e.preventDefault(); handleResendOtp(elementId); }); }
+    }
+    remaining--;
+  }, 1000);
+}
+
+function handleResendOtp(elementId) {
+  const isRegister = elementId.includes('register');
+  const phone = isRegister ? document.getElementById('register-phone')?.value : document.getElementById('forgot-phone')?.value;
+  if (!phone) { showNotificationInPopUp('شماره موبایل یافت نشد', 'error'); return; }
+  fetch("/api/mobile/sendOtp", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ mobile: phone }),
+  })
+  .then((res) => res.json())
+  .then((data) => {
+    if (data.success) { showNotificationInPopUp('کد تأیید جدید ارسال شد', 'success'); startCountdown(elementId, 120); }
+    else { showNotificationInPopUp(data.message || 'خطا در ارسال کد تأیید', 'error'); }
+  })
+  .catch((err) => { console.error("Error:", err); showNotificationInPopUp('مشکلی در ارتباط با سرور به وجود آمده است', 'error'); });
+}
+
+// مدیریت منوی موبایل
+const menuBtn = document.getElementById('menu-btn');
+const mobileMenu = document.getElementById('mobile-menu');
+if (menuBtn && mobileMenu) {
+  menuBtn.onclick = function(e) {
+    e.stopPropagation();
+    if (mobileMenu.style.display === 'none' || mobileMenu.style.display === '') {
+      mobileMenu.style.display = 'flex';
+      document.body.classList.add('menu-open');
+    } else {
+      mobileMenu.style.display = 'none';
+      document.body.classList.remove('menu-open');
+    }
+  };
+}
+
+// مدیریت ساب‌منوهای موبایل
+document.querySelectorAll('.mobile-dropdown-trigger').forEach(trigger => {
+  trigger.onclick = function(e) {
+    e.stopPropagation();
+    const menu = this.nextElementSibling;
+    const icon = this.querySelector('i');
+    if (menu.style.display === 'none' || menu.style.display === '') {
+      menu.style.display = 'block';
+      if(icon) icon.style.transform = 'rotate(180deg)';
+    } else {
+      menu.style.display = 'none';
+      if(icon) icon.style.transform = 'rotate(0deg)';
+    }
+  };
+});
+
+// مدیریت پاپ‌آپ احراز هویت
+const authButton = document.getElementById('user-auth-button');
+const singlePostAuthBtn = document.getElementById('singlePostAuthBtn');
+const authPopup = document.getElementById('auth-popup');
+
+function openAuthPopup(e) { if(e) { e.preventDefault(); e.stopPropagation(); } if(authPopup) { authPopup.classList.remove('hidden'); switchTab('login'); } }
+if (authButton) authButton.addEventListener('click', openAuthPopup);
+if (singlePostAuthBtn) singlePostAuthBtn.addEventListener('click', openAuthPopup);
+if (authPopup) authPopup.addEventListener('click', function(e) { if (e.target === authPopup) authPopup.classList.add('hidden'); });
+
+// فرم‌های احراز هویت (ثبت‌نام، ورود، بازیابی رمز)
+// ... (ادامه کدهای ثبت‌نام و ورود که در فایل نهایی موجود است)
+</script>
+</body>
+</html>
