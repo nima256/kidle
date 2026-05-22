@@ -293,6 +293,45 @@ router.get("/", async (req, res) => {
     { $limit: 12 }
   ]);
 
+  function formatPageInfo(path) {
+    if (path === '/') {
+      return { name: 'صفحه اصلی', link: '/' };
+    }
+    
+    if (path.startsWith('/productDetails/')) {
+      const slug = path.replace('/productDetails/', '');
+      const name = decodeURIComponent(slug).replace(/-/g, ' ');
+      return { name: name, link: path };
+    }
+    
+    if (path.startsWith('/category/')) {
+      const catName = decodeURIComponent(path.replace('/category/', '')).replace(/-/g, ' ');
+      return { name: `دسته: ${catName}`, link: path };
+    }
+    
+    if (path.startsWith('/weblog/')) {
+      const blogTitle = decodeURIComponent(path.replace('/weblog/', '')).replace(/-/g, ' ');
+      return { name: `مقاله: ${blogTitle}`, link: path };
+    }
+    
+    // صفحات دیگر مثل /about-us, /contact-us و ...
+    let name = path.replace(/^\//, '').replace(/-/g, ' ');
+    name = name.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+    
+    return { name: name || path, link: path };
+  }
+
+  // در جایی که topPages رو پردازش می‌کنی:
+  const formattedTopPages = topPages.map(page => {
+      const formatted = formatPageInfo(page._id);
+      return {
+          count: page.count,
+          title: page.title,
+          displayName: formatted.name,
+          link: formatted.link
+      };
+  });
+
   const statusCounts = {
     pendingProcessing: await Order.countDocuments({ status: "در حال پردازش" }),
     inShipping: await Order.countDocuments({ status: "در حال ارسال" }),
@@ -316,7 +355,7 @@ router.get("/", async (req, res) => {
       todayVisits,
       yesterdayVisits,
       visitsChangePercent,
-      topPages,
+      topPages: formattedTopPages,
       last7Days,
       monthlyVisits,
     },

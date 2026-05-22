@@ -448,8 +448,11 @@
                                                 <%= toPersianDigits(index + 1) %>
                                             </span>
                                         </td>
-                                        <td class="px-4 py-3 text-sm text-gray-800">
-                                            <%= page._id === '/' ? 'صفحه اصلی' : page._id %>
+                                        <td class="px-4 py-3 text-sm">
+                                            <!-- اینجا از page.link و page.displayName استفاده کن -->
+                                            <a href="<%= page.link %>" class="text-gray-800 hover:text-blue-600 hover:underline transition-colors">
+                                                <%= page.displayName %>
+                                            </a>
                                         </td>
                                         <td class="px-4 py-3 text-sm font-semibold text-blue-600">
                                             <%= toPersianDigits(page.count) %>
