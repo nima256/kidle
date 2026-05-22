@@ -1291,7 +1291,7 @@ document.addEventListener('DOMContentLoaded', function() {
 <div class="order-1 lg:order-2">
   <!-- Main Image با قابلیت کلیک برای باز شدن پاپ‌آپ -->
   <div class="mb-8">
-    <div style="margin-top: 64px" class="section-card bg-white rounded-3xl p-8 shadow-xl border border-gray-100">
+    <div style=" margin-top: 64px" class="section-card bg-white rounded-3xl p-8 shadow-xl border border-gray-100">
       <img
         id="main-image"
         src="<%= product.images[0].url %>"
@@ -1303,17 +1303,17 @@ document.addEventListener('DOMContentLoaded', function() {
   </div>
 
   <!-- Thumbnail Gallery -->
-  <div class="flex space-x-4 space-x-reverse overflow-x-auto pb-4 pt-1 ps-1">
-    <% for (let i = 0; i < product.images.length; i++) { %>
-    <div class="thumbnail bg-white rounded-2xl p-4 shadow-xl border-2 border-transparent flex-shrink-0" onclick="openGallery(<%= i %>)">
+<div class="flex space-x-4 space-x-reverse overflow-x-auto pb-4 pt-1 ps-1">
+  <% for (let i = 0; i < product.images.length; i++) { %>
+  <div class="thumbnail bg-white rounded-2xl p-4 shadow-xl border-2 border-transparent flex-shrink-0" onclick="openGallery(<%= i %>)" style="--tw-shadow: -20px 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04); box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);">
       <img
         src="<%= product.images[i].url %>"
         alt="<%= product.name %>"
         class="w-16 h-16 object-contain rounded-xl cursor-pointer"
       />
     </div>
-    <% } %>
-  </div>
+  <% } %>
+</div>
   <!-- Product Description - توضیحات محصول -->
  
 </div>

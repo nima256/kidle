@@ -426,6 +426,62 @@
     padding: 16px;
   }
 }
+    /* استایل بخش توضیحات سئو */
+.seo-content {
+  position: relative;
+  overflow: hidden;
+  transition: max-height 0.5s ease;
+  max-height: 120px; /* ارتفاع اولیه برای نمایش 3 خط */
+}
+
+.seo-content.expanded {
+  max-height: 2000px; /* بعد از کلیک، تمام محتوا نمایش داده می‌شود */
+}
+
+.seo-fade {
+  position: relative;
+}
+
+.seo-fade:not(.expanded)::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  height: 60px;
+  background: linear-gradient(to top, white, transparent);
+  pointer-events: none;
+  border-radius: 0 0 16px 16px;
+}
+
+.seo-toggle-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+  padding: 10px 24px;
+  border-radius: 50px;
+  font-size: 14px;
+  font-weight: bold;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 16px;
+}
+
+.seo-toggle-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px -5px rgba(102, 126, 234, 0.4);
+}
+
+.seo-toggle-btn i {
+  transition: transform 0.3s ease;
+}
+
+.seo-toggle-btn.active i {
+  transform: rotate(180deg);
+}
     </style>
     <script>
       // کد مدیریت نمایش فیلترها در موبایل
@@ -1335,12 +1391,14 @@ if (scrollLeftBtn && scrollRightBtn && slider) {
     setTimeout(checkScrollButtons, 100);
 }
 </script>
+
 <div class="flex flex-col xl:flex-row gap-8">
   <!-- Advanced Filters Section - در دسکتاپ کنار، در موبایل بالای محصولات -->
   <div class="xl:w-1/4 filters-sidebar">
     <div class="glass-effect rounded-3xl p-8 sticky top-4 shadow-2xl">
       <div class="flex items-center mb-8">
         <div class="w-3 h-8 bg-gradient-to-b from-purple-500 to-pink-500 rounded-full ml-3"></div>
+        <br><br><br><br><br>
         <h2 class="text-2xl font-bold text-gray-800">فیلترهای هوشمند</h2>
       </div>
 
@@ -1405,10 +1463,6 @@ if (scrollLeftBtn && scrollRightBtn && slider) {
           <% } %>
         </div>
       </div>
-
-      <button id="apply-filters" class="filter-btn w-full text-white py-4 rounded-2xl font-bold text-lg shadow-xl">
-        اعمال فیلترها
-      </button>
     </div>
   </div>
 
@@ -1495,51 +1549,60 @@ if (scrollLeftBtn && scrollRightBtn && slider) {
     </div>
     <!-- بخش توضیحات سئو -->
 <section class="container mx-auto px-4 py-12 mt-8 border-t border-gray-200">
-  <div class="max-w-5xl mx-auto text-right">
-    <h1 class="text-2xl md:text-3xl font-bold text-gray-800 mb-4">
-      فروشگاه اینترنتی اودور - مرجع تخصصی محصولات آرایشی و بهداشتی
-    </h1>
+  <div style="padding: 20px;" class="max-w-5xl mx-auto text-right seo-fade" id="seoSection">
     
-    <div class="prose prose-lg text-gray-600 space-y-4">
-      <p>
-        فروشگاه اینترنتی اودور با سال‌ها تجربه در زمینه فروش محصولات آرایشی و بهداشتی، 
-        همواره تلاش کرده است بهترین و باکیفیت‌ترین محصولات برندهای معتبر جهان را به مشتریان 
-        عزیز ارائه دهد. ما در اودور به اصلالت کالا اهمیت ویژه‌ای می‌دهیم و تمامی محصولات 
-        ما دارای ضمانت اصالت و سلامت فیزیکی می‌باشند.
-      </p>
+    <div class="seo-content" id="seoContent">
+      <h1 class="text-2xl md:text-3xl font-bold text-gray-800 mb-4">
+        فروشگاه اینترنتی اودور - مرجع تخصصی محصولات آرایشی و بهداشتی
+      </h1>
       
-      <p>
-        مجموعه ما شامل انواع محصولات شیگلم، لوازم آرایشی حرفه‌ای، محصولات مراقبت از پوست و مو، 
-        عطر و ادکلن و اکسسوری‌های زیبایی می‌باشد. خرید آنلاین از اودور به معنای تجربه خریدی 
-        امن، سریع و لذت‌بخش است.
-      </p>
-      
-      <h2 class="text-xl font-bold text-gray-800 mt-6 mb-3">
-        چرا اودور را انتخاب کنیم؟
-      </h2>
-      
-      <ul class="list-disc list-inside space-y-2 pr-4">
-        <li>✅ تضمین اصالت کالا و ضمانت بازگشت وجه</li>
-        <li>✅ ارسال سریع به تمام نقاط کشور در کمترین زمان ممکن</li>
-        <li>✅ پشتیبانی ۲۴ ساعته و مشاوره رایگان قبل از خرید</li>
-        <li>✅ مناسب‌ترین قیمت‌ها با تخفیف‌های ویژه و شگفت‌انگیز</li>
-        <li>✅ تنوع بی‌نظیر محصولات از برندهای تراز اول جهانی</li>
-      </ul>
-      
-      <p>
-        مشتریان عزیز می‌توانند با ثبت‌نام در سایت اودور از آخرین تخفیف‌ها و جشنواره‌های 
-        فروش مطلع شده و خریدی هوشمندانه را تجربه کنند. کیفیت، اعتماد و رضایت شما 
-        اولویت اصلی ماست.
-      </p>
-      
-      <div class="bg-gradient-to-r from-purple-50 to-pink-50 p-6 rounded-2xl mt-6">
-        <h3 class="font-bold text-lg text-gray-800 mb-2">نمادهای اعتماد و افتخارات</h3>
-        <p class="text-sm text-gray-600">
-          فروشگاه اینترنتی اودور دارای نماد اعتماد الکترونیک از وزارت صنعت، معدن و تجارت 
-          بوده و تمامی تراکنش‌های مالی آن از طریق درگاه‌های امن بانکی انجام می‌شود.
+      <div class="prose prose-lg text-gray-600 space-y-4">
+        <p>
+          فروشگاه اینترنتی اودور با سال‌ها تجربه در زمینه فروش محصولات آرایشی و بهداشتی، 
+          همواره تلاش کرده است بهترین و باکیفیت‌ترین محصولات برندهای معتبر جهان را به مشتریان 
+          عزیز ارائه دهد. ما در اودور به اصلالت کالا اهمیت ویژه‌ای می‌دهیم و تمامی محصولات 
+          ما دارای ضمانت اصالت و سلامت فیزیکی می‌باشند.
         </p>
+        
+        <p>
+          مجموعه ما شامل انواع محصولات شیگلم، لوازم آرایشی حرفه‌ای، محصولات مراقبت از پوست و مو، 
+          عطر و ادکلن و اکسسوری‌های زیبایی می‌باشد. خرید آنلاین از اودور به معنای تجربه خریدی 
+          امن، سریع و لذت‌بخش است.
+        </p>
+        
+        <h2 class="text-xl font-bold text-gray-800 mt-6 mb-3">
+          چرا اودور را انتخاب کنیم؟
+        </h2>
+        
+        <ul class="list-disc list-inside space-y-2 pr-4">
+          <li>✅ تضمین اصالت کالا و ضمانت بازگشت وجه</li>
+          <li>✅ ارسال سریع به تمام نقاط کشور در کمترین زمان ممکن</li>
+          <li>✅ پشتیبانی ۲۴ ساعته و مشاوره رایگان قبل از خرید</li>
+          <li>✅ مناسب‌ترین قیمت‌ها با تخفیف‌های ویژه و شگفت‌انگیز</li>
+          <li>✅ تنوع بی‌نظیر محصولات از برندهای تراز اول جهانی</li>
+        </ul>
+        
+        <p>
+          مشتریان عزیز می‌توانند با ثبت‌نام در سایت اودور از آخرین تخفیف‌ها و جشنواره‌های 
+          فروش مطلع شده و خریدی هوشمندانه را تجربه کنند. کیفیت، اعتماد و رضایت شما 
+          اولویت اصلی ماست.
+        </p>
+        
+        <div class="bg-gradient-to-r from-purple-50 to-pink-50 p-6 rounded-2xl mt-6">
+          <h3 class="font-bold text-lg text-gray-800 mb-2">نمادهای اعتماد و افتخارات</h3>
+          <p class="text-sm text-gray-600">
+            فروشگاه اینترنتی اودور دارای نماد اعتماد الکترونیک از وزارت صنعت، معدن و تجارت 
+            بوده و تمامی تراکنش‌های مالی آن از طریق درگاه‌های امن بانکی انجام می‌شود.
+          </p>
+        </div>
       </div>
     </div>
+    
+    <button class="seo-toggle-btn" id="seoToggleBtn">
+      <span>بیشتر بخوانید</span>
+      <i class="fas fa-chevron-down"></i>
+    </button>
+    
   </div>
 </section>
 <footer class="bg-gray-900 text-white py-12">
@@ -1908,11 +1971,7 @@ if (scrollLeftBtn && scrollRightBtn && slider) {
                                     <div class="bg-orange-100 text-orange-800 px-3 py-1 rounded-full text-xs font-medium">
                                         ${categoryBadges}
                                     </div>
-                                    <button class="text-gray-400 hover:text-red-500 transition-colors">
-                                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
-                                            <path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z"/>
-                                        </svg>
-                                    </button>
+  
                                 </div>
                                 <h3 class="font-bold text-xl text-gray-800 mb-2 text-right">${
                                   product.name
@@ -2527,6 +2586,25 @@ if (scrollLeftBtn && scrollRightBtn && slider) {
                     }
                   });
                 });
+      // مدیریت دکمه بیشتر/کمتر برای بخش سئو
+const seoSection = document.getElementById('seoSection');
+const seoContent = document.getElementById('seoContent');
+const seoToggleBtn = document.getElementById('seoToggleBtn');
+
+if (seoToggleBtn && seoContent && seoSection) {
+  seoToggleBtn.addEventListener('click', function() {
+    const isExpanded = seoContent.classList.toggle('expanded');
+    seoSection.classList.toggle('expanded');
+    
+    if (isExpanded) {
+      this.innerHTML = '<span>کمتر بخوانید</span> <i class="fas fa-chevron-up"></i>';
+    } else {
+      this.innerHTML = '<span>بیشتر بخوانید</span> <i class="fas fa-chevron-down"></i>';
+      // اسکرول به بالای بخش سئو
+      seoSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  });
+}
     </script>
   </body>
 </html>
