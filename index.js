@@ -9,6 +9,15 @@ const flash = require("connect-flash");
 const fs = require("fs");
 const { SitemapStream, streamToPromise } = require("sitemap");
 const { createGzip } = require("zlib");
+const Visit = require("./models/Visit");
+const crypto = require("crypto");
+
+function getPersianDate(date = new Date()) {
+  const year = date.toLocaleDateString('fa-IR', { year: 'numeric' });
+  const month = date.toLocaleDateString('fa-IR', { month: 'numeric' });
+  const day = date.toLocaleDateString('fa-IR', { day: 'numeric' });
+  return `${year}-${month}-${day}`;
+}
 
 require("dotenv").config();
 
@@ -143,6 +152,50 @@ app.use((req, res, next) => {
   }
   next();
 });
+
+app.use(async (req, res, next) => {
+  if (
+    req.method === "GET" &&
+    !req.path.startsWith("/admin") &&
+    !req.path.startsWith("/api") &&
+    !req.path.includes(".") &&
+    req.path !== "/favicon.ico"
+  ) {
+    try {
+      const visitorId = crypto
+        .createHash("md5")
+        .update(`${req.ip}-${req.headers["user-agent"] || "unknown"}`)
+        .digest("hex");
+
+      // بررسی آخرین بازدید کاربر از این صفحه (در 5 دقیقه اخیر)
+      const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000);
+      
+      const lastVisit = await Visit.findOne({
+        path: req.path,
+        visitorId: visitorId,
+        visitTimestamp: { $gte: fiveMinutesAgo }
+      });
+
+      // اگر در 5 دقیقه اخیر بازدیدی نداشته، ثبت کن
+      if (!lastVisit) {
+        await Visit.create({
+          path: req.path,
+          title: req.originalUrl || req.path,
+          visitorId: visitorId,
+          ip: req.ip,
+          userAgent: req.headers["user-agent"] || "",
+          referer: req.headers["referer"] || "",
+          visitDate: getPersianDate(),
+          visitTimestamp: new Date(),
+        });
+      }
+    } catch (error) {
+      console.error("Visit tracking error:", error.message);
+    }
+  }
+  next();
+});
+
 
 app.use(flash());
 
