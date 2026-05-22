@@ -683,6 +683,80 @@ body.menu-open {
     gap: 16px !important;
   }
 }
+/* استایل تب‌ها */
+.tab-button {
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.tab-button.active {
+  color: #ec4899;
+  font-weight: 600;
+}
+
+.tab-button.active::after {
+  content: '';
+  position: absolute;
+  bottom: -12px;
+  right: 0;
+  width: 100%;
+  height: 3px;
+  background: linear-gradient(90deg, #ec4899, #f472b6);
+  border-radius: 3px;
+}
+
+.tab-content {
+  display: none;
+  animation: fadeIn 0.3s ease;
+}
+
+.tab-content.active {
+  display: block;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* استایل جدول ویژگی‌های کلیدی */
+.key-features-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.key-features-table tr {
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.key-features-table td {
+  padding: 12px 8px;
+  vertical-align: top;
+}
+
+.key-features-table td:first-child {
+  width: 35%;
+  font-weight: 600;
+  color: #4b5563;
+  background-color: #fafafa;
+  border-radius: 8px 0 0 8px;
+}
+
+.key-features-table td:last-child {
+  width: 65%;
+  color: #6b7280;
+}
+
+.key-features-table tr:hover td:first-child {
+  background-color: #fce7f3;
+  color: #ec4899;
+}
     </style>
   </head>
   <body class="bg-white min-h-screen">
@@ -1459,15 +1533,86 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
     </main>
-    <div style="
-    margin: 20px;" class="section-card bg-white rounded-3xl p-8 shadow-xl border border-gray-100">
-  <h3 class="text-xl font-semibold text-gray-900 mb-6">توضیحات محصول</h3>
-  <div class="prose prose-gray max-w-none">
-    <div class="text-gray-700 leading-relaxed mb-5 text-base">
-      <%- product.description %>
+    
+
+    <!-- بخش توضیحات محصول با تب‌ها -->
+    <div class="section-card bg-white rounded-3xl p-8 shadow-xl border border-gray-100 mt-8" style="margin: 20px;">
+      <!-- تب‌ها -->
+      <div class="flex border-b border-gray-200 mb-6">
+        <button class="tab-button active px-6 py-3 text-base font-medium text-pink-500" data-tab="description">
+          توضیحات محصول
+        </button>
+        <button class="tab-button px-6 py-3 text-base font-medium text-gray-500 hover:text-gray-700" data-tab="features">
+          ویژگی‌های کلیدی
+        </button>
+      </div>
+      
+      <!-- محتوای تب توضیحات محصول -->
+      <div id="tab-description" class="tab-content active">
+        <div class="text-gray-700 leading-relaxed text-base">
+          <%- product.description %>
+        </div>
+      </div>
+      
+      <!-- محتوای تب ویژگی‌های کلیدی -->
+      <div id="tab-features" class="tab-content">
+        <div class="overflow-x-auto">
+          <table class="key-features-table w-full">
+            <tbody>
+              <tr>
+                <td>جنس پارچه</td>
+                <td><%= product.fabric ? product.fabric : 'پنبه و الاستیک' %></td>
+              </tr>
+              <tr>
+                <td>ترکیبات</td>
+                <td><%= product.material ? product.material : '۹۵٪ پنبه، ۵٪ الاستیک' %></td>
+              </tr>
+              <tr>
+                <td>الگو</td>
+                <td><%= product.pattern ? product.pattern : 'ساده' %></td>
+              </tr>
+              <tr>
+                <td>یقه</td>
+                <td><%= product.neckStyle ? product.neckStyle : 'گرد' %></td>
+              </tr>
+              <tr>
+                <td>آستین</td>
+                <td><%= product.sleeveStyle ? product.sleeveStyle : 'کوتاه' %></td>
+              </tr>
+              <tr>
+                <td>قد</td>
+                <td><%= product.length ? product.length : 'متوسط (۶۵-۷۰ سانتی‌متر)' %></td>
+              </tr>
+              <tr>
+                <td>ست</td>
+                <td><%= product.setType ? product.setType : 'تک' %></td>
+              </tr>
+              <tr>
+                <td>نوع بسته‌بندی</td>
+                <td><%= product.packaging ? product.packaging : 'کیسه پارچه‌ای' %></td>
+              </tr>
+              <tr>
+                <td>شماره مجوز</td>
+                <td><%= product.licenseNumber ? product.licenseNumber : 'IR-۱۲۳۴۵۶۷۸' %></td>
+              </tr>
+              <tr>
+                <td>کد محصول</td>
+                <td><%= product.sku ? product.sku : (typeof product._id === 'string' ? product._id.slice(-8) : (product._id && product._id.toString ? product._id.toString().slice(-8) : '۱۲۳۴۵۶۷۸')) %></td>
+              </tr>
+              <tr>
+                <td>کشور سازنده</td>
+                <td><%= product.country ? product.country : 'ایران' %></td>
+              </tr>
+              <tr>
+                <td>روش شستشو</td>
+                <td><%= product.washingMethod ? product.washingMethod : 'ماشینی با آب سرد' %></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
-  </div>
-</div>  
+    
     <!-- بخش نظرات محصول -->
 <!-- بخش نظرات محصول -->
 <!-- بخش نظرات محصول -->
@@ -1994,6 +2139,46 @@ if (document.readyState === 'loading') {
 
                   selectedVolumeSpan.textContent = option.dataset.volume;
               });
+          });
+          
+          // ==================== بخش تب‌ها ====================
+          const tabButtons = document.querySelectorAll('.tab-button');
+          const tabContents = {
+            description: document.getElementById('tab-description'),
+            features: document.getElementById('tab-features')
+          };
+          
+          function switchTab(tabId) {
+            // غیرفعال کردن همه تب‌ها
+            tabButtons.forEach(btn => {
+              btn.classList.remove('active', 'text-pink-500');
+              btn.classList.add('text-gray-500');
+            });
+            
+            // مخفی کردن همه محتواها
+            Object.values(tabContents).forEach(content => {
+              if (content) content.classList.remove('active');
+            });
+            
+            // فعال کردن تب انتخاب شده
+            const activeButton = document.querySelector(`.tab-button[data-tab="${tabId}"]`);
+            if (activeButton) {
+              activeButton.classList.add('active', 'text-pink-500');
+              activeButton.classList.remove('text-gray-500');
+            }
+            
+            // نمایش محتوای مربوطه
+            if (tabContents[tabId]) {
+              tabContents[tabId].classList.add('active');
+            }
+          }
+          
+          // اضافه کردن event listener به دکمه‌های تب
+          tabButtons.forEach(button => {
+            button.addEventListener('click', () => {
+              const tabId = button.getAttribute('data-tab');
+              if (tabId) switchTab(tabId);
+            });
           });
       });
 
