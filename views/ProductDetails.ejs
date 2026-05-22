@@ -2091,8 +2091,6 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 // گالری تصاویر
 // گالری تصاویر پیشرفته
-
-
 // گالری تصاویر پیشرفته با فول اسکرین
 let currentImageIndex = 0;
 let galleryImages = <%- JSON.stringify(product.images.map(img => img.url)) %>;
@@ -2227,7 +2225,6 @@ function toPersianDigits(str) {
   const num = str.toString();
   return num.replace(/\d/g, d => '۰۱۲۳۴۵۶۷۸۹'[d]);
 }
-// تابع toPersianDigits
 
 </script>
   </body>

@@ -1,0 +1,1428 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>کیدل مگ | مجله تخصصی لباس کودک</title>
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&display=swap');
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Vazirmatn', Tahoma, sans-serif;
+      background: linear-gradient(135deg, #fff8f1 0%, #fff1f4 52%, #f8eadf 100%);
+      min-height: 100vh;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    /* استایل کارت مقالات */
+    .article-card {
+      transition: transform 280ms ease, box-shadow 280ms ease;
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 255, 255, 0.7);
+    }
+
+    .article-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 22px 50px rgba(190, 119, 103, 0.18);
+    }
+
+    .line-clamp-2 {
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .line-clamp-3 {
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .chip-scroll {
+      overflow-x: auto;
+      scrollbar-width: thin;
+      -webkit-overflow-scrolling: touch;
+    }
+    
+    .chip-scroll::-webkit-scrollbar {
+      height: 4px;
+    }
+    
+    .chip-scroll::-webkit-scrollbar-track {
+      background: rgba(0,0,0,0.05);
+      border-radius: 10px;
+    }
+    
+    .chip-scroll::-webkit-scrollbar-thumb {
+      background: #ee97ab;
+      border-radius: 10px;
+    }
+
+    .post-content p {
+      line-height: 2.25;
+      margin-bottom: 1.15rem;
+    }
+
+    .post-content h2 {
+      font-weight: 800;
+      margin-top: 2rem;
+      margin-bottom: 0.85rem;
+      font-size: 1.5rem;
+    }
+
+    .post-content ul {
+      list-style: none;
+      padding: 0;
+      margin: 1rem 0 1.5rem;
+    }
+
+    .post-content li {
+      position: relative;
+      padding-right: 1.35rem;
+      margin-bottom: 0.65rem;
+      line-height: 2;
+    }
+
+    .post-content li::before {
+      content: "•";
+      position: absolute;
+      right: 0;
+      color: #ee97ab;
+      font-weight: 800;
+    }
+
+    .fade-in {
+      animation: fadeIn 450ms ease both;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    button {
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    button:active {
+      transform: scale(0.97);
+    }
+
+    @media (max-width: 640px) {
+      .article-card {
+        margin-bottom: 0;
+      }
+      h1 {
+        font-size: 1.8rem !important;
+      }
+      .post-content p {
+        font-size: 14px;
+        line-height: 1.8;
+      }
+    }
+
+    .skeleton {
+      background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+      background-size: 200% 100%;
+      animation: loading 1.5s infinite;
+    }
+
+    @keyframes loading {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+
+    .image-placeholder {
+      background: linear-gradient(135deg, #ffd7df, #ffe2c6);
+      min-height: 180px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* استایل‌های منو و پاپ‌آپ از سایت اصلی */
+    .dropdown:hover .dropdown-menu {
+      display: block !important;
+    }
+    
+    .submenu-item:hover .submenu-level2 {
+      display: block !important;
+    }
+    
+    .dropdown-menu a:hover,
+    .submenu-level2 a:hover {
+      background-color: #f5f5f5;
+    }
+
+    /* پاپ‌آپ احراز هویت */
+    #auth-popup {
+      transition: opacity 0.3s ease;
+      z-index: 1000;
+    }
+
+    #auth-popup:not(.hidden) {
+      animation: modalFadeIn 0.3s ease;
+    }
+
+    .tab-content,
+    .form-step {
+      display: none;
+    }
+
+    .tab-content.active,
+    .form-step.active {
+      display: block;
+    }
+
+    input:focus {
+      outline: none;
+    }
+
+    .otp-input {
+      width: 3rem;
+      height: 3.5rem;
+      font-size: 1.5rem;
+      text-align: center;
+      border: 1px solid #d1d5db;
+      border-radius: 0.5rem;
+      direction: ltr;
+    }
+
+    @keyframes modalFadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .modal-content {
+      animation: modalFadeIn 0.3s ease-out;
+    }
+
+    body.menu-open {
+      overflow: hidden;
+      position: fixed;
+      width: 100%;
+      height: 100%;
+    }
+
+    .cart-count {
+      top: -8px;
+      left: -8px;
+    }
+
+    /* استایل صفحه تک مقاله */
+    #singlePostView {
+      transition: all 0.3s ease;
+    }
+  </style>
+</head>
+<body>
+
+<!-- ==================== نوار ناوبری (در تمام صفحات ثابت) ==================== -->
+<nav id="main-navbar" style="background: white; box-shadow: 0 2px 10px rgba(0,0,0,0.1); position: fixed; top: 0; left: 0; right: 0; z-index: 50; padding: 12px 20px;">
+  <div style="max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
+    
+    <!-- لوگو -->
+    <a href="#" id="logo" style="display: flex; align-items: center; gap: 8px; text-decoration: none;">
+      <div class="w-10 h-10 rounded-2xl bg-pink-400 flex items-center justify-center shadow-lg">
+        <i class="fas fa-child text-white text-xl"></i>
+      </div>
+      <div>
+        <span class="block text-xl font-extrabold text-rose-800">کیدل</span>
+        <span class="block text-xs text-rose-600">فروشگاه لباس کودک</span>
+      </div>
+    </a>
+
+    <!-- منوی دسکتاپ با ساب‌منو -->
+    <div style="display: none; gap: 24px;" class="desktop-menu">
+      <a href="#" class="nav-home" style="color: #333; text-decoration: none;">خانه</a>
+      
+      <!-- فروشگاه با ساب‌منو -->
+      <div style="position: relative;" class="dropdown">
+        <a href="#" style="color: #333; text-decoration: none; display: flex; align-items: center; gap: 5px;">
+           دسته بندی <i class="fas fa-chevron-down" style="font-size: 12px;"></i>
+        </a>
+        <div class="dropdown-menu" style="position: absolute; top: 100%; right: 0; background: white; box-shadow: 0 4px 12px rgba(0,0,0,0.15); border-radius: 8px; min-width: 200px; display: none; z-index: 100;">
+          <div class="submenu-item" style="position: relative;">
+            <a href="#" style="display: flex; justify-content: space-between; align-items: center; padding: 10px 16px; color: #333; text-decoration: none; border-bottom: 1px solid #eee;">
+              لباس زنانه <i class="fas fa-chevron-left" style="font-size: 10px;"></i>
+            </a>
+            <div class="submenu-level2" style="position: absolute; right: 100%; top: 0; background: white; box-shadow: 0 4px 12px rgba(0,0,0,0.15); border-radius: 8px; min-width: 180px; display: none;">
+              <a href="#" style="display: block; padding: 10px 16px; color: #333; text-decoration: none; border-bottom: 1px solid #eee;">پیراهن زنانه</a>
+              <a href="#" style="display: block; padding: 10px 16px; color: #333; text-decoration: none; border-bottom: 1px solid #eee;">شلوار زنانه</a>
+              <a href="#" style="display: block; padding: 10px 16px; color: #333; text-decoration: none;">مانتو و کت</a>
+            </div>
+          </div>
+          <div class="submenu-item" style="position: relative;">
+            <a href="#" style="display: flex; justify-content: space-between; align-items: center; padding: 10px 16px; color: #333; text-decoration: none; border-bottom: 1px solid #eee;">
+              لباس مردانه <i class="fas fa-chevron-left" style="font-size: 10px;"></i>
+            </a>
+            <div class="submenu-level2" style="position: absolute; right: 100%; top: 0; background: white; box-shadow: 0 4px 12px rgba(0,0,0,0.15); border-radius: 8px; min-width: 180px; display: none;">
+              <a href="#" style="display: block; padding: 10px 16px; color: #333; text-decoration: none; border-bottom: 1px solid #eee;">پیراهن مردانه</a>
+              <a href="#" style="display: block; padding: 10px 16px; color: #333; text-decoration: none; border-bottom: 1px solid #eee;">شلوار مردانه</a>
+              <a href="#" style="display: block; padding: 10px 16px; color: #333; text-decoration: none;">کت و شلوار</a>
+            </div>
+          </div>
+          <a href="#" style="display: block; padding: 10px 16px; color: #333; text-decoration: none; border-bottom: 1px solid #eee;">اکسسوری</a>
+          <a href="#" style="display: block; padding: 10px 16px; color: #333; text-decoration: none;">کفش</a>
+        </div>
+      </div>
+      <a href="#" class="nav-shop" style="color: #333; text-decoration: none;">فروشگاه</a>
+      <a href="#" class="nav-blog" style="color: #333; text-decoration: none;">وبلاگ</a>
+      <a href="#" style="color: #333; text-decoration: none;">درباره ما</a>
+      <a href="#" style="color: #333; text-decoration: none;">تماس با ما</a>
+    </div>
+
+    <!-- آیکون‌ها و همبرگر -->
+    <div class="flex items-center space-x-4 space-x-reverse order-1 md:order-3">
+      <div class="relative">
+        <button class="relative text-gray-700 hover:text-pink-500 transition-colors">
+          <a href="/cart">
+            <i class="fas fa-shopping-bag text-xl"></i>
+          </a>
+          <span id="cartCount" class="absolute cart-count bg-pink-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center hidden">۰</span>
+        </button>
+      </div>
+      <!-- دکمه پروفایل کاربر -->
+      <button id="user-auth-button" class="text-gray-700 hover:text-pink-500 transition-colors">
+        <i class="fas fa-user text-xl"></i>
+      </button>
+      <button id="menu-btn" style="color: #333; font-size: 24px; background: none; border: none; cursor: pointer; display: block;" class="hamburger">
+        <i class="fas fa-bars"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- منوی موبایل -->
+  <div id="mobile-menu" style="display: none; margin-top: 15px; padding-top: 15px; border-top: 1px solid #eee; flex-direction: column; gap: 10px;">
+    <a href="#" class="mobile-nav-home" style="display: block; padding: 8px; color: #333; text-decoration: none;">خانه</a>
+    
+    <div class="mobile-dropdown">
+      <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px; cursor: pointer;" class="mobile-dropdown-trigger">
+        <span style="color: #333;">دسته بندی</span>
+        <i class="fas fa-chevron-down" style="font-size: 12px; transition: transform 0.3s;"></i>
+      </div>
+      <div class="mobile-dropdown-menu" style="display: none; padding-right: 15px;">
+        <div class="mobile-submenu">
+          <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px; cursor: pointer;" class="mobile-submenu-trigger">
+            <span style="color: #555;">لباس زنانه</span>
+            <i class="fas fa-chevron-left" style="font-size: 10px; transition: transform 0.3s;"></i>
+          </div>
+          <div class="mobile-submenu-level2" style="display: none; padding-right: 15px;">
+            <a href="#" style="display: block; padding: 8px; color: #666; text-decoration: none;">پیراهن زنانه</a>
+            <a href="#" style="display: block; padding: 8px; color: #666; text-decoration: none;">شلوار زنانه</a>
+            <a href="#" style="display: block; padding: 8px; color: #666; text-decoration: none;">مانتو و کت</a>
+          </div>
+        </div>
+        <div class="mobile-submenu">
+          <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px; cursor: pointer;" class="mobile-submenu-trigger">
+            <span style="color: #555;">لباس مردانه</span>
+            <i class="fas fa-chevron-left" style="font-size: 10px; transition: transform 0.3s;"></i>
+          </div>
+          <div class="mobile-submenu-level2" style="display: none; padding-right: 15px;">
+            <a href="#" style="display: block; padding: 8px; color: #666; text-decoration: none;">پیراهن مردانه</a>
+            <a href="#" style="display: block; padding: 8px; color: #666; text-decoration: none;">شلوار مردانه</a>
+            <a href="#" style="display: block; padding: 8px; color: #666; text-decoration: none;">کت و شلوار</a>
+          </div>
+        </div>
+        <a href="#" style="display: block; padding: 8px; color: #555; text-decoration: none;">اکسسوری</a>
+        <a href="#" style="display: block; padding: 8px; color: #555; text-decoration: none;">کفش</a>
+      </div>
+    </div>
+    <a href="#" class="mobile-nav-shop" style="display: block; padding: 8px; color: #333; text-decoration: none;">فروشگاه</a>
+    <a href="#" class="mobile-nav-blog" style="display: block; padding: 8px; color: #333; text-decoration: none;">وبلاگ</a>
+    <a href="#" style="display: block; padding: 8px; color: #333; text-decoration: none;">درباره ما</a>
+    <a href="#" style="display: block; padding: 8px; color: #333; text-decoration: none;">تماس با ما</a>
+  </div>
+</nav>
+
+<style>
+  @media (min-width: 768px) {
+    .desktop-menu {
+      display: flex !important;
+    }
+    .hamburger {
+      display: none !important;
+    }
+  }
+  .mobile-dropdown-menu,
+  .mobile-submenu-level2 {
+    transition: all 0.3s ease;
+  }
+  @media (max-width: 768px) {
+    .flex.items-center.space-x-4 {
+      gap: 12px;
+    }
+  }
+</style>
+
+<!-- ==================== پاپ‌آپ احراز هویت ==================== -->
+<div id="auth-popup" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+  <div class="bg-white rounded-xl shadow-lg w-full max-w-md mx-4 modal-content">
+    <!-- Tab Navigation -->
+    <div class="flex border-b">
+      <button id="login-tab" class="tab-btn flex-1 py-4 text-center font-medium text-pink-500 border-b-2 border-pink-500">
+        ورود
+      </button>
+      <button id="register-tab" class="tab-btn flex-1 py-4 text-center font-medium text-gray-500">
+        ثبت نام
+      </button>
+      <button id="forgot-tab" class="tab-btn flex-1 py-4 text-center font-medium text-gray-500">
+        بازیابی رمز
+      </button>
+    </div>
+
+    <!-- Login Form -->
+    <div id="login-content" class="tab-content active p-6">
+      <h2 class="text-xl font-bold text-gray-800 mb-5 text-center">ورود به حساب کاربری</h2>
+      <form id="login-form" class="space-y-5">
+        <div>
+          <label class="block text-gray-700 mb-2" for="login-phone">شماره موبایل</label>
+          <input type="tel" name="mobile" id="login-phone" class="w-full px-4 py-3 rounded-lg border" placeholder="09xxxxxxxxx" required />
+        </div>
+        <div>
+          <label class="block text-gray-700 mb-2" for="login-password">رمز عبور</label>
+          <input type="password" name="password" id="login-password" class="w-full px-4 py-3 rounded-lg border" placeholder="رمز عبور خود را وارد کنید" required />
+        </div>
+        <button type="submit" class="w-full bg-pink-500 hover:bg-pink-600 text-white py-3 rounded-lg font-medium transition-colors">
+          ورود
+        </button>
+      </form>
+    </div>
+
+    <!-- Registration Form -->
+    <div id="register-content" class="tab-content p-6">
+      <div id="register-step-1" class="form-step active">
+        <h2 class="text-xl font-bold text-gray-800 mb-5 text-center">ایجاد حساب کاربری</h2>
+        <form id="register-form" class="space-y-4">
+          <div>
+            <label class="block text-gray-700 mb-2" for="register-name">نام و نام خانوادگی</label>
+            <input type="text" name="fullName" id="register-name" class="w-full px-4 py-3 rounded-lg border" placeholder="نام کامل خود را وارد کنید" required />
+          </div>
+          <div>
+            <label class="block text-gray-700 mb-2" for="register-phone">شماره موبایل</label>
+            <input type="tel" name="mobile" id="register-phone" class="w-full px-4 py-3 rounded-lg border" placeholder="09xxxxxxxxx" required />
+          </div>
+          <div>
+            <label class="block text-gray-700 mb-2" for="register-email">ایمیل</label>
+            <input type="email" name="email" id="register-email" class="w-full px-4 py-3 rounded-lg border" placeholder="email@example.com" />
+          </div>
+          <div>
+            <label class="block text-gray-700 mb-2" for="register-password">رمز عبور</label>
+            <input type="password" name="password" id="register-password" class="w-full px-4 py-3 rounded-lg border" placeholder="حداقل 8 کاراکتر" required />
+          </div>
+          <div>
+            <label class="block text-gray-700 mb-2" for="register-confirm-password">تکرار رمز عبور</label>
+            <input type="password" name="confirmPassword" id="register-confirm-password" class="w-full px-4 py-3 rounded-lg border" placeholder="تکرار رمز عبور" required />
+          </div>
+          <button type="submit" class="w-full bg-pink-500 hover:bg-pink-600 text-white py-3 rounded-lg font-medium transition-colors mt-2">
+            ثبت نام
+          </button>
+        </form>
+      </div>
+
+      <div id="register-step-2" class="form-step">
+        <h2 class="text-xl font-bold text-gray-800 mb-2 text-center">تایید شماره موبایل</h2>
+        <p class="text-gray-600 text-center mb-5">کد تایید به شماره <span id="register-phone-display" class="font-bold"></span> ارسال شد</p>
+        <form id="register-verification-form" class="space-y-5">
+          <div class="text-center">
+            <label class="block text-gray-700 mb-4 text-center">کد تایید را وارد کنید</label>
+            <div class="flex justify-center gap-2 mb-3">
+              <input type="text" maxlength="1" class="otp-input" dir="ltr" required />
+              <input type="text" maxlength="1" class="otp-input" dir="ltr" required />
+              <input type="text" maxlength="1" class="otp-input" dir="ltr" required />
+              <input type="text" maxlength="1" class="otp-input" dir="ltr" required />
+              <input type="text" maxlength="1" class="otp-input" dir="ltr" required />
+            </div>
+            <div id="register-resend-timer" class="text-sm text-gray-500 mb-3">ارسال مجدد کد تا <span>۰۲:۰۰</span></div>
+          </div>
+          <button type="submit" class="w-full bg-pink-500 hover:bg-pink-600 text-white py-3 rounded-lg font-medium transition-colors">
+            تایید و ورود
+          </button>
+          <button type="button" id="register-back-btn" class="w-full bg-white text-pink-500 py-3 rounded-lg font-medium border border-pink-500 hover:bg-pink-50 transition-colors">
+            بازگشت
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Forgot Password Form -->
+    <div id="forgot-content" class="tab-content p-6">
+      <div id="forgot-step-1" class="form-step active">
+        <h2 class="text-xl font-bold text-gray-800 mb-5 text-center">بازیابی رمز عبور</h2>
+        <form id="forgot-form" class="space-y-5">
+          <div>
+            <label class="block text-gray-700 mb-2" for="forgot-phone">شماره موبایل</label>
+            <input type="tel" id="forgot-phone" class="w-full px-4 py-3 rounded-lg border" placeholder="09xxxxxxxxx" required />
+          </div>
+          <button type="submit" class="w-full bg-pink-500 hover:bg-pink-600 text-white py-3 rounded-lg font-medium transition-colors">
+            ارسال کد تایید
+          </button>
+        </form>
+      </div>
+
+      <div id="forgot-step-2" class="form-step">
+        <h2 class="text-xl font-bold text-gray-800 mb-2 text-center">تایید کد</h2>
+        <p class="text-gray-600 text-center mb-5">کد تایید به شماره <span id="forgot-phone-display" class="font-bold"></span> ارسال شد</p>
+        <form id="forgot-verification-form" class="space-y-5">
+          <div class="text-center">
+            <label class="block text-gray-700 mb-4 text-center">کد تایید را وارد کنید</label>
+            <div class="flex justify-center gap-2 mb-3">
+              <input type="text" maxlength="1" class="otp-input" dir="ltr" required />
+              <input type="text" maxlength="1" class="otp-input" dir="ltr" required />
+              <input type="text" maxlength="1" class="otp-input" dir="ltr" required />
+              <input type="text" maxlength="1" class="otp-input" dir="ltr" required />
+              <input type="text" maxlength="1" class="otp-input" dir="ltr" required />
+            </div>
+            <div id="forgot-resend-timer" class="text-sm text-gray-500 mb-3">ارسال مجدد کد تا <span>۰۲:۰۰</span></div>
+          </div>
+          <button type="submit" class="w-full bg-pink-500 hover:bg-pink-600 text-white py-3 rounded-lg font-medium transition-colors">
+            تایید
+          </button>
+          <button type="button" id="forgot-back-btn" class="w-full bg-white text-pink-500 py-3 rounded-lg font-medium border border-pink-500 hover:bg-pink-50 transition-colors">
+            بازگشت
+          </button>
+        </form>
+      </div>
+
+      <div id="forgot-step-3" class="form-step">
+        <h2 class="text-xl font-bold text-gray-800 mb-5 text-center">تعیین رمز عبور جدید</h2>
+        <form id="new-password-form" class="space-y-5">
+          <div>
+            <label class="block text-gray-700 mb-2" for="new-password">رمز عبور جدید</label>
+            <input type="password" id="new-password" class="w-full px-4 py-3 rounded-lg border" placeholder="حداقل 8 کاراکتر" required />
+          </div>
+          <div>
+            <label class="block text-gray-700 mb-2" for="confirm-new-password">تکرار رمز عبور جدید</label>
+            <input type="password" id="confirm-new-password" class="w-full px-4 py-3 rounded-lg border" placeholder="تکرار رمز عبور جدید" required />
+            <input type="hidden" id="reset-token" name="reset-token">
+          </div>
+          <button type="submit" class="w-full bg-pink-500 hover:bg-pink-600 text-white py-3 rounded-lg font-medium transition-colors">
+            ذخیره و ورود
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== محتوای اصلی مجله ==================== -->
+<div id="mainContent" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-4">
+  
+  <!-- بخش هیرو -->
+  <section class="mt-4 mb-8">
+    <div class="bg-white/60 backdrop-blur-sm rounded-3xl p-6 sm:p-8 border border-white/70 shadow-xl">
+      <div class="grid md:grid-cols-2 gap-8 items-center">
+        <div>
+          <span class="inline-flex items-center gap-2 bg-rose-50 px-4 py-2 rounded-full text-xs font-bold text-pink-500 mb-4">
+            <i class="fas fa-sparkle"></i> راهنمای خوش‌پوشی کوچولوها
+          </span>
+          <h1 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-rose-800 leading-tight">
+            کیدل مگ | مجله تخصصی لباس کودک
+          </h1>
+          <p class="mt-4 text-rose-700 leading-relaxed">
+            اینجا درباره انتخاب لباس راحت، شیک و مناسب فصل برای کودکان می‌خوانید؛ از ترندهای لطیف کودکانه تا نکته‌های کاربردی برای خرید هوشمندانه.
+          </p>
+        </div>
+        <div class="hidden md:block">
+          <div class="w-48 h-48 mx-auto bg-gradient-to-br from-pink-200 to-amber-100 rounded-3xl flex items-center justify-center shadow-2xl">
+            <i class="fas fa-baby-carriage text-6xl text-pink-400"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- بخش آمار -->
+  <section class="mb-12">
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+      <div class="bg-white/60 backdrop-blur-sm rounded-2xl p-4 text-center hover:bg-white transition">
+        <div class="w-10 h-10 rounded-xl bg-amber-100 flex items-center justify-center mx-auto mb-2">
+          <i class="fas fa-newspaper text-pink-500"></i>
+        </div>
+        <p class="text-2xl font-extrabold text-rose-800" id="stat-articles">۱۲۴</p>
+        <p class="text-xs text-rose-600">تعداد مقالات منتشر شده</p>
+      </div>
+      <div class="bg-white/60 backdrop-blur-sm rounded-2xl p-4 text-center hover:bg-white transition">
+        <div class="w-10 h-10 rounded-xl bg-amber-100 flex items-center justify-center mx-auto mb-2">
+          <i class="fas fa-heart text-pink-500"></i>
+        </div>
+        <p class="text-2xl font-extrabold text-rose-800" id="stat-satisfaction">۹۸٪</p>
+        <p class="text-xs text-rose-600">درصد رضایت کاربران</p>
+      </div>
+      <div class="bg-white/60 backdrop-blur-sm rounded-2xl p-4 text-center hover:bg-white transition">
+        <div class="w-10 h-10 rounded-xl bg-amber-100 flex items-center justify-center mx-auto mb-2">
+          <i class="fas fa-pen-fancy text-pink-500"></i>
+        </div>
+        <p class="text-2xl font-extrabold text-rose-800" id="stat-writers">۸</p>
+        <p class="text-xs text-rose-600">تعداد نویسندگان</p>
+      </div>
+      <div class="bg-white/60 backdrop-blur-sm rounded-2xl p-4 text-center hover:bg-white transition">
+        <div class="w-10 h-10 rounded-xl bg-amber-100 flex items-center justify-center mx-auto mb-2">
+          <i class="fas fa-comments text-pink-500"></i>
+        </div>
+        <p class="text-2xl font-extrabold text-rose-800" id="stat-comments">۱٬۲۰۳</p>
+        <p class="text-xs text-rose-600">تعداد نظرات</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- دسته‌بندی‌ها -->
+  <section id="categories" class="mb-10">
+    <div class="mb-4">
+      <h2 class="text-2xl font-extrabold text-rose-800">دسته‌بندی‌ها</h2>
+      <p class="text-sm text-rose-600">موضوع مورد علاقه‌تان را سریع‌تر پیدا کنید.</p>
+    </div>
+    <div class="chip-scroll flex gap-3 pb-2">
+      <button class="category-chip active px-5 py-2.5 rounded-full bg-pink-500 text-white font-bold whitespace-nowrap shadow-md" data-cat="all">همه</button>
+      <button class="category-chip px-5 py-2.5 rounded-full bg-white/70 text-rose-700 font-bold whitespace-nowrap hover:bg-white transition" data-cat="مد کودک">مد کودک</button>
+      <button class="category-chip px-5 py-2.5 rounded-full bg-white/70 text-rose-700 font-bold whitespace-nowrap hover:bg-white transition" data-cat="سبک زندگی">سبک زندگی</button>
+      <button class="category-chip px-5 py-2.5 rounded-full bg-white/70 text-rose-700 font-bold whitespace-nowrap hover:bg-white transition" data-cat="سلامت کودک">سلامت کودک</button>
+      <button class="category-chip px-5 py-2.5 rounded-full bg-white/70 text-rose-700 font-bold whitespace-nowrap hover:bg-white transition" data-cat="راهنمای خرید">راهنمای خرید</button>
+      <button class="category-chip px-5 py-2.5 rounded-full bg-white/70 text-rose-700 font-bold whitespace-nowrap hover:bg-white transition" data-cat="مراقبت لباس">مراقبت لباس</button>
+    </div>
+  </section>
+
+  <!-- آخرین مقالات -->
+  <section id="latest" class="mb-12">
+    <div class="mb-5 flex justify-between items-end flex-wrap gap-2">
+      <div>
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-rose-800">آخرین مقالات</h2>
+        <p class="text-sm text-rose-600">۵ مطلب تازه برای انتخاب بهتر لباس کودک</p>
+      </div>
+      <span id="filter-badge" class="hidden sm:inline-block bg-white/70 rounded-full px-4 py-2 text-sm font-bold text-pink-500">نمایش همه مقالات</span>
+    </div>
+    
+    <!-- اسکلت لودینگ -->
+    <div id="skeleton-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
+      <div class="rounded-2xl bg-white/50 p-3"><div class="skeleton h-40 rounded-xl"></div><div class="skeleton h-5 w-2/3 mt-4 rounded-full"></div><div class="skeleton h-4 w-full mt-3 rounded-full"></div></div>
+      <div class="rounded-2xl bg-white/50 p-3"><div class="skeleton h-40 rounded-xl"></div><div class="skeleton h-5 w-2/3 mt-4 rounded-full"></div><div class="skeleton h-4 w-full mt-3 rounded-full"></div></div>
+      <div class="rounded-2xl bg-white/50 p-3 hidden sm:block"><div class="skeleton h-40 rounded-xl"></div><div class="skeleton h-5 w-2/3 mt-4 rounded-full"></div><div class="skeleton h-4 w-full mt-3 rounded-full"></div></div>
+    </div>
+    
+    <!-- گرید مقالات -->
+    <div id="articles-grid" class="hidden grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4"></div>
+  </section>
+
+  <!-- خبرنامه -->
+  <section id="newsletter" class="mb-12">
+    <div class="bg-rose-800 rounded-3xl p-6 sm:p-8 relative overflow-hidden">
+      <div class="absolute -top-16 -left-16 w-40 h-40 rounded-full bg-pink-400/30"></div>
+      <div class="absolute -bottom-20 -right-20 w-56 h-56 rounded-full bg-amber-300/20"></div>
+      <div class="relative z-10 grid md:grid-cols-2 gap-6 items-center">
+        <div>
+          <h2 class="text-2xl sm:text-3xl font-extrabold text-white">عضویت در خبرنامه</h2>
+          <p class="mt-2 text-rose-100">اولین نفری باشید که از جدیدترین مقالات و تخفیف‌ها باخبر می‌شوید</p>
+        </div>
+        <form id="newsletterForm" class="flex flex-col sm:flex-row gap-3">
+          <input type="email" id="newsletterEmail" placeholder="ایمیل شما" class="flex-1 px-5 py-3 rounded-2xl border-0 focus:ring-2 focus:ring-pink-400 outline-none text-rose-800" required>
+          <button type="submit" class="bg-pink-500 hover:bg-pink-600 text-white font-bold px-6 py-3 rounded-2xl transition shadow-lg">عضویت</button>
+        </form>
+        <p id="newsletterMsg" class="hidden text-white text-sm mt-2"></p>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- ==================== صفحه تکی مقاله (همراه با نوار ناوبری) ==================== -->
+<div id="singlePostView" class="hidden fixed inset-0 bg-white z-40 overflow-auto">
+  <!-- نوار ناوبری برای صفحه تکی مقاله -->
+  <nav style="background: white; box-shadow: 0 2px 10px rgba(0,0,0,0.1); position: sticky; top: 0; left: 0; right: 0; z-index: 50; padding: 12px 20px;">
+    <div style="max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
+      <a href="#" id="singlePostLogo" style="display: flex; align-items: center; gap: 8px; text-decoration: none;">
+        <div class="w-10 h-10 rounded-2xl bg-pink-400 flex items-center justify-center shadow-lg">
+          <i class="fas fa-child text-white text-xl"></i>
+        </div>
+        <div>
+          <span class="block text-xl font-extrabold text-rose-800">کیدل</span>
+          <span class="block text-xs text-rose-600">فروشگاه لباس کودک</span>
+        </div>
+      </a>
+      <div class="flex items-center space-x-4 space-x-reverse">
+        <div class="relative">
+          <button class="relative text-gray-700 hover:text-pink-500 transition-colors">
+            <a href="/cart">
+              <i class="fas fa-shopping-bag text-xl"></i>
+            </a>
+          </button>
+        </div>
+        <button id="singlePostAuthBtn" class="text-gray-700 hover:text-pink-500 transition-colors">
+          <i class="fas fa-user text-xl"></i>
+        </button>
+        <button id="closeSinglePostBtn" class="text-gray-700 hover:text-pink-500 transition-colors">
+          <i class="fas fa-times text-xl"></i>
+        </button>
+      </div>
+    </div>
+  </nav>
+  
+  <div class="max-w-6xl mx-auto px-4 py-6">
+    <div id="singlePostContent"></div>
+  </div>
+
+  <!-- ==================== فوتر برای صفحه تکی مقاله ==================== -->
+  <footer class="bg-gray-900 text-white py-12 mt-8">
+    <div class="container mx-auto px-4">
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+        <!-- درباره فروشگاه -->
+        <div>
+          <div class="flex items-center space-x-reverse space-x-3 mb-4">
+            <div class="w-10 h-10 bg-gradient-to-r from-pink-500 to-rose-500 rounded-lg flex items-center justify-center">
+              <i class="fas fa-child text-white text-xl"></i>
+            </div>
+            <h3 class="text-xl font-bold">کیدل | فروشگاه لباس کودک</h3>
+          </div>
+          <p class="text-gray-400 text-sm leading-relaxed">
+            فروشگاه تخصصی پوشاک کودک و نوزاد، با بهترین کیفیت و مناسب‌ترین قیمت
+          </p>
+          <p class="text-gray-400 text-sm leading-relaxed mt-3">
+            <i class="fas fa-phone ml-2"></i> تماس: 0905424346
+          </p>
+          <p class="text-gray-400 text-sm leading-relaxed mt-1">
+            <i class="fas fa-map-marker-alt ml-2"></i> گرگان خیابان پاسداران پاساژ وارکانا پلاک 51
+          </p>
+        </div>
+
+        <!-- دسته‌بندی محصولات -->
+        <div>
+          <h4 class="font-bold mb-4 text-pink-400">دسته‌بندی‌ها</h4>
+          <ul class="space-y-2 text-sm text-gray-400">
+            <li><a href="#" class="hover:text-pink-400 transition-colors">لباس نوزاد (۰-۲۴ ماه)</a></li>
+            <li><a href="#" class="hover:text-pink-400 transition-colors">لباس کودک (۲-۷ سال)</a></li>
+            <li><a href="#" class="hover:text-pink-400 transition-colors">لباس پسرانه</a></li>
+            <li><a href="#" class="hover:text-pink-400 transition-colors">لباس دخترانه</a></li>
+            <li><a href="#" class="hover:text-pink-400 transition-colors">ست و اکسسوری کودک</a></li>
+          </ul>
+        </div>
+
+        <!-- لینک‌های مفید -->
+        <div>
+          <h4 class="font-bold mb-4 text-pink-400">لینک‌های مفید</h4>
+          <ul class="space-y-2 text-sm text-gray-400">
+            <li><a href="#" class="hover:text-pink-400 transition-colors">درباره ما</a></li>
+            <li><a href="#" class="hover:text-pink-400 transition-colors">تماس با ما</a></li>
+            <li><a href="#" class="hover:text-pink-400 transition-colors">فروشگاه</a></li>
+          </ul>
+        </div>
+
+        <!-- شبکه‌های اجتماعی -->
+        <div>
+          <h4 class="font-bold mb-4 text-pink-400">ما را دنبال کنید</h4>
+          <div class="flex space-x-reverse space-x-4 mb-6">
+            <a href="#" class="w-10 h-10 bg-gray-800 rounded-lg flex items-center justify-center hover:bg-pink-500 transition-colors">
+              <i class="fab fa-instagram text-xl"></i>
+            </a>
+            <a href="#" class="w-10 h-10 bg-gray-800 rounded-lg flex items-center justify-center hover:bg-pink-500 transition-colors">
+              <i class="fab fa-telegram text-xl"></i>
+            </a>
+            <a href="#" class="w-10 h-10 bg-gray-800 rounded-lg flex items-center justify-center hover:bg-pink-500 transition-colors">
+              <i class="fab fa-whatsapp text-xl"></i>
+            </a>
+          </div>
+          <div class="mt-4">
+            <p class="text-gray-400 text-sm mb-2">ایمیل:</p>
+            <p class="text-gray-400 text-sm">info@kidland.com</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- کپی‌رایت -->
+      <div class="border-t border-gray-800 mt-8 pt-8">
+        <div class="flex flex-col md:flex-row justify-between items-center gap-4">
+          <div class="text-center text-sm text-gray-400">
+            <p>© ۱۴۰۶ فروشگاه کیدل. تمامی حقوق محفوظ است.</p>
+          </div>
+          <div class="flex space-x-reverse space-x-3">
+            <span class="text-xs text-gray-500">پشتیبانی ۲۴ ساعته</span>
+            <span class="text-xs text-gray-500">ارسال سریع</span>
+            <span class="text-xs text-gray-500">تضمین اصالت کالا</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
+</div>
+
+<!-- ==================== فوتر ==================== -->
+<footer class="bg-gray-900 text-white py-12">
+  <div class="container mx-auto px-4">
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+      <div>
+        <div class="flex items-center space-x-reverse space-x-3 mb-4">
+          <div class="w-10 h-10 bg-gradient-to-r from-pink-500 to-rose-500 rounded-lg flex items-center justify-center">
+            <i class="fas fa-child text-white text-xl"></i>
+          </div>
+          <h3 class="text-xl font-bold">کیدل | فروشگاه لباس کودک</h3>
+        </div>
+        <p class="text-gray-400 text-sm leading-relaxed">
+          فروشگاه تخصصی پوشاک کودک و نوزاد، با بهترین کیفیت و مناسب‌ترین قیمت
+        </p>
+        <p class="text-gray-400 text-sm leading-relaxed mt-3">
+          <i class="fas fa-phone ml-2"></i> تماس: 0905424346
+        </p>
+        <p class="text-gray-400 text-sm leading-relaxed mt-1">
+          <i class="fas fa-map-marker-alt ml-2"></i> گرگان خیابان پاسداران پاساژ وارکانا پلاک 51
+        </p>
+      </div>
+
+      <div>
+        <h4 class="font-bold mb-4 text-pink-400">دسته‌بندی‌ها</h4>
+        <ul class="space-y-2 text-sm text-gray-400">
+          <li><a href="#" class="hover:text-pink-400 transition-colors">لباس نوزاد (۰-۲۴ ماه)</a></li>
+          <li><a href="#" class="hover:text-pink-400 transition-colors">لباس کودک (۲-۷ سال)</a></li>
+          <li><a href="#" class="hover:text-pink-400 transition-colors">لباس پسرانه</a></li>
+          <li><a href="#" class="hover:text-pink-400 transition-colors">لباس دخترانه</a></li>
+          <li><a href="#" class="hover:text-pink-400 transition-colors">ست و اکسسوری کودک</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <h4 class="font-bold mb-4 text-pink-400">لینک‌های مفید</h4>
+        <ul class="space-y-2 text-sm text-gray-400">
+          <li><a href="#" class="hover:text-pink-400 transition-colors">درباره ما</a></li>
+          <li><a href="#" class="hover:text-pink-400 transition-colors">تماس با ما</a></li>
+          <li><a href="#" class="hover:text-pink-400 transition-colors">فروشگاه</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <h4 class="font-bold mb-4 text-pink-400">ما را دنبال کنید</h4>
+        <div class="flex space-x-reverse space-x-4 mb-6">
+          <a href="#" class="w-10 h-10 bg-gray-800 rounded-lg flex items-center justify-center hover:bg-pink-500 transition-colors">
+            <i class="fab fa-instagram text-xl"></i>
+          </a>
+          <a href="#" class="w-10 h-10 bg-gray-800 rounded-lg flex items-center justify-center hover:bg-pink-500 transition-colors">
+            <i class="fab fa-telegram text-xl"></i>
+          </a>
+          <a href="#" class="w-10 h-10 bg-gray-800 rounded-lg flex items-center justify-center hover:bg-pink-500 transition-colors">
+            <i class="fab fa-whatsapp text-xl"></i>
+          </a>
+        </div>
+        <div class="mt-4">
+          <p class="text-gray-400 text-sm mb-2">ایمیل:</p>
+          <p class="text-gray-400 text-sm">info@kidland.com</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="border-t border-gray-800 mt-8 pt-8">
+      <div class="flex flex-col md:flex-row justify-between items-center gap-4">
+        <div class="text-center text-sm text-gray-400">
+          <p>© ۱۴۰۶ فروشگاه کیدل. تمامی حقوق محفوظ است.</p>
+        </div>
+        <div class="flex space-x-reverse space-x-3">
+          <span class="text-xs text-gray-500">پشتیبانی ۲۴ ساعته</span>
+          <span class="text-xs text-gray-500">ارسال سریع</span>
+          <span class="text-xs text-gray-500">تضمین اصالت کالا</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+// ==================== دیتای مقالات ====================
+const posts = [
+  { id: 1, category: "مد کودک", title: "چطور برای بهار، لباس‌های نرم و لایه‌ای کودک انتخاب کنیم؟", date: "۱۴۰۴/۰۲/۱۵", author: "نگار کریمی", readTime: 3, description: "در روزهای بهاری که هوا گاهی خنک و گاهی گرم می‌شود، انتخاب لباس لایه‌ای و سبک به کودک کمک می‌کند راحت‌تر بازی کند.", imageIcon: "fa-shirt", fullContent: "<p>بهار فصل تغییرات ملایم هواست؛ صبح‌ها ممکن است کمی خنک باشد و ظهرها کودک هنگام بازی احساس گرما کند. بهترین انتخاب برای این فصل، لباس‌هایی هستند که سبک، قابل تنفس و لایه‌لایه باشند.</p><h2>چرا لایه‌پوشی برای کودک مهم است؟</h2><p>کودکان هنگام بازی تحرک زیادی دارند و دمای بدنشان سریع تغییر می‌کند. یک ژاکت سبک، یک تی‌شرت نخی و شلوار راحت، ترکیبی ساده اما کاربردی برای روزهای بهاری است.</p><ul><li>پارچه‌های نخی و لطیف را انتخاب کنید.</li><li>از لباس‌های خیلی تنگ یا سنگین دوری کنید.</li><li>رنگ‌های روشن و گرم حس شادی بیشتری ایجاد می‌کنند.</li></ul><p>در کیدل، لباس‌های کودکانه با نگاه به راحتی، سادگی و زیبایی طراحی می‌شوند تا کودک هم آزادانه حرکت کند و هم ظاهر دوست‌داشتنی داشته باشد.</p>" },
+  { id: 2, category: "مراقبت لباس", title: "راهنمای شست‌وشوی لباس کودک بدون آسیب به بافت پارچه", date: "۱۴۰۴/۰۲/۱۰", author: "سارا راد", readTime: 4, description: "لباس کودک به شست‌وشوی دقیق‌تری نیاز دارد. با چند نکته ساده می‌توانید رنگ و لطافت لباس‌ها را حفظ کنید.", imageIcon: "fa-hand-sparkles", fullContent: "<p>پوست کودکان حساس‌تر از بزرگسالان است و لباس‌هایی که مستقیم با پوست در تماس هستند باید با دقت بیشتری شسته شوند.</p><h2>انتخاب شوینده مناسب</h2><p>بهتر است از شوینده‌های ملایم و بدون عطر تند استفاده کنید. این کار احتمال حساسیت پوستی را کاهش می‌دهد و بافت لباس را نرم نگه می‌دارد.</p><ul><li>لباس‌ها را بر اساس رنگ جدا کنید.</li><li>از آب خیلی داغ استفاده نکنید.</li><li>لباس‌های ظریف را پشت‌ورو بشویید.</li></ul><p>اگر لباس چاپ یا گلدوزی دارد، خشک‌کردن در سایه کمک می‌کند طرح آن دیرتر کمرنگ شود.</p>" },
+  { id: 3, category: "سبک زندگی", title: "رنگ‌های آرامش‌بخش برای استایل روزمره کودکان", date: "۱۴۰۴/۰۲/۰۵", author: "مهسا نوری", readTime: 3, description: "رنگ‌ها روی حس‌وحال کودک تأثیر می‌گذارند. پالت‌های پاستلی می‌توانند ظاهری آرام، شاد و هماهنگ بسازند.", imageIcon: "fa-palette", fullContent: "<p>رنگ‌های پاستلی مثل صورتی ملایم، کرم، هلویی و بژ روشن، برای لباس کودک انتخاب‌هایی گرم و دلنشین هستند.</p><h2>چگونه رنگ‌ها را ترکیب کنیم؟</h2><p>برای یک ظاهر متعادل، یک رنگ اصلی نرم انتخاب کنید و آن را با رنگ‌های خنثی مثل کرم یا شیری همراه کنید.</p><ul><li>صورتی ملایم با بژ روشن ترکیبی لطیف می‌سازد.</li><li>هلویی با سفید، استایلی تمیز و شاد دارد.</li><li>رنگ‌های خیلی تند را فقط در جزئیات کوچک استفاده کنید.</li></ul><p>هدف از انتخاب رنگ، ایجاد حس راحتی و شادی است؛ نه شلوغ‌کردن بیش از حد استایل کودک.</p>" },
+  { id: 4, category: "سلامت کودک", title: "چه پارچه‌هایی برای پوست حساس کودک مناسب‌تر هستند؟", date: "۱۴۰۴/۰۱/۲۸", author: "دکتر لیلا شفیعی", readTime: 5, description: "انتخاب پارچه مناسب نقش مهمی در سلامت پوست کودک دارد؛ مخصوصاً برای کودکانی که پوست حساس یا مستعد خشکی دارند.", imageIcon: "fa-heartbeat", fullContent: "<p>پوست کودک ظریف است و تماس طولانی با پارچه‌های زبر یا الیاف نامناسب می‌تواند باعث قرمزی، خارش یا ناراحتی شود.</p><h2>پارچه‌های پیشنهادی</h2><p>نخ پنبه، لینن نرم و ترکیب‌های تنفس‌پذیر، گزینه‌هایی مناسب برای لباس روزمره کودک هستند.</p><ul><li>به برچسب ترکیب پارچه توجه کنید.</li><li>لباس را قبل از اولین استفاده بشویید.</li><li>در فصل گرم از لباس‌های سبک‌تر استفاده کنید.</li></ul><p>لباس سالم، لباسی است که کودک در آن احساس آزادی، آرامش و سبکی کند.</p>" },
+  { id: 5, category: "راهنمای خرید", title: "۵ نکته برای خرید هوشمندانه لباس کودک در هر فصل", date: "۱۴۰۴/۰۱/۲۰", author: "پریسا واعظی", readTime: 4, description: "خرید لباس کودک فقط انتخاب طرح زیبا نیست. سایز، جنس، کاربرد و دوام هم نقش مهمی در خرید بهتر دارند.", imageIcon: "fa-cart-shopping", fullContent: "<p>کودکان سریع رشد می‌کنند، بنابراین خرید لباس باید هم زیبا باشد و هم از نظر اندازه و کاربرد، منطقی انتخاب شود.</p><h2>قبل از خرید به چه چیزهایی توجه کنیم؟</h2><p>به فصل، میزان استفاده، راحتی هنگام بازی و قابلیت شست‌وشوی آسان توجه کنید. لباس کودک باید همراه روزمره او باشد، نه مانع حرکتش.</p><ul><li>یک سایز خیلی بزرگ‌تر نخرید؛ آزادی مناسب کافی است.</li><li>لباس‌های قابل ترکیب با چند آیتم دیگر انتخاب کنید.</li><li>دوام دوخت و کیفیت پارچه را بررسی کنید.</li></ul><p>خرید هوشمندانه یعنی انتخاب لباسی که هم کودک دوستش داشته باشد و هم والدین از کیفیت و کاربرد آن راضی باشند.</p>" }
+];
+
+let currentCategory = "all";
+
+// ==================== توابع کمکی ====================
+function toPersianNumber(num) {
+  const digits = ['۰','۱','۲','۳','۴','۵','۶','۷','۸','۹'];
+  return num.toString().replace(/\d/g, d => digits[parseInt(d)]);
+}
+
+// ==================== نمایش مقالات در صفحه اصلی ====================
+function renderArticles() {
+  const grid = document.getElementById("articles-grid");
+  if (!grid) return;
+  grid.innerHTML = "";
+  
+  const filtered = posts.filter(p => currentCategory === "all" || p.category === currentCategory);
+  
+  filtered.forEach(post => {
+    const card = document.createElement("div");
+    card.className = "article-card rounded-2xl p-3 shadow-sm fade-in";
+    card.innerHTML = `
+      <div class="image-placeholder rounded-xl h-44 flex items-center justify-center">
+        <i class="fas ${post.imageIcon || 'fa-tshirt'} text-5xl text-pink-400"></i>
+      </div>
+      <div class="pt-4">
+        <div class="flex flex-wrap gap-2 mb-2">
+          <span class="bg-pink-100 text-pink-600 text-xs font-bold px-3 py-1 rounded-full">${post.category}</span>
+          <span class="bg-amber-50 text-rose-600 text-xs font-bold px-3 py-1 rounded-full"><i class="far fa-clock ml-1"></i> ${toPersianNumber(post.readTime)} دقیقه</span>
+        </div>
+        <h3 class="font-extrabold text-rose-800 text-base leading-6 line-clamp-2 min-h-[48px]">${post.title}</h3>
+        <div class="flex gap-3 text-xs text-rose-500 mt-2">
+          <span><i class="far fa-calendar ml-1"></i> ${post.date}</span>
+          <span><i class="far fa-user ml-1"></i> ${post.author}</span>
+        </div>
+        <p class="text-sm text-rose-600 mt-2 line-clamp-3">${post.description}</p>
+        <button class="read-more-btn w-full mt-3 bg-pink-500 hover:bg-pink-600 text-white font-bold py-2.5 rounded-xl transition" data-id="${post.id}">
+          ادامه مطلب <i class="fas fa-arrow-left mr-1"></i>
+        </button>
+      </div>
+    `;
+    grid.appendChild(card);
+  });
+  
+  document.querySelectorAll(".read-more-btn").forEach(btn => {
+    btn.addEventListener("click", (e) => {
+      const id = parseInt(btn.dataset.id);
+      showSinglePost(id);
+    });
+  });
+}
+
+// ==================== نمایش صفحه تکی مقاله با نوار ناوبری ====================
+function showSinglePost(postId) {
+  const post = posts.find(p => p.id === postId);
+  if (!post) return;
+  
+  const otherPosts = posts.filter(p => p.id !== postId).slice(0, 4);
+  
+  const content = `
+    <div class="grid lg:grid-cols-3 gap-8">
+      <div class="lg:col-span-2">
+        <div class="bg-white rounded-3xl p-5 shadow-xl border border-rose-100">
+          <div class="image-placeholder rounded-2xl h-64 flex items-center justify-center">
+            <i class="fas ${post.imageIcon || 'fa-tshirt'} text-7xl text-pink-400"></i>
+          </div>
+          <div class="mt-6">
+            <div class="flex flex-wrap gap-2 mb-4">
+              <span class="bg-pink-100 text-pink-600 text-xs font-bold px-3 py-1 rounded-full">${post.category}</span>
+              <span class="bg-amber-50 text-rose-600 text-xs font-bold px-3 py-1 rounded-full"><i class="far fa-clock ml-1"></i> ${toPersianNumber(post.readTime)} دقیقه</span>
+            </div>
+            <h1 class="text-2xl md:text-3xl font-extrabold text-rose-800">${post.title}</h1>
+            <div class="flex gap-4 text-sm text-rose-500 mt-4 pb-4 border-b border-rose-100">
+              <span><i class="far fa-calendar ml-1"></i> ${post.date}</span>
+              <span><i class="far fa-user ml-1"></i> ${post.author}</span>
+            </div>
+            <div class="post-content mt-6 text-rose-700 leading-loose">
+              ${post.fullContent}
+            </div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="bg-white/80 backdrop-blur rounded-2xl p-5 sticky top-4 shadow-lg border border-rose-100">
+          <h3 class="font-extrabold text-rose-800 text-lg mb-4">مقالات دیگر</h3>
+          <div class="space-y-3">
+            ${otherPosts.map(p => `
+              <button class="related-post w-full text-right flex gap-3 items-center p-2 rounded-xl hover:bg-rose-50 transition" data-id="${p.id}">
+                <div class="w-14 h-14 rounded-xl bg-gradient-to-br from-pink-100 to-amber-100 flex items-center justify-center shrink-0">
+                  <i class="fas ${p.imageIcon || 'fa-tshirt'} text-pink-400 text-xl"></i>
+                </div>
+                <div>
+                  <h4 class="font-bold text-rose-800 text-sm line-clamp-2">${p.title}</h4>
+                  <span class="text-xs text-rose-500">${p.date}</span>
+                </div>
+              </button>
+            `).join("")}
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+  
+  document.getElementById("singlePostContent").innerHTML = content;
+  document.getElementById("singlePostView").classList.remove("hidden");
+  document.body.style.overflow = "hidden";
+  
+  document.querySelectorAll(".related-post").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const id = parseInt(btn.dataset.id);
+      showSinglePost(id);
+      window.scrollTo(0, 0);
+    });
+  });
+}
+
+// ==================== بستن صفحه تکی ====================
+function closeSinglePost() {
+  document.getElementById("singlePostView").classList.add("hidden");
+  document.body.style.overflow = "auto";
+}
+
+// ==================== دسته‌بندی‌ها ====================
+function setupCategories() {
+  document.querySelectorAll(".category-chip").forEach(btn => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll(".category-chip").forEach(b => {
+        b.classList.remove("active", "bg-pink-500", "text-white");
+        b.classList.add("bg-white/70", "text-rose-700");
+      });
+      btn.classList.add("active", "bg-pink-500", "text-white");
+      btn.classList.remove("bg-white/70", "text-rose-700");
+      
+      currentCategory = btn.dataset.cat;
+      const filterSpan = document.getElementById("filter-badge");
+      if (filterSpan) {
+        filterSpan.textContent = currentCategory === "all" ? "نمایش همه مقالات" : `نمایش: ${currentCategory}`;
+      }
+      renderArticles();
+    });
+  });
+}
+
+// ==================== خبرنامه ====================
+function setupNewsletter() {
+  const form = document.getElementById("newsletterForm");
+  const msg = document.getElementById("newsletterMsg");
+  if (form) {
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const email = document.getElementById("newsletterEmail").value;
+      if (!email || !email.includes("@")) {
+        msg.textContent = "لطفاً ایمیل معتبر وارد کنید.";
+        msg.classList.remove("hidden");
+        return;
+      }
+      msg.textContent = "عضویت شما با موفقیت ثبت شد! به خانواده کیدل خوش آمدید.";
+      msg.classList.remove("hidden");
+      document.getElementById("newsletterEmail").value = "";
+      setTimeout(() => msg.classList.add("hidden"), 3000);
+    });
+  }
+}
+
+// ==================== توابع پاپ‌آپ احراز هویت ====================
+function showNotification(message, type = 'info') {
+  const notification = document.createElement('div');
+  notification.className = `fixed z-50 px-4 py-3 rounded-lg shadow-lg text-white text-sm sm:text-base ${
+    type === 'success' ? 'bg-green-500' : type === 'error' ? 'bg-red-500' : 'bg-blue-500'
+  } top-4 left-1/2 -translate-x-1/2 sm:left-auto sm:translate-x-0 sm:top-6 sm:right-6 w-[calc(100%-2rem)] max-w-xs sm:max-w-sm`;
+  notification.textContent = message;
+  document.body.appendChild(notification);
+  notification.classList.add('transform', 'transition-all', 'duration-300', 'translate-y-2', 'opacity-0');
+  setTimeout(() => notification.classList.remove('translate-y-2', 'opacity-0'), 10);
+  setTimeout(() => {
+    notification.classList.add('opacity-0', 'translate-y-2');
+    setTimeout(() => notification.remove(), 300);
+  }, 2000);
+}
+
+function showNotificationInPopUp(message, type = 'info') {
+  const authPopup = document.getElementById('auth-popup');
+  if (!authPopup) return;
+  const notification = document.createElement('div');
+  notification.className = `fixed z-50 px-4 py-3 rounded-lg shadow-lg text-white text-sm sm:text-base ${
+    type === 'success' ? 'bg-green-500' : type === 'error' ? 'bg-red-500' : 'bg-blue-500'
+  }`;
+  notification.textContent = message;
+  notification.classList.add('transform', 'transition-all', 'duration-300', '-translate-y-[100px]', 'opacity-0');
+  authPopup.appendChild(notification);
+  setTimeout(() => notification.classList.remove('-translate-y-[100px]', 'opacity-0'), 10);
+  setTimeout(() => {
+    notification.classList.add('opacity-0', 'translate-y-2');
+    setTimeout(() => notification.remove(), 300);
+  }, 2000);
+}
+
+function switchTab(activeTab) {
+  const tabs = { login: document.getElementById("login-tab"), register: document.getElementById("register-tab"), forgot: document.getElementById("forgot-tab") };
+  const contents = { login: document.getElementById("login-content"), register: document.getElementById("register-content"), forgot: document.getElementById("forgot-content") };
+  if (!tabs[activeTab] || !contents[activeTab]) return;
+  Object.values(tabs).forEach((tab) => { if(tab) { tab.classList.remove("border-pink-500", "text-pink-500"); tab.classList.add("text-gray-500"); } });
+  Object.values(contents).forEach((content) => { if(content) content.classList.remove("active"); });
+  tabs[activeTab].classList.add("border-pink-500", "text-pink-500");
+  tabs[activeTab].classList.remove("text-gray-500");
+  contents[activeTab].classList.add("active");
+}
+
+function setupOtpInputs(containerSelector) {
+  const inputs = Array.from(document.querySelectorAll(`${containerSelector} .otp-input`));
+  if (inputs.length === 0) return;
+  inputs[inputs.length - 1].focus();
+  inputs.forEach((input, index) => {
+    input.addEventListener("input", function() { if (this.value.length === 1 && index > 0) inputs[index - 1].focus(); });
+    input.addEventListener("keydown", function(e) { if (e.key === "Backspace" && this.value.length === 0 && index < inputs.length - 1) inputs[index + 1].focus(); });
+  });
+}
+
+function getOtpValue(containerSelector) {
+  const inputs = Array.from(document.querySelectorAll(`${containerSelector} .otp-input`));
+  return inputs.map((input) => input.value).join("");
+}
+
+function startCountdown(elementId, seconds) {
+  const timerElement = document.getElementById(elementId);
+  if (!timerElement) return;
+  const timerSpan = timerElement.querySelector("span");
+  if (!timerSpan) return;
+  let remaining = seconds;
+  const interval = setInterval(() => {
+    const minutes = Math.floor(remaining / 60);
+    const secs = remaining % 60;
+    timerSpan.textContent = `${minutes.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
+    if (remaining <= 0) {
+      clearInterval(interval);
+      timerElement.innerHTML = '<a href="#" class="text-pink-500 resend-link">ارسال مجدد کد</a>';
+      const resendLink = timerElement.querySelector('.resend-link');
+      if (resendLink) {
+        resendLink.addEventListener('click', function(e) {
+          e.preventDefault();
+          handleResendOtp(elementId);
+        });
+      }
+    }
+    remaining--;
+  }, 1000);
+}
+
+function handleResendOtp(elementId) {
+  const isRegister = elementId.includes('register');
+  const phone = isRegister ? document.getElementById('register-phone')?.value : document.getElementById('forgot-phone')?.value;
+  if (!phone) { showNotificationInPopUp('شماره موبایل یافت نشد', 'error'); return; }
+  fetch("/api/mobile/sendOtp", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ mobile: phone }),
+  })
+  .then((res) => res.json())
+  .then((data) => {
+    if (data.success) { showNotificationInPopUp('کد تأیید جدید ارسال شد', 'success'); startCountdown(elementId, 120); }
+    else { showNotificationInPopUp(data.message || 'خطا در ارسال کد تأیید', 'error'); }
+  })
+  .catch((err) => { console.error("Error:", err); showNotificationInPopUp('مشکلی در ارتباط با سرور به وجود آمده است', 'error'); });
+}
+
+// ==================== راه‌اندازی اولیه ====================
+document.addEventListener("DOMContentLoaded", () => {
+  // نمایش اسکلت و بعد محتوا
+  setTimeout(() => {
+    const skeleton = document.getElementById("skeleton-grid");
+    const articlesGrid = document.getElementById("articles-grid");
+    if (skeleton) skeleton.classList.add("hidden");
+    if (articlesGrid) articlesGrid.classList.remove("hidden");
+    renderArticles();
+  }, 700);
+  
+  setupCategories();
+  setupNewsletter();
+  
+  // دکمه‌های بستن صفحه تکی
+  const closeSinglePostBtn = document.getElementById("closeSinglePostBtn");
+  if (closeSinglePostBtn) closeSinglePostBtn.addEventListener("click", closeSinglePost);
+  
+  const singlePostLogo = document.getElementById("singlePostLogo");
+  if (singlePostLogo) singlePostLogo.addEventListener("click", (e) => { e.preventDefault(); closeSinglePost(); });
+  
+  const logo = document.getElementById("logo");
+  if (logo) logo.addEventListener("click", (e) => { e.preventDefault(); closeSinglePost(); window.scrollTo(0, 0); });
+  
+  // ==================== منوی موبایل ====================
+  const menuBtn = document.getElementById('menu-btn');
+  const mobileMenu = document.getElementById('mobile-menu');
+  if (menuBtn && mobileMenu) {
+    menuBtn.onclick = function(e) {
+      e.stopPropagation();
+      if (mobileMenu.style.display === 'none' || mobileMenu.style.display === '') {
+        mobileMenu.style.display = 'flex';
+        document.body.classList.add('menu-open');
+      } else {
+        mobileMenu.style.display = 'none';
+        document.body.classList.remove('menu-open');
+      }
+    };
+  }
+  
+  document.querySelectorAll('.mobile-dropdown-trigger').forEach(trigger => {
+    trigger.onclick = function(e) {
+      e.stopPropagation();
+      const menu = this.nextElementSibling;
+      const icon = this.querySelector('i');
+      if (menu.style.display === 'none' || menu.style.display === '') {
+        menu.style.display = 'block';
+        if(icon) icon.style.transform = 'rotate(180deg)';
+      } else {
+        menu.style.display = 'none';
+        if(icon) icon.style.transform = 'rotate(0deg)';
+      }
+    };
+  });
+  
+  document.querySelectorAll('.mobile-submenu-trigger').forEach(trigger => {
+    trigger.onclick = function(e) {
+      e.stopPropagation();
+      const submenu = this.nextElementSibling;
+      const icon = this.querySelector('i');
+      if (submenu.style.display === 'none' || submenu.style.display === '') {
+        submenu.style.display = 'block';
+        if(icon) icon.style.transform = 'rotate(180deg)';
+      } else {
+        submenu.style.display = 'none';
+        if(icon) icon.style.transform = 'rotate(0deg)';
+      }
+    };
+  });
+  
+  // ==================== پاپ‌آپ احراز هویت ====================
+  const authButton = document.getElementById('user-auth-button');
+  const singlePostAuthBtn = document.getElementById('singlePostAuthBtn');
+  const authPopup = document.getElementById('auth-popup');
+  
+  function openAuthPopup(e) {
+    if(e) { e.preventDefault(); e.stopPropagation(); }
+    if(authPopup) {
+      authPopup.classList.remove('hidden');
+      switchTab('login');
+    }
+  }
+  
+  if (authButton) authButton.addEventListener('click', openAuthPopup);
+  if (singlePostAuthBtn) singlePostAuthBtn.addEventListener('click', openAuthPopup);
+  
+  if (authPopup) {
+    authPopup.addEventListener('click', function(e) {
+      if (e.target === authPopup) authPopup.classList.add('hidden');
+    });
+  }
+  
+  // Tab Switching Events
+  const loginTab = document.getElementById("login-tab");
+  const registerTab = document.getElementById("register-tab");
+  const forgotTab = document.getElementById("forgot-tab");
+  if (loginTab) loginTab.addEventListener("click", () => switchTab("login"));
+  if (registerTab) registerTab.addEventListener("click", () => switchTab("register"));
+  if (forgotTab) forgotTab.addEventListener("click", () => switchTab("forgot"));
+  
+  // Registration Process (همانند کد اصلی)
+  const registerForm = document.getElementById("register-form");
+  const registerStep1 = document.getElementById("register-step-1");
+  const registerStep2 = document.getElementById("register-step-2");
+  const registerPhoneDisplay = document.getElementById("register-phone-display");
+  
+  if (registerForm) {
+    registerForm.addEventListener("submit", function(e) {
+      e.preventDefault();
+      const fullName = document.getElementById("register-name")?.value || "";
+      const mobile = document.getElementById("register-phone")?.value.trim() || "";
+      const email = document.getElementById("register-email")?.value.trim() || "";
+      const password = document.getElementById("register-password")?.value || "";
+      const confirmPassword = document.getElementById("register-confirm-password")?.value || "";
+      const iranMobileRegex = /^09\d{9}$/;
+      const emailRegex = /^\S+@\S+\.\S+$/;
+      
+      if (fullName.length < 3) { showNotificationInPopUp("نام کامل باید حداقل ۳ کاراکتر باشد", 'error'); return; }
+      if (!iranMobileRegex.test(mobile)) { showNotificationInPopUp("شماره موبایل وارد شده معتبر نیست (مثال: 09123456789)", 'error'); return; }
+      if (email && !emailRegex.test(email)) { showNotificationInPopUp("ایمیل وارد شده معتبر نیست", 'error'); return; }
+      if (password.length < 8) { showNotificationInPopUp("رمز عبور باید حداقل ۸ کاراکتر باشد", 'error'); return; }
+      if (password !== confirmPassword) { showNotificationInPopUp("رمز عبور و تکرار آن یکسان نیستند", 'error'); return; }
+      
+      const formDataRegister = new FormData(registerForm);
+      const phone = mobile;
+      if (registerPhoneDisplay) registerPhoneDisplay.textContent = phone;
+      if (registerStep1) registerStep1.classList.remove("active");
+      if (registerStep2) registerStep2.classList.add("active");
+      startCountdown("register-resend-timer", 120);
+      setupOtpInputs("#register-step-2");
+      
+      fetch("/api/mobile/sendOtp", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ mobile: phone }),
+      })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success) {
+          const registerVerificationForm = document.getElementById("register-verification-form");
+          if (registerVerificationForm) {
+            registerVerificationForm.addEventListener("submit", function(e) {
+              e.preventDefault();
+              const otpValue = getOtpValue("#register-step-2");
+              const reversedOtpValue = otpValue.split("").reverse().join("");
+              fetch("/api/mobile/verifyOtp", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ mobile: phone, otp: reversedOtpValue }),
+              })
+              .then((res) => res.json())
+              .then((data) => {
+                if (data.success) {
+                  fetch("/api/authentication/signUp", {
+                    method: "POST",
+                    body: formDataRegister,
+                  })
+                  .then((res) => res.json())
+                  .then((data) => {
+                    if (data.success) {
+                      showNotification(data.message, 'success');
+                      if (authPopup) authPopup.classList.add("hidden");
+                      setTimeout(() => location.reload(), 2000);
+                    } else { showNotificationInPopUp(data.message, 'error'); }
+                  })
+                  .catch((err) => { console.error("Error:", err); showNotificationInPopUp("مشکلی در ارتباط با سرور به وجود آمده است", 'error'); });
+                } else { showNotificationInPopUp(data.message, 'error'); }
+              })
+              .catch((err) => { console.error("Error:", err); showNotificationInPopUp("مشکلی در ارتباط با سرور به وجود آمده است", 'error'); });
+            }, { once: true });
+          }
+        } else { showNotificationInPopUp(data.message, 'error'); }
+      })
+      .catch((err) => { console.error("Error:", err); showNotificationInPopUp("مشکلی در ارتباط با سرور به وجود آمده است", 'error'); });
+    });
+  }
+  
+  const registerBackBtn = document.getElementById("register-back-btn");
+  if (registerBackBtn) {
+    registerBackBtn.addEventListener("click", function() {
+      if (registerStep2) registerStep2.classList.remove("active");
+      if (registerStep1) registerStep1.classList.add("active");
+    });
+  }
+  
+  // Forgot Password Process
+  const forgotForm = document.getElementById("forgot-form");
+  const forgotStep1 = document.getElementById("forgot-step-1");
+  const forgotStep2 = document.getElementById("forgot-step-2");
+  const forgotStep3 = document.getElementById("forgot-step-3");
+  const forgotPhoneDisplay = document.getElementById("forgot-phone-display");
+  
+  if (forgotForm) {
+    forgotForm.addEventListener("submit", function(e) {
+      e.preventDefault();
+      const phone = document.getElementById("forgot-phone")?.value || "";
+      fetch("/api/authentication/forgotPassword", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ mobile: phone }),
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          if (forgotPhoneDisplay) forgotPhoneDisplay.textContent = phone;
+          if (forgotStep1) forgotStep1.classList.remove("active");
+          if (forgotStep2) forgotStep2.classList.add("active");
+          startCountdown("forgot-resend-timer", 120);
+          setupOtpInputs("#forgot-step-2");
+          if (data.otp) console.log("OTP for testing:", data.otp);
+        } else { showNotificationInPopUp(data.message, 'error'); }
+      })
+      .catch(err => { console.error("Error:", err); showNotificationInPopUp("مشکلی در ارتباط با سرور به وجود آمده است", 'error'); });
+    });
+  }
+  
+  const forgotBackBtn = document.getElementById("forgot-back-btn");
+  if (forgotBackBtn) {
+    forgotBackBtn.addEventListener("click", function() {
+      if (forgotStep2) forgotStep2.classList.remove("active");
+      if (forgotStep1) forgotStep1.classList.add("active");
+    });
+  }
+  
+  const forgotVerificationForm = document.getElementById("forgot-verification-form");
+  if (forgotVerificationForm) {
+    forgotVerificationForm.addEventListener("submit", function(e) {
+      e.preventDefault();
+      const otpValue = getOtpValue("#forgot-step-2");
+      const reversedOtpValue = otpValue.split("").reverse().join("");
+      fetch("/api/authentication/verifyPasswordResetOtp", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ mobile: forgotPhoneDisplay?.textContent || "", otp: reversedOtpValue }),
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          if (forgotStep2) forgotStep2.classList.remove("active");
+          if (forgotStep3) forgotStep3.classList.add("active");
+          const resetTokenInput = document.getElementById("reset-token");
+          if (resetTokenInput && data.resetToken) resetTokenInput.value = data.resetToken;
+        } else { showNotificationInPopUp(data.message, 'error'); }
+      })
+      .catch(err => { console.error("Error:", err); showNotificationInPopUp("مشکلی در ارتباط با سرور به وجود آمده است", 'error'); });
+    });
+  }
+  
+  // Login form submission
+  const loginForm = document.getElementById("login-form");
+  if (loginForm) {
+    loginForm.addEventListener("submit", function(e) {
+      e.preventDefault();
+      const formDataLogin = new FormData(loginForm);
+      fetch("/api/authentication/signIn", {
+        method: "POST",
+        body: formDataLogin,
+      })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success) {
+          showNotification(data.message, 'success');
+          setTimeout(() => location.reload(), 2000);
+          if (authPopup) authPopup.classList.add("hidden");
+        } else { showNotificationInPopUp(data.message, 'error'); }
+      })
+      .catch((err) => { console.error("Error:", err); showNotificationInPopUp("مشکلی در ارتباط با سرور به وجود آمده است", 'error'); });
+    });
+  }
+  
+  // New password form submission
+  const newPasswordForm = document.getElementById("new-password-form");
+  if (newPasswordForm) {
+    newPasswordForm.addEventListener("submit", function(e) {
+      e.preventDefault();
+      const password = document.getElementById("new-password")?.value || "";
+      const confirmPassword = document.getElementById("confirm-new-password")?.value || "";
+      const resetToken = document.getElementById("reset-token")?.value || "";
+      if (password !== confirmPassword) { showNotificationInPopUp("رمز عبور و تکرار آن یکسان نیستند", 'error'); return; }
+      fetch(`/api/authentication/resetPassword/${resetToken}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ password }),
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          showNotification("رمز عبور با موفقیت تغییر یافت! اکنون وارد شوید", 'success');
+          if (authPopup) authPopup.classList.add("hidden");
+          if (data.token) localStorage.setItem('token', data.token);
+        } else { showNotificationInPopUp(data.message, 'error'); }
+      })
+      .catch(err => { console.error("Error:", err); showNotificationInPopUp("مشکلی در ارتباط با سرور به وجود آمده است", 'error'); });
+    });
+  }
+  
+  // Phone number input validation
+  document.querySelectorAll('input[type="tel"]').forEach((input) => {
+    input.addEventListener("input", function(e) { this.value = this.value.replace(/\D/g, ""); });
+    input.addEventListener("blur", function() { if (!this.value.startsWith("0") && this.value.length > 0) this.value = "0" + this.value; });
+  });
+  
+  setupOtpInputs("#register-step-2");
+  setupOtpInputs("#forgot-step-2");
+});
+</script>
+</body>
+</html>
