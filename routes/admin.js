@@ -212,6 +212,10 @@ router.delete("/delete-image", async (req, res) => {
   }
 });
 
+router.get("/login", async (req, res) => {
+  res.render("adminlogin");
+});
+
 router.get("/", async (req, res) => {
   const users = await User.find({});
   const products = await Product.find({})
