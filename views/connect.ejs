@@ -3,12 +3,20 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>حریم خصوصی | کیدل</title>
-  <script src="https://cdn.tailwindcss.com"></script>
+  <title>ارتباط با ما | کیدل</title>
+  <link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet"> 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;700;800&display=swap');
-    body { font-family: 'Vazirmatn', Tahoma, sans-serif; }
+    @font-face {
+      font-family: "MyFont";
+      src: url("/fonts/Vazirmatn-Light.ttf");
+      font-weight: 400;
+      font-style: normal;
+      font-display: swap;
+    }
+    body { 
+      font-family: "MyFont", sans-serif;
+    }
   </style>
 </head>
 <body class="bg-gradient-to-br from-pink-50 to-rose-50 min-h-screen">
@@ -378,45 +386,47 @@ body.menu-open {
     <div class="bg-white/80 backdrop-blur-sm rounded-3xl p-8 shadow-xl border border-pink-100">
       <div class="flex items-center gap-4 mb-6">
         <div class="w-16 h-16 rounded-2xl bg-pink-100 flex items-center justify-center">
-          <i class="fas fa-lock text-pink-500 text-2xl"></i>
+          <i class="fas fa-comments text-pink-500 text-2xl"></i>
         </div>
         <div>
-          <h1 class="text-3xl font-extrabold text-rose-800">سیاست حریم خصوصی</h1>
-          <p class="text-rose-600">حفظ حریم خصوصی کاربران برای ما مهم است</p>
+          <h1 class="text-3xl font-extrabold text-rose-800">ارتباط با ما</h1>
+          <p class="text-rose-600">ما به گفتگوهای واقعی و سازنده اهمیت می‌دهیم</p>
         </div>
       </div>
       
-      <div class="space-y-6">
-        <div class="border-r-4 border-pink-400 pr-4">
-          <h2 class="text-xl font-bold text-gray-800 mb-3">جمع‌آوری اطلاعات</h2>
-          <p class="text-gray-700 leading-relaxed">ما فقط اطلاعات ضروری برای ارائه خدمات (مانند نام، شماره تماس، آدرس) را جمع‌آوری می‌کنیم. این اطلاعات با رضایت شما و برای بهبود تجربه خرید استفاده می‌شود.</p>
-        </div>
-        
-        <div class="border-r-4 border-pink-400 pr-4">
-          <h2 class="text-xl font-bold text-gray-800 mb-3">استفاده از اطلاعات</h2>
-          <p class="text-gray-700 leading-relaxed">اطلاعات شما فقط برای پردازش سفارشات، ارسال به‌روزرسانی‌های مرتبط و بهبود خدمات استفاده می‌شود. اطلاعات شما به هیچ شخص ثالثی فروخته نمی‌شود.</p>
-        </div>
-        
-        <div class="border-r-4 border-pink-400 pr-4">
-          <h2 class="text-xl font-bold text-gray-800 mb-3">امنیت اطلاعات</h2>
-          <p class="text-gray-700 leading-relaxed">اطلاعات شما با پروتکل‌های امنیتی پیشرفته محافظت می‌شود. تمامی تراکنش‌های مالی با استفاده از گواهی‌های SSL رمزگذاری می‌گردند.</p>
-        </div>
-        
-        <div class="border-r-4 border-pink-400 pr-4">
-          <h2 class="text-xl font-bold text-gray-800 mb-3">حقوق کاربران</h2>
-          <p class="text-gray-700 leading-relaxed">شما می‌توانید درخواست حذف یا ویرایش اطلاعات خود را ثبت کنید. همچنین می‌توانید از نحوه استفاده اطلاعات خود سوال بپرسید.</p>
-        </div>
-        
-        <div class="border-r-4 border-pink-400 pr-4">
-          <h2 class="text-xl font-bold text-gray-800 mb-3">تغییرات سیاست</h2>
-          <p class="text-gray-700 leading-relaxed">هرگونه تغییر در سیاست حریم خصوصی در همین صفحه اطلاع‌رسانی می‌شود. استفاده مداوم از سایت به معنای پذیرش تغییرات است.</p>
-        </div>
-      </div>
+      <p class="text-lg text-gray-700 leading-relaxed mb-8">
+        پیشنهادها، همکاری‌ها، بازخوردها و ایده‌های خود را با ما به اشتراک بگذارید تا تجربه بهتری برای شما بسازیم.
+      </p>
       
-      <div class="mt-8 p-4 bg-green-50 rounded-xl border border-green-200">
-        <p class="text-green-700 text-sm flex items-center gap-2">
-          <i class="fas fa-shield-alt"></i> اطلاعات شما نزد ما امن است
-        </p>
+      <div class="grid md:grid-cols-2 gap-6">
+        <a href="mailto:info@kidle.ir" class="flex items-center gap-4 p-5 rounded-2xl bg-pink-50 hover:bg-pink-100 transition border border-pink-200">
+          <i class="fas fa-envelope text-pink-500 text-2xl"></i>
+          <div>
+            <h3 class="font-bold text-gray-800">ارسال ایمیل</h3>
+            <p class="text-gray-600 text-sm">info@kidle.ir</p>
+          </div>
+        </a>
+        <a href="https://t.me/kidle" target="_blank" class="flex items-center gap-4 p-5 rounded-2xl bg-pink-50 hover:bg-pink-100 transition border border-pink-200">
+          <i class="fab fa-telegram text-pink-500 text-2xl"></i>
+          <div>
+            <h3 class="font-bold text-gray-800">تلگرام</h3>
+            <p class="text-gray-600 text-sm">@kidle</p>
+          </div>
+        </a>
+        <a href="https://instagram.com/kidle" target="_blank" class="flex items-center gap-4 p-5 rounded-2xl bg-pink-50 hover:bg-pink-100 transition border border-pink-200">
+          <i class="fab fa-instagram text-pink-500 text-2xl"></i>
+          <div>
+            <h3 class="font-bold text-gray-800">اینستاگرام</h3>
+            <p class="text-gray-600 text-sm">@kidle</p>
+          </div>
+        </a>
+        <a href="https://wa.me/989054243464" target="_blank" class="flex items-center gap-4 p-5 rounded-2xl bg-pink-50 hover:bg-pink-100 transition border border-pink-200">
+          <i class="fab fa-whatsapp text-pink-500 text-2xl"></i>
+          <div>
+            <h3 class="font-bold text-gray-800">واتساپ</h3>
+            <p class="text-gray-600 text-sm">09054243464</p>
+          </div>
+        </a>
       </div>
     </div>
   </div>

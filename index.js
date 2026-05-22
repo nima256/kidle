@@ -94,6 +94,7 @@ app.use(
           "https://cdn.jsdelivr.net",
           "https://unpkg.com",
           "https://cdnjs.cloudflare.com",
+          "https://trustseal.enamad.ir/logo.aspx?id=731837&Code=jSMW53UKTzbJlysi5bIKHLWgBO1HddCW"
         ],
         styleSrc: [
           "'self'",
@@ -103,6 +104,7 @@ app.use(
           "https://fonts.googleapis.com",
           "https://cdn.quilljs.com",
           "https://unpkg.com",
+          "https://trustseal.enamad.ir/logo.aspx?id=731837&Code=jSMW53UKTzbJlysi5bIKHLWgBO1HddCW"
         ],
         fontSrc: [
           "'self'",
@@ -110,6 +112,7 @@ app.use(
           "https://cdnjs.cloudflare.com",
           "https://fonts.gstatic.com",
           "https://unpkg.com",
+          "https://trustseal.enamad.ir/logo.aspx?id=731837&Code=jSMW53UKTzbJlysi5bIKHLWgBO1HddCW"
         ],
         connectSrc: [
           "'self'",
@@ -117,6 +120,7 @@ app.use(
           "https://sandbox.zarinpal.com",
           "https://payment.zarinpal.com",
           "https://api.odour.ir", // آدرس دامنه خودت رو بذار
+          "https://trustseal.enamad.ir/logo.aspx?id=731837&Code=jSMW53UKTzbJlysi5bIKHLWgBO1HddCW",
           process.env.SITE_URL, // آدرس سایت
         ],
         imgSrc: ["'self'", "data:", "https:", "http:"], // http رو هم اضافه کن
@@ -463,6 +467,26 @@ app.get("/weblog", async (req, res) => {
   } catch (err) {
     res.status(500).render("error", { message: "خطا در بارگزاری وبلاگ" });
   }
+});
+
+app.get("/about-us", async (req, res) => {
+  res.render("aboutus");
+});
+
+app.get("/connect-us", async (req, res) => {
+  res.render("connect");
+});
+
+app.get("/contact-us", async (req, res) => {
+  res.render("contact");
+});
+
+app.get("/terms-and-conditions", async (req, res) => {
+  res.render("terms");
+});
+
+app.get("/privacy-policy", async (req, res) => {
+  res.render("privacy");
 });
 
 app.get("/api/weblogs/:id/related", async (req, res) => {

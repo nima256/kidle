@@ -3,16 +3,25 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>قوانین و مقررات | کیدل</title>
-  <script src="https://cdn.tailwindcss.com"></script>
+  <title>تماس با ما | کیدل</title>
+  <link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet"> 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;700;800&display=swap');
-    body { font-family: 'Vazirmatn', Tahoma, sans-serif; }
+    @font-face {
+      font-family: "MyFont";
+      src: url("/fonts/Vazirmatn-Light.ttf");
+      font-weight: 400;
+      font-style: normal;
+      font-display: swap;
+    }
+    body { 
+      font-family: "MyFont", sans-serif;
+    }
   </style>
 </head>
 <body class="bg-gradient-to-br from-pink-50 to-rose-50 min-h-screen">
   
+  <!-- نوار ناوبری (مشابه صفحه اصلی) -->
 <!-- ==================== نوار ناوبری (در تمام صفحات ثابت) ==================== -->
 <nav id="main-navbar" style="background: white; box-shadow: 0 2px 10px rgba(0,0,0,0.1); position: fixed; top: 0; left: 0; right: 0; z-index: 50; padding: 12px 20px;">
   <div style="max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
@@ -132,7 +141,24 @@
 </nav>
 
 <style>
-    /* استایل‌های منو و پاپ‌آپ از سایت اصلی */
+  @media (min-width: 768px) {
+    .desktop-menu {
+      display: flex !important;
+    }
+    .hamburger {
+      display: none !important;
+    }
+  }
+  .mobile-dropdown-menu,
+  .mobile-submenu-level2 {
+    transition: all 0.3s ease;
+  }
+  @media (max-width: 768px) {
+    .flex.items-center.space-x-4 {
+      gap: 12px;
+    }
+  }
+/* استایل‌های منو و پاپ‌آپ از سایت اصلی */
 .dropdown:hover .dropdown-menu {
   display: block !important;
 }
@@ -206,23 +232,6 @@ body.menu-open {
   top: -8px;
   left: -8px;
 }
-  @media (min-width: 768px) {
-    .desktop-menu {
-      display: flex !important;
-    }
-    .hamburger {
-      display: none !important;
-    }
-  }
-  .mobile-dropdown-menu,
-  .mobile-submenu-level2 {
-    transition: all 0.3s ease;
-  }
-  @media (max-width: 768px) {
-    .flex.items-center.space-x-4 {
-      gap: 12px;
-    }
-  }
 </style>
 <!-- ==================== پاپ‌آپ احراز هویت ==================== -->
 <div id="auth-popup" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
@@ -378,46 +387,53 @@ body.menu-open {
     <div class="bg-white/80 backdrop-blur-sm rounded-3xl p-8 shadow-xl border border-pink-100">
       <div class="flex items-center gap-4 mb-6">
         <div class="w-16 h-16 rounded-2xl bg-pink-100 flex items-center justify-center">
-          <i class="fas fa-file-alt text-pink-500 text-2xl"></i>
+          <i class="fas fa-phone-alt text-pink-500 text-2xl"></i>
         </div>
         <div>
-          <h1 class="text-3xl font-extrabold text-rose-800">قوانین و مقررات</h1>
-          <p class="text-rose-600">لطفاً پیش از استفاده، شرایط را با دقت مطالعه کنید</p>
+          <h1 class="text-3xl font-extrabold text-rose-800">تماس با ما</h1>
+          <p class="text-rose-600">ما همیشه آماده پاسخگویی به شما هستیم</p>
         </div>
       </div>
       
-      <div class="space-y-6">
-        <div class="border-r-4 border-pink-400 pr-4">
-          <h2 class="text-xl font-bold text-gray-800 mb-3">۱. استفاده مسئولانه</h2>
-          <p class="text-gray-700 leading-relaxed">کاربران متعهد می‌شوند از خدمات به شکل درست، قانونی و بدون آسیب به دیگران استفاده کنند. هرگونه سوءاستفاده از خدمات سایت پیگرد قانونی خواهد داشت.</p>
+      <div class="grid md:grid-cols-2 gap-8 mt-8">
+        <div class="space-y-6">
+          <div class="flex items-start gap-4">
+            <i class="fas fa-map-marker-alt text-pink-500 text-xl mt-1"></i>
+            <div>
+              <h3 class="font-bold text-gray-800">آدرس</h3>
+              <p class="text-gray-600">گرگان، خیابان پاسداران، پاساژ وارکانا، پلاک 51</p>
+            </div>
+          </div>
+          <div class="flex items-start gap-4">
+            <i class="fas fa-phone text-pink-500 text-xl mt-1"></i>
+            <div>
+              <h3 class="font-bold text-gray-800">شماره تماس</h3>
+              <p class="text-gray-600">09054243464</p>
+              <p class="text-gray-500 text-sm">شنبه تا پنجشنبه 9 الی 18</p>
+            </div>
+          </div>
+          <div class="flex items-start gap-4">
+            <i class="fas fa-envelope text-pink-500 text-xl mt-1"></i>
+            <div>
+              <h3 class="font-bold text-gray-800">ایمیل</h3>
+              <p class="text-gray-600">info@kidle.ir</p>
+            </div>
+          </div>
         </div>
         
-        <div class="border-r-4 border-pink-400 pr-4">
-          <h2 class="text-xl font-bold text-gray-800 mb-3">۲. ثبت‌نام و اطلاعات کاربری</h2>
-          <p class="text-gray-700 leading-relaxed">برای استفاده از خدمات سایت، ثبت‌نام با اطلاعات صحیح و واقعی الزامی است. مسئولیت حفظ امنیت رمز عبور بر عهده کاربر می‌باشد.</p>
+        <div class="bg-pink-50 rounded-2xl p-6">
+          <h3 class="font-bold text-gray-800 mb-4">ارسال پیام سریع</h3>
+          <form>
+            <input type="text" placeholder="نام شما" class="w-full mb-3 p-3 rounded-xl border border-pink-200 focus:outline-none focus:ring-2 focus:ring-pink-400">
+            <input type="email" placeholder="ایمیل شما" class="w-full mb-3 p-3 rounded-xl border border-pink-200 focus:outline-none focus:ring-2 focus:ring-pink-400">
+            <textarea rows="4" placeholder="پیام شما..." class="w-full mb-3 p-3 rounded-xl border border-pink-200 focus:outline-none focus:ring-2 focus:ring-pink-400"></textarea>
+            <button class="w-full bg-pink-500 hover:bg-pink-600 text-white py-3 rounded-xl font-bold transition">ارسال پیام</button>
+          </form>
         </div>
-        
-        <div class="border-r-4 border-pink-400 pr-4">
-          <h2 class="text-xl font-bold text-gray-800 mb-3">۳. سفارش و پرداخت</h2>
-          <p class="text-gray-700 leading-relaxed">پس از ثبت سفارش، اطلاعات سفارش برای کاربر ارسال می‌شود. در صورت وجود مشکل در موجودی کالا، فروشگاه حق لغو سفارش را دارد.</p>
-        </div>
-        
-        <div class="border-r-4 border-pink-400 pr-4">
-          <h2 class="text-xl font-bold text-gray-800 mb-3">۴. بازگشت کالا</h2>
-          <p class="text-gray-700 leading-relaxed">در صورت وجود ایراد در کالا، حداکثر تا ۷ روز کاری امکان بازگشت کالا وجود دارد. کالا باید در بسته‌بندی اصلی و بدون استفاده باشد.</p>
-        </div>
-        
-        <div class="border-r-4 border-pink-400 pr-4">
-          <h2 class="text-xl font-bold text-gray-800 mb-3">۵. تغییرات قوانین</h2>
-          <p class="text-gray-700 leading-relaxed">ممکن است قوانین برای بهبود کیفیت خدمات به‌روزرسانی شوند. کاربران موظف به رعایت آخرین نسخه قوانین هستند.</p>
-        </div>
-      </div>
-      
-      <div class="mt-8 p-4 bg-amber-50 rounded-xl border border-amber-200">
-        <p class="text-amber-800 text-sm">آخرین به‌روزرسانی: ۱۴۰۴/۰۲/۱۵</p>
       </div>
     </div>
   </div>
+
   <footer class="bg-gray-900 text-white py-12">
   <div class="container mx-auto px-4">
     <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
@@ -533,7 +549,8 @@ body.menu-open {
     </div>
   </div>
 </footer>
-<script>// توابع کمکی پاپ‌آپ
+<script>
+    // توابع کمکی پاپ‌آپ
 function showNotification(message, type = 'info') {
   const notification = document.createElement('div');
   notification.className = `fixed z-50 px-4 py-3 rounded-lg shadow-lg text-white text-sm sm:text-base ${
@@ -672,6 +689,7 @@ if (singlePostAuthBtn) singlePostAuthBtn.addEventListener('click', openAuthPopup
 if (authPopup) authPopup.addEventListener('click', function(e) { if (e.target === authPopup) authPopup.classList.add('hidden'); });
 
 // فرم‌های احراز هویت (ثبت‌نام، ورود، بازیابی رمز)
-// ... (ادامه کدهای ثبت‌نام و ورود که در فایل نهایی موجود است)</script>
+// ... (ادامه کدهای ثبت‌نام و ورود که در فایل نهایی موجود است)
+</script>
 </body>
 </html>
