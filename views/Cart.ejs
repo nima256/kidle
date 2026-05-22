@@ -168,6 +168,17 @@
         width: 60px;
         height: 60px;
       }
+      @keyframes spin {
+          from {
+              transform: rotate(0deg);
+          }
+          to {
+              transform: rotate(360deg);
+          }
+      }
+      .animate-spin {
+          animation: spin 1s linear infinite;
+      }
     </style>
   </head>
   <body>
@@ -1090,90 +1101,122 @@
           .getElementById("back-to-cart")
           .addEventListener("click", () => showPage("cart-page"));
         document.getElementById("go-to-summary").addEventListener("click", () => {
-            // اعتبارسنجی فیلدها قبل از رفتن به خلاصه سفارش
-            const postalCode = document.getElementById("postal-code").value;
-            const address = document.getElementById("address").value;
-            
-            // اعتبارسنجی استان و شهر - این خط باید اول اجرا شود
-            if (!validateProvinceAndCity()) return;
-            
-            // تابع اعتبارسنجی کد پستی
-            function validatePostalCode(postalCode) {
-                const regex = /^\d{10}$/;
-                if (!postalCode) {
-                    showNotification("لطفاً کد پستی را وارد کنید", 'error');
-                    return false;
-                }
-                if (!regex.test(postalCode)) {
-                    showNotification("کد پستی باید دقیقاً ۱۰ رقم باشد", 'error');
-                    return false;
-                }
-                return true;
+        const completeBtn = document.getElementById("complete-purchase");
+        // اگر در حال پردازش است، اجازه نده
+        if (completeBtn.disabled) {
+            showNotification("لطفاً صبر کنید، در حال اتصال به درگاه پرداخت...", 'info');
+            return;
+        }
+        
+        const postalCode = document.getElementById("postal-code").value;
+        const address = document.getElementById("address").value;
+        
+        if (!validateProvinceAndCity()) return;
+        
+        function validatePostalCode(postalCode) {
+            const regex = /^\d{10}$/;
+            if (!postalCode) {
+                showNotification("لطفاً کد پستی را وارد کنید", 'error');
+                return false;
             }
-            
-            // تابع اعتبارسنجی آدرس
-            function validateAddress(address) {
-                if (!address) {
-                    showNotification("لطفاً آدرس را وارد کنید", 'error');
-                    return false;
-                }
-                if (address.length < 10) {
-                    showNotification("آدرس نمی‌تواند کمتر از ۱۰ کاراکتر باشد", 'error');
-                    return false;
-                }
-                if (address.length > 500) {
-                    showNotification("آدرس نمی‌تواند بیشتر از ۵۰۰ کاراکتر باشد", 'error');
-                    return false;
-                }
-                return true;
+            if (!regex.test(postalCode)) {
+                showNotification("کد پستی باید دقیقاً ۱۰ رقم باشد", 'error');
+                return false;
             }
-            
-            // انجام اعتبارسنجی
-            if (!validatePostalCode(postalCode)) {
-                return;
+            return true;
+        }
+        
+        function validateAddress(address) {
+            if (!address) {
+                showNotification("لطفاً آدرس را وارد کنید", 'error');
+                return false;
             }
-            
-            if (!validateAddress(address)) {
-                return;
+            if (address.length < 10) {
+                showNotification("آدرس نمی‌تواند کمتر از ۱۰ کاراکتر باشد", 'error');
+                return false;
             }
-            
-            // اگر همه چیز درست بود، به صفحه خلاصه سفارش برو
-            showPage("summary-page");
-        });
+            if (address.length > 500) {
+                showNotification("آدرس نمی‌تواند بیشتر از ۵۰۰ کاراکتر باشد", 'error');
+                return false;
+            }
+            return true;
+        }
+        
+        if (!validatePostalCode(postalCode)) return;
+        if (!validateAddress(address)) return;
+        
+        showPage("summary-page");
+    });
 
 
-        document
-          .getElementById("back-to-shipping")
-          .addEventListener("click", () => showPage("shipping-page"));
-        document.getElementById("complete-purchase").addEventListener("click", () => {
-            const orderForm = document.getElementById("order-form");
-            const formDataOrder = new FormData(orderForm);
-            formDataOrder.append("province", document.getElementById("province").value);
-            formDataOrder.append("city", document.getElementById("city").value);
-            
-            // بدون اعتبارسنجی مجدد، مستقیماً به سرور ارسال کن
-            fetch("/api/order", {
-                method: "POST",
-                body: formDataOrder,
-            })
-            .then((res) => res.json())
-            .then((data) => {
-                if (data.success) {
-                    if (data.paymentUrl) {
-                        showNotification("درحال انتقال به درگاه پرداخت...");
-                        window.location.href = data.paymentUrl;
-                    }
-                } else {
-                    showNotification(data.message, 'error');
-                }
-            })
-            .catch((err) => {
-                console.error("Error:", err);
-                showNotification("مشکلی در ارتباط با سرور به وجود آمده است", 'error');
-            });
-        });
+          document.getElementById("back-to-shipping").addEventListener("click", () => {
+              const completeBtn = document.getElementById("complete-purchase");
+              // اگر دکمه تکمیل خرید غیرفعال است (در حال پردازش)، اجازه بازگشت نده
+              if (completeBtn.disabled) {
+                  showNotification("لطفاً صبر کنید، در حال اتصال به درگاه پرداخت...", 'info');
+                  return;
+              }
+              showPage("shipping-page");
+          });
+          document.getElementById("complete-purchase").addEventListener("click", async (e) => {
+              // جلوگیری از رویدادهای تکراری
+              if (document.getElementById("complete-purchase").disabled) return;
+              
+              const completeBtn = document.getElementById("complete-purchase");
+              const backBtn = document.getElementById("back-to-shipping");
+              const originalBtnText = completeBtn.innerHTML;
+              
+              // غیرفعال کردن دکمه‌ها
+              completeBtn.disabled = true;
+              backBtn.disabled = true;
+              
+              // نمایش اسپینر
+              completeBtn.innerHTML = `
+                  <svg class="animate-spin h-5 w-5 ml-2 inline-block" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                      <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  در حال انتقال به درگاه...
+              `;
+              completeBtn.classList.add("opacity-50", "cursor-not-allowed");
+              
+              try {
+                  const orderForm = document.getElementById("order-form");
+                  const formDataOrder = new FormData(orderForm);
+                  formDataOrder.append("province", document.getElementById("province").value);
+                  formDataOrder.append("city", document.getElementById("city").value);
+                  
+                  const response = await fetch("/api/order", {
+                      method: "POST",
+                      body: formDataOrder,
+                  });
+                  
+                  const data = await response.json();
+                  
+                  if (data.success) {
+                      if (data.paymentUrl) {
+                          showNotification("درحال انتقال به درگاه پرداخت...");
+                          window.location.href = data.paymentUrl;
+                      }
+                  } else {
+                      // بازگرداندن دکمه‌ها به حالت اولیه در صورت خطا
+                      completeBtn.disabled = false;
+                      backBtn.disabled = false;
+                      completeBtn.innerHTML = originalBtnText;
+                      completeBtn.classList.remove("opacity-50", "cursor-not-allowed");
+                      showNotification(data.message, 'error');
+                  }
+              } catch (err) {
+                  console.error("Error:", err);
+                  // بازگرداندن دکمه‌ها به حالت اولیه در صورت خطا
+                  completeBtn.disabled = false;
+                  backBtn.disabled = false;
+                  completeBtn.innerHTML = originalBtnText;
+                  completeBtn.classList.remove("opacity-50", "cursor-not-allowed");
+                  showNotification("مشکلی در ارتباط با سرور به وجود آمده است", 'error');
+              }
+          });
       });
-          
       </script>
   </div>
   </body>

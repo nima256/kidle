@@ -17,6 +17,7 @@ const Brand = require("../models/Brand");
 const DiscountCode = require("../models/DiscountCode");
 
 const { getPersianDate } = require("../helper/getPersianDate");
+const Weblog = require("../models/Weblog");
 
 router.use(express.json());
 router.use(express.urlencoded({ extended: true }));
@@ -219,7 +220,8 @@ router.get("/", async (req, res) => {
   const orders = await Order.find({}).populate("user").populate("products");
   const brands = await Brand.find({});
   const discounts = await DiscountCode.find({});
-  
+  const weblogs = await Weblog.find({})
+
   const statusCounts = {
     pendingProcessing: await Order.countDocuments({ status: "در حال پردازش" }),
     inShipping: await Order.countDocuments({ status: "در حال ارسال" }),
@@ -235,7 +237,8 @@ router.get("/", async (req, res) => {
     orders,
     brands,
     statusCounts,
-    discounts
+    discounts,
+    weblogs
   });
 });
 
@@ -1084,5 +1087,318 @@ router.delete("/discounts/delete/:id", async (req, res) => {
 });
 
 
+const validateWeblog = [
+  body("title")
+    .trim()
+    .notEmpty()
+    .withMessage("عنوان مقاله الزامی است")
+    .isLength({ min: 5, max: 100 })
+    .withMessage("عنوان باید بین 5 تا 100 کاراکتر باشد"),
+  body("description")
+    .trim()
+    .notEmpty()
+    .withMessage("توضیحات کوتاه الزامی است")
+    .isLength({ max: 160 })
+    .withMessage("توضیحات کوتاه نمی‌تواند بیشتر از 160 کاراکتر باشد"),
+  body("content")
+    .trim()
+    .notEmpty()
+    .withMessage("محتوا الزامی است")
+    .isLength({ min: 100 })
+    .withMessage("محتوا نمی‌تواند کمتر از 100 کاراکتر باشد"),
+  body("readingTime")
+    .optional()
+    .isInt({ min: 1 })
+    .withMessage("زمان مطالعه باید حداقل 1 دقیقه باشد"),
+  body("metaTitle")
+    .optional()
+    .isLength({ max: 60 })
+    .withMessage("عنوان متا نمی‌تواند بیشتر از 60 کاراکتر باشد"),
+  body("metaDescription")
+    .optional()
+    .isLength({ max: 160 })
+    .withMessage("توضیحات متا نمی‌تواند بیشتر از 160 کاراکتر باشد"),
+];
+
+// دریافت لیست مقالات
+router.get("/weblogs", async (req, res) => {
+  try {
+    const weblogs = await Weblog.find({})
+      .populate("author", "fullName email")
+      .populate("categories", "name")
+      .sort({ createdAt: -1 });
+    
+    res.json({
+      success: true,
+      weblogs,
+    });
+  } catch (error) {
+    console.error("Error fetching weblogs:", error);
+    res.status(500).json({
+      success: false,
+      message: "خطا در دریافت مقالات",
+      error: error.message,
+    });
+  }
+});
+
+// افزودن مقاله جدید
+router.post("/weblogs/add", validateWeblog, async (req, res) => {
+  try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({
+        success: false,
+        message: "خطا در اعتبارسنجی",
+        errors: errors.array(),
+      });
+    }
+
+    const {
+      title,
+      slug,
+      description,
+      content,
+      images,
+      categories,
+      tags,
+      readingTime,
+      isFeatured,
+      isPublished,
+      metaTitle,
+      metaDescription,
+    } = req.body;
+
+    let formattedImages = [];
+    if (images && images.length > 0) {
+      formattedImages = images.map(img => {
+        // استخراج filename از URL
+        const filename = img.split('/').pop();
+        return {
+          url: img,
+          filename: filename
+        };
+      });
+    }
+
+    const weblog = new Weblog({
+      title,
+      slug,
+      description,
+      content,
+      images: formattedImages,
+      categories: categories || [],
+      tags: tags || [],
+      readingTime: readingTime || 5,
+      isFeatured: isFeatured || false,
+      isPublished: isPublished || false,
+      metaTitle,
+      metaDescription,
+      author: req.session.userId,
+      createTarikh: getPersianDate(),
+      updateTarikh: getPersianDate(),
+    });
+
+    await weblog.save();
+
+    const populatedWeblog = await Weblog.findById(weblog._id)
+      .populate("author", "fullName email")
+      .populate("categories", "name");
+
+    res.status(201).json({
+      success: true,
+      message: "مقاله با موفقیت ایجاد شد",
+      weblog: populatedWeblog,
+    });
+  } catch (error) {
+    console.error("Error creating weblog:", error);
+    res.status(500).json({
+      success: false,
+      message: "خطا در ایجاد مقاله",
+      error: error.message,
+    });
+  }
+});
+
+// ویرایش مقاله
+router.put("/weblogs/edit/:id", validateWeblog, async (req, res) => {
+  try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({
+        success: false,
+        message: "خطا در اعتبارسنجی",
+        errors: errors.array(),
+      });
+    }
+
+    const { id } = req.params;
+    
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({
+        success: false,
+        message: "شناسه مقاله نامعتبر است",
+      });
+    }
+
+    const {
+      title,
+      description,
+      content,
+      images,
+      categories,
+      tags,
+      readingTime,
+      isFeatured,
+      isPublished,
+      metaTitle,
+      metaDescription,
+    } = req.body;
+
+    let formattedImages = [];
+    if (images && images.length > 0) {
+      formattedImages = images.map(img => {
+        const filename = img.split('/').pop();
+        return {
+          url: img,
+          filename: filename
+        };
+      });
+    }
+
+    const updatedWeblog = await Weblog.findByIdAndUpdate(
+      id,
+      {
+        title,
+        description,
+        content,
+        images: formattedImages,
+        categories: categories || [],
+        tags: tags || [],
+        readingTime: readingTime || 5,
+        isFeatured: isFeatured || false,
+        isPublished: isPublished || false,
+        metaTitle,
+        metaDescription,
+        updateTarikh: getPersianDate(),
+      },
+      { new: true, runValidators: true }
+    )
+      .populate("author", "fullName email")
+      .populate("categories", "name");
+
+    if (!updatedWeblog) {
+      return res.status(404).json({
+        success: false,
+        message: "مقاله یافت نشد",
+      });
+    }
+
+    res.json({
+      success: true,
+      message: "مقاله با موفقیت ویرایش شد",
+      weblog: updatedWeblog,
+    });
+  } catch (error) {
+    console.error("Error updating weblog:", error);
+    res.status(500).json({
+      success: false,
+      message: "خطا در ویرایش مقاله",
+      error: error.message,
+    });
+  }
+});
+
+// حذف مقاله
+router.delete("/weblogs/delete/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({
+        success: false,
+        message: "شناسه مقاله نامعتبر است",
+      });
+    }
+
+    const deletedWeblog = await Weblog.findByIdAndDelete(id);
+
+    if (!deletedWeblog) {
+      return res.status(404).json({
+        success: false,
+        message: "مقاله یافت نشد",
+      });
+    }
+
+    res.json({
+      success: true,
+      message: "مقاله با موفقیت حذف شد",
+    });
+  } catch (error) {
+    console.error("Error deleting weblog:", error);
+    res.status(500).json({
+      success: false,
+      message: "خطا در حذف مقاله",
+      error: error.message,
+    });
+  }
+});
+
+// دریافت یک مقاله
+router.get("/weblogs/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({
+        success: false,
+        message: "شناسه مقاله نامعتبر است",
+      });
+    }
+
+    const weblog = await Weblog.findById(id)
+      .populate("author", "fullName email")
+      .populate("categories", "name");
+
+    if (!weblog) {
+      return res.status(404).json({
+        success: false,
+        message: "مقاله یافت نشد",
+      });
+    }
+
+    res.json({
+      success: true,
+      weblog,
+    });
+  } catch (error) {
+    console.error("Error fetching weblog:", error);
+    res.status(500).json({
+      success: false,
+      message: "خطا در دریافت مقاله",
+      error: error.message,
+    });
+  }
+});
+
+router.get("/categories", async (req, res) => {
+    try {
+        const { type } = req.query;
+        const filter = {};
+        if (type) {
+            filter.categoryType = type;
+        }
+        const categories = await Category.find(filter);
+        res.json({
+            success: true,
+            categories
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message
+        });
+    }
+});
 
 module.exports = router;

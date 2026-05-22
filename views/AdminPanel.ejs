@@ -285,6 +285,10 @@
                     <i class="fas fa-shopping-cart text-lg"></i>
                     <span class="font-medium">سفارشات</span>
                 </button>
+                <button onclick="showSection('weblogs')" class="sidebar-item w-full text-right px-3 md:px-4 py-3 md:py-4 rounded-lg text-gray-700 transition-all duration-300 flex items-center space-x-reverse space-x-3">
+                    <i class="fas fa-newspaper text-lg"></i>
+                    <span class="font-medium">مقالات</span>
+                </button>
             </nav>
         </div>
     </aside>
@@ -522,6 +526,40 @@
                         </thead>
                         <tbody class="divide-y divide-gray-200" id="ordersTableBody">
                             <!-- Orders will be populated here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div id="weblogsContent" class="hidden">
+            <div class="mb-4 md:mb-6">
+                <h2 class="text-2xl md:text-3xl font-bold text-gray-800 mb-2">مدیریت مقالات</h2>
+                <div class="flex justify-between items-center">
+                    <p class="text-gray-600">لیست تمام مقالات وبلاگ</p>
+                    <button onclick="addWeblog()" class="gradient-bg text-white px-3 md:px-4 py-2 rounded-lg hover:opacity-90 transition-all text-sm md:text-base">
+                        <i class="fas fa-plus ml-1"></i>
+                        افزودن مقاله
+                    </button>
+                </div>
+            </div>
+
+            <div class="glass-card rounded-xl md:rounded-2xl overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead class="bg-gray-100">
+                            <tr>
+                                <th class="px-3 md:px-6 py-3 md:py-4 text-right text-xs md:text-sm font-semibold text-gray-700">شناسه</th>
+                                <th class="px-3 md:px-6 py-3 md:py-4 text-right text-xs md:text-sm font-semibold text-gray-700">تصویر</th>
+                                <th class="px-3 md:px-6 py-3 md:py-4 text-right text-xs md:text-sm font-semibold text-gray-700">عنوان</th>
+                                <th class="px-3 md:px-6 py-3 md:py-4 text-right text-xs md:text-sm font-semibold text-gray-700 hidden md:table-cell">دسته‌بندی</th>
+                                <th class="px-3 md:px-6 py-3 md:py-4 text-right text-xs md:text-sm font-semibold text-gray-700 hidden sm:table-cell">نویسنده</th>
+                                <th class="px-3 md:px-6 py-3 md:py-4 text-right text-xs md:text-sm font-semibold text-gray-700 hidden sm:table-cell">وضعیت</th>
+                                <th class="px-3 md:px-6 py-3 md:py-4 text-right text-xs md:text-sm font-semibold text-gray-700">تاریخ</th>
+                                <th class="px-3 md:px-6 py-3 md:py-4 text-right text-xs md:text-sm font-semibold text-gray-700">عملیات</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-200" id="weblogsTableBody">
+                            <!-- Weblogs will be populated here -->
                         </tbody>
                     </table>
                 </div>
@@ -772,6 +810,109 @@
         </div>
     </div>
 
+    <div id="editWeblogModal" class="hidden fixed inset-0 bg-black bg-opacity-50 modal z-50 flex items-center justify-center p-4">
+    <div class="glass-card rounded-xl md:rounded-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto">
+        <div class="p-4 md:p-6 border-b border-gray-200 flex justify-between items-center">
+            <h3 class="text-lg md:text-xl font-bold text-gray-800" id="weblogModalTitle">افزودن مقاله جدید</h3>
+            <button onclick="closeModal('editWeblogModal')" class="text-gray-400 hover:text-gray-600">
+                <i class="fas fa-times text-xl"></i>
+            </button>
+        </div>
+        <div class="p-4 md:p-6">
+            <form id="weblogForm" class="space-y-4 md:space-y-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+                    <div class="md:col-span-2">
+                        <label for="weblogTitle" class="block text-sm font-semibold text-gray-700 mb-2">عنوان مقاله <span class="text-red-500">*</span></label>
+                        <input type="text" id="weblogTitle" name="title" required
+                            class="w-full px-3 md:px-4 py-2 md:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    </div>
+
+                    <div class="md:col-span-2">
+                        <label for="weblogDescription" class="block text-sm font-semibold text-gray-700 mb-2">توضیحات کوتاه <span class="text-red-500">*</span></label>
+                        <textarea id="weblogDescription" name="description" rows="2" required
+                            class="w-full px-3 md:px-4 py-2 md:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"></textarea>
+                        <p class="text-xs text-gray-500 mt-1">حداکثر 160 کاراکتر</p>
+                    </div>
+
+                    <div class="md:col-span-2">
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">تصویر شاخص</label>
+                        <input type="file" id="weblogImage" accept="image/*"
+                            class="w-full px-3 md:px-4 py-2 md:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        <div id="weblogImagePreview" class="mt-2 hidden">
+                            <img id="weblogImagePreviewImg" src="" alt="Preview" class="w-32 h-32 object-cover rounded-lg">
+                        </div>
+                    </div>
+
+                    <div class="md:col-span-2">
+                        <label for="weblogContent" class="block text-sm font-semibold text-gray-700 mb-2">محتوا <span class="text-red-500">*</span></label>
+                        <div id="weblogEditorContainer" class="border border-gray-300 rounded-lg">
+                            <div id="weblogEditor" class="min-h-[300px]"></div>
+                            <textarea name="content" id="weblogContent" rows="4" required
+                                class="hidden"></textarea>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label for="weblogCategories" class="block text-sm font-semibold text-gray-700 mb-2">دسته‌بندی</label>
+                        <select id="weblogCategories" multiple
+                            class="w-full px-3 md:px-4 py-2 md:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                            <!-- Options will be populated from weblog categories -->
+                        </select>
+                        <p class="text-xs text-gray-500 mt-1">با按住 Ctrl برای انتخاب چندین دسته</p>
+                    </div>
+
+                    <div>
+                        <label for="weblogTags" class="block text-sm font-semibold text-gray-700 mb-2">برچسب‌ها</label>
+                        <input type="text" id="weblogTags" placeholder="با کاما جدا کنید (مثال: مد,پوشاک,کودک)"
+                            class="w-full px-3 md:px-4 py-2 md:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    </div>
+
+                    <div>
+                        <label for="weblogReadingTime" class="block text-sm font-semibold text-gray-700 mb-2">زمان مطالعه (دقیقه)</label>
+                        <input type="number" id="weblogReadingTime" min="1" value="5"
+                            class="w-full px-3 md:px-4 py-2 md:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    </div>
+
+                    <div>
+                        <label for="weblogMetaTitle" class="block text-sm font-semibold text-gray-700 mb-2">عنوان متا</label>
+                        <input type="text" id="weblogMetaTitle"
+                            class="w-full px-3 md:px-4 py-2 md:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        <p class="text-xs text-gray-500 mt-1">حداکثر 60 کاراکتر</p>
+                    </div>
+
+                    <div class="md:col-span-2">
+                        <label for="weblogMetaDescription" class="block text-sm font-semibold text-gray-700 mb-2">توضیحات متا</label>
+                        <textarea id="weblogMetaDescription" rows="2"
+                            class="w-full px-3 md:px-4 py-2 md:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"></textarea>
+                        <p class="text-xs text-gray-500 mt-1">حداکثر 160 کاراکتر</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="flex items-center">
+                        <input type="checkbox" id="weblogIsFeatured" class="ml-2">
+                        <label for="weblogIsFeatured" class="text-sm font-semibold text-gray-700">مقاله ویژه</label>
+                    </div>
+                    <div class="flex items-center">
+                        <input type="checkbox" id="weblogIsPublished" class="ml-2">
+                        <label for="weblogIsPublished" class="text-sm font-semibold text-gray-700">منتشر شده</label>
+                    </div>
+                </div>
+
+                <div class="flex flex-col sm:flex-row justify-end space-y-2 sm:space-y-0 sm:space-x-reverse sm:space-x-4 pt-4 md:pt-6 border-t border-gray-200">
+                    <button type="button" onclick="closeModal('editWeblogModal')" class="px-4 md:px-6 py-2 md:py-3 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-all">
+                        انصراف
+                    </button>
+                    <button type="submit" id="weblogFormButton" class="px-4 md:px-6 py-2 md:py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all">
+                        افزودن مقاله
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
 
     <!-- Order Details Modal -->
     <div id="orderModal" class="hidden fixed inset-0 bg-black bg-opacity-50 modal z-50 flex items-center justify-center p-4">
@@ -808,7 +949,7 @@
         // در ابتدای اسکریپت این رو فراخوانی کنید
         setupModalCleanup();
 
-         function imageHandler() {
+        function imageHandler() {
             const input = document.createElement('input');
             input.setAttribute('type', 'file');
             input.setAttribute('accept', 'image/*');
@@ -851,6 +992,48 @@
                 }
             };
         }
+
+        function weblogImageHandler() {
+            const input = document.createElement('input');
+            input.setAttribute('type', 'file');
+            input.setAttribute('accept', 'image/*');
+            input.click();
+            
+            input.onchange = async function() {
+                const file = input.files[0];
+                if (!file) return;
+                
+                try {
+                    const range = weblogQuillInstance.getSelection();
+                    const placeholderIndex = range.index;
+                    weblogQuillInstance.insertEmbed(placeholderIndex, 'image', '/loading.gif');
+                    
+                    const formData = new FormData();
+                    formData.append('image', file);
+                    
+                    const response = await fetch('/admin/upload-image', {
+                        method: 'POST',
+                        body: formData
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (result.success && result.url) {
+                        weblogQuillInstance.deleteText(placeholderIndex, 1);
+                        weblogQuillInstance.insertEmbed(placeholderIndex, 'image', result.url);
+                    } else {
+                        weblogQuillInstance.deleteText(placeholderIndex, 1);
+                        console.error('Image upload failed:', result.error);
+                    }
+                } catch (error) {
+                    console.error('Error uploading image:', error);
+                    if (weblogQuillInstance && placeholderIndex !== undefined) {
+                        weblogQuillInstance.deleteText(placeholderIndex, 1);
+                    }
+                }
+            };
+        }
+
 
 
         // تابع راه‌اندازی ویرایشگر
@@ -927,6 +1110,68 @@
 
         // فراخوانی تابع تنظیم مودال
         setupEditModal();
+
+
+        let weblogs = <%- JSON.stringify(weblogs) %>;
+        let weblogCategories = [];
+        let currentWeblogId = null;
+        let weblogQuillInstance = null;
+
+
+        function initWeblogQuillEditor(initialContent = '') {
+            if (weblogQuillInstance) {
+                if (initialContent) {
+                    weblogQuillInstance.root.innerHTML = initialContent;
+                }
+                return;
+            }
+
+            const editorElement = document.getElementById('weblogEditor');
+            if (!editorElement) {
+                console.error('Editor element not found!');
+                return;
+            }
+
+            weblogQuillInstance = new Quill('#weblogEditor', {
+                theme: 'snow',
+                modules: {
+                    toolbar: {
+                        container: [
+                            ['bold', 'italic', 'underline', 'strike'],
+                            ['blockquote', 'code-block'],
+                            [{ 'header': 1 }, { 'header': 2 }],
+                            [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                            [{ 'script': 'sub'}, { 'script': 'super' }],
+                            [{ 'indent': '-1'}, { 'indent': '+1' }],
+                            [{ 'direction': 'rtl' }],
+                            [{ 'size': ['small', false, 'large', 'huge'] }],
+                            [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+                            [{ 'color': [] }, { 'background': [] }],
+                            [{ 'font': [] }],
+                            [{ 'align': [] }],
+                            ['clean'],
+                            ['link', 'image', 'video']
+                        ],
+                        handlers: {
+                            image: weblogImageHandler
+                        }
+                    }
+                },
+                placeholder: 'محتوای مقاله را اینجا بنویسید...'
+            });
+
+            if (initialContent) {
+                weblogQuillInstance.root.innerHTML = initialContent;
+            }
+
+            const contentField = document.getElementById('weblogContent');
+            if (contentField) {
+                weblogQuillInstance.on('text-change', function() {
+                    contentField.value = weblogQuillInstance.root.innerHTML;
+                });
+            }
+        }
+
 
 
         // Initialize chart
@@ -1019,6 +1264,7 @@
             document.getElementById('productsContent').classList.add('hidden');
             document.getElementById('categoriesContent').classList.add('hidden');
             document.getElementById('ordersContent').classList.add('hidden');
+            document.getElementById('weblogsContent').classList.add('hidden');
             
             // Show selected section
             document.getElementById(section + 'Content').classList.remove('hidden');
@@ -1039,6 +1285,9 @@
                 loadBrands();
             } else if (section === 'orders') {
                 loadOrders();
+            } else if (section === 'weblogs') {  // اضافه کن
+                loadWeblogs();
+                loadWeblogCategories();
             }
         }
         function toPersianDigits(num) {
@@ -1950,6 +2199,32 @@
             document.getElementById('editItemParentField').classList.add('hidden');
         }
 
+        function addWeblog() {
+            currentWeblogId = null;
+            
+            document.getElementById('weblogForm').reset();
+            document.getElementById('weblogModalTitle').textContent = 'افزودن مقاله جدید';
+            document.getElementById('weblogFormButton').textContent = 'افزودن مقاله';
+            
+            // Reset quill editor
+            if (weblogQuillInstance) {
+                weblogQuillInstance.root.innerHTML = '';
+            }
+            
+            // Reset image preview
+            const imagePreview = document.getElementById('weblogImagePreview');
+            imagePreview.classList.add('hidden');
+            document.getElementById('weblogImage').value = '';
+            
+            document.getElementById('editWeblogModal').classList.remove('hidden');
+            
+            // Initialize quill after modal is shown
+            setTimeout(() => {
+                initWeblogQuillEditor('');
+            }, 100);
+        }
+
+
         async function deleteCategory(id) {
             if (confirm('آیا از حذف این دسته‌بندی اطمینان دارید؟')) {
                 try {
@@ -1996,6 +2271,30 @@
                     console.error('Error deleting brand:', error);
                     showNotification(error.message || 'خطا در حذف برند', 'error');
                 }
+            }
+        }
+
+        async function deleteWeblog(id) {
+            if (!confirm('آیا از حذف این مقاله اطمینان دارید؟')) return;
+            
+            try {
+                const response = await fetch(`/admin/weblogs/delete/${id}`, {
+                    method: 'DELETE'
+                });
+                
+                const data = await response.json();
+                
+                if (!response.ok) {
+                    throw new Error(data.message || 'خطا در حذف مقاله');
+                }
+                
+                weblogs = weblogs.filter(w => w._id !== id);
+                loadWeblogs();
+                showNotification('مقاله با موفقیت حذف شد', 'success');
+                
+            } catch (error) {
+                console.error('Error deleting weblog:', error);
+                showNotification(error.message || 'خطا در حذف مقاله', 'error');
             }
         }
 
@@ -2069,6 +2368,59 @@
                 showNotification(error.message || 'خطا در آماده‌سازی ویرایش', 'error');
             }
         }
+
+        async function editWeblog(id) {
+            try {
+                const response = await fetch(`/admin/weblogs/${id}`);
+                const data = await response.json();
+                
+                if (!data.success) {
+                    throw new Error(data.message);
+                }
+                
+                const weblog = data.weblog;
+                currentWeblogId = id;
+                
+                document.getElementById('weblogTitle').value = weblog.title || '';
+                document.getElementById('weblogDescription').value = weblog.description || '';
+                document.getElementById('weblogTags').value = weblog.tags ? weblog.tags.join(', ') : '';
+                document.getElementById('weblogReadingTime').value = weblog.readingTime || 5;
+                document.getElementById('weblogMetaTitle').value = weblog.metaTitle || '';
+                document.getElementById('weblogMetaDescription').value = weblog.metaDescription || '';
+                document.getElementById('weblogIsFeatured').checked = weblog.isFeatured || false;
+                document.getElementById('weblogIsPublished').checked = weblog.isPublished || false;
+                
+                // Set categories
+                const categorySelect = document.getElementById('weblogCategories');
+                if (weblog.categories && weblog.categories.length > 0) {
+                    Array.from(categorySelect.options).forEach(option => {
+                        option.selected = weblog.categories.some(cat => cat._id === option.value);
+                    });
+                }
+                
+                // Set image preview
+                if (weblog.images && weblog.images[0]) {
+                    const previewDiv = document.getElementById('weblogImagePreview');
+                    const previewImg = document.getElementById('weblogImagePreviewImg');
+                    previewImg.src = weblog.images[0];
+                    previewDiv.classList.remove('hidden');
+                }
+                
+                // Set content in quill
+                setTimeout(() => {
+                    initWeblogQuillEditor(weblog.content || '');
+                }, 100);
+                
+                document.getElementById('weblogModalTitle').textContent = 'ویرایش مقاله';
+                document.getElementById('weblogFormButton').textContent = 'ذخیره تغییرات';
+                document.getElementById('editWeblogModal').classList.remove('hidden');
+                
+            } catch (error) {
+                console.error('Error loading weblog:', error);
+                showNotification('خطا در بارگذاری مقاله', 'error');
+            }
+        }
+
 
         // Add this form handler for the edit modal
         document.getElementById('editItemForm').addEventListener('submit', async function(e) {
@@ -2230,6 +2582,106 @@
             });
         }
 
+        async function loadWeblogCategories() {
+            try {
+                const response = await fetch('/admin/categories?type=weblog');
+                const data = await response.json();
+                if (data.success) {
+                    weblogCategories = data.categories;
+                    const select = document.getElementById('weblogCategories');
+                    select.innerHTML = '';
+                    weblogCategories.forEach(cat => {
+                        const option = document.createElement('option');
+                        option.value = cat._id;
+                        option.textContent = cat.name;
+                        select.appendChild(option);
+                    });
+                }
+            } catch (error) {
+                console.error('Error loading weblog categories:', error);
+            }
+        }
+
+        async function uploadWeblogImage(file) {
+            const formData = new FormData();
+            formData.append('images', file);
+            
+            try {
+                const response = await fetch('/admin/upload-images', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const result = await response.json();
+                
+                if (!response.ok) {
+                    throw new Error(result.error || 'خطا در آپلود تصویر');
+                }
+                
+                return result.images[0];
+            } catch (error) {
+                console.error('Image upload error:', error);
+                showNotification('خطا در آپلود تصویر: ' + error.message, 'error');
+                return null;
+            }
+        }
+
+        function loadWeblogs() {
+            const tbody = document.getElementById('weblogsTableBody');
+            if (!tbody) return;
+            
+            tbody.innerHTML = '';
+            
+            if (!weblogs || weblogs.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="8" class="text-center py-8 text-gray-500">هیچ مقاله‌ای وجود ندارد</td></tr>';
+                return;
+            }
+            
+            weblogs.forEach((weblog, index) => {
+                const row = document.createElement('tr');
+                row.className = 'product-row transition-all duration-300';
+                
+                const statusBadge = weblog.isPublished 
+                    ? '<span class="inline-block bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full">منتشر شده</span>'
+                    : '<span class="inline-block bg-yellow-100 text-yellow-800 text-xs px-2 py-1 rounded-full">پیش‌نویس</span>';
+                
+                const categoryBadges = weblog.categories && weblog.categories.length > 0 
+                    ? weblog.categories.map(cat => 
+                        `<span class="inline-block bg-gray-100 text-gray-800 text-xs px-2 py-1 rounded-full ml-1 mb-1">
+                            ${cat.name}
+                        </span>`
+                    ).join('')
+                    : '<span class="text-gray-500 text-xs">بدون دسته‌بندی</span>';
+                
+                row.innerHTML = `
+                    <td class="px-3 md:px-6 py-3 md:py-4 text-xs md:text-sm text-gray-900">${index + 1}</td>
+                    <td class="px-3 md:px-6 py-3 md:py-4">
+                        <img src="${weblog.images && weblog.images[0] ? weblog.images[0].url : '/images/default-article.jpg'}" alt="Article" class="w-12 h-12 md:w-16 md:h-16 rounded-lg object-cover">
+                    </td>
+                    <td class="px-3 md:px-6 py-3 md:py-4 text-xs md:text-sm font-medium text-gray-900">${weblog.title}</td>
+                    <td class="px-3 md:px-6 py-3 md:py-4 text-xs md:text-sm text-gray-600 hidden md:table-cell"><div class="flex flex-wrap">${categoryBadges}</div></td>
+                    <td class="px-3 md:px-6 py-3 md:py-4 text-xs md:text-sm text-gray-600 hidden sm:table-cell">${weblog.author?.fullName || 'نامشخص'}</td>
+                    <td class="px-3 md:px-6 py-3 md:py-4 text-xs md:text-sm hidden sm:table-cell">${statusBadge}</td>
+                    <td class="px-3 md:px-6 py-3 md:py-4 text-xs md:text-sm text-gray-600">${weblog.createTarikh || '-'}</td>
+                    <td class="px-3 md:px-6 py-3 md:py-4">
+                        <div class="flex space-x-reverse space-x-1 md:space-x-2">
+                            <button onclick="viewWeblog('${weblog._id}')" class="action-btn p-1 md:p-2 text-blue-600 hover:bg-blue-50 rounded-full transition-all">
+                                <i class="fas fa-eye text-sm"></i>
+                            </button>
+                            <button onclick="editWeblog('${weblog._id}')" class="action-btn p-1 md:p-2 text-yellow-600 hover:bg-yellow-50 rounded-full transition-all">
+                                <i class="fas fa-pencil text-sm"></i>
+                            </button>
+                            <button onclick="deleteWeblog('${weblog._id}')" class="action-btn p-1 md:p-2 text-red-600 hover:bg-red-50 rounded-full transition-all">
+                                <i class="fas fa-trash text-sm"></i>
+                            </button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+
         function viewOrder(id) {
             const order = orders.find(p => p._id === id);
             
@@ -2319,6 +2771,155 @@
             document.getElementById('orderDetails').innerHTML = detailsHtml;
             document.getElementById('orderModal').classList.remove('hidden');
         }
+
+        async function viewWeblog(id) {
+            try {
+                const response = await fetch(`/admin/weblogs/${id}`);
+                const data = await response.json();
+                
+                if (!data.success) {
+                    throw new Error(data.message);
+                }
+                
+                const weblog = data.weblog;
+                
+                const detailsHtml = `
+                    <div class="space-y-4">
+                        <div class="flex flex-col md:flex-row gap-4">
+                            ${weblog.images && weblog.images[0] ? `<img src="${weblog.images[0]}" class="w-full md:w-48 h-48 object-cover rounded-lg">` : ''}
+                            <div class="flex-1">
+                                <h3 class="text-xl font-bold text-gray-800">${weblog.title}</h3>
+                                <p class="text-gray-600 mt-2">${weblog.description}</p>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div><span class="font-semibold">نویسنده:</span> ${weblog.author?.fullName || 'نامشخص'}</div>
+                            <div><span class="font-semibold">زمان مطالعه:</span> ${weblog.readingTime} دقیقه</div>
+                            <div><span class="font-semibold">تاریخ ایجاد:</span> ${weblog.createTarikh}</div>
+                            <div><span class="font-semibold">وضعیت:</span> ${weblog.isPublished ? 'منتشر شده' : 'پیش‌نویس'}</div>
+                            <div><span class="font-semibold">بازدید:</span> ${toPersianDigits(weblog.viewCount || 0)}</div>
+                        </div>
+                        <div>
+                            <span class="font-semibold">دسته‌بندی‌ها:</span>
+                            <div class="flex flex-wrap gap-1 mt-1">
+                                ${weblog.categories?.map(cat => `<span class="bg-gray-100 px-2 py-1 rounded-full text-sm">${cat.name}</span>`).join('') || 'بدون دسته‌بندی'}
+                            </div>
+                        </div>
+                        <div>
+                            <span class="font-semibold">برچسب‌ها:</span>
+                            <div class="flex flex-wrap gap-1 mt-1">
+                                ${weblog.tags?.map(tag => `<span class="bg-gray-100 px-2 py-1 rounded-full text-sm">${tag}</span>`).join('') || 'بدون برچسب'}
+                            </div>
+                        </div>
+                        <div class="border-t pt-4">
+                            <span class="font-semibold">محتوا:</span>
+                            <div class="mt-2 prose max-w-none">${weblog.content || 'بدون محتوا'}</div>
+                        </div>
+                    </div>
+                `;
+                
+                document.getElementById('productDetails').innerHTML = detailsHtml;
+                document.getElementById('productModal').classList.remove('hidden');
+                
+            } catch (error) {
+                console.error('Error viewing weblog:', error);
+                showNotification('خطا در نمایش مقاله', 'error');
+            }
+        }
+
+        // آپلود تصویر شاخص مقاله
+        document.getElementById('weblogImage').addEventListener('change', async function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            
+            const result = await uploadWeblogImage(file);
+            if (result) {
+                const previewDiv = document.getElementById('weblogImagePreview');
+                const previewImg = document.getElementById('weblogImagePreviewImg');
+                previewImg.src = result.url;
+                previewDiv.classList.remove('hidden');
+            }
+        });
+
+        // ذخیره مقاله
+        document.getElementById('weblogForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            if (weblogQuillInstance) {
+                document.getElementById('weblogContent').value = weblogQuillInstance.root.innerHTML;
+            }
+            
+            const imageFile = document.getElementById('weblogImage').files[0];
+            let imageUrl = null;
+            
+            if (imageFile) {
+                const uploaded = await uploadWeblogImage(imageFile);
+                if (uploaded) {
+                    imageUrl = uploaded.url;
+                }
+            } else {
+                const previewImg = document.getElementById('weblogImagePreviewImg');
+                if (previewImg.src && !previewImg.src.includes('blob:')) {
+                    imageUrl = previewImg.src;
+                }
+            }
+            
+            const data = {
+                title: document.getElementById('weblogTitle').value,
+                description: document.getElementById('weblogDescription').value,
+                content: document.getElementById('weblogContent').value,
+                images: imageUrl ? [imageUrl] : [],
+                categories: Array.from(document.getElementById('weblogCategories').selectedOptions).map(opt => opt.value),
+                tags: document.getElementById('weblogTags').value.split(',').map(t => t.trim()).filter(t => t),
+                readingTime: parseInt(document.getElementById('weblogReadingTime').value),
+                isFeatured: document.getElementById('weblogIsFeatured').checked,
+                isPublished: document.getElementById('weblogIsPublished').checked,
+                metaTitle: document.getElementById('weblogMetaTitle').value,
+                metaDescription: document.getElementById('weblogMetaDescription').value
+            };
+            
+            try {
+                let response;
+                
+                if (currentWeblogId) {
+                    response = await fetch(`/admin/weblogs/edit/${currentWeblogId}`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(data)
+                    });
+                } else {
+                    response = await fetch('/admin/weblogs/add', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(data)
+                    });
+                }
+                
+                const result = await response.json();
+                
+                if (!response.ok) {
+                    throw new Error(result.message || 'خطا در ذخیره مقاله');
+                }
+                
+                if (currentWeblogId) {
+                    const index = weblogs.findIndex(w => w._id === currentWeblogId);
+                    if (index !== -1) {
+                        weblogs[index] = result.weblog;
+                    }
+                } else {
+                    weblogs.unshift(result.weblog);
+                }
+                
+                loadWeblogs();
+                closeModal('editWeblogModal');
+                showNotification(currentWeblogId ? 'مقاله با موفقیت ویرایش شد' : 'مقاله جدید با موفقیت اضافه شد', 'success');
+                
+            } catch (error) {
+                console.error('Error saving weblog:', error);
+                showNotification(error.message || 'خطا در ذخیره مقاله', 'error');
+            }
+        });
+
 
         async function updateOrderStatus(orderId, selectElement) {
             const newStatus = selectElement.value;
@@ -2786,6 +3387,7 @@
             loadBrands();
             loadDiscounts();
             loadOrders();
+            loadWeblogs();
         });
     </script>
 </body>
