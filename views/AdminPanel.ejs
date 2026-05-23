@@ -149,6 +149,83 @@
                 display: block;
             }
         }
+        @keyframes modalSlideIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95) translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+@keyframes modalFadeIn {
+    from {
+        opacity: 0;
+        backdrop-filter: blur(0px);
+    }
+    to {
+        opacity: 1;
+        backdrop-filter: blur(4px);
+    }
+}
+
+/* استایل اسکرول بار برای مودال */
+#editModal .overflow-y-auto::-webkit-scrollbar {
+    width: 6px;
+}
+
+#editModal .overflow-y-auto::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+#editModal .overflow-y-auto::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 10px;
+}
+
+#editModal .overflow-y-auto::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+}
+
+/* استایل فیلدهای رنگ */
+#colorFields > div {
+    background: #f9fafb;
+    padding: 8px;
+    border-radius: 12px;
+    transition: all 0.2s;
+}
+
+#colorFields > div:hover {
+    background: #f3f4f6;
+}
+
+/* استایل فیلدهای سایز */
+#sizeFields > div {
+    background: #f9fafb;
+    padding: 8px;
+    border-radius: 12px;
+    transition: all 0.2s;
+}
+
+#sizeFields > div:hover {
+    background: #f3f4f6;
+}
+
+/* استایل فیلدهای مشخصات */
+#specFields > div {
+    background: #f9fafb;
+    padding: 8px;
+    border-radius: 12px;
+    transition: all 0.2s;
+}
+
+#specFields > div:hover {
+    background: #f3f4f6;
+}
+
     </style>
 
     <!-- <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet"> -->
@@ -676,191 +753,253 @@
     </div>
 
     <!-- Edit Product Modal -->
-    <div id="editModal" class="hidden fixed inset-0 bg-black bg-opacity-50 modal z-50 flex items-center justify-center p-4">
-        <div class="glass-card rounded-xl md:rounded-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto">
-            <div class="p-4 md:p-6 border-b border-gray-200 flex justify-between items-center">
-                <h3 class="text-lg md:text-xl font-bold text-gray-800">ویرایش محصول</h3>
-                <button onclick="closeModal('editModal')" class="text-gray-400 hover:text-gray-600">
-                    <i class="fas fa-times text-xl"></i>
+    <div id="editModal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-3 md:p-4 transition-all duration-300">
+    <div class="bg-white rounded-2xl max-w-5xl w-full max-h-[95vh] overflow-hidden shadow-2xl transform transition-all duration-300 scale-95 opacity-0" id="editModalContent">
+        
+        <!-- Header با گرادیانت زیبا -->
+        <div class="bg-gradient-to-l from-blue-600 to-indigo-700 px-5 md:px-7 py-4 md:py-5 flex justify-between items-center sticky top-0 z-10">
+            <h3 class="text-lg md:text-xl font-bold text-white flex items-center gap-2">
+                <i class="fas fa-box text-white/80 text-lg md:text-xl"></i>
+                <span id="modalTitle">افزودن محصول جدید</span>
+            </h3>
+            <button onclick="closeModal('editModal')" class="text-white/80 hover:text-white hover:bg-white/20 rounded-lg p-2 transition-all duration-200">
+                <i class="fas fa-times text-xl"></i>
+            </button>
+        </div>
+        
+        <!-- فرم با اسکرول -->
+        <form id="editForm" class="overflow-y-auto" style="max-height: calc(95vh - 70px);">
+            <div class="p-5 md:p-7 space-y-6 md:space-y-8">
+                
+                <!-- بخش اول: اطلاعات پایه -->
+                <div class="bg-gradient-to-r from-gray-50 to-white rounded-xl p-4 md:p-5 border border-gray-200">
+                    <h4 class="text-base md:text-lg font-bold text-gray-800 mb-4 flex items-center gap-2 border-r-4 border-blue-500 pr-3">
+                        <i class="fas fa-info-circle text-blue-500"></i>
+                        اطلاعات پایه
+                    </h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5">
+                        <div class="md:col-span-2">
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                نام محصول <span class="text-red-500">*</span>
+                            </label>
+                            <input name="name" type="text" id="editName" required
+                                class="w-full px-4 py-2.5 border-2 border-gray-200 rounded-xl focus:border-blue-400 focus:ring-2 focus:ring-blue-200 transition-all duration-200 outline-none"
+                                placeholder="مثال: کرم ضد آفتاب SPF50">
+                        </div>
+                        
+                        <div class="md:col-span-2">
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                توضیح کوتاه
+                            </label>
+                            <textarea name="lilDescription" id="editLilDescription" rows="2"
+                                class="w-full px-4 py-2.5 border-2 border-gray-200 rounded-xl focus:border-blue-400 focus:ring-2 focus:ring-blue-200 transition-all duration-200 outline-none resize-none"
+                                placeholder="توضیح مختصر درباره محصول (حداکثر 160 کاراکتر)"></textarea>
+                            <p class="text-xs text-gray-400 mt-1">حداکثر 160 کاراکتر</p>
+                        </div>
+                        
+                        <div class="md:col-span-2">
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                تصاویر محصول <span class="text-red-500">*</span>
+                            </label>
+                            <div class="border-2 border-dashed border-gray-300 rounded-xl p-4 hover:border-blue-400 transition-all duration-200">
+                                <input name="images" type="file" id="editImages" multiple accept="image/*"
+                                    class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer">
+                                <div id="imagePreviews" class="flex flex-wrap gap-3 mt-3"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="md:col-span-2">
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                توضیحات کامل <span class="text-red-500">*</span>
+                            </label>
+                            <div id="editor-container" class="border-2 border-gray-200 rounded-xl overflow-hidden focus-within:border-blue-400 transition-all">
+                                <div id="editor" class="min-h-[200px]" style="direction: rtl;"></div>
+                                <textarea name="description" id="editDescription" class="hidden"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- بخش دوم: قیمت و موجودی -->
+                <div class="bg-gradient-to-r from-gray-50 to-white rounded-xl p-4 md:p-5 border border-gray-200">
+                    <h4 class="text-base md:text-lg font-bold text-gray-800 mb-4 flex items-center gap-2 border-r-4 border-green-500 pr-3">
+                        <i class="fas fa-tag text-green-500"></i>
+                        قیمت و موجودی
+                    </h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5">
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                قیمت اصلی (تومان) <span class="text-red-500">*</span>
+                            </label>
+                            <input name="price" type="number" id="editPrice" min="0" required
+                                class="w-full px-4 py-2.5 border-2 border-gray-200 rounded-xl focus:border-green-400 focus:ring-2 focus:ring-green-200 transition-all outline-none"
+                                placeholder="0">
+                        </div>
+                        
+                        <div>
+                            <div class="flex items-center gap-3 mb-2">
+                                <input type="checkbox" id="hasDiscount" class="w-4 h-4 text-green-600 rounded focus:ring-green-500" onchange="toggleDiscountField()">
+                                <label for="hasDiscount" class="text-sm font-semibold text-gray-700">قیمت ویژه (تخفیف دار)</label>
+                            </div>
+                            <input name="offerPrice" type="number" id="editOfferPrice" 
+                                class="w-full px-4 py-2.5 border-2 border-gray-200 rounded-xl focus:border-green-400 focus:ring-2 focus:ring-green-200 transition-all outline-none disabled:bg-gray-100 disabled:cursor-not-allowed"
+                                placeholder="قیمت پس از تخفیف" disabled>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                موجودی <span class="text-red-500">*</span>
+                            </label>
+                            <input name="countInStock" type="number" id="editCountInStock" min="0" required
+                                class="w-full px-4 py-2.5 border-2 border-gray-200 rounded-xl focus:border-green-400 focus:ring-2 focus:ring-green-200 transition-all outline-none"
+                                placeholder="تعداد موجود">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                امتیاز
+                            </label>
+                            <div class="flex items-center gap-2">
+                                <input name="rating" type="number" id="editRating" min="0" max="5" step="0.1"
+                                    class="w-full px-4 py-2.5 border-2 border-gray-200 rounded-xl focus:border-green-400 focus:ring-2 focus:ring-green-200 transition-all outline-none"
+                                    placeholder="0 تا 5">
+                                <div class="flex text-yellow-400">
+                                    <i class="fas fa-star"></i>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                وزن (گرم)
+                            </label>
+                            <input name="weight" type="number" id="editWeight" min="0"
+                                class="w-full px-4 py-2.5 border-2 border-gray-200 rounded-xl focus:border-green-400 focus:ring-2 focus:ring-green-200 transition-all outline-none"
+                                placeholder="وزن محصول">
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- بخش سوم: دسته‌بندی و برند -->
+                <div class="bg-gradient-to-r from-gray-50 to-white rounded-xl p-4 md:p-5 border border-gray-200">
+                    <h4 class="text-base md:text-lg font-bold text-gray-800 mb-4 flex items-center gap-2 border-r-4 border-purple-500 pr-3">
+                        <i class="fas fa-folder-open text-purple-500"></i>
+                        دسته‌بندی و برند
+                    </h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5">
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                دسته‌بندی <span class="text-red-500">*</span>
+                            </label>
+                            <select name="category" id="editCategory" required
+                                class="w-full px-4 py-2.5 border-2 border-gray-200 rounded-xl focus:border-purple-400 focus:ring-2 focus:ring-purple-200 transition-all outline-none bg-white">
+                                <option value="">انتخاب دسته‌بندی</option>
+                            </select>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                برند <span class="text-red-500">*</span>
+                            </label>
+                            <select name="brand" id="editBrand" required
+                                class="w-full px-4 py-2.5 border-2 border-gray-200 rounded-xl focus:border-purple-400 focus:ring-2 focus:ring-purple-200 transition-all outline-none bg-white">
+                                <option value="">انتخاب برند</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- بخش چهارم: رنگ‌ها و سایزها -->
+                <div class="bg-gradient-to-r from-gray-50 to-white rounded-xl p-4 md:p-5 border border-gray-200">
+                    <h4 class="text-base md:text-lg font-bold text-gray-800 mb-4 flex items-center gap-2 border-r-4 border-pink-500 pr-3">
+                        <i class="fas fa-palette text-pink-500"></i>
+                        رنگ‌ها و سایزها
+                    </h4>
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-3">رنگ‌ها</label>
+                            <div id="colorFields" class="space-y-2 max-h-48 overflow-y-auto p-1"></div>
+                            <button type="button" onclick="addColorField()" class="mt-3 text-sm text-blue-600 hover:text-blue-800 font-medium flex items-center gap-1 transition-colors">
+                                <i class="fas fa-plus-circle"></i>
+                                افزودن رنگ جدید
+                            </button>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-3">سایزها</label>
+                            <div id="sizeFields" class="space-y-2 max-h-48 overflow-y-auto p-1"></div>
+                            <button type="button" onclick="addSizeField()" class="mt-3 text-sm text-blue-600 hover:text-blue-800 font-medium flex items-center gap-1 transition-colors">
+                                <i class="fas fa-plus-circle"></i>
+                                افزودن سایز جدید
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- بخش پنجم: مشخصات فنی -->
+                <div class="bg-gradient-to-r from-gray-50 to-white rounded-xl p-4 md:p-5 border border-gray-200">
+                    <h4 class="text-base md:text-lg font-bold text-gray-800 mb-4 flex items-center gap-2 border-r-4 border-orange-500 pr-3">
+                        <i class="fas fa-microchip text-orange-500"></i>
+                        مشخصات فنی
+                    </h4>
+                    <div id="specFields" class="space-y-2 max-h-64 overflow-y-auto p-1"></div>
+                    <button type="button" onclick="addSpecField()" class="mt-3 text-sm text-blue-600 hover:text-blue-800 font-medium flex items-center gap-1 transition-colors">
+                        <i class="fas fa-plus-circle"></i>
+                        افزودن مشخصه جدید
+                    </button>
+                </div>
+                
+                <!-- بخش ششم: برچسب‌ها -->
+                <div class="bg-gradient-to-r from-gray-50 to-white rounded-xl p-4 md:p-5 border border-gray-200">
+                    <h4 class="text-base md:text-lg font-bold text-gray-800 mb-4 flex items-center gap-2 border-r-4 border-yellow-500 pr-3">
+                        <i class="fas fa-tags text-yellow-500"></i>
+                        برچسب‌ها
+                    </h4>
+                    <input name="tags" type="text" id="editTags" 
+                        class="w-full px-4 py-2.5 border-2 border-gray-200 rounded-xl focus:border-yellow-400 focus:ring-2 focus:ring-yellow-200 transition-all outline-none"
+                        placeholder="با کاما جدا کنید (مثال: آرایشی,پوست,مراقبت)">
+                    <p class="text-xs text-gray-400 mt-1">برچسب‌ها را با کاما (,) از هم جدا کنید</p>
+                </div>
+                
+                <!-- بخش هفتم: وضعیت نمایش -->
+                <div class="bg-gradient-to-r from-gray-50 to-white rounded-xl p-4 md:p-5 border border-gray-200">
+                    <h4 class="text-base md:text-lg font-bold text-gray-800 mb-4 flex items-center gap-2 border-r-4 border-indigo-500 pr-3">
+                        <i class="fas fa-eye text-indigo-500"></i>
+                        وضعیت نمایش
+                    </h4>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                        <label class="flex items-center gap-2 p-3 bg-gray-50 rounded-xl cursor-pointer hover:bg-gray-100 transition-all">
+                            <input type="checkbox" id="editIsFeatured" class="w-4 h-4 text-indigo-600 rounded">
+                            <span class="text-sm font-medium text-gray-700">محصول ویژه</span>
+                        </label>
+                        <label class="flex items-center gap-2 p-3 bg-gray-50 rounded-xl cursor-pointer hover:bg-gray-100 transition-all">
+                            <input type="checkbox" id="editIsNewProduct" class="w-4 h-4 text-green-600 rounded">
+                            <span class="text-sm font-medium text-gray-700">محصول جدید</span>
+                        </label>
+                        <label class="flex items-center gap-2 p-3 bg-gray-50 rounded-xl cursor-pointer hover:bg-gray-100 transition-all">
+                            <input type="checkbox" id="editIsPopular" class="w-4 h-4 text-red-600 rounded">
+                            <span class="text-sm font-medium text-gray-700">محصول پرطرفدار</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Footer با دکمه‌ها -->
+            <div class="sticky bottom-0 bg-gray-50 border-t border-gray-200 px-5 md:px-7 py-4 flex flex-col sm:flex-row justify-end gap-3">
+                <button type="button" onclick="closeModal('editModal')" 
+                    class="px-6 py-2.5 border-2 border-gray-300 rounded-xl text-gray-700 font-medium hover:bg-gray-100 hover:border-gray-400 transition-all duration-200 order-2 sm:order-1">
+                    انصراف
+                </button>
+                <button type="submit" id="form-button" 
+                    class="px-6 py-2.5 bg-gradient-to-l from-blue-600 to-indigo-600 text-white rounded-xl font-medium hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 shadow-md hover:shadow-lg order-1 sm:order-2">
+                    <i class="fas fa-save ml-2"></i>
+                    <span id="submitBtnText">افزودن محصول</span>
                 </button>
             </div>
-            <div class="p-4 md:p-6">
-                <form id="editForm" class="space-y-4 md:space-y-6">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
-                        <!-- نام محصول -->
-                        <div>
-                            <label for="editName" class="block text-sm font-semibold text-gray-700 mb-2">نام محصول</label>
-                            <input name="name" type="text" id="editName" required
-                                class="w-full px-3 md:px-4 py-2 md:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                        </div>
-
-                        <!-- توضیح کوتاه -->
-                        <div>
-                            <label for="editLilDescription" class="block text-sm font-semibold text-gray-700 mb-2">توضیح کوتاه</label>
-                            <input name="lilDescription" type="text" id="editLilDescription"
-                                class="w-full px-3 md:px-4 py-2 md:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                        </div>
-
-                        <!-- تصاویر محصول -->
-                        <div class="md:col-span-2">
-                            <label class="block text-sm font-semibold text-gray-700 mb-2">تصاویر محصول</label>
-                            <input name="images" type="file" id="editImages" multiple accept="image/*"
-                                class="w-full px-3 md:px-4 py-2 md:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                            <div id="imagePreviews" class="flex flex-wrap gap-2 mt-2"></div>
-                        </div>
-                    </div>
-
-                    <!-- توضیحات کامل -->
-                    <div class="md:col-span-2">
-                        <label for="editDescription" class="block text-sm font-semibold text-gray-700 mb-2">توضیحات کامل</label>
-                        <div id="editor-container" class="border border-gray-300 rounded-lg">
-                            <div id="editor" class="min-h-[200px]"></div>
-                            <textarea name="description" id="editDescription" rows="4" required
-                                class="hidden w-full px-3 md:px-4 py-2 md:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"></textarea>
-                        </div>
-                    </div>
-
-                    <!-- بخش دوم - قیمت و موجودی -->
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
-                        <!-- قیمت اصلی -->
-                        <div>
-                            <label for="editPrice" class="block text-sm font-semibold text-gray-700 mb-2">قیمت اصلی (تومان)</label>
-                            <input name="price" type="number" id="editPrice" min="0" required
-                                class="w-full px-3 md:px-4 py-2 md:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                        </div>
-
-                        <!-- قیمت ویژه -->
-                        <div>
-                            <div class="flex items-center mb-2">
-                                <input type="checkbox" id="hasDiscount" class="mr-2" onchange="toggleDiscountField()">
-                                <label for="hasDiscount" class="text-sm font-semibold text-gray-700">قیمت ویژه</label>
-                            </div>
-                            <div>
-                                <input name="offerPrice" type="number" id="editOfferPrice" 
-                                    class="w-full px-3 md:px-4 py-2 md:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                    disabled>
-                            </div>
-                        </div>
-
-                        <!-- موجودی -->
-                        <div>
-                            <label for="editCountInStock" class="block text-sm font-semibold text-gray-700 mb-2">موجودی</label>
-                            <input name="countInStock" type="number" id="editCountInStock" min="0" required
-                                class="w-full px-3 md:px-4 py-2 md:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                        </div>
-
-                        <div>
-                            <label for="editRating" class="block text-sm font-semibold text-gray-700 mb-2">امتیاز</label>
-                            <input name="rating" type="number" id="editRating" min="0" required
-                                class="w-full px-3 md:px-4 py-2 md:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                        </div>
-
-                        <!-- وزن -->
-                        <div>
-                            <label for="editWeight" class="block text-sm font-semibold text-gray-700 mb-2">وزن (گرم)</label>
-                            <input name="weight" type="number" id="editWeight" min="0"
-                                class="w-full px-3 md:px-4 py-2 md:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                        </div>
-                    </div>
-
-                    <!-- بخش سوم - دسته‌بندی و برند -->
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
-                        <!-- دسته‌بندی‌ها -->
-                        <div>
-                            <label for="editCategory" class="block text-sm font-semibold text-gray-700 mb-2">دسته‌بندی‌ها</label>
-                            <select name="category" id="editCategory"
-                                class="w-full px-3 md:px-4 py-2 md:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                                <!-- Options will be populated dynamically -->
-                            </select>
-                        </div>
-
-                        <!-- برند -->
-                        <div>
-                            <label for="editBrand" class="block text-sm font-semibold text-gray-700 mb-2">برند</label>
-                            <select name="brand" id="editBrand" required
-                                class="w-full px-3 md:px-4 py-2 md:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                                <option value="">انتخاب برند</option>
-                                <!-- Options will be populated dynamically -->
-                            </select>
-                        </div>
-                    </div>
-
-                    <!-- بخش چهارم - ویژگی‌های اضافی -->
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
-                        <!-- رنگ‌ها -->
-                        <div>
-                            <label class="block text-sm font-semibold text-gray-700 mb-2">رنگ‌ها</label>
-                            <div id="colorFields" class="space-y-2">
-                                <!-- Dynamic color fields will be added here -->
-                            </div>
-                            <button type="button" onclick="addColorField()" class="mt-2 text-sm text-blue-600 hover:text-blue-800">
-                                + افزودن رنگ
-                            </button>
-                        </div>
-
-                        <!-- سایزها -->
-                        <div>
-                            <label class="block text-sm font-semibold text-gray-700 mb-2">سایزها</label>
-                            <div id="sizeFields" class="space-y-2">
-                                <!-- Dynamic size fields will be added here -->
-                            </div>
-                            <button type="button" onclick="addSizeField()" class="mt-2 text-sm text-blue-600 hover:text-blue-800">
-                                + افزودن سایز
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- بخش پنجم - مشخصات فنی -->
-                    <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-2">مشخصات فنی</label>
-                        <div id="specFields" class="space-y-2">
-                            <!-- Dynamic specification fields will be added here -->
-                        </div>
-                        <button type="button" onclick="addSpecField()" class="mt-2 text-sm text-blue-600 hover:text-blue-800">
-                            + افزودن مشخصه
-                        </button>
-                    </div>
-
-                    <!-- بخش ششم - برچسب‌ها -->
-                    <div>
-                        <label for="editTags" class="block text-sm font-semibold text-gray-700 mb-2">برچسب‌ها</label>
-                        <input name="tags" type="text" id="editTags" placeholder="با کاما جدا کنید (مثال: زیبایی,آرایشی,پوست)"
-                            class="w-full px-3 md:px-4 py-2 md:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                    </div>
-
-                    <!-- بخش هفتم - گزینه‌های نمایش -->
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
-                        <!-- محصول ویژه -->
-                        <div class="flex items-center">
-                            <input name="isFeatured" type="checkbox" id="editIsFeatured" class="mr-2">
-                            <label for="editIsFeatured" class="text-sm font-semibold text-gray-700">محصول ویژه</label>
-                        </div>
-
-                        <!-- محصول جدید -->
-                        <div class="flex items-center">
-                            <input name="isNewProduct" type="checkbox" id="editIsNewProduct" class="mr-2">
-                            <label for="editIsNewProduct" class="text-sm font-semibold text-gray-700">محصول جدید</label>
-                        </div>
-
-                        <!-- محصول پرطرفدار -->
-                        <div class="flex items-center">
-                            <input name="isPopular" type="checkbox" id="editIsPopular" class="mr-2">
-                            <label for="editIsPopular" class="text-sm font-semibold text-gray-700">محصول پرطرفدار</label>
-                        </div>
-                    </div>
-
-                    <!-- دکمه‌های فرم -->
-                    <div class="flex flex-col sm:flex-row justify-end space-y-2 sm:space-y-0 sm:space-x-reverse sm:space-x-4 pt-4 md:pt-6 border-t border-gray-200">
-                        <button type="button" onclick="closeModal('editModal')" class="px-4 md:px-6 py-2 md:py-3 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-all">
-                            انصراف
-                        </button>
-                        <button type="submit" id="form-button" class="px-4 md:px-6 py-2 md:py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all">
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
+        </form>
     </div>
+</div>
+
 
     <!-- Edit Item Modal -->
     <div id="editItemModal" class="modal hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
@@ -1190,17 +1329,17 @@
         document.addEventListener('DOMContentLoaded', initQuillEditor);
 
         // راه‌اندازی مجدد ویرایشگر هنگام باز کردن مودال
-        function setupEditModal() {
-            const editModal = document.getElementById('editModal');
-            if (editModal) {
-                editModal.addEventListener('shown.bs.modal', function() {
-                    setTimeout(initQuillEditor, 300);
-                });
-            }
-        }
+        // function setupEditModal() {
+        //     const editModal = document.getElementById('editModal');
+        //     if (editModal) {
+        //         editModal.addEventListener('shown.bs.modal', function() {
+        //             setTimeout(initQuillEditor, 300);
+        //         });
+        //     }
+        // }
 
         // فراخوانی تابع تنظیم مودال
-        setupEditModal();
+        // setupEditModal();
 
 
         let weblogs = <%- JSON.stringify(weblogs) %>;
@@ -1368,9 +1507,11 @@
             
             // Load section data
             if (section === 'dashboard') {
-                setTimeout(() => {
+            setTimeout(() => {
                 initChart();
-                initVisitsChart();  // اضافه کنید
+                if (typeof initVisitsChart === 'function') {
+                    initVisitsChart();
+                }
             }, 100);
             } else if (section === 'products') {
                 loadProducts();
@@ -1513,7 +1654,7 @@
         async function addProduct() {
             currentProductId = null;
             currentProduct = {};
-
+            
             document.getElementById('editForm').reset();
 
             document.getElementById('colorFields').innerHTML = '';
@@ -1521,24 +1662,29 @@
             document.getElementById('specFields').innerHTML = '';
             document.getElementById('imagePreviews').innerHTML = '';
             document.getElementById('editImages').addEventListener('change', handleImageUpload);
-
+            
             addColorField();
             addSizeField();
             addSpecField();
-
+            
             document.getElementById('hasDiscount').checked = false;
             document.getElementById('editOfferPrice').disabled = true;
             document.getElementById('editOfferPrice').value = '';
-
+            
+            // تغییر عنوان مودال
+            document.getElementById('modalTitle').textContent = 'افزودن محصول جدید';
+            document.getElementById('submitBtnText').textContent = 'افزودن محصول';
+            
+            // بارگذاری دسته‌بندی‌ها و برندها
             const categorySelect = document.getElementById('editCategory');
-            categorySelect.innerHTML = '';
+            categorySelect.innerHTML = '<option value="">انتخاب دسته‌بندی</option>';
             categories.forEach(category => {
                 const option = document.createElement('option');
                 option.value = category._id;
                 option.textContent = category.name;
                 categorySelect.appendChild(option);
             });
-
+            
             const brandSelect = document.getElementById('editBrand');
             brandSelect.innerHTML = '<option value="">انتخاب برند</option>';
             brands.forEach(brand => {
@@ -1547,11 +1693,16 @@
                 option.textContent = brand.name;
                 brandSelect.appendChild(option);
             });
-       
-            document.querySelector('#editModal h3').textContent = 'افزودن محصول جدید';
-            document.querySelector('#form-button').textContent = 'افزودن محصول جدید';
-
-            document.getElementById('editModal').classList.remove('hidden');
+            
+            // نمایش مودال با انیمیشن
+            const modal = document.getElementById('editModal');
+            const modalContent = document.getElementById('editModalContent');
+            if (modal && modalContent) {
+                modal.classList.remove('hidden');
+                modal.style.animation = 'modalFadeIn 0.3s ease-out forwards';
+                modalContent.classList.remove('scale-95', 'opacity-0');
+                modalContent.classList.add('scale-100', 'opacity-100');
+            }
         }
 
         async function editProduct(id) {
@@ -1559,10 +1710,17 @@
             const product = products.find(p => p._id === id);
             currentProduct = product;
 
-            document.getElementById('editModal').classList.remove('hidden');
+            const modal = document.getElementById('editModal');
+            const modalContent = document.getElementById('editModalContent');
+            if (modal && modalContent) {
+                modal.classList.remove('hidden');
+                modal.style.animation = 'modalFadeIn 0.3s ease-out forwards';
+                modalContent.classList.remove('scale-95', 'opacity-0');
+                modalContent.classList.add('scale-100', 'opacity-100');
+            }
 
-            document.querySelector('#editModal h3').textContent = 'ویرایش محصول';
-            document.querySelector('#form-button').textContent = 'ذخیره تغییرات';
+            document.getElementById('modalTitle').textContent = 'ویرایش محصول';
+            document.getElementById('submitBtnText').textContent = 'ذخیره تغییرات';
 
             // Populate form fields
             document.getElementById('editName').value = product.name || '';
@@ -3078,12 +3236,6 @@
             return statusMap[persianStatus] || persianStatus;
         }
 
-
-        // Modal Functions
-        function closeModal(modalId) {
-            document.getElementById(modalId).classList.add('hidden');
-        }
-
         function toggleDiscount() {
             const checkbox = document.getElementById('discountCheckbox');
             const discountField = document.getElementById('discountPriceField');
@@ -3297,129 +3449,125 @@
         // Form Handlers
         document.getElementById('editForm').addEventListener('submit', async function(e) {
             e.preventDefault();
-
+            
+            // پاک کردن خطاهای قبلی
+            clearFormErrors();
+            
+            // گرفتن محتوای ویرایشگر
             if (window.quillInstance) {
                 const descriptionField = document.getElementById('editDescription');
                 descriptionField.value = window.quillInstance.root.innerHTML;
             }
-
-            try {
-                const formData = new FormData(this);
-
-                const images = [];
-                document.querySelectorAll('#imagePreviews img').forEach(img => {
+            
+            // جمع‌آوری داده‌های فرم
+            const hasDiscount = document.getElementById('hasDiscount').checked;
+            const offerPriceField = document.getElementById('editOfferPrice');
+            
+            // جمع‌آوری تصاویر
+            const images = [];
+            document.querySelectorAll('#imagePreviews img').forEach(img => {
                 const container = img.parentElement;
                 images.push({
                     url: img.src,
                     filename: container.dataset.filename
                 });
-                });
-                
-                // تبدیل داده‌های آرایه‌ای به JSON
-                const data = {
-                    name: formData.get('name'),
-                    lilDescription: formData.get('lilDescription'),
-                    description: formData.get('description'),
-                    price: parseFloat(formData.get('price')),
-                    offerPrice: formData.get('hasDiscount') ? parseFloat(formData.get('offerPrice')) : null,
-                    countInStock: parseInt(formData.get('countInStock')),
-                    rating: parseInt(formData.get('rating')),
-                    weight: formData.get('weight') ? parseFloat(formData.get('weight')) : null,
-                    images: images,
-                    tags: formData.get('tags') ? formData.get('tags').split(',').map(tag => tag.trim()) : [],
-                    category: Array.from(formData.getAll('category')),
-                    brand: formData.get('brand'),
-                    isFeatured: formData.get('isFeatured') === 'on',
-                    isNewProduct: formData.get('isNewProduct') === 'on',
-                    isPopular: formData.get('isPopular') === 'on',
-                    colors: [],
-                    sizes: [],
-                    specifications: []
-                };
-
-                
-                // جمع‌آوری رنگ‌ها
-                document.querySelectorAll('#colorFields > div').forEach((colorDiv, index) => {
-                    const name = colorDiv.querySelector('input[type="text"]').value;
-                    const rgb = colorDiv.querySelector('input[type="color"]').value;
-                    if (name && rgb) {
-                        data.colors.push({ name, rgb });
-                    }
-                });                
-
-                // جمع‌آوری سایزها - روش جدید
-                document.querySelectorAll('#sizeFields > div').forEach((sizeDiv, index) => {
-                    const size = sizeDiv.querySelector('input:nth-of-type(1)').value;
-                    const usage = sizeDiv.querySelector('input:nth-of-type(2)').value;
+            });
+            
+            // ساخت آبجکت داده
+            const data = {
+                name: document.getElementById('editName').value.trim(),
+                lilDescription: document.getElementById('editLilDescription').value.trim(),
+                description: document.getElementById('editDescription').value,
+                price: parseFloat(document.getElementById('editPrice').value),
+                offerPrice: hasDiscount && offerPriceField.value ? parseFloat(offerPriceField.value) : null,
+                countInStock: parseInt(document.getElementById('editCountInStock').value),
+                rating: parseInt(document.getElementById('editRating').value) || 0,
+                weight: document.getElementById('editWeight').value ? parseFloat(document.getElementById('editWeight').value) : null,
+                images: images,
+                tags: document.getElementById('editTags').value ? document.getElementById('editTags').value.split(',').map(tag => tag.trim()).filter(t => t) : [],
+                category: [document.getElementById('editCategory').value], // چون select تکی است
+                brand: document.getElementById('editBrand').value,
+                isFeatured: document.getElementById('editIsFeatured').checked,
+                isNewProduct: document.getElementById('editIsNewProduct').checked,
+                isPopular: document.getElementById('editIsPopular').checked,
+                colors: [],
+                sizes: [],
+                specifications: []
+            };
+            
+            // جمع‌آوری رنگ‌ها
+            document.querySelectorAll('#colorFields > div').forEach((colorDiv) => {
+                const nameInput = colorDiv.querySelector('input[type="text"]');
+                const colorInput = colorDiv.querySelector('input[type="color"]');
+                if (nameInput && colorInput && nameInput.value.trim()) {
+                    data.colors.push({ 
+                        name: nameInput.value.trim(), 
+                        rgb: colorInput.value 
+                    });
+                }
+            });
+            
+            // جمع‌آوری سایزها
+            document.querySelectorAll('#sizeFields > div').forEach((sizeDiv) => {
+                const inputs = sizeDiv.querySelectorAll('input');
+                if (inputs.length >= 2) {
+                    const size = inputs[0].value.trim();
+                    const usage = inputs[1].value.trim();
                     if (size && usage) {
                         data.sizes.push({ size, usage });
                     }
-                });
-                
-                // جمع‌آوری مشخصات فنی - روش جدید
-                document.querySelectorAll('#specFields > div').forEach((specDiv, index) => {
-                    const key = specDiv.querySelector('input:nth-of-type(1)').value;
-                    const value = specDiv.querySelector('input:nth-of-type(2)').value;
+                }
+            });
+            
+            // جمع‌آوری مشخصات فنی
+            document.querySelectorAll('#specFields > div').forEach((specDiv) => {
+                const inputs = specDiv.querySelectorAll('input');
+                if (inputs.length >= 2) {
+                    const key = inputs[0].value.trim();
+                    const value = inputs[1].value.trim();
                     if (key && value) {
                         data.specifications.push({ key, value });
                     }
-                });
-
-                // const validationErrors = validateProductInputs(data);
-                // if (validationErrors.length > 0) {
-                // validationErrors.forEach(error => showNotification(error, 'error'));
-                // return;
-                // }
-
-                const imageInput = document.getElementById('editImages');
-                if (imageInput.files.length > 0) {
-                    // Here you would typically upload images to a server
-                    // For now, we'll just note that images need to be handled
-                    data.images = []; // This will be populated with uploaded image URLs
                 }
-
-                const hasDiscount = document.getElementById('hasDiscount').checked;
-                const offerPriceField = document.getElementById('editOfferPrice');
-                
-                if (hasDiscount) {
-                    // اگر تیک زده شده، مقدار فعلی را ارسال کن
-                    data.offerPrice = parseFloat(offerPriceField.value) || null;
-                } else if (currentProduct.offerPrice) {
-                    // اگر تیک نخورده اما محصول قبلاً قیمت ویژه داشته، همان را ارسال کن
-                    data.offerPrice = currentProduct.offerPrice;
-                } else {
-                    // در غیر این صورت قیمت ویژه null باشد
-                    data.offerPrice = null;
-                }            
-
-
+            });
+            
+            // اعتبارسنجی داده‌ها
+            const validationErrors = validateProductData(data);
+            
+            if (validationErrors.length > 0) {
+                showFormErrors(validationErrors);
+                return; // توقف ارسال فرم
+            }
+            
+            // نمایش وضعیت در حال ارسال
+            const submitBtn = document.querySelector('#form-button');
+            const originalBtnText = submitBtn.textContent;
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin ml-2"></i> در حال ذخیره...';
+            
+            try {
                 let response;
                 if (currentProductId) {
-                    // Edit existing product
                     response = await fetch(`/admin/products/edit/${currentProductId}`, {
                         method: 'PUT',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
+                        headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(data)
                     });
                 } else {
-                    // Add new product
                     response = await fetch('/admin/products/add', {
                         method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
+                        headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(data)
                     });
                 }
-
+                
                 const result = await response.json();
                 
                 if (!response.ok) {
                     throw new Error(result.message || 'خطا در عملیات');
                 }
-
+                
+                // به‌روزرسانی لیست محصولات
                 if (currentProductId) {
                     const index = products.findIndex(p => p._id === currentProductId);
                     if (index !== -1) {
@@ -3429,19 +3577,31 @@
                     products.unshift(result.product);
                 }
                 
-                // Reload products and close modal
                 loadProducts();
                 closeModal('editModal');
                 showNotification(
-                    currentProductId 
-                        ? 'محصول با موفقیت ویرایش شد' 
-                        : 'محصول جدید با موفقیت اضافه شد', 
+                    currentProductId ? 'محصول با موفقیت ویرایش شد' : 'محصول جدید با موفقیت اضافه شد', 
                     'success'
                 );
-
+                
+                // ریست فرم در صورت افزودن محصول جدید
+                if (!currentProductId) {
+                    document.getElementById('editForm').reset();
+                    document.getElementById('colorFields').innerHTML = '';
+                    document.getElementById('sizeFields').innerHTML = '';
+                    document.getElementById('specFields').innerHTML = '';
+                    document.getElementById('imagePreviews').innerHTML = '';
+                    addColorField();
+                    addSizeField();
+                    addSpecField();
+                }
+                
             } catch (error) {
                 console.error('Error:', error);
-                showNotification('خطا در عملیات: ' + error.message, 'error');
+                showNotification(error.message || 'خطا در عملیات', 'error');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = originalBtnText;
             }
         });
 
@@ -3472,12 +3632,220 @@
             }
         });
 
+        function validateProductData(data) {
+            const errors = [];
+
+            // بررسی نام محصول
+            if (!data.name || data.name.trim().length === 0) {
+                errors.push('نام محصول الزامی است');
+            } else if (data.name.trim().length < 3) {
+                errors.push('نام محصول نمی‌تواند کمتر از ۳ کاراکتر باشد');
+            } else if (data.name.trim().length > 100) {
+                errors.push('نام محصول نمی‌تواند بیشتر از ۱۰۰ کاراکتر باشد');
+            }
+
+            // بررسی توضیحات
+            if (!data.description || data.description.trim().length === 0) {
+                errors.push('توضیحات محصول الزامی است');
+            } else if (data.description.trim().length < 20) {
+                errors.push('توضیحات محصول نمی‌تواند کمتر از ۲۰ کاراکتر باشد');
+            }
+
+            // بررسی قیمت
+            if (data.price === undefined || data.price === null || data.price === '') {
+                errors.push('قیمت محصول الزامی است');
+            } else if (isNaN(data.price) || data.price < 0) {
+                errors.push('قیمت محصول باید عددی مثبت باشد');
+            }
+
+            // بررسی قیمت ویژه
+            if (data.offerPrice && data.offerPrice > 0) {
+                if (isNaN(data.offerPrice) || data.offerPrice < 0) {
+                    errors.push('قیمت ویژه باید عددی مثبت باشد');
+                }
+                if (data.price && data.offerPrice >= data.price) {
+                    errors.push('قیمت ویژه باید کمتر از قیمت اصلی باشد');
+                }
+            }
+
+            // بررسی موجودی
+            if (data.countInStock === undefined || data.countInStock === null || data.countInStock === '') {
+                errors.push('موجودی محصول الزامی است');
+            } else if (isNaN(data.countInStock) || data.countInStock < 0) {
+                errors.push('موجودی باید عددی مثبت باشد');
+            }
+
+            // بررسی امتیاز
+            if (data.rating && (data.rating < 0 || data.rating > 5)) {
+                errors.push('امتیاز باید بین ۰ تا ۵ باشد');
+            }
+
+            // بررسی تصاویر
+            if (!data.images || data.images.length === 0) {
+                errors.push('حداقل یک تصویر برای محصول الزامی است');
+            }
+
+            // بررسی دسته‌بندی
+            if (!data.category || data.category.length === 0) {
+                errors.push('انتخاب دسته‌بندی الزامی است');
+            }
+
+            // بررسی برند
+            if (!data.brand || data.brand === '') {
+                errors.push('انتخاب برند الزامی است');
+            }
+
+            return errors;
+        }
+
+        function showFormErrors(errors) {
+            // حذف خطاهای قبلی
+            document.querySelectorAll('.form-error-message').forEach(el => el.remove());
+            document.querySelectorAll('.error-border').forEach(el => {
+                el.classList.remove('error-border', 'border-red-500', 'bg-red-50');
+            });
+            
+            // نمایش خطاهای جدید
+            errors.forEach(error => {
+                // نمایش نوتیفیکیشن
+                showNotification(error, 'error');
+                
+                // تشخیص فیلد مربوط به هر خطا و هایلایت کردن آن
+                if (error.includes('نام محصول')) {
+                    const field = document.getElementById('editName');
+                    if (field) highlightErrorField(field, error);
+                }
+                else if (error.includes('توضیحات')) {
+                    const field = document.getElementById('editor');
+                    if (field) highlightErrorField(field, error);
+                }
+                else if (error.includes('قیمت')) {
+                    const field = document.getElementById('editPrice');
+                    if (field) highlightErrorField(field, error);
+                }
+                else if (error.includes('موجودی')) {
+                    const field = document.getElementById('editCountInStock');
+                    if (field) highlightErrorField(field, error);
+                }
+                else if (error.includes('دسته‌بندی')) {
+                    const field = document.getElementById('editCategory');
+                    if (field) highlightErrorField(field, error);
+                }
+                else if (error.includes('برند')) {
+                    const field = document.getElementById('editBrand');
+                    if (field) highlightErrorField(field, error);
+                }
+                else if (error.includes('تصویر')) {
+                    const field = document.getElementById('editImages');
+                    if (field) highlightErrorField(field, error);
+                }
+            });
+        }
+
+        // هایلایت کردن فیلد خطادار
+        function highlightErrorField(field, errorMessage) {
+            field.classList.add('border-red-500', 'bg-red-50');
+            
+            // اضافه کردن پیام خطا زیر فیلد
+            const errorSpan = document.createElement('p');
+            errorSpan.className = 'form-error-message text-red-500 text-xs mt-1';
+            errorSpan.textContent = errorMessage;
+            field.parentNode.appendChild(errorSpan);
+            
+            // اسکرول به فیلد خطادار
+            field.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+
+        // پاک کردن هایلایت خطاها
+        function clearFormErrors() {
+            document.querySelectorAll('.form-error-message').forEach(el => el.remove());
+            document.querySelectorAll('.error-border').forEach(el => {
+                el.classList.remove('error-border', 'border-red-500', 'bg-red-50');
+            });
+        }
+
+        function setupClearErrorsOnInput() {
+            const fields = ['editName', 'editPrice', 'editCountInStock', 'editCategory', 'editBrand'];
+            fields.forEach(fieldId => {
+                const field = document.getElementById(fieldId);
+                if (field) {
+                    field.addEventListener('input', function() {
+                        this.classList.remove('border-red-500', 'bg-red-50');
+                        const errorMsg = this.parentNode.querySelector('.form-error-message');
+                        if (errorMsg) errorMsg.remove();
+                    });
+                }
+            });
+        }
+
+        function showModal(modalId) {
+            const modal = document.getElementById(modalId);
+            const content = document.getElementById(modalId + 'Content');
+            
+            if (modal && content) {
+                modal.classList.remove('hidden');
+                content.classList.remove('scale-95', 'opacity-0');
+                content.classList.add('scale-100', 'opacity-100');
+            }
+        }
+
+// و در closeModal:
+function closeModal(modalId) {
+    const modal = document.getElementById(modalId);
+    const content = document.getElementById(modalId + 'Content');
+    
+    if (content) {
+        content.classList.remove('scale-100', 'opacity-100');
+        content.classList.add('scale-95', 'opacity-0');
+        setTimeout(() => {
+            if (modal) {
+                modal.classList.add('hidden');
+            }
+        }, 200);
+    } else if (modal) {
+        modal.classList.add('hidden');
+    }
+}
+
+
+function initVisitsChart() {
+    const ctx = document.getElementById('visitsChart');
+    if (!ctx) return;
+    
+    const visitsData = <%- JSON.stringify(visitStats.last7Days) %>;
+    
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: visitsData.map(item => item.date),
+            datasets: [{
+                label: 'تعداد بازدید',
+                data: visitsData.map(item => item.count),
+                backgroundColor: 'rgba(59, 130, 246, 0.5)',
+                borderColor: 'rgb(59, 130, 246)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+}
+
+
         // Initialize
         document.addEventListener('DOMContentLoaded', function() {
             setTimeout(() => {
                 initChart();
                 initVisitsChart();  // اضافه کنید
             }, 100);
+            setupClearErrorsOnInput();
             loadProducts();
             loadCategories();
             loadBrands();
