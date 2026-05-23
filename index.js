@@ -477,6 +477,8 @@ app.get(
           weight: prod.weight,
           image: prod.images?.[0] || "",
           quantity: item.quantity,
+          selectedColor: item.selectedColor || "",
+          selectedSize: item.selectedSize || ""
         };
       })
       .filter((item) => item !== null);

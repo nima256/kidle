@@ -978,6 +978,21 @@
                           product.name
                         }</h3>
 
+                      <div class="text-sm text-gray-500 mt-2 text-right">
+                        ${product.selectedColor ? `
+                          <span class="inline-flex items-center ml-3">
+                            <span class="font-semibold">رنگ:</span> 
+                            <span class="mr-1">${product.selectedColor}</span>
+                          </span>
+                        ` : ''}
+                        ${product.selectedSize ? `
+                          <span class="inline-flex items-center">
+                            <span class="font-semibold">سایز:</span> 
+                            <span class="mr-1">${product.selectedSize}</span>
+                          </span>
+                        ` : ''}
+                      </div>
+
                         ${
                         product.offerPrice
                             ? `
@@ -1164,16 +1179,23 @@
           const productElement = document.createElement("div");
           productElement.className = "flex justify-between items-center";
           productElement.innerHTML = `
-                <div class="flex items-center">
-                    <div class="product-image ml-4" style="width: 50px; height: 50px;">
-                        <img src="${product.image.url}" alt="">
-                    </div>
-                    <div class="text-gray-800">${product.offerPrice ? formatPrice(forOfferPrice) : formatPrice(forPrice)}</div>
-                </div>
-                <div class="text-gray-600 text-right">${product.name} × ${
-            product.quantity
-          }</div>
-            `;
+            <div class="flex items-center">
+              <div class="product-image ml-4" style="width: 50px; height: 50px;">
+                <img src="${product.image.url}" alt="" style="width: 50px; height: 50px; object-fit: cover;">
+              </div>
+              <div class="text-right">
+                <div class="text-gray-800 font-medium">${product.offerPrice ? formatPrice(forOfferPrice) : formatPrice(forPrice)}</div>
+                ${(product.selectedColor || product.selectedSize) ? `
+                  <div class="text-xs text-gray-500 mt-1">
+                    ${product.selectedColor ? `رنگ: ${product.selectedColor}` : ''}
+                    ${product.selectedColor && product.selectedSize ? ' | ' : ''}
+                    ${product.selectedSize ? `سایز: ${product.selectedSize}` : ''}
+                  </div>
+                ` : ''}
+              </div>
+            </div>
+            <div class="text-gray-600 text-right">${product.name} × ${product.quantity}</div>
+          `;
           summaryProducts.appendChild(productElement);
         });
 
