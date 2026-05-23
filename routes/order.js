@@ -10,7 +10,7 @@ const Product = require("../models/Product");
 const { body, validationResult } = require("express-validator");
 const mongoose = require("mongoose");
 const ZarinPal = require("zarinpal-checkout");
-const zarinpal = ZarinPal.create("4da16f0c-eb42-4064-bf75-22a4b53e2b74", false);
+const zarinpal = ZarinPal.create("0f03c606-0e29-49be-b289-7f7ec0dc7aa3", false);
 
 // For access to req.body
 router.use(express.json());
@@ -182,7 +182,7 @@ router.post(
 
         const payment = await zarinpal.PaymentRequest({
           Amount: order.totalPrice,
-          CallbackURL: "http://localhost:7000/api/order/verify",
+          CallbackURL: `${process.env.WEBSITE_URL}/api/order/verify` || "http://localhost:7000/api/order/verify",
           Description: `سفارش ${order.OrderNum}`,
           Email: user.email,
           Mobile: user.mobile,
@@ -285,8 +285,10 @@ router.get("/verify", async (req, res) => {
       order.paymentInfo.cardPan = verification.cardPan;
       order.paymentInfo.paymentDate = new Date();
       await order.save();
+      
+      req.session.OrderNum = order.OrderNum;
+      await req.session.save();
 
-      console.log("Payment successful for order:", order._id);
       return res.redirect("/api/order/payment-success");
     } else {
       // Payment verification failed
@@ -306,7 +308,8 @@ router.get("/verify", async (req, res) => {
 });
 
 router.get("/payment-success", async (req, res) => {
-  res.render("PaymentSuccess", { OrderNum: req.session.OrderNum });
+  const orderNum = req.query.orderNum || req.session.OrderNum;
+  res.render("PaymentSuccess", { OrderNum: orderNum  });
 });
 
 router.get("/payment-failed", async (req, res) => {
