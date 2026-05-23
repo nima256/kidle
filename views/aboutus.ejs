@@ -43,17 +43,6 @@
       position: relative;
     }
 
-    .nav-link::after {
-      content: "";
-      position: absolute;
-      width: 0;
-      height: 2px;
-      bottom: -4px;
-      right: 50%;
-      background: linear-gradient(90deg, #d94f86, #ec4899);
-      transition: all 0.3s ease;
-    }
-
     .nav-link:hover::after {
       width: 100%;
       right: 0;
@@ -230,6 +219,11 @@
         gap: 12px;
       }
     }
+
+.cart-count {
+    top: -8px;
+    left: -8px;
+}
   </style>
  </head>
  <body class="h-full w-full overflow-hidden">
@@ -243,10 +237,16 @@
     <div style="max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
       
       <!-- لوگو -->
-      <a href="/" style="height: 48px;">
-        <img src="logo.png" alt="لوگو" style="height: 100%; width: auto;" onerror="this.style.display='none'">
-        <span style="display: none;">کیدل</span>
-      </a>
+    <a href="/" id="logo" style="display: flex; align-items: center; gap: 8px; text-decoration: none;">
+      <div class="w-10 h-10 rounded-2xl bg-pink-400 flex items-center justify-center shadow-lg">
+        <i class="fas fa-child text-white text-xl"></i>
+      </div>
+      <div>
+        <span class="block text-xl font-extrabold text-rose-800">کیدل</span>
+        <span class="block text-xs text-rose-600">فروشگاه لباس کودک</span>
+      </div>
+    </a>
+
 
       <!-- منوی دسکتاپ با ساب‌منو -->
       <div style="display: none; gap: 24px;" class="desktop-menu">
@@ -284,30 +284,40 @@
         </div>
         <a href="/shop" class="nav-link" style="color: #333; text-decoration: none;">فروشگاه</a>
         <a href="/weblog" class="nav-link" style="color: #333; text-decoration: none;">وبلاگ</a>
-        <a href="#" class="nav-link" style="color: #333; text-decoration: none;">درباره ما</a>
-        <a href="#" class="nav-link" style="color: #333; text-decoration: none;">تماس با ما</a>
+        <a href="/about-us" class="nav-link" style="color: #333; text-decoration: none;">درباره ما</a>
+        <a href="/contact-us" class="nav-link" style="color: #333; text-decoration: none;">تماس با ما</a>
       </div>
 
       <!-- آیکون‌ها و همبرگر -->
-      <div class="flex items-center space-x-4 space-x-reverse order-1 md:order-3">
-        <div class="relative">
-          <button class="relative text-gray-700 hover:text-pink-500 transition-colors">
-            <a href="/cart">
-              <i style="color: #374151;" class="fas fa-shopping-bag text-xl"></i>
-            </a>
-            <span id="cartCount" class="absolute cart-count bg-pink-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center hidden">
-              ۰
+    <div class="flex items-center space-x-4 space-x-reverse order-1 md:order-3">
+      <div class="relative">
+        <button class="relative text-gray-700 hover:text-pink-500 transition-colors">
+          <a href="/cart">
+            <i class="fas fa-shopping-bag text-xl"></i>
+          </a>
+          <% if(user) { %>
+            <span id="cartCount" class="absolute cart-count bg-pink-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+              <%= toPersianDigitsForSizes(cartCount) %>
             </span>
-          </button>
-        </div>
-        <!-- دکمه کاربر با آیدی صحیح -->
+          <% } %>
+        </button>
+      </div>
+      <% if (!user) {%>
+        <!-- مهم: این دکمه باید آیدی صحیح داشته باشه -->
         <button id="user-auth-button" class="text-gray-700 hover:text-pink-500 transition-colors">
           <i class="fas fa-user text-xl"></i>
         </button>
-        <button id="menu-btn" style="color: #333; font-size: 24px; background: none; border: none; cursor: pointer; display: block;" class="hamburger">
-          <i class="fas fa-bars"></i>
-        </button>
-      </div>
+      <% } else { %>
+        <a href="/userProfile">
+          <button class="text-gray-700 hover:text-pink-500 transition-colors">
+            <i class="fas fa-user text-xl"></i>
+          </button>
+        </a>
+      <% } %>
+      <button id="menu-btn" style="color: #333; font-size: 24px; background: none; border: none; cursor: pointer; display: block;" class="hamburger">
+        <i class="fas fa-bars"></i>
+      </button>
+    </div>
     </div>
 
     <!-- منوی موبایل با ساب‌منو -->
@@ -348,8 +358,8 @@
       </div>
       <a href="/shop" style="display: block; padding: 8px; color: #333; text-decoration: none;">فروشگاه</a>
       <a href="/weblog" style="display: block; padding: 8px; color: #333; text-decoration: none;">وبلاگ</a>
-      <a href="#" style="display: block; padding: 8px; color: #333; text-decoration: none;">درباره ما</a>
-      <a href="#" style="display: block; padding: 8px; color: #333; text-decoration: none;">تماس با ما</a>
+      <a href="/about-us" style="display: block; padding: 8px; color: #333; text-decoration: none;">درباره ما</a>
+      <a href="/contact-us" style="display: block; padding: 8px; color: #333; text-decoration: none;">تماس با ما</a>
     </div>
    </nav>
 
@@ -517,16 +527,16 @@
      </div>
      <div class="glass-card rounded-[2rem] p-3">
 <div class="grid grid-cols-2 gap-2 sm:grid-cols-4 md:grid-cols-2 lg:grid-cols-4">
-  <a href="contact.html" class="nav-button active focus-ring rounded-2xl px-4 py-3 text-sm font-bold text-[#7a4058] text-center block" style="text-decoration: none;">
+  <a href="/contact-us" class="nav-button active focus-ring rounded-2xl px-4 py-3 text-sm font-bold text-[#7a4058] text-center block" style="text-decoration: none;">
     تماس با ما
   </a>
-  <a href="connect.html" class="nav-button focus-ring rounded-2xl px-4 py-3 text-sm font-bold text-[#7a4058] text-center block" style="text-decoration: none;">
+  <a href="/connect-us" class="nav-button focus-ring rounded-2xl px-4 py-3 text-sm font-bold text-[#7a4058] text-center block" style="text-decoration: none;">
     ارتباط با ما
   </a>
-  <a href="terms.html" class="nav-button focus-ring rounded-2xl px-4 py-3 text-sm font-bold text-[#7a4058] text-center block" style="text-decoration: none;">
+  <a href="/terms-and-conditions" class="nav-button focus-ring rounded-2xl px-4 py-3 text-sm font-bold text-[#7a4058] text-center block" style="text-decoration: none;">
     قوانین
   </a>
-  <a href="privacy.html" class="nav-button focus-ring rounded-2xl px-4 py-3 text-sm font-bold text-[#7a4058] text-center block" style="text-decoration: none;">
+  <a href="/privacy-policy" class="nav-button focus-ring rounded-2xl px-4 py-3 text-sm font-bold text-[#7a4058] text-center block" style="text-decoration: none;">
     حریم خصوصی
   </a>
 </div>

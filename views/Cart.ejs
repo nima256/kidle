@@ -105,16 +105,16 @@
         position: relative;
       }
 
-      .nav-link::after {
-        content: "";
-        position: absolute;
-        width: 0;
-        height: 2px;
-        bottom: -4px;
-        right: 50%;
-        background: linear-gradient(90deg, #3b82f6, #1d4ed8);
-        transition: all 0.3s ease;
-      }
+.nav-link::after {
+    content: "";
+    position: absolute;
+    width: 0;
+    height: 2px;
+    bottom: -4px;
+    right: 50%;
+    background: linear-gradient(90deg, #d94f86, #ec4899);
+    transition: all 0.3s ease;
+}
 
       .nav-link:hover::after {
         width: 100%;
@@ -179,10 +179,160 @@
       .animate-spin {
           animation: spin 1s linear infinite;
       }
+    /* در استایل‌های موجود اضافه کنید */
+@media (min-width: 768px) {
+  .hamburger {
+    display: none !important;
+  }
+  
+  .desktop-menu {
+    display: flex !important;
+  }
+}
+
+@media (max-width: 767px) {
+  .desktop-menu {
+    display: none !important;
+  }
+  
+  .hamburger {
+    display: block !important;
+  }
+}
+.cart-count {
+    top: -8px;
+    left: -8px;
+}
     </style>
   </head>
   <body>
+<nav style="background: white; box-shadow: 0 2px 10px rgba(0,0,0,0.1); position: fixed; top: 0; left: 0; right: 0; z-index: 50; padding: 12px 20px;">
+  <div style="max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
+    
+    <a href="#" id="logo" style="display: flex; align-items: center; gap: 8px; text-decoration: none;">
+      <div class="w-10 h-10 rounded-2xl bg-pink-400 flex items-center justify-center shadow-lg">
+        <i class="fas fa-child text-white text-xl"></i>
+      </div>
+      <div>
+        <span class="block text-xl font-extrabold text-rose-800">کیدل</span>
+        <span class="block text-xs text-rose-600">فروشگاه لباس کودک</span>
+      </div>
+    </a>
 
+    <!-- منوی دسکتاپ با ساب‌منو -->
+    <div style="display: none; gap: 24px;" class="desktop-menu">
+      <a href="/" style="color: #333; text-decoration: none;">خانه</a>
+      
+      <!-- فروشگاه با ساب‌منو -->
+      <div style="position: relative;" class="dropdown">
+        <a href="/shop" style="color: #333; text-decoration: none; display: flex; align-items: center; gap: 5px;">
+           دسته بندی <i class="fas fa-chevron-down" style="font-size: 12px;"></i>
+        </a>
+        <div class="dropdown-menu" style="position: absolute; top: 100%; right: 0; background: white; box-shadow: 0 4px 12px rgba(0,0,0,0.15); border-radius: 8px; min-width: 200px; display: none; z-index: 100;">
+          <div class="submenu-item" style="position: relative;">
+            <a href="#" style="display: flex; justify-content: space-between; align-items: center; padding: 10px 16px; color: #333; text-decoration: none; border-bottom: 1px solid #eee;">
+              لباس زنانه <i class="fas fa-chevron-left" style="font-size: 10px;"></i>
+            </a>
+            <div class="submenu-level2" style="position: absolute; right: 100%; top: 0; background: white; box-shadow: 0 4px 12px rgba(0,0,0,0.15); border-radius: 8px; min-width: 180px; display: none;">
+              <a href="#" style="display: block; padding: 10px 16px; color: #333; text-decoration: none; border-bottom: 1px solid #eee;">پیراهن زنانه</a>
+              <a href="#" style="display: block; padding: 10px 16px; color: #333; text-decoration: none; border-bottom: 1px solid #eee;">شلوار زنانه</a>
+              <a href="#" style="display: block; padding: 10px 16px; color: #333; text-decoration: none;">مانتو و کت</a>
+            </div>
+          </div>
+          <div class="submenu-item" style="position: relative;">
+            <a href="#" style="display: flex; justify-content: space-between; align-items: center; padding: 10px 16px; color: #333; text-decoration: none; border-bottom: 1px solid #eee;">
+              لباس مردانه <i class="fas fa-chevron-left" style="font-size: 10px;"></i>
+            </a>
+            <div class="submenu-level2" style="position: absolute; right: 100%; top: 0; background: white; box-shadow: 0 4px 12px rgba(0,0,0,0.15); border-radius: 8px; min-width: 180px; display: none;">
+              <a href="#" style="display: block; padding: 10px 16px; color: #333; text-decoration: none; border-bottom: 1px solid #eee;">پیراهن مردانه</a>
+              <a href="#" style="display: block; padding: 10px 16px; color: #333; text-decoration: none; border-bottom: 1px solid #eee;">شلوار مردانه</a>
+              <a href="#" style="display: block; padding: 10px 16px; color: #333; text-decoration: none;">کت و شلوار</a>
+            </div>
+          </div>
+          <a href="#" style="display: block; padding: 10px 16px; color: #333; text-decoration: none; border-bottom: 1px solid #eee;">اکسسوری</a>
+          <a href="#" style="display: block; padding: 10px 16px; color: #333; text-decoration: none;">کفش</a>
+        </div>
+      </div>
+      <a href="/shop" style="color: #333; text-decoration: none;">فروشگاه</a>
+      <a href="/weblog" style="color: #333; text-decoration: none;">وبلاگ</a>
+      <a href="/about-us" style="color: #333; text-decoration: none;">درباره ما</a>
+      <a href="/contact-us" style="color: #333; text-decoration: none;">تماس با ما</a>
+    </div>
+
+    <!-- آیکون‌ها و همبرگر -->
+    <div class="flex items-center space-x-4 space-x-reverse order-1 md:order-3">
+      <div class="relative">
+        <button class="relative text-gray-700 hover:text-pink-500 transition-colors">
+          <a href="/cart">
+            <i class="fas fa-shopping-bag text-xl"></i>
+          </a>
+          <% if(user) { %>
+            <span id="cartCount" class="absolute cart-count bg-pink-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+              <%= toPersianDigitsForSizes(cartCount) %>
+            </span>
+          <% } %>
+        </button>
+      </div>
+      <% if (!user) {%>
+        <!-- مهم: این دکمه باید آیدی صحیح داشته باشه -->
+        <button id="user-auth-button" class="text-gray-700 hover:text-pink-500 transition-colors">
+          <i class="fas fa-user text-xl"></i>
+        </button>
+      <% } else { %>
+        <a href="/userProfile">
+          <button class="text-gray-700 hover:text-pink-500 transition-colors">
+            <i class="fas fa-user text-xl"></i>
+          </button>
+        </a>
+      <% } %>
+      <button id="menu-btn" style="color: #333; font-size: 24px; background: none; border: none; cursor: pointer; display: block;" class="hamburger">
+        <i class="fas fa-bars"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- منوی موبایل با ساب‌منو -->
+  <div id="mobile-menu" style="display: none; margin-top: 15px; padding-top: 15px; border-top: 1px solid #eee; flex-direction: column; gap: 10px;">
+    <a href="/" style="display: block; padding: 8px; color: #333; text-decoration: none;">خانه</a>
+    
+    <div class="mobile-dropdown">
+      <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px; cursor: pointer;" class="mobile-dropdown-trigger">
+        <span style="color: #333;">دسته بندی </span>
+        <i class="fas fa-chevron-down" style="font-size: 12px; transition: transform 0.3s;"></i>
+      </div>
+      <div class="mobile-dropdown-menu" style="display: none; padding-right: 15px;">
+        <div class="mobile-submenu">
+          <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px; cursor: pointer;" class="mobile-submenu-trigger">
+            <span style="color: #555;">لباس زنانه</span>
+            <i class="fas fa-chevron-left" style="font-size: 10px; transition: transform 0.3s;"></i>
+          </div>
+          <div class="mobile-submenu-level2" style="display: none; padding-right: 15px;">
+            <a href="#" style="display: block; padding: 8px; color: #666; text-decoration: none;">پیراهن زنانه</a>
+            <a href="#" style="display: block; padding: 8px; color: #666; text-decoration: none;">شلوار زنانه</a>
+            <a href="#" style="display: block; padding: 8px; color: #666; text-decoration: none;">مانتو و کت</a>
+          </div>
+        </div>
+        <div class="mobile-submenu">
+          <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px; cursor: pointer;" class="mobile-submenu-trigger">
+            <span style="color: #555;">لباس مردانه</span>
+            <i class="fas fa-chevron-left" style="font-size: 10px; transition: transform 0.3s;"></i>
+          </div>
+          <div class="mobile-submenu-level2" style="display: none; padding-right: 15px;">
+            <a href="#" style="display: block; padding: 8px; color: #666; text-decoration: none;">پیراهن مردانه</a>
+            <a href="#" style="display: block; padding: 8px; color: #666; text-decoration: none;">شلوار مردانه</a>
+            <a href="#" style="display: block; padding: 8px; color: #666; text-decoration: none;">کت و شلوار</a>
+          </div>
+        </div>
+        <a href="#" style="display: block; padding: 8px; color: #555; text-decoration: none;">اکسسوری</a>
+        <a href="#" style="display: block; padding: 8px; color: #555; text-decoration: none;">کفش</a>
+      </div>
+    </div>
+    <a href="/shop" style="display: block; padding: 8px; color: #333; text-decoration: none;">فروشگاه</a>
+    <a href="/weblog" style="display: block; padding: 8px; color: #333; text-decoration: none;">وبلاگ</a>
+    <a href="/about-us" style="display: block; padding: 8px; color: #333; text-decoration: none;">درباره ما</a>
+    <a href="/contact-us" style="display: block; padding: 8px; color: #333; text-decoration: none;">تماس با ما</a>
+  </div>
+</nav>
   <br /><br />
   <div class="bg-gradient-to-br from-blue-50 to-indigo-50">
     <div class="container mx-auto px-4 py-8 max-w-4xl">
@@ -1217,7 +1367,106 @@
               }
           });
       });
+    
       </script>
+ <script>
+    // توابع کمکی
+    function toPersianDigits(num) {
+      if (num === undefined || num === null) return '۰';
+      return num.toString().replace(/\d/g, d => '۰۱۲۳۴۵۶۷۸۹'[d]);
+    }
+
+    function showNotification(message, type = 'info') {
+      const notification = document.createElement('div');
+      notification.className = `fixed z-50 px-4 py-3 rounded-lg shadow-lg text-white text-sm sm:text-base ${
+        type === 'success' ? 'bg-green-500' :
+        type === 'error' ? 'bg-red-500' :
+        'bg-blue-500'
+      } top-4 left-1/2 -translate-x-1/2 sm:left-auto sm:translate-x-0 sm:top-6 sm:right-6 w-[calc(100%-2rem)] max-w-xs sm:max-w-sm`;
+      notification.textContent = message;
+      document.body.appendChild(notification);
+      notification.classList.add('transform', 'transition-all', 'duration-300', 'translate-y-2', 'opacity-0');
+      setTimeout(() => notification.classList.remove('translate-y-2', 'opacity-0'), 10);
+      setTimeout(() => {
+        notification.classList.add('opacity-0', 'translate-y-2');
+        setTimeout(() => notification.remove(), 300);
+      }, 2000);
+    }
+
+    document.addEventListener("DOMContentLoaded", function() {
+      // منوی همبرگری موبایل
+      var menuBtn = document.getElementById('menu-btn');
+      var mobileMenu = document.getElementById('mobile-menu');
+      
+      if (menuBtn && mobileMenu) {
+        menuBtn.onclick = function(e) {
+          e.stopPropagation();
+          if (mobileMenu.style.display === 'none' || mobileMenu.style.display === '') {
+            mobileMenu.style.display = 'flex';
+          } else {
+            mobileMenu.style.display = 'none';
+          }
+        };
+      }
+      
+      // ساب‌منوی موبایل
+      var mobileTriggers = document.querySelectorAll('.mobile-dropdown-trigger');
+      mobileTriggers.forEach(function(trigger) {
+        trigger.onclick = function(e) {
+          e.stopPropagation();
+          var menu = this.nextElementSibling;
+          var icon = this.querySelector('i');
+          if (menu.style.display === 'none' || menu.style.display === '') {
+            menu.style.display = 'block';
+            icon.style.transform = 'rotate(180deg)';
+          } else {
+            menu.style.display = 'none';
+            icon.style.transform = 'rotate(0deg)';
+          }
+        };
+      });
+      
+      var subTriggers = document.querySelectorAll('.mobile-submenu-trigger');
+      subTriggers.forEach(function(trigger) {
+        trigger.onclick = function(e) {
+          e.stopPropagation();
+          var submenu = this.nextElementSibling;
+          var icon = this.querySelector('i');
+          if (submenu.style.display === 'none' || submenu.style.display === '') {
+            submenu.style.display = 'block';
+            icon.style.transform = 'rotate(180deg)';
+          } else {
+            submenu.style.display = 'none';
+            icon.style.transform = 'rotate(0deg)';
+          }
+        };
+      });
+
+
+
+    });
+    // جایگزین کد موجود منوی همبرگری با این:
+var menuBtn = document.getElementById('menu-btn');
+var mobileMenu = document.getElementById('mobile-menu');
+
+if (menuBtn && mobileMenu) {
+  menuBtn.onclick = function(e) {
+    e.stopPropagation();
+    if (mobileMenu.style.display === 'none' || mobileMenu.style.display === '') {
+      mobileMenu.style.display = 'flex';
+    } else {
+      mobileMenu.style.display = 'none';
+    }
+  };
+}
+
+// اضافه کردن Event listener برای resize
+window.addEventListener('resize', function() {
+  if (window.innerWidth >= 768) {
+    if (mobileMenu) mobileMenu.style.display = 'none';
+  }
+});
+  </script>
   </div>
   </body>
 </html>

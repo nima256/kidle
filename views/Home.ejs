@@ -344,7 +344,16 @@
             transform: scale(1.02);
         
         }
-
+.nav-link::after {
+    content: "";
+    position: absolute;
+    width: 0;
+    height: 2px;
+    bottom: -4px;
+    right: 50%;
+    background: linear-gradient(90deg, #d94f86, #ec4899);
+    transition: all 0.3s ease;
+}
   </style>
   </head>
 
@@ -353,9 +362,14 @@
 <nav style="background: white; box-shadow: 0 2px 10px rgba(0,0,0,0.1); position: fixed; top: 0; left: 0; right: 0; z-index: 50; padding: 12px 20px;">
   <div style="max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
     
-    <!-- لوگو -->
-    <a href="/" style="height: 48px;">
-
+    <a href="#" id="logo" style="display: flex; align-items: center; gap: 8px; text-decoration: none;">
+      <div class="w-10 h-10 rounded-2xl bg-pink-400 flex items-center justify-center shadow-lg">
+        <i class="fas fa-child text-white text-xl"></i>
+      </div>
+      <div>
+        <span class="block text-xl font-extrabold text-rose-800">کیدل</span>
+        <span class="block text-xs text-rose-600">فروشگاه لباس کودک</span>
+      </div>
     </a>
 
     <!-- منوی دسکتاپ با ساب‌منو -->
@@ -394,8 +408,8 @@
       </div>
       <a href="/shop" style="color: #333; text-decoration: none;">فروشگاه</a>
       <a href="/weblog" style="color: #333; text-decoration: none;">وبلاگ</a>
-      <a href="#" style="color: #333; text-decoration: none;">درباره ما</a>
-      <a href="#" style="color: #333; text-decoration: none;">تماس با ما</a>
+      <a href="/about-us" style="color: #333; text-decoration: none;">درباره ما</a>
+      <a href="/contact-us" style="color: #333; text-decoration: none;">تماس با ما</a>
     </div>
 
     <!-- آیکون‌ها و همبرگر -->
@@ -468,8 +482,8 @@
     </div>
     <a href="/shop" style="display: block; padding: 8px; color: #333; text-decoration: none;">فروشگاه</a>
     <a href="/weblog" style="display: block; padding: 8px; color: #333; text-decoration: none;">وبلاگ</a>
-    <a href="#" style="display: block; padding: 8px; color: #333; text-decoration: none;">درباره ما</a>
-    <a href="#" style="display: block; padding: 8px; color: #333; text-decoration: none;">تماس با ما</a>
+    <a href="/about-us" style="display: block; padding: 8px; color: #333; text-decoration: none;">درباره ما</a>
+    <a href="/contact-us" style="display: block; padding: 8px; color: #333; text-decoration: none;">تماس با ما</a>
   </div>
 </nav>
 

@@ -482,6 +482,20 @@
 .seo-toggle-btn.active i {
   transform: rotate(180deg);
 }
+.nav-link::after {
+    content: "";
+    position: absolute;
+    width: 0;
+    height: 2px;
+    bottom: -4px;
+    right: 50%;
+    background: linear-gradient(90deg, #d94f86, #ec4899);
+    transition: all 0.3s ease;
+}
+.cart-count {
+    top: -8px;
+    left: -8px;
+}
     </style>
     <script>
       // کد مدیریت نمایش فیلترها در موبایل
@@ -619,9 +633,14 @@ document.addEventListener('DOMContentLoaded', function() {
 <nav style="background: white; box-shadow: 0 2px 10px rgba(0,0,0,0.1); position: fixed; top: 0; left: 0; right: 0; z-index: 50; padding: 12px 20px;">
   <div style="max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
     
-    <!-- لوگو -->
-    <a href="/" style="height: 48px;">
-      <img src="logo.png" alt="لوگو" style="height: 100%; width: auto;" />
+    <a href="#" id="logo" style="display: flex; align-items: center; gap: 8px; text-decoration: none;">
+      <div class="w-10 h-10 rounded-2xl bg-pink-400 flex items-center justify-center shadow-lg">
+        <i class="fas fa-child text-white text-xl"></i>
+      </div>
+      <div>
+        <span class="block text-xl font-extrabold text-rose-800">کیدل</span>
+        <span class="block text-xs text-rose-600">فروشگاه لباس کودک</span>
+      </div>
     </a>
 
     <!-- منوی دسکتاپ با ساب‌منو -->
@@ -660,8 +679,8 @@ document.addEventListener('DOMContentLoaded', function() {
       </div>
       <a href="/shop" style="color: #333; text-decoration: none;">فروشگاه</a>
       <a href="/weblog" style="color: #333; text-decoration: none;">وبلاگ</a>
-      <a href="#" style="color: #333; text-decoration: none;">درباره ما</a>
-      <a href="#" style="color: #333; text-decoration: none;">تماس با ما</a>
+      <a href="/about-us" style="color: #333; text-decoration: none;">درباره ما</a>
+      <a href="/contact-us" style="color: #333; text-decoration: none;">تماس با ما</a>
     </div>
 
     <!-- آیکون‌ها و همبرگر -->
@@ -734,8 +753,8 @@ document.addEventListener('DOMContentLoaded', function() {
     </div>
     <a href="/shop" style="display: block; padding: 8px; color: #333; text-decoration: none;">فروشگاه</a>
     <a href="/weblog" style="display: block; padding: 8px; color: #333; text-decoration: none;">وبلاگ</a>
-    <a href="#" style="display: block; padding: 8px; color: #333; text-decoration: none;">درباره ما</a>
-    <a href="#" style="display: block; padding: 8px; color: #333; text-decoration: none;">تماس با ما</a>
+    <a href="/about-us" style="display: block; padding: 8px; color: #333; text-decoration: none;">درباره ما</a>
+    <a href="/contact-us" style="display: block; padding: 8px; color: #333; text-decoration: none;">تماس با ما</a>
   </div>
 </nav>
 
@@ -1784,11 +1803,23 @@ if (scrollLeftBtn && scrollRightBtn && slider) {
           const productFromServer = <%- JSON.stringify(products) %>;
           let currentView = "grid";
           let allProducts = [...productFromServer];
-          let filteredProducts = [...productFromServer]; // ابتدا همه محصولات را در filteredProducts قرار دهید
-          let displayedProducts = []; // اینجا خالی می‌ماند تا در init پر شود
+          let allPrices = productFromServer.map(product => {
+              return product.offerPrice || product.price;
+          });
+
+          let minGlobalPrice = allPrices.length > 0 ? Math.min(...allPrices) : 0;
+          let maxGlobalPrice = allPrices.length > 0 ? Math.max(...allPrices) : 2000000;
+
+          if (minGlobalPrice === maxGlobalPrice) {
+              minGlobalPrice = Math.floor(minGlobalPrice * 0.8);
+              maxGlobalPrice = Math.ceil(maxGlobalPrice * 1.2);
+          }
+
+          let filteredProducts = [...productFromServer];
+          let displayedProducts = [];
           let selectedCategories = [];
           let selectedBrands = [];
-          let maxPrice = 2000000;
+          let maxPrice = maxGlobalPrice;
           let searchQuery = "";
           let sortBy = "default";
           let currentPage = 1;
@@ -1946,6 +1977,10 @@ if (scrollLeftBtn && scrollRightBtn && slider) {
                     </span>`
                 ).join('')
             : '<span class="text-gray-500 text-xs">بدون دسته‌بندی</span>';
+            const brandBadge = product.brand?.name ? 
+                `<span class="inline-block bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full ml-1 mb-1">
+                    <i class="fas fa-tag ml-1"></i>${product.brand.name}
+              </span>` : '';
                 return `
                 <div class="product-card rounded-3xl overflow-hidden shadow-xl floating-animation">
 
@@ -1970,6 +2005,7 @@ if (scrollLeftBtn && scrollRightBtn && slider) {
                                 <div class="flex justify-between items-start mb-3">
                                     <div class="bg-orange-100 text-orange-800 px-3 py-1 rounded-full text-xs font-medium">
                                         ${categoryBadges}
+                                        ${brandBadge}
                                     </div>
   
                                 </div>
@@ -2044,6 +2080,23 @@ if (scrollLeftBtn && scrollRightBtn && slider) {
               document.querySelector(".cart-count").textContent = savedCount;
             }
           });
+          function scrollToFirstProduct() {
+            const isMobile = window.innerWidth <= 768;
+            
+            // پیدا کردن اولین محصول
+            const firstProduct = document.querySelector('.product-card');
+            
+            if (firstProduct) {
+              const headerHeight = document.querySelector('nav')?.offsetHeight || 80;
+              const elementPosition = firstProduct.getBoundingClientRect().top;
+              const offsetPosition = elementPosition + window.pageYOffset - headerHeight - (isMobile ? 20 : 10);
+              
+              window.scrollTo({
+                top: offsetPosition,
+                behavior: 'smooth'
+              });
+            }
+          }
           // Filter products
           function filterProducts() {
             currentPage = 1;
@@ -2061,11 +2114,21 @@ if (scrollLeftBtn && scrollRightBtn && slider) {
               }
 
               // Brand filter
-              if (
-                selectedBrands.length > 0 &&
-                !selectedBrands.includes(product.brandName)
-              ) {
-                return false;
+              if (selectedBrands.length > 0) {
+                // برند محصول (مقادیر ممکن: object با name یا string مستقیم)
+                let productBrand = null;
+                if (product.brand && typeof product.brand === 'object') {
+                  productBrand = product.brand.name;
+                } else if (product.brand && typeof product.brand === 'string') {
+                  productBrand = product.brand;
+                } else if (product.brandName) {
+                  productBrand = product.brandName;
+                }
+                
+                // بررسی مطابقت برند
+                if (!productBrand || !selectedBrands.includes(productBrand)) {
+                  return false;
+                }
               }
 
               // Price filter - now uses effectivePrice
@@ -2115,6 +2178,10 @@ if (scrollLeftBtn && scrollRightBtn && slider) {
 
             paginateProducts();
             renderProducts();
+
+            setTimeout(() => {
+              scrollToFirstProduct();
+            }, 100);
           }
 
           function paginateProducts() {
@@ -2131,6 +2198,16 @@ if (scrollLeftBtn && scrollRightBtn && slider) {
 
           // Event listeners
           document.addEventListener("DOMContentLoaded", function () {
+            const priceRangee = document.getElementById('price-range');
+            if (priceRangee) {
+                priceRangee.min = minGlobalPrice;
+                priceRangee.max = maxGlobalPrice;
+                priceRangee.value = maxGlobalPrice;
+                
+                document.getElementById('min-price-display').textContent = formatPrice(minGlobalPrice) + ' تومان';
+                document.getElementById('max-price-display').textContent = formatPrice(maxGlobalPrice) + ' تومان';
+                document.getElementById('current-price').textContent = `تا ${formatPrice(maxGlobalPrice)} تومان`;
+            }
             initializeProducts();
             // Initial render
             renderProducts();
@@ -2203,6 +2280,8 @@ if (scrollLeftBtn && scrollRightBtn && slider) {
                   this.classList.add("active");
                 }
                 filterProducts();
+
+                window.scrollTo({ top: 380, behavior: 'smooth' });
               });
             });
 
@@ -2220,6 +2299,8 @@ if (scrollLeftBtn && scrollRightBtn && slider) {
                   this.classList.remove("bg-white/70");
                 }
                 filterProducts();
+
+                window.scrollTo({ top: 380, behavior: 'smooth' });
               });
             });
 

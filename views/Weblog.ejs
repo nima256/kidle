@@ -271,15 +271,28 @@
     .bg-black\/50 { background-color: rgba(0, 0, 0, 0.5); }
     .backdrop-blur-sm { backdrop-filter: blur(4px); }
     .backdrop-blur { backdrop-filter: blur(8px); }
+  .nav-link::after {
+    content: "";
+    position: absolute;
+    width: 0;
+    height: 2px;
+    bottom: -4px;
+    right: 50%;
+    background: linear-gradient(90deg, #d94f86, #ec4899);
+    transition: all 0.3s ease;
+}
+.cart-count {
+    top: -8px;
+    left: -8px;
+}
   </style>
 </head>
 <body>
 
 <!-- ==================== نوار ناوبری (در تمام صفحات ثابت) ==================== -->
-<nav id="main-navbar" style="background: white; box-shadow: 0 2px 10px rgba(0,0,0,0.1); position: fixed; top: 0; left: 0; right: 0; z-index: 50; padding: 12px 20px;">
+<nav style="background: white; box-shadow: 0 2px 10px rgba(0,0,0,0.1); position: fixed; top: 0; left: 0; right: 0; z-index: 50; padding: 12px 20px;">
   <div style="max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
     
-    <!-- لوگو -->
     <a href="#" id="logo" style="display: flex; align-items: center; gap: 8px; text-decoration: none;">
       <div class="w-10 h-10 rounded-2xl bg-pink-400 flex items-center justify-center shadow-lg">
         <i class="fas fa-child text-white text-xl"></i>
@@ -292,11 +305,11 @@
 
     <!-- منوی دسکتاپ با ساب‌منو -->
     <div style="display: none; gap: 24px;" class="desktop-menu">
-      <a href="#" class="nav-home" style="color: #333; text-decoration: none;">خانه</a>
+      <a href="/" style="color: #333; text-decoration: none;">خانه</a>
       
       <!-- فروشگاه با ساب‌منو -->
       <div style="position: relative;" class="dropdown">
-        <a href="#" style="color: #333; text-decoration: none; display: flex; align-items: center; gap: 5px;">
+        <a href="/shop" style="color: #333; text-decoration: none; display: flex; align-items: center; gap: 5px;">
            دسته بندی <i class="fas fa-chevron-down" style="font-size: 12px;"></i>
         </a>
         <div class="dropdown-menu" style="position: absolute; top: 100%; right: 0; background: white; box-shadow: 0 4px 12px rgba(0,0,0,0.15); border-radius: 8px; min-width: 200px; display: none; z-index: 100;">
@@ -324,10 +337,10 @@
           <a href="#" style="display: block; padding: 10px 16px; color: #333; text-decoration: none;">کفش</a>
         </div>
       </div>
-      <a href="#" class="nav-shop" style="color: #333; text-decoration: none;">فروشگاه</a>
-      <a href="#" class="nav-blog" style="color: #333; text-decoration: none;">وبلاگ</a>
-      <a href="#" style="color: #333; text-decoration: none;">درباره ما</a>
-      <a href="#" style="color: #333; text-decoration: none;">تماس با ما</a>
+      <a href="/shop" style="color: #333; text-decoration: none;">فروشگاه</a>
+      <a href="/weblog" style="color: #333; text-decoration: none;">وبلاگ</a>
+      <a href="/about-us" style="color: #333; text-decoration: none;">درباره ما</a>
+      <a href="/contact-us" style="color: #333; text-decoration: none;">تماس با ما</a>
     </div>
 
     <!-- آیکون‌ها و همبرگر -->
@@ -337,26 +350,38 @@
           <a href="/cart">
             <i class="fas fa-shopping-bag text-xl"></i>
           </a>
-          <span id="cartCount" class="absolute cart-count bg-pink-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center hidden">۰</span>
+          <% if(user) { %>
+            <span id="cartCount" class="absolute cart-count bg-pink-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+              <%= toPersianDigitsForSizes(cartCount) %>
+            </span>
+          <% } %>
         </button>
       </div>
-      <!-- دکمه پروفایل کاربر -->
-      <button id="user-auth-button" class="text-gray-700 hover:text-pink-500 transition-colors">
-        <i class="fas fa-user text-xl"></i>
-      </button>
+      <% if (!user) {%>
+        <!-- مهم: این دکمه باید آیدی صحیح داشته باشه -->
+        <button id="user-auth-button" class="text-gray-700 hover:text-pink-500 transition-colors">
+          <i class="fas fa-user text-xl"></i>
+        </button>
+      <% } else { %>
+        <a href="/userProfile">
+          <button class="text-gray-700 hover:text-pink-500 transition-colors">
+            <i class="fas fa-user text-xl"></i>
+          </button>
+        </a>
+      <% } %>
       <button id="menu-btn" style="color: #333; font-size: 24px; background: none; border: none; cursor: pointer; display: block;" class="hamburger">
         <i class="fas fa-bars"></i>
       </button>
     </div>
   </div>
 
-  <!-- منوی موبایل -->
+  <!-- منوی موبایل با ساب‌منو -->
   <div id="mobile-menu" style="display: none; margin-top: 15px; padding-top: 15px; border-top: 1px solid #eee; flex-direction: column; gap: 10px;">
-    <a href="#" class="mobile-nav-home" style="display: block; padding: 8px; color: #333; text-decoration: none;">خانه</a>
+    <a href="/" style="display: block; padding: 8px; color: #333; text-decoration: none;">خانه</a>
     
     <div class="mobile-dropdown">
       <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px; cursor: pointer;" class="mobile-dropdown-trigger">
-        <span style="color: #333;">دسته بندی</span>
+        <span style="color: #333;">دسته بندی </span>
         <i class="fas fa-chevron-down" style="font-size: 12px; transition: transform 0.3s;"></i>
       </div>
       <div class="mobile-dropdown-menu" style="display: none; padding-right: 15px;">
@@ -386,13 +411,12 @@
         <a href="#" style="display: block; padding: 8px; color: #555; text-decoration: none;">کفش</a>
       </div>
     </div>
-    <a href="#" class="mobile-nav-shop" style="display: block; padding: 8px; color: #333; text-decoration: none;">فروشگاه</a>
-    <a href="#" class="mobile-nav-blog" style="display: block; padding: 8px; color: #333; text-decoration: none;">وبلاگ</a>
-    <a href="#" style="display: block; padding: 8px; color: #333; text-decoration: none;">درباره ما</a>
-    <a href="#" style="display: block; padding: 8px; color: #333; text-decoration: none;">تماس با ما</a>
+    <a href="/shop" style="display: block; padding: 8px; color: #333; text-decoration: none;">فروشگاه</a>
+    <a href="/weblog" style="display: block; padding: 8px; color: #333; text-decoration: none;">وبلاگ</a>
+    <a href="/about-us" style="display: block; padding: 8px; color: #333; text-decoration: none;">درباره ما</a>
+    <a href="/contact-us" style="display: block; padding: 8px; color: #333; text-decoration: none;">تماس با ما</a>
   </div>
 </nav>
-
 <style>
   @media (min-width: 768px) {
     .desktop-menu {

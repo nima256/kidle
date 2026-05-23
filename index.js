@@ -414,7 +414,7 @@ app.get("/api/products/filtered", async (req, res) => {
   }
 });
 
-app.get("/productDetails/:slug", async (req, res) => {
+app.get("/productDetails/:slug", async (req, res, next) => {
   try {
     const slug = req?.params?.slug;
     const user = await User.findById(req.session.userId);
@@ -499,6 +499,9 @@ app.get(
       req.session.OrderNum = generateOrderNumber();
     }
 
+
+   const cartCount = user?.cart?.length || 0;
+
     res.render("Cart", {
       cartItems,
       user,
@@ -507,6 +510,7 @@ app.get(
       discountAmount,
       finalTotal,
       discountCode: req.session.discount?.code || null,
+      cartCount
     });
   })
 );
@@ -516,30 +520,68 @@ app.get("/weblog", async (req, res) => {
     const weblogs = await Weblog.find({})
       .populate("categories")
       .populate("author");
-    res.render("Weblog", { weblogs }); // Render empty initially
+      const user = await User.findById(req.session.userId)
+    .populate("cart.productId")
+    .populate("orders");
+
+  const cartCount = user?.cart?.length || 0;
+
+
+    res.render("Weblog", { weblogs,user, cartCount }); // Render empty initially
   } catch (err) {
     res.status(500).render("error", { message: "خطا در بارگزاری وبلاگ" });
   }
 });
 
 app.get("/about-us", async (req, res) => {
-  res.render("aboutus");
+  const user = await User.findById(req.session.userId)
+    .populate("cart.productId")
+    .populate("orders");
+
+  const cartCount = user?.cart?.length || 0;
+
+
+  res.render("aboutus", {user, cartCount});
 });
 
 app.get("/connect-us", async (req, res) => {
-  res.render("connect");
+   const user = await User.findById(req.session.userId)
+    .populate("cart.productId")
+    .populate("orders");
+
+  const cartCount = user?.cart?.length || 0;
+
+  res.render("connect" , {user, cartCount});
 });
 
 app.get("/contact-us", async (req, res) => {
-  res.render("contact");
+  const user = await User.findById(req.session.userId)
+    .populate("cart.productId")
+    .populate("orders");
+
+  const cartCount = user?.cart?.length || 0;
+
+  res.render("contact", {user, cartCount});
 });
 
 app.get("/terms-and-conditions", async (req, res) => {
-  res.render("terms");
+    const user = await User.findById(req.session.userId)
+    .populate("cart.productId")
+    .populate("orders");
+
+  const cartCount = user?.cart?.length || 0;
+
+  res.render("terms", {user, cartCount});
 });
 
 app.get("/privacy-policy", async (req, res) => {
-  res.render("privacy");
+   const user = await User.findById(req.session.userId)
+    .populate("cart.productId")
+    .populate("orders");
+
+  const cartCount = user?.cart?.length || 0;
+
+  res.render("privacy", {user, cartCount});
 });
 
 app.get("/api/weblogs/:id/related", async (req, res) => {
@@ -584,11 +626,14 @@ app.get("/userProfile", async (req, res) => {
   );
   const canceledOrders = user.orders.filter((o) => o.status === "لغو شده");
 
+  const cartCount = user?.cart?.length || 0;
+
   res.render("UserProfile", {
     user,
     currentOrders,
     completedOrders,
     canceledOrders,
+    cartCount
   });
 });
 
