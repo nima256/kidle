@@ -384,6 +384,11 @@ router.post("/products/add", async (req, res) => {
     const product = new Product(productData);
     await product.save();
 
+    if (product.countInStock <= 0) {
+      product.isOutOfStock = true;
+      await product.save();
+    }
+
     const populatedProduct = await Product.findById(product._id)
       .populate("brand", "name") // Only populate the name field
       .populate("category", "name"); // Only populate the name field
@@ -597,6 +602,14 @@ router.put("/products/edit/:id", validateProductUpdate, async (req, res) => {
     )
       .populate("category")
       .populate("brand");
+
+    if (updatedProduct.countInStock <= 0) {
+      updatedProduct.isOutOfStock = true;
+      await updatedProduct.save();
+    } else if (updatedProduct.isOutOfStock && updatedProduct.countInStock > 0) {
+      updatedProduct.isOutOfStock = false;
+      await updatedProduct.save();
+    }
 
     res.json({
       success: true,

@@ -91,6 +91,10 @@ const productSchema = mongoose.Schema(
       type: String,
       default: "",
     },
+    isOutOfStock: {
+      type: Boolean,
+      default: false,
+    },
     category: [
       {
         type: mongoose.Schema.Types.ObjectId,

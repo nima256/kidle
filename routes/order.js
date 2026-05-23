@@ -163,6 +163,23 @@ router.post(
       try {
         await order.save();
 
+        for (const item of user.cart) {
+          const product = await Product.findById(item.productId._id);
+          
+          // کاهش موجودی
+          const newStock = product.countInStock - item.quantity;
+          await Product.updateOne(
+            { _id: item.productId._id },
+            { 
+              $inc: { countInStock: -item.quantity },
+              // اگه موجودی به صفر رسید، یه فیلد isOutOfStock رو true کن
+              $set: { 
+                isOutOfStock: newStock <= 0 
+              }
+            }
+          );
+        }
+
         await Promise.all(
           user.cart.map((item) =>
             Product.updateOne(

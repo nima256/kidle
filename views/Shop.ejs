@@ -1993,7 +1993,7 @@ if (scrollLeftBtn && scrollRightBtn && slider) {
                                   <a href="/productDetails/${product.slug}">
                                     <div class="absolute inset-0 bg-gradient-to-br"><img src=${product?.images[0]?.url} alt=${product.name}></div>
                                   </a>
-                                  ${product.countInStock === 0 ? `<div class="absolute top-4 right-4 bg-red-500 text-white px-3 py-1 rounded-full text-sm font-bold animate-pulse">ناموجود</div>` : product.discount > 0 ? `<div class="absolute top-4 right-4 bg-red-500 text-white px-3 py-1 rounded-full text-sm font-bold animate-pulse">${toPersianDigits(product.discount)}% تخفیف</div>` : ''}
+                                  ${product.isOutOfStock ? `<div class="absolute top-4 right-4 bg-red-500 text-white px-3 py-1 rounded-full text-sm font-bold animate-pulse">ناموجود</div>` : product.discount > 0 ? `<div class="absolute top-4 right-4 bg-red-500 text-white px-3 py-1 rounded-full text-sm font-bold animate-pulse">${toPersianDigits(product.discount)}% تخفیف</div>` : ''}
                                   ${product.isNew ? `<div class="absolute top-4 ${product.discount ? `left-4` : `right-4`} bg-green-500 text-white px-3 py-1 rounded-full text-sm font-bold">جدید</div>` : ''}
                                   <div class="absolute bottom-4 left-4 bg-white/80 backdrop-blur-sm rounded-full px-3 py-1 text-sm">⭐ ${ toPersianDigits(product.rating)} (${toPersianDigits(product.reviewsNum)} نظر)</div>
                               </div>
@@ -2039,11 +2039,17 @@ if (scrollLeftBtn && scrollRightBtn && slider) {
                                     }
                                 </div>
                                 </a>
-
-                        <button onclick="location.href='/productDetails/${ product.slug }';" class="w-full bg-gradient-to-r from-blue-600 to-teal-600
-                } text-white py-3 rounded-2xl font-bold hover:opacity-90 transition-all transform hover:scale-105 shadow-lg">
-            افزودن به سبد خرید
-        </button>
+                                ${product.isOutOfStock || product.countInStock <= 0 ? `
+                                    <button disabled class="w-full bg-gradient-to-r from-red-600 to-red-700 text-white py-3 rounded-2xl font-bold opacity-70 cursor-not-allowed shadow-lg flex items-center justify-center gap-2">
+                                        <i class="fas fa-ban ml-2"></i>
+                                        ناموجود
+                                    </button>
+                                ` : `
+                                    <button onclick="location.href='/productDetails/${ product.slug }';" class="w-full bg-gradient-to-r from-blue-600 to-teal-600 text-white py-3 rounded-2xl font-bold hover:opacity-90 transition-all transform hover:scale-105 shadow-lg flex items-center justify-center gap-2">
+                                        <i class="fas fa-shopping-cart ml-2"></i>
+                                        افزودن به سبد خرید
+                                    </button>
+                                `}
                                 </div>
                         </div>
 

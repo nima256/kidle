@@ -1540,11 +1540,18 @@ document.addEventListener('DOMContentLoaded', function() {
     </div>
 
     <!-- دکمه افزودن به سبد خرید -->
-    <button onclick="addToCart('<%= product.name %>', '<%= product._id %>')" 
-            id="add-to-cart" 
-            class="w-full bg-gradient-to-r from-pink-500 to-rose-500 text-white py-3 rounded-xl font-semibold text-sm hover:from-pink-600 hover:to-rose-600 transition duration-300 shadow hover:shadow-md active:scale-[0.98]">
-      افزودن به سبد خرید
-    </button>
+    <% if (product.isOutOfStock || product.countInStock <= 0) { %>
+        <button disabled class="w-full bg-gradient-to-r from-red-600 to-red-700 text-white py-3 rounded-2xl font-bold opacity-70 cursor-not-allowed shadow-lg">
+            <i class="fas fa-ban ml-2"></i>
+            ناموجود
+        </button>
+    <% } else { %>
+        <button onclick="addToCart('<%= product.name %>', '<%= product._id %>')" 
+                id="add-to-cart" 
+                class="w-full bg-gradient-to-r from-pink-500 to-rose-500 text-white py-3 rounded-xl font-semibold text-sm hover:from-pink-600 hover:to-rose-600 transition duration-300 shadow hover:shadow-md active:scale-[0.98]">
+          افزودن به سبد خرید
+        </button>
+    <% } %>
   </div>
 
   <!-- Product Description - توضیحات محصول (انتقال به پایین بخش خرید) -->
