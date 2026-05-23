@@ -226,6 +226,52 @@
     background: #f3f4f6;
 }
 
+.ql-editor {
+    direction: rtl;
+    text-align: right;
+    font-family: "MyFont", sans-serif;
+    font-size: 16px;
+    line-height: 1.8;
+}
+
+.ql-toolbar {
+    direction: rtl;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+}
+
+.ql-toolbar .ql-formats {
+    margin-left: 12px;
+    margin-right: 0;
+}
+
+.ql-toolbar button {
+    margin-left: 4px;
+    margin-right: 0;
+}
+
+.ql-toolbar .ql-picker-label {
+    padding-left: 8px;
+    padding-right: 8px;
+}
+
+.ql-snow .ql-picker.ql-expanded .ql-picker-options {
+    right: 0;
+    left: auto;
+}
+
+/* برای لینک‌ها */
+.ql-editor a {
+    color: #3b82f6;
+    text-decoration: underline;
+}
+
+.ql-editor a:hover {
+    color: #1d4ed8;
+}
+
+
     </style>
 
     <!-- <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet"> -->
@@ -1268,44 +1314,52 @@
 
         // تابع راه‌اندازی ویرایشگر
         function initQuillEditor(initialContent = '') {
-            // اگر ویرایشگر از قبل وجود دارد، فقط محتوا رو آپدیت کن
+            // اگر ویرایشگر از قبل وجود دارد و نیاز به آپدیت داریم
             if (window.quillInstance) {
-                if (initialContent) {
+                if (initialContent !== undefined) {
                     window.quillInstance.root.innerHTML = initialContent;
                 }
                 return;
             }
 
-            // ایجاد ویرایشگر جدید فقط اگر وجود ندارد
             const editorElement = document.getElementById('editor');
             if (!editorElement) {
                 console.error('Editor element not found!');
                 return;
             }
 
+            // تنظیمات کامل toolbar
+            const toolbarOptions = [
+                ['bold', 'italic', 'underline', 'strike'],
+                ['blockquote', 'code-block'],
+                [{ 'header': 1 }, { 'header': 2 }],
+                [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                [{ 'script': 'sub'}, { 'script': 'super' }],
+                [{ 'indent': '-1'}, { 'indent': '+1' }],
+                [{ 'direction': 'rtl' }],
+                [{ 'size': ['small', false, 'large', 'huge'] }],
+                [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+                [{ 'color': [] }, { 'background': [] }],
+                [{ 'font': [] }],
+                [{ 'align': [] }],
+                ['clean'],
+                ['link', 'image', 'video']  // لینک اینجا اضافه شده
+            ];
+
             // ایجاد ویرایشگر جدید
             window.quillInstance = new Quill('#editor', {
                 theme: 'snow',
                 modules: {
                     toolbar: {
-                        container: [
-                            ['bold', 'italic', 'underline', 'strike'],
-                            ['blockquote', 'code-block'],
-                            [{ 'header': 1 }, { 'header': 2 }],
-                            [{ 'list': 'ordered'}, { 'list': 'bullet' }],
-                            [{ 'script': 'sub'}, { 'script': 'super' }],
-                            [{ 'indent': '-1'}, { 'indent': '+1' }],
-                            [{ 'direction': 'rtl' }],
-                            [{ 'size': ['small', false, 'large', 'huge'] }],
-                            [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
-                            [{ 'color': [] }, { 'background': [] }],
-                            [{ 'font': [] }],
-                            [{ 'align': [] }],
-                            ['clean'],
-                            ['link', 'image', 'video']
-                        ],
+                        container: toolbarOptions,
                         handlers: {
-                            image: imageHandler
+                            image: imageHandler,
+                            link: function() {  // هندلر دستی برای لینک
+                                let value = prompt('لطفاً آدرس لینک را وارد کنید:', 'https://');
+                                if (value) {
+                                    this.quill.format('link', value);
+                                }
+                            }
                         }
                     }
                 },
@@ -1323,6 +1377,13 @@
                 window.quillInstance.on('text-change', function() {
                     descriptionField.value = window.quillInstance.root.innerHTML;
                 });
+            }
+            
+            // تنظیم RTL
+            const editorContainer = document.querySelector('#editor .ql-editor');
+            if (editorContainer) {
+                editorContainer.style.direction = 'rtl';
+                editorContainer.style.textAlign = 'right';
             }
         }
         // راه‌اندازی ویرایشگر هنگام بارگذاری صفحه
@@ -1350,7 +1411,7 @@
 
         function initWeblogQuillEditor(initialContent = '') {
             if (weblogQuillInstance) {
-                if (initialContent) {
+                if (initialContent !== undefined) {
                     weblogQuillInstance.root.innerHTML = initialContent;
                 }
                 return;
@@ -1362,28 +1423,39 @@
                 return;
             }
 
+            const toolbarOptions = [
+                ['bold', 'italic', 'underline', 'strike'],
+                ['blockquote', 'code-block'],
+                [{ 'header': 1 }, { 'header': 2 }],
+                [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                [{ 'script': 'sub'}, { 'script': 'super' }],
+                [{ 'indent': '-1'}, { 'indent': '+1' }],
+                [{ 'direction': 'rtl' }],
+                [{ 'size': ['small', false, 'large', 'huge'] }],
+                [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+                [{ 'color': [] }, { 'background': [] }],
+                [{ 'font': [] }],
+                [{ 'align': [] }],
+                ['clean'],
+                ['link', 'image', 'video']
+            ];
+
             weblogQuillInstance = new Quill('#weblogEditor', {
                 theme: 'snow',
                 modules: {
                     toolbar: {
-                        container: [
-                            ['bold', 'italic', 'underline', 'strike'],
-                            ['blockquote', 'code-block'],
-                            [{ 'header': 1 }, { 'header': 2 }],
-                            [{ 'list': 'ordered'}, { 'list': 'bullet' }],
-                            [{ 'script': 'sub'}, { 'script': 'super' }],
-                            [{ 'indent': '-1'}, { 'indent': '+1' }],
-                            [{ 'direction': 'rtl' }],
-                            [{ 'size': ['small', false, 'large', 'huge'] }],
-                            [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
-                            [{ 'color': [] }, { 'background': [] }],
-                            [{ 'font': [] }],
-                            [{ 'align': [] }],
-                            ['clean'],
-                            ['link', 'image', 'video']
-                        ],
+                        container: toolbarOptions,
                         handlers: {
-                            image: weblogImageHandler
+                            image: weblogImageHandler,
+                            link: function() {
+                                const range = this.quill.getSelection();
+                                if (range) {
+                                    let value = prompt('لطفاً آدرس لینک را وارد کنید:', 'https://');
+                                    if (value) {
+                                        this.quill.format('link', value);
+                                    }
+                                }
+                            }
                         }
                     }
                 },
@@ -1399,6 +1471,13 @@
                 weblogQuillInstance.on('text-change', function() {
                     contentField.value = weblogQuillInstance.root.innerHTML;
                 });
+            }
+            
+            // تنظیم RTL
+            const editorContainer = document.querySelector('#weblogEditor .ql-editor');
+            if (editorContainer) {
+                editorContainer.style.direction = 'rtl';
+                editorContainer.style.textAlign = 'right';
             }
         }
 
