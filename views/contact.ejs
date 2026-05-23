@@ -739,7 +739,7 @@ function showNotification(message, type = 'info') {
   setTimeout(() => {
     notification.classList.add('opacity-0', 'translate-y-2');
     setTimeout(() => notification.remove(), 300);
-  }, 2000);
+  }, 800);
 }
 
 function showNotificationInPopUp(message, type = 'info') {
@@ -756,7 +756,7 @@ function showNotificationInPopUp(message, type = 'info') {
   setTimeout(() => {
     notification.classList.add('opacity-0', 'translate-y-2');
     setTimeout(() => notification.remove(), 300);
-  }, 2000);
+  }, 800);
 }
 
 function switchTab(activeTab) {
@@ -877,7 +877,7 @@ document.querySelectorAll('.mobile-dropdown-trigger').forEach(trigger => {
       setTimeout(() => {
         notification.classList.add('opacity-0', 'translate-y-2');
         setTimeout(() => notification.remove(), 300);
-      }, 2000);
+      }, 800);
     }
 
     document.addEventListener("DOMContentLoaded", function() {
@@ -1033,7 +1033,7 @@ document.querySelectorAll('.mobile-dropdown-trigger').forEach(trigger => {
           .then(data => {
             if (data.success) {
               showNotification(data.message, 'success');
-              setTimeout(() => location.reload(), 1500);
+              setTimeout(() => location.reload(), 800);
               if(authPopup) authPopup.classList.add('hidden');
             } else {
               showNotification(data.message, 'error');

@@ -1365,7 +1365,7 @@ document.addEventListener('DOMContentLoaded', function() {
       .then(data => {
         if (data.success) {
           showNotification(data.message, 'success');
-          setTimeout(() => location.reload(), 1500);
+          setTimeout(() => location.reload(), 800);
           authPopup.classList.add('hidden');
         } else {
           showNotification(data.message, 'error');
@@ -2036,7 +2036,7 @@ function showNotificationForComments(message, type = 'info') {
   setTimeout(() => {
     notification.classList.add('opacity-0', 'translate-y-2');
     setTimeout(() => notification.remove(), 300);
-  }, 2000);
+  }, 800);
 }
 
 // راه‌اندازی ستاره‌های ریتینگ
@@ -2235,7 +2235,7 @@ if (document.readyState === 'loading') {
                   showNotification(`محصول ${productName} با رنگ ${selectedColor} و سایز ${selectedSize} به سبد خرید اضافه شد`, 'success');
                   setTimeout(() => {
                       location.reload();
-                  }, 1500);
+                  }, 800);
               } else {
                   showNotification(data.message, 'error');
               }
@@ -2275,7 +2275,7 @@ if (document.readyState === 'loading') {
           setTimeout(() => {
               notification.classList.add('opacity-0', 'translate-y-2');
               setTimeout(() => notification.remove(), 300);
-          }, 2000);
+          }, 800);
       }
       
     </script>

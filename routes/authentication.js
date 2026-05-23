@@ -410,4 +410,33 @@ router.patch("/resetPassword/:token", async (req, res) => {
   }
 });
 
+router.post("/logout", async (req, res) => {
+    try {
+        // حذف session کاربر
+        req.session.destroy((err) => {
+            if (err) {
+                console.error("Logout error:", err);
+                return res.status(500).json({
+                    success: false,
+                    message: "خطا در خروج از حساب کاربری"
+                });
+            }
+            
+            // پاک کردن کوکی session (اختیاری)
+            res.clearCookie('connect.sid');
+            
+            return res.status(200).json({
+                success: true,
+                message: "با موفقیت خارج شدید"
+            });
+        });
+    } catch (error) {
+        console.error("Logout error:", error);
+        return res.status(500).json({
+            success: false,
+            message: "خطا در خروج از حساب کاربری"
+        });
+    }
+});
+
 module.exports = router;

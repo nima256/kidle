@@ -1765,7 +1765,7 @@ if (scrollLeftBtn && scrollRightBtn && slider) {
             setTimeout(() => {
                 notification.classList.add('opacity-0', 'translate-y-2');
                 setTimeout(() => notification.remove(), 300);
-            }, 2000);
+            }, 800);
         }
         function showNotification(message, type = 'info') {
           const notification = document.createElement('div');
@@ -1796,7 +1796,7 @@ if (scrollLeftBtn && scrollRightBtn && slider) {
           setTimeout(() => {
               notification.classList.add('opacity-0', 'translate-y-2');
               setTimeout(() => notification.remove(), 300);
-          }, 2000);
+          }, 800);
       }
 
           // State
@@ -2482,7 +2482,7 @@ if (scrollLeftBtn && scrollRightBtn && slider) {
                                           showNotification(data.message, 'success');
                                           setTimeout(() => {
                                             location.reload();
-                                          }, 2000);
+                                          }, 800);
                                         } else {
                                           // Show error message
                                           showNotificationInPopUp(data.message, 'error');
@@ -2606,7 +2606,7 @@ if (scrollLeftBtn && scrollRightBtn && slider) {
                       showNotification(data.message, 'success');
                       setTimeout(() => {
                         location.reload();
-                      }, 2000);
+                      }, 800);
                       authPopup.classList.add("hidden");
                       } else {
                         // Show error message
