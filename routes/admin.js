@@ -20,6 +20,21 @@ const Visit = require("../models/Visit");
 const { getPersianDate } = require("../helper/getPersianDate");
 const Weblog = require("../models/Weblog");
 
+const { isAdminLoggedIn } = require("../middlewares/adminAuth");
+
+// این middleware رو برای همه روت‌ها به جز لاگین اعمال کن
+router.use((req, res, next) => {
+  if (req.path === '/login' || 
+      req.path === '/login-page' || 
+      req.path.startsWith('/css/') || 
+      req.path.startsWith('/js/') || 
+      req.path.startsWith('/fonts/') ||
+      req.path === '/favicon.ico') {
+    return next();
+  }
+  return isAdminLoggedIn(req, res, next);
+});
+
 router.use(express.json());
 router.use(express.urlencoded({ extended: true }));
 
@@ -212,13 +227,9 @@ router.delete("/delete-image", async (req, res) => {
   }
 });
 
-router.get("/login", async (req, res) => {
-  res.render("adminlogin");
-});
-
-
-
 router.get("/", async (req, res) => {
+  const loggedInAdmin = req.admin;
+
   const users = await User.find({});
   const products = await Product.find({})
     .populate("category")
@@ -349,6 +360,7 @@ router.get("/", async (req, res) => {
     statusCounts,
     discounts,
     weblogs,
+    admin: loggedInAdmin,
     // اضافه کردن آمار بازدیدها
     visitStats: {
       totalVisits,
@@ -362,6 +374,24 @@ router.get("/", async (req, res) => {
   });
 });
 
+router.get("/login", async (req, res) => {
+  if (req.session && req.session.userId) {
+    const user = await User.findById(req.session.userId);
+    if (user && (user.role === 'admin' || user.role === 'super_admin')) {
+      return res.redirect('/admin');
+    }
+  }
+  res.render("adminlogin");
+});
+
+router.get("/logout", async (req, res) => {
+  req.session.destroy((err) => {
+    if (err) {
+      console.error("Logout error:", err);
+    }
+    res.redirect('/admin/login');
+  });
+});
 
 router.post("/products/add", async (req, res) => {
   try {
@@ -1534,5 +1564,7 @@ router.get("/categories", async (req, res) => {
         });
     }
 });
+
+
 
 module.exports = router;

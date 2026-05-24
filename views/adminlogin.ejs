@@ -125,6 +125,7 @@
             const toastMessage = document.getElementById('toastMessage');
             toastMessage.textContent = message;
             toast.classList.remove('hidden');
+            
             if (isError) {
                 toast.classList.remove('bg-green-500');
                 toast.classList.add('bg-red-500');
@@ -132,54 +133,79 @@
                 toast.classList.remove('bg-red-500');
                 toast.classList.add('bg-green-500');
             }
+            
             setTimeout(() => {
                 toast.classList.add('hidden');
             }, 3000);
         }
+
         
-        document.getElementById('loginForm').addEventListener('submit', function(e) {
-            e.preventDefault();
+    document.getElementById('loginForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        const username = document.getElementById('username').value.trim();
+        const password = document.getElementById('password').value;
+        
+        if (!username || !password) {
+            showToast('لطفاً نام کاربری و رمز عبور را وارد کنید');
+            return;
+        }
+        
+        // غیرفعال کردن دکمه لاگین
+        const submitBtn = this.querySelector('button[type="submit"]');
+        const originalText = submitBtn.innerHTML;
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> در حال ورود...';
+        
+        try {
+            const response = await fetch('/api/authentication/admin/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ email: username, password })
+            });
             
-            const username = document.getElementById('username').value.trim();
-            const password = document.getElementById('password').value;
+            const data = await response.json();
             
-            // اعتبارسنجی ساده سمت کلاینت
-            if (!username || !password) {
-                showToast('لطفاً نام کاربری و رمز عبور را وارد کنید');
-                return;
-            }
-            
-            // بررسی اعتبار (در حالت واقعی باید به سرور درخواست بزنید)
-            if ((username === VALID_CREDENTIALS.username || username === VALID_CREDENTIALS.email) && 
-                password === VALID_CREDENTIALS.password) {
-                
-                // ذخیره اطلاعات لاگین در localStorage یا sessionStorage
-                sessionStorage.setItem('isLoggedIn', 'true');
-                sessionStorage.setItem('user', JSON.stringify({
-                    username: username,
-                    name: 'مدیر سیستم'
-                }));
-                
-                showToast('ورود موفقیت‌آمیز! در حال انتقال به پنل...', false);
-                
-                // انتقال به پنل اصلی بعد از 1 ثانیه
-                setTimeout(() => {
-                    window.location.href = '/admin/dashboard';
-                }, 1000);
+            if (data.success) {
+                showToast('ورود موفقیت‌آمیز! در حال انتقال...', false);
+                // ریدایرکت مستقیم به /admin
+                window.location.href = '/admin';
             } else {
-                showToast('نام کاربری یا رمز عبور اشتباه است');
-                // افزودن انیمیشن خطا به فرم
+                showToast(data.message);
                 document.querySelector('.login-card').classList.add('error-message');
                 setTimeout(() => {
                     document.querySelector('.login-card').classList.remove('error-message');
                 }, 500);
             }
-        });
-        
-        // بررسی اگر کاربر قبلاً لاگین کرده باشد، مستقیماً به پنل برود
-        if (sessionStorage.getItem('isLoggedIn') === 'true') {
-            window.location.href = '/admin/dashboard';
+        } catch (error) {
+            console.error('Login error:', error);
+            showToast('خطا در ارتباط با سرور');
+        } finally {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = originalText;
         }
-    </script>
+    });
+    
+    function showToast(message, isError = true) {
+        const toast = document.getElementById('toast');
+        const toastMessage = document.getElementById('toastMessage');
+        toastMessage.textContent = message;
+        toast.classList.remove('hidden');
+        
+        if (isError) {
+            toast.classList.remove('bg-green-500');
+            toast.classList.add('bg-red-500');
+        } else {
+            toast.classList.remove('bg-red-500');
+            toast.classList.add('bg-green-500');
+        }
+        
+        setTimeout(() => {
+            toast.classList.add('hidden');
+        }, 3000);
+    }
+</script>
 </body>
 </html>

@@ -369,7 +369,7 @@
                         <button onclick="toggleProfileMenu()" class="flex items-center space-x-reverse space-x-2 md:space-x-3 p-1 md:p-2 rounded-lg hover:bg-gray-100 transition-all">
                             <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Ccircle cx='20' cy='20' r='20' fill='%233b82f6'/%3E%3Ctext x='20' y='26' text-anchor='middle' fill='white' font-size='14' font-weight='bold'%3Eس%3C/text%3E%3C/svg%3E" alt="Profile" class="w-8 h-8 md:w-10 md:h-10 rounded-full">
                             <div class="text-right hidden sm:block">
-                                <p class="text-sm font-semibold text-gray-800">سارا احمدی</p>
+                                <p class="text-sm font-semibold text-gray-800"><%= admin?.fullName %></p>
                                 <p class="text-xs text-gray-500">مدیر فروشگاه</p>
                             </div>
                             <i class="fas fa-chevron-down text-gray-400 hidden md:block"></i>
@@ -1207,6 +1207,80 @@
         </div>
     </div>
 
+    <div id="logout-modal" class="fixed inset-0 bg-gray-900/60 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
+    <div class="bg-white rounded-2xl max-w-sm w-full mx-4 shadow-2xl transform transition-all duration-300" id="logout-modal-content">
+        <!-- هدر مودال -->
+        <div class="border-b border-gray-200 px-6 pt-6 pb-4">
+            <div class="flex items-center justify-center mb-3">
+                <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center">
+                    <svg class="w-8 h-8 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+                    </svg>
+                </div>
+            </div>
+            <h3 class="text-xl font-bold text-gray-800 text-center">
+                خروج از پنل مدیریت
+            </h3>
+        </div>
+        
+        <!-- بدنه مودال -->
+        <div class="px-6 py-5">
+            <p class="text-gray-600 text-center text-base leading-relaxed">
+                آیا مطمئن هستید که می‌خواهید از پنل مدیریت خارج شوید؟
+            </p>
+        </div>
+        
+        <!-- فوتر مودال با دکمه‌ها -->
+        <div class="border-t border-gray-200 px-6 py-4 flex gap-3">
+            <button onclick="confirmAdminLogout()" 
+                    class="flex-1 bg-red-500 hover:bg-red-600 text-white py-2.5 rounded-lg font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2">
+                خروج
+            </button>
+            <button onclick="closeAdminLogoutModal()" 
+                    class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 py-2.5 rounded-lg font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2">
+                انصراف
+            </button>
+        </div>
+    </div>
+</div>
+
+<style>
+    @keyframes modalContentEnter {
+        from {
+            opacity: 0;
+            transform: scale(0.95) translateY(-20px);
+        }
+        to {
+            opacity: 1;
+            transform: scale(1) translateY(0);
+        }
+    }
+
+    @keyframes modalContentExit {
+        from {
+            opacity: 1;
+            transform: scale(1) translateY(0);
+        }
+        to {
+            opacity: 0;
+            transform: scale(0.95) translateY(-20px);
+        }
+    }
+
+    .modal-content-enter {
+        animation: modalContentEnter 0.25s ease-out forwards;
+    }
+
+    .modal-content-exit {
+        animation: modalContentExit 0.2s ease-out forwards;
+    }
+    
+    body.modal-open {
+        overflow: hidden;
+    }
+</style>
+
+
     <script>
         function setupModalCleanup() {
             const editModal = document.getElementById('editModal');
@@ -1557,12 +1631,7 @@
             menu.classList.toggle('hidden');
         }
 
-        function logout() {
-            if (confirm('آیا از خروج از سیستم اطمینان دارید؟')) {
-                alert('خروج از سیستم انجام شد');
-                toggleProfileMenu();
-            }
-        }
+
 
         function showSection(section) {
             // Close mobile sidebar
@@ -3915,6 +3984,97 @@ function initVisitsChart() {
             }
         }
     });
+}
+
+function showAdminLogoutModal() {
+    const modal = document.getElementById('logout-modal');
+    const modalContent = document.getElementById('logout-modal-content');
+    
+    if (modal) {
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+        document.body.classList.add('modal-open');
+        
+        // اضافه کردن انیمیشن
+        if (modalContent) {
+            modalContent.classList.remove('modal-content-exit');
+            modalContent.classList.add('modal-content-enter');
+        }
+    }
+}
+
+function closeAdminLogoutModal() {
+    const modal = document.getElementById('logout-modal');
+    const modalContent = document.getElementById('logout-modal-content');
+    
+    if (modalContent) {
+        modalContent.classList.remove('modal-content-enter');
+        modalContent.classList.add('modal-content-exit');
+        
+        setTimeout(() => {
+            if (modal) {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+                document.body.classList.remove('modal-open');
+            }
+        }, 200);
+    } else if (modal) {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+        document.body.classList.remove('modal-open');
+    }
+}
+
+// بستن با کلیک روی پس‌زمینه
+document.addEventListener('click', function(event) {
+    const modal = document.getElementById('logout-modal');
+    if (event.target === modal) {
+        closeAdminLogoutModal();
+    }
+});
+
+// بستن با دکمه Escape
+document.addEventListener('keydown', function(event) {
+    if (event.key === 'Escape') {
+        const modal = document.getElementById('logout-modal');
+        if (modal && !modal.classList.contains('hidden')) {
+            closeAdminLogoutModal();
+        }
+    }
+});
+
+// تابع خروج واقعی برای ادمین
+async function confirmAdminLogout() {
+    try {
+        const response = await fetch('/api/authentication/admin/logout', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            closeAdminLogoutModal();
+            showNotification('با موفقیت خارج شدید', 'success');
+            setTimeout(() => {
+                window.location.href = '/admin/login';
+            }, 1000);
+        } else {
+            showNotification(data.message || 'خطا در خروج از سیستم', 'error');
+            closeAdminLogoutModal();
+        }
+    } catch (error) {
+        console.error('Logout error:', error);
+        showNotification('خطا در ارتباط با سرور', 'error');
+        closeAdminLogoutModal();
+    }
+}
+
+// تابع logout قدیمی رو جایگزین کن
+function logout() {
+    showAdminLogoutModal();
 }
 
 

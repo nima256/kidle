@@ -3,6 +3,7 @@ const app = express();
 const mongoose = require("mongoose");
 const path = require("path");
 const session = require("express-session");
+const MongoStore = require("connect-mongo");
 const rateLimit = require("express-rate-limit");
 const helmet = require("helmet");
 const flash = require("connect-flash");
@@ -54,26 +55,23 @@ const User = require("./models/User");
 // For production
 // app.use(
 //   session({
-//     secret: process.env.SESSION_SECRET || 'fallback-secret-but-warn',
+//     secret: process.env.SESSION_SECRET || "your-secret-key-change-this",
 //     resave: false,
 //     saveUninitialized: false,
+//     store: MongoStore.create({
+//       mongoUrl: process.env.DB_URL,
+//       ttl: 24 * 60 * 60, // 24 ساعت
+//       autoRemove: 'native'
+//     }),
 //     cookie: {
 //       httpOnly: true,
-//       secure: process.env.NODE_ENV === 'production', // HTTPS only in production
-//       sameSite: 'strict',
-//       maxAge: 1000 * 60 * 60 * 2, // 2 hours
+//       secure: process.env.NODE_ENV === 'production', // فقط HTTPS در production
+//       sameSite: 'lax',
+//       maxAge: 24 * 60 * 60 * 1000 // 24 ساعت
 //     },
-//     store: MongoStore.create({ // For production - stores sessions in DB
-//       mongoUrl: process.env.DB_URL,
-//       ttl: 14 * 24 * 60 * 60 // 14 days
-//     })
+//     name: 'sessionId' // نام کوکی
 //   })
 // );
-
-// // Warn if using default session secret
-// if (!process.env.SESSION_SECRET) {
-//   console.warn('WARNING: Using default session secret - set SESSION_SECRET in production!');
-// }
 
 // Basic Setup
 app.use(
