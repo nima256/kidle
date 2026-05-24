@@ -15,6 +15,8 @@ const https = require("https");
 // Models
 const User = require("../models/User");
 const Admin = require("../models/Admins");
+const RecentAction = require("../models/RecentAction");
+
 
 const { isLoggedIn } = require("../middlewares/isLoggedIn");
 
@@ -412,33 +414,44 @@ router.patch("/resetPassword/:token", async (req, res) => {
   }
 });
 
-router.post("/logout", async (req, res) => {
-    try {
-        // حذف session کاربر
-        req.session.destroy((err) => {
-            if (err) {
-                console.error("Logout error:", err);
-                return res.status(500).json({
-                    success: false,
-                    message: "خطا در خروج از حساب کاربری"
-                });
-            }
-            
-            // پاک کردن کوکی session (اختیاری)
-            res.clearCookie('connect.sid');
-            
-            return res.status(200).json({
-                success: true,
-                message: "با موفقیت خارج شدید"
-            });
+router.post("/admin/logout", async (req, res) => {
+  try {
+    if (req.session.adminId) {
+      const admin = await Admin.findById(req.session.adminId);
+      if (admin) {
+        const recentAction = new RecentAction({
+          action: 'admin_logout',
+          targetType: 'admin',
+          targetId: admin._id,
+          targetName: admin.fullName,
+          adminId: admin._id,
+          adminName: admin.fullName,
+          ipAddress: req.ip
         });
-    } catch (error) {
-        console.error("Logout error:", error);
-        return res.status(500).json({
-            success: false,
-            message: "خطا در خروج از حساب کاربری"
-        });
+        await recentAction.save();
+      }
     }
+    
+    req.session.destroy((err) => {
+      if (err) {
+        return res.status(500).json({
+          success: false,
+          message: "خطا در خروج از سیستم"
+        });
+      }
+      res.clearCookie('connect.sid');
+      return res.status(200).json({
+        success: true,
+        message: "با موفقیت خارج شدید"
+      });
+    });
+  } catch (error) {
+    console.error("Admin logout error:", error);
+    return res.status(500).json({
+      success: false,
+      message: "خطا در خروج از سیستم"
+    });
+  }
 });
 
 router.post("/admin/login", async (req, res) => {
@@ -487,6 +500,18 @@ router.post("/admin/login", async (req, res) => {
     // ذخیره در سشن
     req.session.adminId = admin._id;
     req.session.adminRole = admin.role;
+
+    const recentAction = new RecentAction({
+      action: 'admin_login',
+      targetType: 'admin',
+      targetId: admin._id,
+      targetName: admin.fullName,
+      adminId: admin._id,
+      adminName: admin.fullName,
+      ipAddress: req.ip
+    });
+    await recentAction.save();
+
     
     req.session.save((err) => {
       if (err) {

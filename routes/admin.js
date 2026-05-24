@@ -16,11 +16,14 @@ const Category = require("../models/Category");
 const Brand = require("../models/Brand");
 const DiscountCode = require("../models/DiscountCode");
 const Visit = require("../models/Visit");
+const RecentAction = require("../models/RecentAction");
 
 const { getPersianDate } = require("../helper/getPersianDate");
 const Weblog = require("../models/Weblog");
 
 const { isAdminLoggedIn } = require("../middlewares/adminAuth");
+const { logAfterAction } = require("../middlewares/recentAction");
+
 
 // این middleware رو برای همه روت‌ها به جز لاگین اعمال کن
 router.use((req, res, next) => {
@@ -393,7 +396,28 @@ router.get("/logout", async (req, res) => {
   });
 });
 
-router.post("/products/add", async (req, res) => {
+router.post("/products/add", async (req, res, next) => {
+  const originalJson = res.json;
+  res.json = function(data) {
+    if (data && data.success && data.product) {
+      const admin = req.admin;
+      if (admin) {
+        const recentAction = new RecentAction({
+          action: 'create_product',
+          targetType: 'product',
+          targetId: data.product._id,
+          targetName: data.product.name,
+          adminId: admin._id,
+          adminName: admin.fullName,
+          ipAddress: req.ip
+        });
+        recentAction.save().catch(console.error);
+      }
+    }
+    return originalJson.call(this, data);
+  };
+  next();
+}, async (req, res) => {
   try {
     // Calculate discount percentage if offerPrice exists
     let discount = null;
@@ -535,7 +559,29 @@ const validateProductUpdate = [
     .withMessage("برچسب نمی‌تواند خالی باشد"),
 ];
 
-router.put("/products/edit/:id", validateProductUpdate, async (req, res) => {
+router.put("/products/edit/:id",async (req, res, next) => {
+  const originalJson = res.json;
+  res.json = function(data) {
+    if (data && data.success && data.product) {
+      const admin = req.admin;
+      if (admin) {
+        const recentAction = new RecentAction({
+          action: 'update_product',
+          targetType: 'product',
+          targetId: data.product._id,
+          targetName: data.product.name,
+          adminId: admin._id,
+          adminName: admin.fullName,
+          details: `ویرایش محصول`,
+          ipAddress: req.ip
+        });
+        recentAction.save().catch(console.error);
+      }
+    }
+    return originalJson.call(this, data);
+  };
+  next();
+}, validateProductUpdate, async (req, res) => {
   try {
     // بررسی خطاهای اعتبارسنجی
     const errors = validationResult(req);
@@ -656,7 +702,29 @@ router.put("/products/edit/:id", validateProductUpdate, async (req, res) => {
   }
 });
 
-router.delete("/products/delete/:id", async (req, res) => {
+router.delete("/products/delete/:id",async (req, res, next) => {
+  const originalJson = res.json;
+  res.json = function(data) {
+    if (data && data.success) {
+      const admin = req.admin;
+      if (admin) {
+        const recentAction = new RecentAction({
+          action: 'delete_product',
+          targetType: 'product',
+          targetId: req.params.id,
+          targetName: data.deletedProductId || req.params.id,
+          adminId: admin._id,
+          adminName: admin.fullName,
+          details: `حذف محصول`,
+          ipAddress: req.ip
+        });
+        recentAction.save().catch(console.error);
+      }
+    }
+    return originalJson.call(this, data);
+  };
+  next();
+}, async (req, res) => {
   try {
     const product = await Product.findById(req.params.id);
 
@@ -1565,6 +1633,65 @@ router.get("/categories", async (req, res) => {
     }
 });
 
+router.get("/recent-actions", async (req, res) => {
+  try {
+    const limit = parseInt(req.query.limit) || 10;
+    
+    const actions = await RecentAction.find({})
+      .sort({ createdAtTimestamp: -1 })
+      .limit(limit)
+      .populate('adminId', 'fullName email');
+    
+    // ترجمه اکشن‌ها به فارسی
+    const actionMap = {
+      'create_product': '➕ افزودن محصول جدید',
+      'update_product': '✏️ ویرایش محصول',
+      'delete_product': '🗑️ حذف محصول',
+      'create_category': '📁 افزودن دسته‌بندی جدید',
+      'update_category': '✏️ ویرایش دسته‌بندی',
+      'delete_category': '🗑️ حذف دسته‌بندی',
+      'create_brand': '🏷️ افزودن برند جدید',
+      'update_brand': '✏️ ویرایش برند',
+      'delete_brand': '🗑️ حذف برند',
+      'create_discount': '🎫 افزودن کد تخفیف جدید',
+      'update_discount': '✏️ ویرایش کد تخفیف',
+      'delete_discount': '🗑️ حذف کد تخفیف',
+      'update_order_status': '📦 تغییر وضعیت سفارش',
+      'create_weblog': '📝 افزودن مقاله جدید',
+      'update_weblog': '✏️ ویرایش مقاله',
+      'delete_weblog': '🗑️ حذف مقاله',
+      'admin_login': '🔐 ورود به پنل',
+      'admin_logout': '🚪 خروج از پنل'
+    };
+    
+    const formattedActions = actions.map(action => ({
+      ...action.toObject(),
+      actionPersian: actionMap[action.action] || action.action,
+      timeAgo: getTimeAgo(action.createdAtTimestamp)
+    }));
+    
+    res.json({
+      success: true,
+      actions: formattedActions
+    });
+  } catch (error) {
+    console.error("Error fetching recent actions:", error);
+    res.status(500).json({
+      success: false,
+      message: error.message
+    });
+  }
+});
+
+function getTimeAgo(date) {
+  const now = new Date();
+  const diff = Math.floor((now - new Date(date)) / 1000);
+  
+  if (diff < 60) return `${diff} ثانیه پیش`;
+  if (diff < 3600) return `${Math.floor(diff / 60)} دقیقه پیش`;
+  if (diff < 86400) return `${Math.floor(diff / 3600)} ساعت پیش`;
+  return `${Math.floor(diff / 86400)} روز پیش`;
+}
 
 
 module.exports = router;
