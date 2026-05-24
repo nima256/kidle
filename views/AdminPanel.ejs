@@ -271,13 +271,103 @@
     color: #1d4ed8;
 }
 
+/* public/css/admin-charts.css */
+.chart-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    min-height: 300px;
+}
+
+.chart-title {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: #1f2937;
+}
+
+.chart-wrapper {
+    background: white;
+    border-radius: 1rem;
+    padding: 1rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+/* استایل برای SVG نمودارها */
+.sales-chart-svg,
+.visits-chart-svg {
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+}
+
+.chart-axis {
+    stroke: #9ca3af;
+    stroke-width: 1;
+}
+
+.chart-grid {
+    stroke: #e5e7eb;
+    stroke-width: 0.5;
+    stroke-dasharray: 4;
+}
+
+.chart-line {
+    fill: none;
+    stroke: #3b82f6;
+    stroke-width: 2;
+}
+
+.chart-area {
+    fill: url(#area-gradient);
+    opacity: 0.3;
+}
+
+.chart-bar {
+    fill: #3b82f6;
+    transition: all 0.3s ease;
+}
+
+.chart-bar:hover {
+    fill: #1d4ed8;
+    cursor: pointer;
+}
+
+.chart-dot {
+    fill: #3b82f6;
+    stroke: white;
+    stroke-width: 2;
+    transition: all 0.3s ease;
+}
+
+.chart-dot:hover {
+    fill: #1d4ed8;
+    transform: scale(1.2);
+}
+
+.chart-label {
+    font-size: 11px;
+    fill: #6b7280;
+    text-anchor: middle;
+}
+
+.chart-value-label {
+    font-size: 10px;
+    fill: #3b82f6;
+    text-anchor: middle;
+    font-weight: 500;
+}
+
 
     </style>
+
+    
 
     <!-- <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet"> -->
     <!-- <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script> -->
      <link href="https://cdnjs.cloudflare.com/ajax/libs/quill/1.0.0/quill.snow.css" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/quill/1.0.0/quill.js"></script>
+    <script src="/js/admin-charts.js"></script>
 </head>
 <body class="bg-gray-50">
     <!-- Mobile Overlay -->
@@ -499,7 +589,7 @@
                     نمودار فروش ماهانه
                 </h3>
                 <div class="h-64 md:h-80">
-                    <canvas id="salesChart"></canvas>
+                    <div id="salesChart" class="w-full h-full"></div>  <!-- تغییر از canvas به div -->
                 </div>
             </div>
 
@@ -543,7 +633,7 @@
                     آمار بازدید (۷ روز اخیر)
                 </h3>
                 <div class="h-64 md:h-80">
-                    <canvas id="visitsChart"></canvas>
+                    <div id="visitsChart" class="w-full h-full"></div>  <!-- تغییر از canvas به div -->
                 </div>
             </div>
 
@@ -1561,47 +1651,20 @@
         let salesChart;
         
         function initChart() {
-            const ctx = document.getElementById('salesChart').getContext('2d');
-            if (salesChart) {
-                salesChart.destroy();
-            }
-            salesChart = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: ['فروردین', 'اردیبهشت', 'خرداد', 'تیر', 'مرداد', 'شهریور'],
-                    datasets: [{
-                        label: 'فروش (میلیون تومان)',
-                        data: [12, 19, 15, 25, 22, 30],
-                        borderColor: 'rgb(59, 130, 246)',
-                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
-                        tension: 0.4,
-                        fill: true
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            display: false
-                        }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            grid: {
-                                color: 'rgba(59, 130, 246, 0.1)'
-                            }
-                        },
-                        x: {
-                            grid: {
-                                color: 'rgba(59, 130, 246, 0.1)'
-                            }
-                        }
-                    }
-                }
-            });
+            console.log('initChart called');
+            
+            // گرفتن داده سفارشات ماهانه از سرور
+            const monthlyOrdersData = <%- JSON.stringify(visitStats?.monthlyOrders || []) %>;
+            console.log('Monthly orders data from server:', monthlyOrdersData);
+            
+            const chartData = prepareOrdersChartData(monthlyOrdersData);
+            console.log('Final chart data:', chartData);
+            
+            setTimeout(() => {
+                drawSalesChart(chartData);
+            }, 200);
         }
+
 
         // Mobile Functions
         function toggleMobileSidebar() {
@@ -3957,34 +4020,66 @@ function closeModal(modalId) {
 
 
 function initVisitsChart() {
-    const ctx = document.getElementById('visitsChart');
-    if (!ctx) return;
+    console.log('initVisitsChart called');
+    const visitsData = <%- JSON.stringify(visitStats?.last7Days || []) %>;
+    console.log('Visits data:', visitsData);
     
-    const visitsData = <%- JSON.stringify(visitStats.last7Days) %>;
+    const formattedData = prepareVisitsData(visitsData);
+    console.log('Formatted visits data:', formattedData);
     
-    new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: visitsData.map(item => item.date),
-            datasets: [{
-                label: 'تعداد بازدید',
-                data: visitsData.map(item => item.count),
-                backgroundColor: 'rgba(59, 130, 246, 0.5)',
-                borderColor: 'rgb(59, 130, 246)',
-                borderWidth: 1
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-                y: {
-                    beginAtZero: true
-                }
+    setTimeout(() => {
+        drawVisitsChart(formattedData);
+    }, 200);
+}
+
+function prepareOrdersChartData(ordersData) {
+    const months = ['فروردین', 'اردیبهشت', 'خرداد', 'تیر', 'مرداد', 'شهریور', 
+                    'مهر', 'آبان', 'آذر', 'دی', 'بهمن', 'اسفند'];
+    
+    if (!ordersData || ordersData.length === 0) {
+        // داده نمونه برای ماه جاری
+        const now = new Date();
+        const currentMonthIndex = now.getMonth();
+        return {
+            labels: [months[currentMonthIndex]],
+            values: [0]
+        };
+    }
+    
+    // ساخت مپ از داده‌ها
+    const orderMap = new Map();
+    ordersData.forEach(item => {
+        if (item.month) {
+            const match = item.month.match(/-(\d+)/);
+            if (match) {
+                const monthNum = parseInt(match[1]);
+                orderMap.set(monthNum, item.orderCount || 0);
             }
         }
     });
+    
+    // گرفتن ماه جاری (بر اساس تاریخ واقعی، نه سفارشات)
+    const now = new Date();
+    const currentMonth = now.getMonth() + 1; // 1-based
+    
+    const labels = [];
+    const values = [];
+    
+    // گرفتن 6 ماه اخیر
+    for (let i = 5; i >= 0; i--) {
+        let monthNum = currentMonth - i;
+        if (monthNum <= 0) {
+            monthNum += 12;
+        }
+        const monthIndex = monthNum - 1;
+        labels.push(months[monthIndex]);
+        values.push(orderMap.get(monthNum) || 0);
+    }
+    
+    console.log('Orders chart data:', { labels, values });
+    return { labels, values };
 }
+
 
 function showAdminLogoutModal() {
     const modal = document.getElementById('logout-modal');

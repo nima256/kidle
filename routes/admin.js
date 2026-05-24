@@ -296,16 +296,38 @@ router.get("/", async (req, res) => {
   }
   
   // بازدیدهای هر ماه (برای نمودار سالانه)
-  const monthlyVisits = await Visit.aggregate([
-    {
-      $group: {
-        _id: { $substrCP: ["$visitDate", 0, 7] }, // سال-ماه
-        count: { $sum: 1 }
+  const allOrders = await Order.find({ status: { $ne: "لغو شده" } });
+
+  const monthlyStats = {};
+
+  allOrders.forEach(order => {
+    if (order.createTarikh) {
+      const parts = order.createTarikh.split('-');
+      if (parts.length >= 2) {
+        const year = parts[0];
+        let month = parts[1];
+        if (month.length === 1) {
+          month = `0${month}`;
+        }
+        const key = `${year}-${month}`;
+        
+        if (!monthlyStats[key]) {
+          monthlyStats[key] = {
+            month: key,
+            orderCount: 0,
+            totalSales: 0  // اضافه کردن فروش کل
+          };
+        }
+        monthlyStats[key].orderCount++;
+        monthlyStats[key].totalSales += (order.totalPrice || 0); // جمع مبلغ سفارشات
       }
-    },
-    { $sort: { _id: 1 } },
-    { $limit: 12 }
-  ]);
+    }
+  });
+
+  // تبدیل به آرایه و مرتب‌سازی
+  const formattedMonthlyStats = Object.values(monthlyStats)
+    .sort((a, b) => a.month.localeCompare(b.month))
+    .slice(-6);
 
   function formatPageInfo(path) {
     if (path === '/') {
@@ -364,7 +386,6 @@ router.get("/", async (req, res) => {
     discounts,
     weblogs,
     admin: loggedInAdmin,
-    // اضافه کردن آمار بازدیدها
     visitStats: {
       totalVisits,
       todayVisits,
@@ -372,7 +393,11 @@ router.get("/", async (req, res) => {
       visitsChangePercent,
       topPages: formattedTopPages,
       last7Days,
-      monthlyVisits,
+      monthlyOrders: formattedMonthlyStats.map(stat => ({
+        month: stat.month,
+        orderCount: stat.orderCount,
+        totalSales: stat.totalSales  // اضافه کردن فروش
+      }))
     },
   });
 });
@@ -1692,6 +1717,62 @@ function getTimeAgo(date) {
   if (diff < 86400) return `${Math.floor(diff / 3600)} ساعت پیش`;
   return `${Math.floor(diff / 86400)} روز پیش`;
 }
+
+router.get("/api/orders-stats", async (req, res) => {
+  try {
+    // همه سفارشات رو بگیر
+    const allOrders = await Order.find({
+      status: { $ne: "لغو شده" }
+    });
+    
+    // گروه‌بندی دستی در جاوااسکریپت
+    const monthlyStats = {};
+    
+    allOrders.forEach(order => {
+      if (order.createTarikh) {
+        // استخراج سال و ماه از createTarikh (مثال: "۱۴۰۵-۳-۲")
+        const parts = order.createTarikh.split('-');
+        if (parts.length >= 2) {
+          const year = parts[0];
+          let month = parts[1];
+          // اطمینان از فرمت دو رقمی ماه
+          if (month.length === 1) {
+            month = `0${month}`;
+          }
+          const key = `${year}-${month}`;
+          
+          if (!monthlyStats[key]) {
+            monthlyStats[key] = {
+              year: year,
+              month: month,
+              orderCount: 0,
+              totalSales: 0
+            };
+          }
+          monthlyStats[key].orderCount++;
+          monthlyStats[key].totalSales += order.totalPrice || 0;
+        }
+      }
+    });
+    
+    // تبدیل به آرایه و مرتب‌سازی
+    const result = Object.values(monthlyStats).sort((a, b) => {
+      if (a.year !== b.year) return a.year.localeCompare(b.year);
+      return a.month.localeCompare(b.month);
+    });
+    
+    res.json({
+      success: true,
+      data: result,
+      currentMonth: new Date().getMonth() + 1,
+      currentYear: new Date().getFullYear()
+    });
+  } catch (error) {
+    console.error("Error:", error);
+    res.json({ success: false, error: error.message });
+  }
+});
+
 
 
 module.exports = router;
