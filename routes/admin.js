@@ -296,38 +296,47 @@ router.get("/", async (req, res) => {
   }
   
   // بازدیدهای هر ماه (برای نمودار سالانه)
-  const allOrders = await Order.find({ status: { $ne: "لغو شده" } });
+const allOrders = await Order.find({ status: { $ne: "لغو شده" } });
 
-  const monthlyStats = {};
+const monthlyStats = {};
 
-  allOrders.forEach(order => {
-    if (order.createTarikh) {
-      const parts = order.createTarikh.split('-');
-      if (parts.length >= 2) {
-        const year = parts[0];
-        let month = parts[1];
-        if (month.length === 1) {
-          month = `0${month}`;
-        }
-        const key = `${year}-${month}`;
-        
-        if (!monthlyStats[key]) {
-          monthlyStats[key] = {
-            month: key,
-            orderCount: 0,
-            totalSales: 0  // اضافه کردن فروش کل
-          };
-        }
-        monthlyStats[key].orderCount++;
-        monthlyStats[key].totalSales += (order.totalPrice || 0); // جمع مبلغ سفارشات
+allOrders.forEach(order => {
+  if (order.createTarikh) {
+    let tarikh = order.createTarikh;
+    
+    // تبدیل اعداد فارسی به انگلیسی در createTarikh
+    tarikh = tarikh.replace(/[۰-۹]/g, d => '0123456789'['۰۱۲۳۴۵۶۷۸۹'.indexOf(d)]);
+    
+    const parts = tarikh.split('-');
+    if (parts.length >= 2) {
+      const year = parts[0];
+      let month = parts[1];
+      
+      // حذف کاراکترهای غیرعددی و اطمینان از دو رقمی بودن
+      month = month.replace(/\D/g, '');
+      if (month.length === 1) {
+        month = `0${month}`;
       }
+      
+      const key = `${year}-${month}`;
+      
+      if (!monthlyStats[key]) {
+        monthlyStats[key] = {
+          month: key,
+          orderCount: 0,
+          totalSales: 0
+        };
+      }
+      monthlyStats[key].orderCount++;
+      monthlyStats[key].totalSales += (order.totalPrice || 0);
     }
-  });
+  }
+});
 
-  // تبدیل به آرایه و مرتب‌سازی
-  const formattedMonthlyStats = Object.values(monthlyStats)
-    .sort((a, b) => a.month.localeCompare(b.month))
-    .slice(-6);
+// تبدیل به آرایه و مرتب‌سازی
+const formattedMonthlyStats = Object.values(monthlyStats)
+  .sort((a, b) => a.month.localeCompare(b.month))
+  .slice(-6);
 
   function formatPageInfo(path) {
     if (path === '/') {

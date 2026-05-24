@@ -1,4 +1,3 @@
-// helper/getPersianDate.js
 function getPersianDate(date = new Date()) {
   const year = date.toLocaleDateString('fa-IR', { year: 'numeric' });
   const month = date.toLocaleDateString('fa-IR', { month: 'numeric' });

@@ -193,7 +193,9 @@ function drawSalesChart(data) {
         valueLabel.setAttribute('font-size', '10');
         valueLabel.setAttribute('fill', '#3b82f6');
         valueLabel.setAttribute('font-weight', '500');
-        valueLabel.textContent = values[index];
+        // فرمت کردن اعداد (هزارتومان)
+        const formattedValue = values[index] >= 1000 ? (values[index] / 1000).toFixed(0) + 'k' : values[index];
+        valueLabel.textContent = formattedValue;
         svg.appendChild(valueLabel);
     }
     
