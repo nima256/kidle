@@ -413,6 +413,22 @@
     display: none !important;
 }
 
+.category-manager-item {
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.category-manager-item:hover {
+    background-color: #f3f4f6;
+    transform: translateX(-4px);
+}
+
+.category-manager-item.active {
+    background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+    color: white;
+}
+
+
     </style>
 
     
@@ -557,6 +573,10 @@
                 <button onclick="showSection('weblogs')" class="sidebar-item w-full text-right px-3 md:px-4 py-3 md:py-4 rounded-lg text-gray-700 transition-all duration-300 flex items-center space-x-reverse space-x-3">
                     <i class="fas fa-newspaper text-lg"></i>
                     <span class="font-medium">مقالات</span>
+                </button>
+                <button onclick="showSection('category-manager')" class="sidebar-item w-full text-right px-3 md:px-4 py-3 md:py-4 rounded-lg text-gray-700 transition-all duration-300 flex items-center space-x-reverse space-x-3">
+                    <i class="fas fa-folder-open text-lg"></i>
+                    <span class="font-medium">مدیریت دسته‌بندی</span>
                 </button>
             </nav>
         </div>
@@ -925,6 +945,55 @@
                 </div>
             </div>
         </div>
+
+        <div id="category-managerContent" class="hidden">
+            <div class="mb-4 md:mb-6">
+                <h2 class="text-2xl md:text-3xl font-bold text-gray-800 mb-2">مدیریت دسته‌بندی</h2>
+                <p class="text-gray-600">ویرایش توضیحات و سئو دسته‌بندی‌ها</p>
+            </div>
+            
+            <div class="glass-card rounded-xl md:rounded-2xl p-4 md:p-6">
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <!-- لیست دسته‌بندی‌ها -->
+                    <div class="lg:col-span-1 border-l border-gray-200 pl-4">
+                        <h3 class="text-lg font-bold text-gray-800 mb-4">دسته‌بندی‌ها</h3>
+                        <div class="space-y-2 max-h-[500px] overflow-y-auto" id="categoryManagerList">
+                            <!-- دسته‌بندی‌ها اینجا لود می‌شن -->
+                        </div>
+                    </div>
+                    
+                    <!-- ویرایشگر توضیحات -->
+                    <div class="lg:col-span-2">
+                        <div id="categoryEditorPanel" class="hidden">
+                            <div class="flex justify-between items-center mb-4">
+                                <h3 class="text-lg font-bold text-gray-800" id="selectedCategoryName">انتخاب دسته‌بندی</h3>
+                                <button id="saveCategoryDescBtn" class="gradient-bg text-white px-4 py-2 rounded-lg hover:opacity-90 transition-all">
+                                    <i class="fas fa-save ml-2"></i>
+                                    ذخیره توضیحات
+                                </button>
+                            </div>
+                            
+                            <!-- ویرایشگر Quill -->
+                            <div id="categoryDescEditorContainer" class="border-2 border-gray-200 rounded-xl overflow-hidden">
+                                <div id="categoryDescEditor" class="min-h-[300px]" style="direction: rtl;"></div>
+                                <textarea id="categoryDescValue" class="hidden"></textarea>
+                            </div>
+                            
+                            <div class="mt-4 text-sm text-gray-500">
+                                <i class="fas fa-info-circle ml-1"></i>
+                                این توضیحات در صفحه دسته‌بندی در بخش سئو نمایش داده می‌شود.
+                            </div>
+                        </div>
+                        
+                        <div id="categoryNoSelection" class="text-center py-12 text-gray-500">
+                            <i class="fas fa-folder-open text-5xl mb-3 opacity-50"></i>
+                            <p>از لیست سمت راست یک دسته‌بندی را انتخاب کنید</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </main>
 
     <!-- Product Details Modal -->
@@ -1786,6 +1855,15 @@
             } else if (section === 'weblogs') {  // اضافه کن
                 loadWeblogs();
                 loadWeblogCategories();
+            } else if (section === 'category-manager') {
+                loadCategoryManagerList();
+                // ریست کردن ویرایشگر
+                if (categoryDescQuill) {
+                    categoryDescQuill.root.innerHTML = '';
+                }
+                document.getElementById('categoryEditorPanel').classList.add('hidden');
+                document.getElementById('categoryNoSelection').classList.remove('hidden');
+                currentSelectedCategory = null;
             }
         }
         function toPersianDigits(num) {
@@ -4378,6 +4456,241 @@ async function markOrdersAsSeen() {
                 markOrdersAsSeen();
             }
         }); 
+
+
+        let categoryDescQuill = null;
+let currentSelectedCategory = null;
+
+// لود کردن لیست دسته‌بندی‌ها برای مدیریت
+function loadCategoryManagerList() {
+    const container = document.getElementById('categoryManagerList');
+    if (!container) return;
+    
+    container.innerHTML = '<div class="text-center py-4 text-gray-500">در حال بارگذاری...</div>';
+    
+    fetch('/admin/categories')
+        .then(res => res.json())
+        .then(data => {
+            if (data.success && data.categories) {
+                renderCategoryList(data.categories);
+            } else {
+                container.innerHTML = '<div class="text-center py-4 text-red-500">خطا در بارگذاری</div>';
+            }
+        })
+        .catch(err => {
+            console.error('Error loading categories:', err);
+            container.innerHTML = '<div class="text-center py-4 text-red-500">خطا در بارگذاری</div>';
+        });
+}
+
+function renderCategoryList(categories) {
+    const container = document.getElementById('categoryManagerList');
+    if (!container) return;
+    
+    // مرتب‌سازی دسته‌بندی‌ها
+    const sortedCategories = [...categories].sort((a, b) => a.name.localeCompare(b.name));
+    
+    container.innerHTML = '';
+    
+    // تابع بازگشتی برای نمایش دسته‌بندی‌های تو در تو
+    function renderCategoryTree(cats, level = 0) {
+        cats.forEach(cat => {
+            const item = document.createElement('div');
+            item.className = `category-manager-item p-3 rounded-lg mb-2 ${level > 0 ? 'mr-4' : ''}`;
+            item.style.paddingRight = `${12 + (level * 16)}px`;
+            item.innerHTML = `
+                <div class="flex justify-between items-center">
+                    <span class="font-medium">${cat.name}</span>
+                    <span class="text-xs ${cat.description ? 'text-green-500' : 'text-gray-400'}">
+                        ${cat.description ? '<i class="fas fa-check-circle"></i>' : '<i class="fas fa-edit"></i>'}
+                    </span>
+                </div>
+            `;
+            item.dataset.id = cat._id;
+            item.dataset.name = cat.name;
+            item.dataset.description = cat.description || '';
+            item.onclick = () => selectCategoryForEdit(cat._id, cat.name, cat.description || '');
+            container.appendChild(item);
+            
+            // نمایش فرزندان
+            if (cat.children && cat.children.length > 0) {
+                renderCategoryTree(cat.children, level + 1);
+            }
+        });
+    }
+    
+    // ساختار درختی
+    const categoryMap = {};
+    sortedCategories.forEach(cat => {
+        categoryMap[cat._id] = { ...cat, children: [] };
+    });
+    
+    const rootCategories = [];
+    sortedCategories.forEach(cat => {
+        if (cat.parentId && categoryMap[cat.parentId]) {
+            categoryMap[cat.parentId].children.push(categoryMap[cat._id]);
+        } else if (!cat.parentId) {
+            rootCategories.push(categoryMap[cat._id]);
+        }
+    });
+    
+    renderCategoryTree(rootCategories);
+}
+
+// انتخاب دسته‌بندی برای ویرایش
+async function selectCategoryForEdit(categoryId, categoryName, currentDescription) {
+    currentSelectedCategory = categoryId;
+    
+    // آپدیت UI
+    document.querySelectorAll('.category-manager-item').forEach(item => {
+        item.classList.remove('active', 'bg-gradient-to-r', 'from-blue-600', 'to-indigo-600', 'text-white');
+    });
+    const selectedItem = document.querySelector(`.category-manager-item[data-id="${categoryId}"]`);
+    if (selectedItem) {
+        selectedItem.classList.add('active', 'bg-gradient-to-r', 'from-blue-600', 'to-indigo-600', 'text-white');
+    }
+    
+    document.getElementById('selectedCategoryName').textContent = categoryName;
+    document.getElementById('categoryEditorPanel').classList.remove('hidden');
+    document.getElementById('categoryNoSelection').classList.add('hidden');
+    
+    // مقداردهی ویرایشگر
+    if (!categoryDescQuill) {
+        initCategoryDescQuill(currentDescription);
+    } else {
+        categoryDescQuill.root.innerHTML = currentDescription || '';
+        document.getElementById('categoryDescValue').value = currentDescription || '';
+    }
+}
+
+// مقداردهی ویرایشگر Quill برای دسته‌بندی
+function initCategoryDescQuill(initialContent = '') {
+    if (categoryDescQuill) {
+        categoryDescQuill.root.innerHTML = initialContent;
+        return;
+    }
+    
+    const editorElement = document.getElementById('categoryDescEditor');
+    if (!editorElement) return;
+    
+    const toolbarOptions = [
+        ['bold', 'italic', 'underline', 'strike'],
+        ['blockquote', 'code-block'],
+        [{ 'header': 1 }, { 'header': 2 }],
+        [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+        [{ 'script': 'sub'}, { 'script': 'super' }],
+        [{ 'indent': '-1'}, { 'indent': '+1' }],
+        [{ 'direction': 'rtl' }],
+        [{ 'size': ['small', false, 'large', 'huge'] }],
+        [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+        [{ 'color': [] }, { 'background': [] }],
+        [{ 'font': [] }],
+        [{ 'align': [] }],
+        ['clean'],
+        ['link', 'image', 'video']
+    ];
+    
+    categoryDescQuill = new Quill('#categoryDescEditor', {
+        theme: 'snow',
+        modules: {
+            toolbar: {
+                container: toolbarOptions,
+                handlers: {
+                    image: categoryDescImageHandler
+                }
+            }
+        },
+        placeholder: 'توضیحات دسته‌بندی را اینجا بنویسید...'
+    });
+    
+    if (initialContent) {
+        categoryDescQuill.root.innerHTML = initialContent;
+    }
+    
+    const descField = document.getElementById('categoryDescValue');
+    if (descField) {
+        categoryDescQuill.on('text-change', function() {
+            descField.value = categoryDescQuill.root.innerHTML;
+        });
+    }
+    
+    const editorContainer = document.querySelector('#categoryDescEditor .ql-editor');
+    if (editorContainer) {
+        editorContainer.style.direction = 'rtl';
+        editorContainer.style.textAlign = 'right';
+    }
+}
+
+// هندلر آپلود تصویر برای ویرایشگر دسته‌بندی
+function categoryDescImageHandler() {
+    const input = document.createElement('input');
+    input.setAttribute('type', 'file');
+    input.setAttribute('accept', 'image/*');
+    input.click();
+    
+    input.onchange = async function() {
+        const file = input.files[0];
+        if (!file) return;
+        
+        try {
+            const range = categoryDescQuill.getSelection();
+            const placeholderIndex = range.index;
+            categoryDescQuill.insertEmbed(placeholderIndex, 'image', '/loading.gif');
+            
+            const formData = new FormData();
+            formData.append('image', file);
+            
+            const response = await fetch('/admin/upload-image', {
+                method: 'POST',
+                body: formData
+            });
+            
+            const result = await response.json();
+            
+            if (result.success && result.url) {
+                categoryDescQuill.deleteText(placeholderIndex, 1);
+                categoryDescQuill.insertEmbed(placeholderIndex, 'image', result.url);
+            } else {
+                categoryDescQuill.deleteText(placeholderIndex, 1);
+                console.error('Image upload failed:', result.error);
+            }
+        } catch (error) {
+            console.error('Error uploading image:', error);
+        }
+    };
+}
+
+// ذخیره توضیحات دسته‌بندی
+document.getElementById('saveCategoryDescBtn')?.addEventListener('click', async () => {
+    if (!currentSelectedCategory) {
+        showNotification('لطفاً ابتدا یک دسته‌بندی را انتخاب کنید', 'error');
+        return;
+    }
+    
+    const description = categoryDescQuill ? categoryDescQuill.root.innerHTML : '';
+    
+    try {
+        const response = await fetch(`/admin/api/category-description/${currentSelectedCategory}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ description })
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            showNotification('توضیحات با موفقیت ذخیره شد', 'success');
+            // به‌روزرسانی لیست
+            loadCategoryManagerList();
+        } else {
+            showNotification(result.message || 'خطا در ذخیره توضیحات', 'error');
+        }
+    } catch (error) {
+        console.error('Error saving description:', error);
+        showNotification('خطا در ارتباط با سرور', 'error');
+    }
+});
+
     </script>
 </body>
 </html>

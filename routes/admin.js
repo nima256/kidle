@@ -1889,6 +1889,46 @@ router.get("/api/orders", async (req, res) => {
     }
 });
 
+router.get("/api/category-description/:id", async (req, res) => {
+  try {
+    const category = await Category.findById(req.params.id);
+    if (!category) {
+      return res.status(404).json({ success: false, message: "دسته‌بندی یافت نشد" });
+    }
+    res.json({
+      success: true,
+      description: category.description || "",
+      name: category.name
+    });
+  } catch (error) {
+    console.error("Error fetching category description:", error);
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+// به‌روزرسانی توضیحات دسته‌بندی
+router.put("/api/category-description/:id", async (req, res) => {
+  try {
+    const { description } = req.body;
+    const category = await Category.findByIdAndUpdate(
+      req.params.id,
+      { description, updateTarikh: getPersianDate() },
+      { new: true }
+    );
+    if (!category) {
+      return res.status(404).json({ success: false, message: "دسته‌بندی یافت نشد" });
+    }
+    res.json({
+      success: true,
+      message: "توضیحات با موفقیت به‌روزرسانی شد",
+      category
+    });
+  } catch (error) {
+    console.error("Error updating category description:", error);
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
 
 
 module.exports = router;

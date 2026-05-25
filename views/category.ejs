@@ -1570,63 +1570,15 @@ if (scrollLeftBtn && scrollRightBtn && slider) {
       <span id="toast-message"></span>
     </div>
     <!-- بخش توضیحات سئو -->
+<% if(currentCategory.description && currentCategory.description.trim() !== '') { %>
 <section class="container mx-auto px-4 py-12 mt-8 border-t border-gray-200">
-  <div style="padding: 20px;" class="max-w-5xl mx-auto text-right seo-fade" id="seoSection">
-    
-    <div class="seo-content" id="seoContent">
-      <h1 class="text-2xl md:text-3xl font-bold text-gray-800 mb-4">
-        فروشگاه اینترنتی اودور - مرجع تخصصی محصولات آرایشی و بهداشتی
-      </h1>
-      
-      <div class="prose prose-lg text-gray-600 space-y-4">
-        <p>
-          فروشگاه اینترنتی اودور با سال‌ها تجربه در زمینه فروش محصولات آرایشی و بهداشتی، 
-          همواره تلاش کرده است بهترین و باکیفیت‌ترین محصولات برندهای معتبر جهان را به مشتریان 
-          عزیز ارائه دهد. ما در اودور به اصلالت کالا اهمیت ویژه‌ای می‌دهیم و تمامی محصولات 
-          ما دارای ضمانت اصالت و سلامت فیزیکی می‌باشند.
-        </p>
-        
-        <p>
-          مجموعه ما شامل انواع محصولات شیگلم، لوازم آرایشی حرفه‌ای، محصولات مراقبت از پوست و مو، 
-          عطر و ادکلن و اکسسوری‌های زیبایی می‌باشد. خرید آنلاین از اودور به معنای تجربه خریدی 
-          امن، سریع و لذت‌بخش است.
-        </p>
-        
-        <h2 class="text-xl font-bold text-gray-800 mt-6 mb-3">
-          چرا اودور را انتخاب کنیم؟
-        </h2>
-        
-        <ul class="list-disc list-inside space-y-2 pr-4">
-          <li>✅ تضمین اصالت کالا و ضمانت بازگشت وجه</li>
-          <li>✅ ارسال سریع به تمام نقاط کشور در کمترین زمان ممکن</li>
-          <li>✅ پشتیبانی ۲۴ ساعته و مشاوره رایگان قبل از خرید</li>
-          <li>✅ مناسب‌ترین قیمت‌ها با تخفیف‌های ویژه و شگفت‌انگیز</li>
-          <li>✅ تنوع بی‌نظیر محصولات از برندهای تراز اول جهانی</li>
-        </ul>
-        
-        <p>
-          مشتریان عزیز می‌توانند با ثبت‌نام در سایت اودور از آخرین تخفیف‌ها و جشنواره‌های 
-          فروش مطلع شده و خریدی هوشمندانه را تجربه کنند. کیفیت، اعتماد و رضایت شما 
-          اولویت اصلی ماست.
-        </p>
-        
-        <div class="bg-gradient-to-r from-purple-50 to-pink-50 p-6 rounded-2xl mt-6">
-          <h3 class="font-bold text-lg text-gray-800 mb-2">نمادهای اعتماد و افتخارات</h3>
-          <p class="text-sm text-gray-600">
-            فروشگاه اینترنتی اودور دارای نماد اعتماد الکترونیک از وزارت صنعت، معدن و تجارت 
-            بوده و تمامی تراکنش‌های مالی آن از طریق درگاه‌های امن بانکی انجام می‌شود.
-          </p>
+    <div class="max-w-5xl mx-auto text-right">
+        <div class="prose prose-lg text-gray-600">
+            <%- currentCategory.description %>
         </div>
-      </div>
     </div>
-    
-    <button class="seo-toggle-btn" id="seoToggleBtn">
-      <span>بیشتر بخوانید</span>
-      <i class="fas fa-chevron-down"></i>
-    </button>
-    
-  </div>
 </section>
+<% } %>
 <footer class="bg-gray-900 text-white py-12">
   <div class="container mx-auto px-4">
     <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
