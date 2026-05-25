@@ -869,7 +869,6 @@ document.addEventListener('DOMContentLoaded', function() {
       authButton.addEventListener('click', function(e) {
         e.preventDefault();
         e.stopPropagation();
-        console.log('دکمه کاربر کلیک شد - باز کردن پاپ‌آپ');
         authPopup.classList.remove('hidden');
         // تابع switchTab باید قبلاً تعریف شده باشد
         if (typeof switchTab === 'function') {
@@ -1313,13 +1312,15 @@ document.addEventListener('DOMContentLoaded', function() {
         </h1>
         <p class="text-gray-600 text-lg">کشف کنید، زیبا باشید، درخشان شوید</p>
       </div> -->
+<% if (childCategories && childCategories.length > 0) { %>
 <section class="py-12 px-4 bg-gradient-to-b from-gray-50  overflow-hidden">
     <div class="max-w-7xl mx-auto">
         <!-- عنوان بخش -->
         <div class="text-center mb-10 fade-in">
-            <h2 class="text-3xl md:text-4xl font-bold text-gray-800 mb-2">دسته بندی های ویژه</h2>
+            <h2 class="text-3xl md:text-4xl font-bold text-gray-800 mb-2">
+              زیرمجموعه‌های <%= currentCategory.name %>
+            </h2>
             <div class="w-24 h-1 bg-gradient-to-l from-pink-500 to-purple-600 mx-auto rounded-full"></div>
-            <p class="text-gray-500 mt-4">محصولات اورجینال و با کیفیت برای حرفه‌ای‌ها</p>
         </div>
 
         <!-- محفظه اسلایدر -->
@@ -1338,28 +1339,26 @@ document.addEventListener('DOMContentLoaded', function() {
 
             <!-- اسلایدر -->
             <div id="categoriesSlider" class="overflow-x-auto scrollbar-hide" style="scrollbar-width: thin; scroll-behavior: smooth;">
-                <div style="margin-bottom:10px" class="flex gap-4 md:gap-6" id="categoriesTrack">
-                    <% for(let category of categories.filter(c => !c.parentId)) {%>
-                    <div onclick="location.href='/category/<%= category.slug %>';" class="category-card flex-shrink-0 w-[calc(50%-8px)] sm:w-[calc(33.333%-10.66px)] md:w-[calc(20%-19.2px)] lg:w-[calc(14.285%-17.14px)] bg-white rounded-2xl p-4 text-center shadow-md hover:shadow-xl transition-all duration-300 cursor-pointer hover:-translate-y-1 border border-gray-100">
+                <div style="margin-bottom: 10px;" class="flex gap-4 md:gap-6" id="categoriesTrack">
+                    <% childCategories.forEach(cat => {%>
+                    <div onclick="location.href='/category/<%= cat.slug %>';" class="category-card flex-shrink-0 w-[calc(50%-8px)] sm:w-[calc(33.333%-10.66px)] md:w-[calc(20%-19.2px)] lg:w-[calc(14.285%-17.14px)] bg-white rounded-2xl p-4 text-center shadow-md hover:shadow-xl transition-all duration-300 cursor-pointer hover:-translate-y-1 border border-gray-100">
                         <div class="w-16 h-16 mx-auto mb-3 rounded-full bg-gradient-to-br from-red-400 to-red-600 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
                             <i class="fas fa-couch text-white text-2xl"></i>
                         </div>
                         <h3 class="font-bold text-gray-800 text-sm md:text-base">
-                            <%= category.name %>
+                            <%= cat.name %>
                         </h3>
                         <span class="text-gray-400 text-xs">
-                              <%= toPersianDigits(category.productCount) %> محصول
+                              <%= toPersianDigits(cat.productCount || 0) %> محصول
                         </span>
                     </div>
-                    <% } %>
+                    <% }); %>
                 </div>
             </div>
         </div>
-
-        <!-- دکمه مشاهده همه -->
-        
-
+      </div>        
 </section>
+<% } else {%><br /><br /><br /><% } %>
 <script>
   // اسلایدر دسته‌بندی‌ها
 const slider = document.getElementById('categoriesSlider');
@@ -1437,20 +1436,21 @@ if (scrollLeftBtn && scrollRightBtn && slider) {
         </div>
       </div>
 
-
-            <div class="mb-8">
-        <h3 class="font-bold text-gray-700 mb-4 text-lg">دسته‌بندی‌ها</h3>
+      <% if (childCategories && childCategories.length > 0) { %>
+      <div class="mb-8">
+        <h3 class="font-bold text-gray-700 mb-4 text-lg">زیر دسته بندی ها</h3>
         <div class="space-y-3">
-          <% for(let category of categories) { %>
-          <div class="category-chip rounded-2xl p-4 shadow-md" data-category="<%= category.name %>">
+          <% childCategories.forEach(cat => { %>
+          <div class="category-chip rounded-2xl p-4 shadow-md" data-category="<%= cat.name %>">
             <div class="flex justify-between items-center">
-              <span class="font-medium"><%= category.name %> <%= category.emoji %></span>
-              <span class="bg-white/50 rounded-full px-3 py-1 text-sm"><%= toPersianDigits(category.productCount) %></span>
+              <span class="font-medium"><%= cat.name %> <%= cat.emoji %></span>
+              <span class="bg-white/50 rounded-full px-3 py-1 text-sm"><%= toPersianDigits(cat.productCount || 0) %></span>
             </div>
           </div>
-          <% } %>
+          <% }); %>
         </div>
       </div>
+      <% } %>
 
       <!-- Price Range Slider -->
       <div class="mb-8">
@@ -1472,17 +1472,19 @@ if (scrollLeftBtn && scrollRightBtn && slider) {
       </div>
 
       <!-- Brand Selection -->
+      <% if (brands && brands.length > 0) { %>
       <div class="mb-8">
         <h3 class="font-bold text-gray-700 mb-4 text-lg">برندهای محبوب</h3>
         <div class="grid grid-cols-2 gap-3">
-          <% for(let brand of brands) { %>
+          <% brands.forEach(brand => { %>
           <div class="brand-filter bg-white/70 rounded-xl p-3 text-center cursor-pointer hover:bg-white transition-all shadow-md" data-brand="<%= brand.name %>">
             <div class="text-2xl mb-1"><%= brand.emoji %></div>
             <div class="text-sm font-medium"><%= brand.name %></div>
           </div>
-          <% } %>
+          <% }); %>
         </div>
       </div>
+      <% } %>
     </div>
   </div>
 
@@ -1802,6 +1804,7 @@ if (scrollLeftBtn && scrollRightBtn && slider) {
 
           // State
           const productFromServer = <%- JSON.stringify(products) %>;
+
           let currentView = "grid";
           let allProducts = [...productFromServer];
           let allPrices = productFromServer.map(product => {
@@ -1827,8 +1830,20 @@ if (scrollLeftBtn && scrollRightBtn && slider) {
           const productsPerPage = 12;
 
           function initializeProducts() {
+
             // در ابتدا همه محصولات را نمایش دهید
             filteredProducts = [...allProducts];
+
+            if (selectedCategories.length > 0) {
+              filteredProducts = filteredProducts.filter(product => {
+                  const productCategories = product.category || [];
+                  return productCategories.some(cat => 
+                      selectedCategories.includes(cat.name)
+                  );
+              });
+            }
+          
+
             paginateProducts();
             renderProducts();
           }

@@ -4361,7 +4361,7 @@ async function markOrdersAsSeen() {
         document.addEventListener('DOMContentLoaded', function() {
             setTimeout(() => {
                 initChart();
-                initVisitsChart();  // اضافه کنید
+                initVisitsChart(); 
             }, 100);
             setupClearErrorsOnInput();
             loadProducts();
@@ -4371,13 +4371,13 @@ async function markOrdersAsSeen() {
             loadOrders();
             loadWeblogs();
 
-            fetchNewOrdersCount();  // چک کردن اولیه سفارشات جدید
-            setInterval(fetchNewOrdersCount, 5000);  // هر 30 ثانیه یکبار چک کن
+            fetchNewOrdersCount();
+            setInterval(fetchNewOrdersCount, 15000); 
             
             if (window.location.hash === '#orders') {
                 markOrdersAsSeen();
             }
-        });
+        }); 
     </script>
 </body>
 </html>

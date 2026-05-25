@@ -378,35 +378,35 @@
       <a href="/" style="color: #333; text-decoration: none;">خانه</a>
       
       <!-- فروشگاه با ساب‌منو -->
-      <div style="position: relative;" class="dropdown">
-        <a href="/shop" style="color: #333; text-decoration: none; display: flex; align-items: center; gap: 5px;">
-           دسته بندی <i class="fas fa-chevron-down" style="font-size: 12px;"></i>
+    <div style="position: relative;" class="dropdown">
+        <a style="color: #333; text-decoration: none; display: flex; align-items: center; gap: 5px; cursor: pointer;">
+            دسته بندی <i class="fas fa-chevron-down" style="font-size: 12px;"></i>
         </a>
-        <div class="dropdown-menu" style="position: absolute; top: 100%; right: 0; background: white; box-shadow: 0 4px 12px rgba(0,0,0,0.15); border-radius: 8px; min-width: 200px; display: none; z-index: 100;">
-          <div class="submenu-item" style="position: relative;">
-            <a href="#" style="display: flex; justify-content: space-between; align-items: center; padding: 10px 16px; color: #333; text-decoration: none; border-bottom: 1px solid #eee;">
-              لباس زنانه <i class="fas fa-chevron-left" style="font-size: 10px;"></i>
-            </a>
-            <div class="submenu-level2" style="position: absolute; right: 100%; top: 0; background: white; box-shadow: 0 4px 12px rgba(0,0,0,0.15); border-radius: 8px; min-width: 180px; display: none;">
-              <a href="#" style="display: block; padding: 10px 16px; color: #333; text-decoration: none; border-bottom: 1px solid #eee;">پیراهن زنانه</a>
-              <a href="#" style="display: block; padding: 10px 16px; color: #333; text-decoration: none; border-bottom: 1px solid #eee;">شلوار زنانه</a>
-              <a href="#" style="display: block; padding: 10px 16px; color: #333; text-decoration: none;">مانتو و کت</a>
-            </div>
-          </div>
-          <div class="submenu-item" style="position: relative;">
-            <a href="#" style="display: flex; justify-content: space-between; align-items: center; padding: 10px 16px; color: #333; text-decoration: none; border-bottom: 1px solid #eee;">
-              لباس مردانه <i class="fas fa-chevron-left" style="font-size: 10px;"></i>
-            </a>
-            <div class="submenu-level2" style="position: absolute; right: 100%; top: 0; background: white; box-shadow: 0 4px 12px rgba(0,0,0,0.15); border-radius: 8px; min-width: 180px; display: none;">
-              <a href="#" style="display: block; padding: 10px 16px; color: #333; text-decoration: none; border-bottom: 1px solid #eee;">پیراهن مردانه</a>
-              <a href="#" style="display: block; padding: 10px 16px; color: #333; text-decoration: none; border-bottom: 1px solid #eee;">شلوار مردانه</a>
-              <a href="#" style="display: block; padding: 10px 16px; color: #333; text-decoration: none;">کت و شلوار</a>
-            </div>
-          </div>
-          <a href="#" style="display: block; padding: 10px 16px; color: #333; text-decoration: none; border-bottom: 1px solid #eee;">اکسسوری</a>
-          <a href="#" style="display: block; padding: 10px 16px; color: #333; text-decoration: none;">کفش</a>
+        <div class="dropdown-menu" style="position: absolute; top: 100%; right: 0; background: white; box-shadow: 0 4px 12px rgba(0,0,0,0.15); border-radius: 8px; min-width: 220px; display: none; z-index: 100;">
+            <% for(let category of menuCategories) { %>
+                <% if(category.children && category.children.length > 0) { %>
+                    <div class="submenu-item" style="position: relative;">
+                        <a href="/category/<%= category.slug %>" style="display: flex; justify-content: space-between; align-items: center; padding: 10px 16px; color: #333; text-decoration: none; border-bottom: 1px solid #eee;">
+                            <%= category.name %> 
+                            <i class="fas fa-chevron-left" style="font-size: 10px;"></i>
+                        </a>
+                        <div class="submenu-level2" style="position: absolute; right: 100%; top: 0; background: white; box-shadow: 0 4px 12px rgba(0,0,0,0.15); border-radius: 8px; min-width: 200px; display: none;">
+                            <% for(let child of category.children) { %>
+                                <a href="/category/<%= child.slug %>" style="display: block; padding: 10px 16px; color: #333; text-decoration: none; border-bottom: 1px solid #eee;">
+                                    <%= child.name %>
+                                </a>
+                            <% } %>
+                        </div>
+                    </div>
+                <% } else { %>
+                    <a href="/category/<%= category.slug %>" style="display: block; padding: 10px 16px; color: #333; text-decoration: none; border-bottom: 1px solid #eee;">
+                        <%= category.name %>
+                    </a>
+                <% } %>
+            <% } %>
         </div>
-      </div>
+    </div>
+
       <a href="/shop" style="color: #333; text-decoration: none;">فروشگاه</a>
       <a href="/weblog" style="color: #333; text-decoration: none;">وبلاگ</a>
       <a href="/about-us" style="color: #333; text-decoration: none;">درباره ما</a>
@@ -450,42 +450,43 @@
     <a href="/" style="display: block; padding: 8px; color: #333; text-decoration: none;">خانه</a>
     
     <div class="mobile-dropdown">
-      <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px; cursor: pointer;" class="mobile-dropdown-trigger">
-        <span style="color: #333;">دسته بندی </span>
-        <i class="fas fa-chevron-down" style="font-size: 12px; transition: transform 0.3s;"></i>
-      </div>
-      <div class="mobile-dropdown-menu" style="display: none; padding-right: 15px;">
-        <div class="mobile-submenu">
-          <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px; cursor: pointer;" class="mobile-submenu-trigger">
-            <span style="color: #555;">لباس زنانه</span>
-            <i class="fas fa-chevron-left" style="font-size: 10px; transition: transform 0.3s;"></i>
-          </div>
-          <div class="mobile-submenu-level2" style="display: none; padding-right: 15px;">
-            <a href="#" style="display: block; padding: 8px; color: #666; text-decoration: none;">پیراهن زنانه</a>
-            <a href="#" style="display: block; padding: 8px; color: #666; text-decoration: none;">شلوار زنانه</a>
-            <a href="#" style="display: block; padding: 8px; color: #666; text-decoration: none;">مانتو و کت</a>
-          </div>
+        <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px; cursor: pointer;" class="mobile-dropdown-trigger">
+            <span style="color: #333;">دسته بندی</span>
+            <i class="fas fa-chevron-down" style="font-size: 12px; transition: transform 0.3s;"></i>
         </div>
-        <div class="mobile-submenu">
-          <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px; cursor: pointer;" class="mobile-submenu-trigger">
-            <span style="color: #555;">لباس مردانه</span>
-            <i class="fas fa-chevron-left" style="font-size: 10px; transition: transform 0.3s;"></i>
-          </div>
-          <div class="mobile-submenu-level2" style="display: none; padding-right: 15px;">
-            <a href="#" style="display: block; padding: 8px; color: #666; text-decoration: none;">پیراهن مردانه</a>
-            <a href="#" style="display: block; padding: 8px; color: #666; text-decoration: none;">شلوار مردانه</a>
-            <a href="#" style="display: block; padding: 8px; color: #666; text-decoration: none;">کت و شلوار</a>
-          </div>
+        <div class="mobile-dropdown-menu" style="display: none; padding-right: 15px;">
+            <% for(let category of menuCategories) { %>
+                <% if(category.children && category.children.length > 0) { %>
+                    <!-- دسته‌بندی با زیرمجموعه -->
+                    <div class="mobile-submenu">
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px; cursor: pointer;" class="mobile-submenu-trigger">
+                            <span style="color: #555;"><%= category.name %></span>
+                            <i class="fas fa-chevron-left" style="font-size: 10px; transition: transform 0.3s;"></i>
+                        </div>
+                        <div class="mobile-submenu-level2" style="display: none; padding-right: 15px;">
+                            <% for(let child of category.children) { %>
+                                <a href="/category/<%= child.slug %>" style="display: block; padding: 8px; color: #666; text-decoration: none;">
+                                    <%= child.name %>
+                                </a>
+                            <% } %>
+                        </div>
+                    </div>
+                <% } else { %>
+                    <!-- دسته‌بندی بدون زیرمجموعه -->
+                    <a href="/category/<%= category.slug %>" style="display: block; padding: 8px; color: #555; text-decoration: none;">
+                        <%= category.name %>
+                    </a>
+                <% } %>
+            <% } %>
         </div>
-        <a href="#" style="display: block; padding: 8px; color: #555; text-decoration: none;">اکسسوری</a>
-        <a href="#" style="display: block; padding: 8px; color: #555; text-decoration: none;">کفش</a>
-      </div>
     </div>
+    
     <a href="/shop" style="display: block; padding: 8px; color: #333; text-decoration: none;">فروشگاه</a>
     <a href="/weblog" style="display: block; padding: 8px; color: #333; text-decoration: none;">وبلاگ</a>
     <a href="/about-us" style="display: block; padding: 8px; color: #333; text-decoration: none;">درباره ما</a>
     <a href="/contact-us" style="display: block; padding: 8px; color: #333; text-decoration: none;">تماس با ما</a>
-  </div>
+</div>
+
 </nav>
 
 
@@ -1198,7 +1199,7 @@ document.addEventListener('DOMContentLoaded', function() {
             <div id="categoriesSlider" class="overflow-x-auto scrollbar-hide" style="scrollbar-width: thin; scroll-behavior: smooth;">
                 <div style="margin-bottom:10px" class="flex gap-4 md:gap-6" id="categoriesTrack">
                     <% for(let category of categories) {%>
-                    <div onclick="setSelectedCategory('<%= category.name %>')" class="category-card flex-shrink-0 w-[calc(50%-8px)] sm:w-[calc(33.333%-10.66px)] md:w-[calc(20%-19.2px)] lg:w-[calc(14.285%-17.14px)] bg-white rounded-2xl p-4 text-center shadow-md hover:shadow-xl transition-all duration-300 cursor-pointer hover:-translate-y-1 border border-gray-100">
+                    <div onclick="location.href='/category/<%= category.slug %>';" class="category-card flex-shrink-0 w-[calc(50%-8px)] sm:w-[calc(33.333%-10.66px)] md:w-[calc(20%-19.2px)] lg:w-[calc(14.285%-17.14px)] bg-white rounded-2xl p-4 text-center shadow-md hover:shadow-xl transition-all duration-300 cursor-pointer hover:-translate-y-1 border border-gray-100">
                         <div class="w-16 h-16 mx-auto mb-3 rounded-full bg-gradient-to-br from-red-400 to-red-600 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
                             <i class="fas fa-couch text-white text-2xl"></i>
                         </div>
@@ -1206,7 +1207,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             <%= category.name %>
                         </h3>
                         <span class="text-gray-400 text-xs">
-                              <%= toPersianDigits(category.productCount) %> محصول
+                            <%= toPersianDigits(category.productCount || 0) %> محصول
                         </span>
                     </div>
                     <% } %>
@@ -1692,10 +1693,6 @@ if (scrollLeftBtn && scrollRightBtn && slider) {
     });
   }
   
-  function setSelectedCategory(categoryName) {
-    localStorage.setItem("selectedCategory", categoryName);
-  }
-  
   // ==========================================
   // DOMContentLoaded
   // ==========================================
@@ -2161,9 +2158,6 @@ if (scrollLeftBtn && scrollRightBtn && slider) {
                 }, 800);
             }
               
-              function setSelectedCategory(categoryName) {
-                localStorage.setItem("selectedCategory", categoryName);
-              }
 
               // Hero Slider
               const slides = document.querySelectorAll(".slide");

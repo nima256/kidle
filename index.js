@@ -255,41 +255,134 @@ function generateOrderNumber() {
   return `ORD-${randomNum}`;
 }
 
+async function getAllCategoryIds(parentId) {
+  let ids = [parentId];
+  const children = await Category.find({ parentId, isActive: true });
+  
+  for (const child of children) {
+    const childIds = await getAllCategoryIds(child._id);
+    ids = [...ids, ...childIds];
+  }
+  
+  return ids;
+}
+
+async function getCategoriesWithChildren() {
+    const categories = await Category.find({ 
+        categoryType: "product",
+        isActive: true 
+    });
+    
+    // ایجاد ساختار درختی
+    const categoryMap = {};
+    categories.forEach(cat => {
+        categoryMap[cat._id] = { ...cat.toObject(), children: [] };
+    });
+    
+    const rootCategories = [];
+    categories.forEach(cat => {
+        if (cat.parentId) {
+            if (categoryMap[cat.parentId]) {
+                categoryMap[cat.parentId].children.push(categoryMap[cat._id]);
+            }
+        } else {
+            rootCategories.push(categoryMap[cat._id]);
+        }
+    });
+    
+    return rootCategories;
+}
+
 app.get("/", async (req, res) => {
-  const categories = await Category.find({ categoryType: "product" });
-  const products = await Product.find({ isPopular: true })
-    .sort({ createdAt: -1 })
-    .limit(4);
-  const isFeaturedProducts = await Product.find({ isFeatured: true })
-    .sort({ createdAt: -1 })
-    .limit(6);
+  try {
+    // ====== 1. دسته‌بندی‌های اصلی برای منوی نوبار (با ساختار درختی) ======
+    const allCategories = await Category.find({ 
+      categoryType: "product",
+      isActive: true 
+    });
+    
+    // ساخت ساختار درختی برای منو
+    const categoryMap = {};
+    allCategories.forEach(cat => {
+      categoryMap[cat._id] = { ...cat.toObject(), children: [] };
+    });
+    
+    const menuCategories = [];
+    allCategories.forEach(cat => {
+      if (cat.parentId && categoryMap[cat.parentId]) {
+        categoryMap[cat.parentId].children.push(categoryMap[cat._id]);
+      } else if (!cat.parentId) {
+        menuCategories.push(categoryMap[cat._id]);
+      }
+    });
+    
+    // ====== 2. دسته‌بندی‌های اصلی با تعداد محصولات (برای اسلایدر هوم پیج) ======
+    const parentCategories = await Category.find({ 
+      categoryType: "product",
+      parentId: null,
+      isActive: true 
+    });
+    
+    const products = await Product.find({ isPopular: true })
+      .sort({ createdAt: -1 })
+      .limit(4);
+      
+    const isFeaturedProducts = await Product.find({ isFeatured: true })
+      .sort({ createdAt: -1 })
+      .limit(6);
+      
     const isNewProduct = await Product.find({ isNewProduct: true })
-    .sort({ createdAt: -1 })
-    .limit(4);
-  const weblogs = await Weblog.find({}).sort({ createdAt: -1 }).limit(4);
-  const user = await User.findById(req.session.userId);
+      .sort({ createdAt: -1 })
+      .limit(4);
+      
+    const weblogs = await Weblog.find({}).sort({ createdAt: -1 }).limit(4);
+    const user = await User.findById(req.session.userId);
+    const cartCount = user?.cart?.length || 0;
 
-  const cartCount = user?.cart?.length || 0;
+    // تابع بازگشتی برای گرفتن همه IDهای زیرمجموعه‌ها
+    async function getAllChildCategoryIds(categoryId) {
+      let ids = [categoryId];
+      const children = await Category.find({ parentId: categoryId, isActive: true });
+      
+      for (const child of children) {
+        const childIds = await getAllChildCategoryIds(child._id);
+        ids = [...ids, ...childIds];
+      }
+      
+      return ids;
+    }
 
-  const categoriesWithCounts = await Promise.all(
-    categories.map(async (cat) => {
-      const count = await Product.countDocuments({ category: cat._id });
-      return {
-        ...cat._doc, // spread the original category fields
-        productCount: count, // add a new property
-      };
-    })
-  );
+    // محاسبه تعداد محصولات هر دسته با احتساب زیرمجموعه‌ها
+    const categoriesWithCounts = await Promise.all(
+      parentCategories.map(async (cat) => {
+        const allCategoryIds = await getAllChildCategoryIds(cat._id);
+        const count = await Product.countDocuments({ 
+          category: { $in: allCategoryIds },
+          isOutOfStock: { $ne: true }
+        });
+        
+        return {
+          ...cat._doc,
+          productCount: count,
+        };
+      })
+    );
 
-  res.render("Home", {
-    categories: categoriesWithCounts,
-    products,
-    weblogs,
-    user,
-    cartCount,
-    isFeaturedProducts,
-    isNewProduct,
-  });
+    res.render("Home", {
+      menuCategories,        // ← برای منوی نوبار (با ساختار درختی و children)
+      categories: categoriesWithCounts,  // ← برای اسلایدر هوم پیج (با productCount)
+      products,
+      weblogs,
+      user,
+      cartCount,
+      isFeaturedProducts,
+      isNewProduct,
+    });
+    
+  } catch (error) {
+    console.error("Home page error:", error);
+    res.status(500).render("500", { message: "خطای سرور" });
+  }
 });
 
 const asyncHandler = (fn) => (req, res, next) =>
@@ -301,6 +394,7 @@ app.get(
     const products = await Product.find({})
       .populate("category")
       .populate("brand");
+      
     const categories = await Category.find({ categoryType: "product" });
     const brands = await Brand.find({});
     const user = await User.findById(req.session.userId);
@@ -313,17 +407,34 @@ app.get(
 
     const cartCount = user?.cart?.length || 0;
 
-    // count products for each category
+    // تابع بازگشتی برای گرفتن همه IDهای زیرمجموعه‌ها
+    async function getAllChildCategoryIds(categoryId) {
+      let ids = [categoryId];
+      const children = await Category.find({ parentId: categoryId, isActive: true });
+      
+      for (const child of children) {
+        const childIds = await getAllChildCategoryIds(child._id);
+        ids = [...ids, ...childIds];
+      }
+      
+      return ids;
+    }
+
+    // محاسبه تعداد محصولات هر دسته با احتساب زیرمجموعه‌ها
     const categoriesWithCounts = await Promise.all(
       categories.map(async (cat) => {
-        const count = await Product.countDocuments({ category: cat._id }); // Changed to "categories" array
+        const allCategoryIds = await getAllChildCategoryIds(cat._id);
+        const count = await Product.countDocuments({ 
+          category: { $in: allCategoryIds },
+          isOutOfStock: { $ne: true }
+        });
+        
         return {
           ...cat._doc,
           productCount: count,
         };
       })
     );
-    
 
     res.render("Shop", {
       products,
@@ -635,6 +746,122 @@ app.get("/userProfile", async (req, res) => {
     canceledOrders,
     cartCount
   });
+});
+
+app.get("/category/:slug", async (req, res) => {
+  try {
+    const user = await User.findById(req.session.userId)
+      .populate("cart.productId")
+      .populate("orders");
+
+    const cartCount = user?.cart?.length || 0;
+    const { slug } = req.params;
+    
+    const currentCategory = await Category.findOne({ 
+      slug: slug,
+      isActive: true 
+    }).populate('parentId');
+    
+    if (!currentCategory) {
+      return res.status(404).render("404", { message: "دسته‌بندی یافت نشد" });
+    }
+    
+    // تابع بازگشتی برای گرفتن همه زیرمجموعه‌ها
+    async function getAllChildCategories(parentId) {
+      const children = await Category.find({ parentId, isActive: true });
+      let allChildren = [...children];
+      
+      for (const child of children) {
+        const grandChildren = await getAllChildCategories(child._id);
+        allChildren = [...allChildren, ...grandChildren];
+      }
+      
+      return allChildren;
+    }
+    
+    const allChildCategories = await getAllChildCategories(currentCategory._id);
+    
+    // محاسبه تعداد محصولات برای هر زیرمجموعه
+    const childCategoriesWithCount = await Promise.all(
+      allChildCategories.map(async (cat) => {
+        let allChildIds = [cat._id];
+        
+        async function getChildIds(parentId) {
+          const children = await Category.find({ parentId, isActive: true });
+          for (const child of children) {
+            allChildIds.push(child._id);
+            await getChildIds(child._id);
+          }
+        }
+        
+        await getChildIds(cat._id);
+        
+        const productCount = await Product.countDocuments({
+          category: { $in: allChildIds },
+          isOutOfStock: { $ne: true }
+        });
+        
+        return {
+          ...cat.toObject(),
+          productCount
+        };
+      })
+    );
+    
+    // پیدا کردن مسیر دسته‌بندی (breadcrumb)
+    let breadcrumb = [];
+    let parent = currentCategory;
+    while (parent) {
+      breadcrumb.unshift({
+        name: parent.name,
+        slug: parent.slug
+      });
+      parent = parent.parentId;
+    }
+    
+    // پیدا کردن تمام IDهای دسته‌بندی (خودش + همه فرزندان)
+    let categoryIds = [currentCategory._id];
+    
+    async function getAllChildIds(parentId) {
+      const children = await Category.find({ parentId, isActive: true });
+      for (const child of children) {
+        categoryIds.push(child._id);
+        await getAllChildIds(child._id);
+      }
+    }
+    
+    await getAllChildIds(currentCategory._id);
+    
+    const products = await Product.find({
+      category: { $in: categoryIds },
+      isOutOfStock: { $ne: true }
+    })
+      .populate("category")
+      .populate("brand")
+      .sort({ createdAt: -1 });
+    
+    const brands = await Brand.find({
+      _id: { $in: [...new Set(products.map(p => p.brand?._id || p.brand).filter(Boolean))] }
+    });
+    
+    res.render("category", {
+      currentCategory,
+      childCategories: childCategoriesWithCount,
+      products,
+      brands,
+      allCategories: await Category.find({ categoryType: "product", parentId: null, isActive: true }),
+      breadcrumb,
+      path: `/category/${slug}`,
+      title: `${currentCategory.name} | فروشگاه`,
+      description: `خرید ${currentCategory.name}`,
+      user,
+      cartCount,
+    });
+    
+  } catch (error) {
+    console.error("Category page error:", error);
+    res.status(500).render("500", { message: "خطای سرور" });
+  }
 });
 
 app.get("/sitemap.xml", async (req, res) => {
