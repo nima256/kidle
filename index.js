@@ -194,6 +194,20 @@ app.use(async (req, res, next) => {
   next();
 });
 
+app.use(async (req, res, next) => {
+  // گرفتن 5 دسته‌بندی اصلی برای فوتر
+  const footerCategories = await Category.find({ 
+    categoryType: "product",
+    parentId: null,  // فقط دسته‌بندی‌های اصلی
+    isActive: true 
+  })
+  .limit(5)  // فقط 5 تا
+  .sort({ name: 1 });  // مرتب بر اساس نام
+  
+  res.locals.footerCategories = footerCategories;
+  next();
+});
+
 
 app.use(flash());
 
@@ -394,10 +408,30 @@ app.get(
     const products = await Product.find({})
       .populate("category")
       .populate("brand");
-      
     const categories = await Category.find({ categoryType: "product" });
     const brands = await Brand.find({});
     const user = await User.findById(req.session.userId);
+
+    // ====== 1. دسته‌بندی‌های اصلی برای منوی نوبار (با ساختار درختی) ======
+    const allCategories = await Category.find({ 
+      categoryType: "product",
+      isActive: true 
+    });
+    
+    // ساخت ساختار درختی برای منو
+    const categoryMap = {};
+    allCategories.forEach(cat => {
+      categoryMap[cat._id] = { ...cat.toObject(), children: [] };
+    });
+    
+    const menuCategories = [];
+    allCategories.forEach(cat => {
+      if (cat.parentId && categoryMap[cat.parentId]) {
+        categoryMap[cat.parentId].children.push(categoryMap[cat._id]);
+      } else if (!cat.parentId) {
+        menuCategories.push(categoryMap[cat._id]);
+      }
+    });
 
     if (!products || !categories || !brands) {
       const error = new Error("خطا در بارگزاری فروشگاه");
@@ -442,6 +476,7 @@ app.get(
       brands,
       cartCount,
       user,
+      menuCategories,
     });
   })
 );
@@ -542,7 +577,27 @@ app.get("/productDetails/:slug", async (req, res, next) => {
 
     const cartCount = user?.cart?.length || 0;
 
-    res.render("ProductDetails", { product, user, cartCount });
+    const allCategories = await Category.find({ 
+      categoryType: "product",
+      isActive: true 
+    });
+    
+    // ساخت ساختار درختی برای منو
+    const categoryMap = {};
+    allCategories.forEach(cat => {
+      categoryMap[cat._id] = { ...cat.toObject(), children: [] };
+    });
+    
+    const menuCategories = [];
+    allCategories.forEach(cat => {
+      if (cat.parentId && categoryMap[cat.parentId]) {
+        categoryMap[cat.parentId].children.push(categoryMap[cat._id]);
+      } else if (!cat.parentId) {
+        menuCategories.push(categoryMap[cat._id]);
+      }
+    });
+
+    res.render("ProductDetails", { product, user, cartCount, menuCategories });
   } catch (err) {
     next(err);
   }
@@ -613,6 +668,26 @@ app.get(
 
    const cartCount = user?.cart?.length || 0;
 
+    const allCategories = await Category.find({ 
+      categoryType: "product",
+      isActive: true 
+    });
+    
+    // ساخت ساختار درختی برای منو
+    const categoryMap = {};
+    allCategories.forEach(cat => {
+      categoryMap[cat._id] = { ...cat.toObject(), children: [] };
+    });
+    
+    const menuCategories = [];
+    allCategories.forEach(cat => {
+      if (cat.parentId && categoryMap[cat.parentId]) {
+        categoryMap[cat.parentId].children.push(categoryMap[cat._id]);
+      } else if (!cat.parentId) {
+        menuCategories.push(categoryMap[cat._id]);
+      }
+    });
+
     res.render("Cart", {
       cartItems,
       user,
@@ -621,7 +696,8 @@ app.get(
       discountAmount,
       finalTotal,
       discountCode: req.session.discount?.code || null,
-      cartCount
+      cartCount,
+      menuCategories,
     });
   })
 );
@@ -637,8 +713,28 @@ app.get("/weblog", async (req, res) => {
 
   const cartCount = user?.cart?.length || 0;
 
+  
+    const allCategories = await Category.find({ 
+      categoryType: "product",
+      isActive: true 
+    });
+    
+    // ساخت ساختار درختی برای منو
+    const categoryMap = {};
+    allCategories.forEach(cat => {
+      categoryMap[cat._id] = { ...cat.toObject(), children: [] };
+    });
+    
+    const menuCategories = [];
+    allCategories.forEach(cat => {
+      if (cat.parentId && categoryMap[cat.parentId]) {
+        categoryMap[cat.parentId].children.push(categoryMap[cat._id]);
+      } else if (!cat.parentId) {
+        menuCategories.push(categoryMap[cat._id]);
+      }
+    });
 
-    res.render("Weblog", { weblogs,user, cartCount }); // Render empty initially
+    res.render("Weblog", { weblogs,user, cartCount, menuCategories }); // Render empty initially
   } catch (err) {
     res.status(500).render("error", { message: "خطا در بارگزاری وبلاگ" });
   }
@@ -651,18 +747,57 @@ app.get("/about-us", async (req, res) => {
 
   const cartCount = user?.cart?.length || 0;
 
+    const allCategories = await Category.find({ 
+      categoryType: "product",
+      isActive: true 
+    });
+    
+    // ساخت ساختار درختی برای منو
+    const categoryMap = {};
+    allCategories.forEach(cat => {
+      categoryMap[cat._id] = { ...cat.toObject(), children: [] };
+    });
+    
+    const menuCategories = [];
+    allCategories.forEach(cat => {
+      if (cat.parentId && categoryMap[cat.parentId]) {
+        categoryMap[cat.parentId].children.push(categoryMap[cat._id]);
+      } else if (!cat.parentId) {
+        menuCategories.push(categoryMap[cat._id]);
+      }
+    });
 
-  res.render("aboutus", {user, cartCount});
+  res.render("aboutus", {user, cartCount, menuCategories});
 });
 
 app.get("/connect-us", async (req, res) => {
    const user = await User.findById(req.session.userId)
     .populate("cart.productId")
     .populate("orders");
+  
+    const allCategories = await Category.find({ 
+      categoryType: "product",
+      isActive: true 
+    });
+    
+    // ساخت ساختار درختی برای منو
+    const categoryMap = {};
+    allCategories.forEach(cat => {
+      categoryMap[cat._id] = { ...cat.toObject(), children: [] };
+    });
+    
+    const menuCategories = [];
+    allCategories.forEach(cat => {
+      if (cat.parentId && categoryMap[cat.parentId]) {
+        categoryMap[cat.parentId].children.push(categoryMap[cat._id]);
+      } else if (!cat.parentId) {
+        menuCategories.push(categoryMap[cat._id]);
+      }
+    });
 
   const cartCount = user?.cart?.length || 0;
 
-  res.render("connect" , {user, cartCount});
+  res.render("connect" , {user, cartCount, menuCategories});
 });
 
 app.get("/contact-us", async (req, res) => {
@@ -672,7 +807,27 @@ app.get("/contact-us", async (req, res) => {
 
   const cartCount = user?.cart?.length || 0;
 
-  res.render("contact", {user, cartCount});
+    const allCategories = await Category.find({ 
+      categoryType: "product",
+      isActive: true 
+    });
+    
+    // ساخت ساختار درختی برای منو
+    const categoryMap = {};
+    allCategories.forEach(cat => {
+      categoryMap[cat._id] = { ...cat.toObject(), children: [] };
+    });
+    
+    const menuCategories = [];
+    allCategories.forEach(cat => {
+      if (cat.parentId && categoryMap[cat.parentId]) {
+        categoryMap[cat.parentId].children.push(categoryMap[cat._id]);
+      } else if (!cat.parentId) {
+        menuCategories.push(categoryMap[cat._id]);
+      }
+    });
+
+  res.render("contact", {user, cartCount, menuCategories});
 });
 
 app.get("/terms-and-conditions", async (req, res) => {
@@ -682,7 +837,27 @@ app.get("/terms-and-conditions", async (req, res) => {
 
   const cartCount = user?.cart?.length || 0;
 
-  res.render("terms", {user, cartCount});
+    const allCategories = await Category.find({ 
+      categoryType: "product",
+      isActive: true 
+    });
+    
+    // ساخت ساختار درختی برای منو
+    const categoryMap = {};
+    allCategories.forEach(cat => {
+      categoryMap[cat._id] = { ...cat.toObject(), children: [] };
+    });
+    
+    const menuCategories = [];
+    allCategories.forEach(cat => {
+      if (cat.parentId && categoryMap[cat.parentId]) {
+        categoryMap[cat.parentId].children.push(categoryMap[cat._id]);
+      } else if (!cat.parentId) {
+        menuCategories.push(categoryMap[cat._id]);
+      }
+    });
+
+  res.render("terms", {user, cartCount, menuCategories});
 });
 
 app.get("/privacy-policy", async (req, res) => {
@@ -692,7 +867,27 @@ app.get("/privacy-policy", async (req, res) => {
 
   const cartCount = user?.cart?.length || 0;
 
-  res.render("privacy", {user, cartCount});
+    const allCategories = await Category.find({ 
+      categoryType: "product",
+      isActive: true 
+    });
+    
+    // ساخت ساختار درختی برای منو
+    const categoryMap = {};
+    allCategories.forEach(cat => {
+      categoryMap[cat._id] = { ...cat.toObject(), children: [] };
+    });
+    
+    const menuCategories = [];
+    allCategories.forEach(cat => {
+      if (cat.parentId && categoryMap[cat.parentId]) {
+        categoryMap[cat.parentId].children.push(categoryMap[cat._id]);
+      } else if (!cat.parentId) {
+        menuCategories.push(categoryMap[cat._id]);
+      }
+    });
+
+  res.render("privacy", {user, cartCount, menuCategories});
 });
 
 app.get("/api/weblogs/:id/related", async (req, res) => {
@@ -739,12 +934,34 @@ app.get("/userProfile", async (req, res) => {
 
   const cartCount = user?.cart?.length || 0;
 
+    const allCategories = await Category.find({ 
+      categoryType: "product",
+      isActive: true 
+    });
+    
+    // ساخت ساختار درختی برای منو
+    const categoryMap = {};
+    allCategories.forEach(cat => {
+      categoryMap[cat._id] = { ...cat.toObject(), children: [] };
+    });
+    
+    const menuCategories = [];
+    allCategories.forEach(cat => {
+      if (cat.parentId && categoryMap[cat.parentId]) {
+        categoryMap[cat.parentId].children.push(categoryMap[cat._id]);
+      } else if (!cat.parentId) {
+        menuCategories.push(categoryMap[cat._id]);
+      }
+    });
+
+
   res.render("UserProfile", {
     user,
     currentOrders,
     completedOrders,
     canceledOrders,
-    cartCount
+    cartCount,
+    menuCategories
   });
 });
 
@@ -843,6 +1060,26 @@ app.get("/category/:slug", async (req, res) => {
     const brands = await Brand.find({
       _id: { $in: [...new Set(products.map(p => p.brand?._id || p.brand).filter(Boolean))] }
     });
+
+    const allCategories = await Category.find({ 
+      categoryType: "product",
+      isActive: true 
+    });
+    
+    // ساخت ساختار درختی برای منو
+    const categoryMap = {};
+    allCategories.forEach(cat => {
+      categoryMap[cat._id] = { ...cat.toObject(), children: [] };
+    });
+    
+    const menuCategories = [];
+    allCategories.forEach(cat => {
+      if (cat.parentId && categoryMap[cat.parentId]) {
+        categoryMap[cat.parentId].children.push(categoryMap[cat._id]);
+      } else if (!cat.parentId) {
+        menuCategories.push(categoryMap[cat._id]);
+      }
+    });
     
     res.render("category", {
       currentCategory,
@@ -856,6 +1093,7 @@ app.get("/category/:slug", async (req, res) => {
       description: `خرید ${currentCategory.name}`,
       user,
       cartCount,
+      menuCategories
     });
     
   } catch (error) {

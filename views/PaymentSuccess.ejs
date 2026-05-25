@@ -175,117 +175,7 @@
     </style>
   </head>
   <body>
-    <nav
-      class="fixed top-0 right-0 left-0 bg-white shadow-md z-50 px-4 md:px-6 py-3"
-    >
-      <div class="max-w-7xl mx-auto flex items-center justify-between">
-        <!-- Logo -->
-        <a href="#" class="flex items-center order-2 md:order-1 h-12 md:h-14">
-          <div class="h-full overflow-hidden flex items-center">
-            <img
-              src="/logo.png"
-              alt="لوگوی اودور"
-              class="h-full w-auto object-contain"
-            />
-          </div>
-        </a>
-
-        <!-- Desktop Menu -->
-        <div
-          class="md:flex items-center space-x-8 space-x-reverse order-1 md:order-2"
-        >
-          <a
-            href="/"
-            class="nav-link text-gray-800 hover:text-pink-500 transition-colors"
-            >خانه</a
-          >
-          <a
-            href="/shop"
-            class="nav-link text-gray-800 hover:text-pink-500 transition-colors"
-            >فروشگاه</a
-          >
-          <a
-            href="#"
-            class="nav-link text-gray-800 hover:text-pink-500 transition-colors"
-            >دسته‌بندی‌ها</a
-          >
-          <a
-            href="/weblog"
-            class="nav-link text-gray-800 hover:text-pink-500 transition-colors"
-            >وبلاگ</a
-          >
-          <a
-            href="#"
-            class="nav-link text-gray-800 hover:text-pink-500 transition-colors"
-            >درباره ما</a
-          >
-          <a
-            href="#"
-            class="nav-link text-gray-800 hover:text-pink-500 transition-colors"
-            >تماس با ما</a
-          >
-        </div>
-
-        <!-- Icons -->
-        <div
-          class="flex items-center space-x-4 space-x-reverse order-1 md:order-3"
-        >
-          <div class="relative">
-            <button
-              onclick="window.location.href='/cart';"
-              class="relative text-gray-700 hover:text-pink-500 transition-colors"
-            >
-              <i class="fas fa-shopping-bag text-xl"></i>
-            </button>
-          </div>
-          <button
-            id="user-auth-button"
-            class="text-gray-700 hover:text-pink-500 transition-colors"
-          >
-            <i class="fas fa-user text-xl"></i>
-          </button>
-        </div>
-      </div>
-
-      <!-- Mobile Menu -->
-      <div
-        id="mobile-menu"
-        class="md:hidden hidden bg-white absolute right-0 left-0 top-full shadow-md"
-      >
-        <div class="flex flex-col px-4 py-2">
-          <a
-            href="/"
-            class="py-2 text-gray-800 hover:text-pink-500 transition-colors"
-            >خانه</a
-          >
-          <a
-            href="/shop"
-            class="py-2 text-gray-800 hover:text-pink-500 transition-colors"
-            >فروشگاه</a
-          >
-          <a
-            href="#"
-            class="py-2 text-gray-800 hover:text-pink-500 transition-colors"
-            >دسته‌بندی‌ها</a
-          >
-          <a
-            href="/weblog"
-            class="py-2 text-gray-800 hover:text-pink-500 transition-colors"
-            >وبلاگ</a
-          >
-          <a
-            href="#"
-            class="py-2 text-gray-800 hover:text-pink-500 transition-colors"
-            >درباره ما</a
-          >
-          <a
-            href="#"
-            class="py-2 text-gray-800 hover:text-pink-500 transition-colors"
-            >تماس با ما</a
-          >
-        </div>
-      </div>
-    </nav>
+<%- include('./partials/navbar') %>
 
     <div class="bg-white rounded-lg shadow-lg p-8 mb-6 text-center mt-20">
       <div
@@ -328,4 +218,5 @@
       </a>
     </div>
   </body>
+  <%- include('./partials/footer') %>
 </html>

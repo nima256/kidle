@@ -241,6 +241,70 @@ body.modal-open {
 }
 
 
+  @media (min-width: 768px) {
+    .desktop-menu {
+      display: flex !important;
+    }
+    .hamburger {
+      display: none !important;
+    }
+  }
+  
+  /* استایل‌های هاور برای دسکتاپ */
+  .dropdown:hover .dropdown-menu {
+    display: block !important;
+  }
+  
+  .submenu-item {
+    position: relative;
+  }
+  
+  .submenu-item:hover .submenu-level2 {
+    display: block !important;
+  }
+  
+  .dropdown-menu a:hover,
+  .submenu-level2 a:hover {
+    background-color: #f5f5f5;
+  }
+  
+  /* اطمینان از display صحیح */
+  .dropdown-menu {
+    display: none;
+  }
+  
+  .submenu-level2 {
+    display: none;
+  }
+  
+  /* تنظیمات بیشتر برای هاور */
+  .dropdown:hover .dropdown-menu {
+    display: block;
+  }
+  
+  .submenu-item:hover > .submenu-level2 {
+    display: block;
+  }
+  
+  /* استایل برای موبایل */
+  @media (max-width: 768px) {
+    .flex.items-center.space-x-4 {
+      gap: 12px;
+    }
+  }
+  
+  .mobile-dropdown-menu,
+  .mobile-submenu-level2 {
+    transition: all 0.3s ease;
+  }
+  
+  /* استایل cart-count */
+  .cart-count {
+    top: -8px;
+    left: -8px;
+  }
+
+
     </style>
   </head>
   <body
@@ -270,135 +334,8 @@ body.modal-open {
     </script>
   <!-- نوار ناوبری (مشابه صفحه اصلی) -->
 <!-- ==================== نوار ناوبری (در تمام صفحات ثابت) ==================== -->
-   <nav style="background: rgba(255,255,255,0.85); backdrop-filter: blur(10px); box-shadow: 0 2px 15px rgba(0,0,0,0.08); position: fixed; top: 0; left: 0; right: 0; z-index: 50; padding: 12px 20px;">
-    <div style="max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
-      
-      <!-- لوگو -->
-    <a href="/" id="logo" style="display: flex; align-items: center; gap: 8px; text-decoration: none;">
-      <div class="w-10 h-10 rounded-2xl bg-pink-400 flex items-center justify-center shadow-lg">
-        <i class="fas fa-child text-white text-xl"></i>
-      </div>
-      <div>
-        <span class="block text-xl font-extrabold text-rose-800">کیدل</span>
-        <span class="block text-xs text-rose-600">فروشگاه لباس کودک</span>
-      </div>
-    </a>
+ <%- include('./partials/navbar') %>
 
-
-      <!-- منوی دسکتاپ با ساب‌منو -->
-      <div style="display: none; gap: 24px;" class="desktop-menu">
-        <a href="/" class="nav-link" style="color: #333; text-decoration: none;">خانه</a>
-        
-        <!-- فروشگاه با ساب‌منو -->
-        <div style="position: relative;" class="dropdown">
-          <a href="/shop" class="nav-link" style="color: #333; text-decoration: none; display: flex; align-items: center; gap: 5px;">
-             دسته بندی <i class="fas fa-chevron-down" style="font-size: 12px;"></i>
-          </a>
-          <div class="dropdown-menu" style="position: absolute; top: 100%; right: 0; background: white; box-shadow: 0 4px 12px rgba(0,0,0,0.15); border-radius: 8px; min-width: 200px; display: none; z-index: 100;">
-            <div class="submenu-item" style="position: relative;">
-              <a href="#" style="display: flex; justify-content: space-between; align-items: center; padding: 10px 16px; color: #333; text-decoration: none; border-bottom: 1px solid #eee;">
-                لباس زنانه <i class="fas fa-chevron-left" style="font-size: 10px;"></i>
-              </a>
-              <div class="submenu-level2" style="position: absolute; right: 100%; top: 0; background: white; box-shadow: 0 4px 12px rgba(0,0,0,0.15); border-radius: 8px; min-width: 180px; display: none;">
-                <a href="#" style="display: block; padding: 10px 16px; color: #333; text-decoration: none; border-bottom: 1px solid #eee;">پیراهن زنانه</a>
-                <a href="#" style="display: block; padding: 10px 16px; color: #333; text-decoration: none; border-bottom: 1px solid #eee;">شلوار زنانه</a>
-                <a href="#" style="display: block; padding: 10px 16px; color: #333; text-decoration: none;">مانتو و کت</a>
-              </div>
-            </div>
-            <div class="submenu-item" style="position: relative;">
-              <a href="#" style="display: flex; justify-content: space-between; align-items: center; padding: 10px 16px; color: #333; text-decoration: none; border-bottom: 1px solid #eee;">
-                لباس مردانه <i class="fas fa-chevron-left" style="font-size: 10px;"></i>
-              </a>
-              <div class="submenu-level2" style="position: absolute; right: 100%; top: 0; background: white; box-shadow: 0 4px 12px rgba(0,0,0,0.15); border-radius: 8px; min-width: 180px; display: none;">
-                <a href="#" style="display: block; padding: 10px 16px; color: #333; text-decoration: none; border-bottom: 1px solid #eee;">پیراهن مردانه</a>
-                <a href="#" style="display: block; padding: 10px 16px; color: #333; text-decoration: none; border-bottom: 1px solid #eee;">شلوار مردانه</a>
-                <a href="#" style="display: block; padding: 10px 16px; color: #333; text-decoration: none;">کت و شلوار</a>
-              </div>
-            </div>
-            <a href="#" style="display: block; padding: 10px 16px; color: #333; text-decoration: none; border-bottom: 1px solid #eee;">اکسسوری</a>
-            <a href="#" style="display: block; padding: 10px 16px; color: #333; text-decoration: none;">کفش</a>
-          </div>
-        </div>
-        <a href="/shop" class="nav-link" style="color: #333; text-decoration: none;">فروشگاه</a>
-        <a href="/weblog" class="nav-link" style="color: #333; text-decoration: none;">وبلاگ</a>
-        <a href="/about-us" class="nav-link" style="color: #333; text-decoration: none;">درباره ما</a>
-        <a href="/contact-us" class="nav-link" style="color: #333; text-decoration: none;">تماس با ما</a>
-      </div>
-
-      <!-- آیکون‌ها و همبرگر -->
-    <div class="flex items-center space-x-4 space-x-reverse order-1 md:order-3">
-      <div class="relative">
-        <button class="relative text-gray-700 hover:text-pink-500 transition-colors">
-          <a href="/cart">
-            <i class="fas fa-shopping-bag text-xl"></i>
-          </a>
-          <% if(user) { %>
-            <span id="cartCount" class="absolute cart-count bg-pink-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-              <%= toPersianDigitsForSizes(cartCount) %>
-            </span>
-          <% } %>
-        </button>
-      </div>
-      <% if (!user) {%>
-        <!-- مهم: این دکمه باید آیدی صحیح داشته باشه -->
-        <button id="user-auth-button" class="text-gray-700 hover:text-pink-500 transition-colors">
-          <i class="fas fa-user text-xl"></i>
-        </button>
-      <% } else { %>
-        <a href="/userProfile">
-          <button class="text-gray-700 hover:text-pink-500 transition-colors">
-            <i class="fas fa-user text-xl"></i>
-          </button>
-        </a>
-      <% } %>
-      <button id="menu-btn" style="color: #333; font-size: 24px; background: none; border: none; cursor: pointer; display: block;" class="hamburger">
-        <i class="fas fa-bars"></i>
-      </button>
-    </div>
-    </div>
-
-    <!-- منوی موبایل با ساب‌منو -->
-    <div id="mobile-menu" style="display: none; margin-top: 15px; padding-top: 15px; border-top: 1px solid #eee; flex-direction: column; gap: 10px;">
-      <a href="/" style="display: block; padding: 8px; color: #333; text-decoration: none;">خانه</a>
-      
-      <div class="mobile-dropdown">
-        <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px; cursor: pointer;" class="mobile-dropdown-trigger">
-          <span style="color: #333;">دسته بندی </span>
-          <i class="fas fa-chevron-down" style="font-size: 12px; transition: transform 0.3s;"></i>
-        </div>
-        <div class="mobile-dropdown-menu" style="display: none; padding-right: 15px;">
-          <div class="mobile-submenu">
-            <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px; cursor: pointer;" class="mobile-submenu-trigger">
-              <span style="color: #555;">لباس زنانه</span>
-              <i class="fas fa-chevron-left" style="font-size: 10px; transition: transform 0.3s;"></i>
-            </div>
-            <div class="mobile-submenu-level2" style="display: none; padding-right: 15px;">
-              <a href="#" style="display: block; padding: 8px; color: #666; text-decoration: none;">پیراهن زنانه</a>
-              <a href="#" style="display: block; padding: 8px; color: #666; text-decoration: none;">شلوار زنانه</a>
-              <a href="#" style="display: block; padding: 8px; color: #666; text-decoration: none;">مانتو و کت</a>
-            </div>
-          </div>
-          <div class="mobile-submenu">
-            <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px; cursor: pointer;" class="mobile-submenu-trigger">
-              <span style="color: #555;">لباس مردانه</span>
-              <i class="fas fa-chevron-left" style="font-size: 10px; transition: transform 0.3s;"></i>
-            </div>
-            <div class="mobile-submenu-level2" style="display: none; padding-right: 15px;">
-              <a href="#" style="display: block; padding: 8px; color: #666; text-decoration: none;">پیراهن مردانه</a>
-              <a href="#" style="display: block; padding: 8px; color: #666; text-decoration: none;">شلوار مردانه</a>
-              <a href="#" style="display: block; padding: 8px; color: #666; text-decoration: none;">کت و شلوار</a>
-            </div>
-          </div>
-          <a href="#" style="display: block; padding: 8px; color: #555; text-decoration: none;">اکسسوری</a>
-          <a href="#" style="display: block; padding: 8px; color: #555; text-decoration: none;">کفش</a>
-        </div>
-      </div>
-      <a href="/shop" style="display: block; padding: 8px; color: #333; text-decoration: none;">فروشگاه</a>
-      <a href="/weblog" style="display: block; padding: 8px; color: #333; text-decoration: none;">وبلاگ</a>
-      <a href="/about-us" style="display: block; padding: 8px; color: #333; text-decoration: none;">درباره ما</a>
-      <a href="/contact-us" style="display: block; padding: 8px; color: #333; text-decoration: none;">تماس با ما</a>
-    </div>
-   </nav>
 
    <!-- ==================== پاپ‌آپ احراز هویت ==================== -->
    <div id="auth-popup" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
@@ -738,7 +675,7 @@ body.modal-open {
                     <div class="flex flex-col space-y-1"> <!-- Added column container -->
                       <% order.products.forEach(item => { %>
                         <div class="flex flex-col"> <!-- Column for each product -->
-                              <span><%= item.product.name %> - <%= toPersianDigitsForSizes(item.quantity) %> عدد</span>
+                              <span><%= item?.product?.name %> - <%= toPersianDigitsForSizes(item?.quantity) %> عدد</span>
                         </div>
                       <% }) %>
                     </div>
@@ -830,7 +767,7 @@ body.modal-open {
                           <div class="flex flex-col space-y-1"> <!-- Added column container -->
                             <% order.products.forEach(item => { %>
                               <div class="flex flex-col"> <!-- Column for each product -->
-                                    <span><%= item.product.name %> - <%= toPersianDigitsForSizes(item.quantity) %> عدد</span>
+                                    <span><%= item?.product?.name %> - <%= toPersianDigitsForSizes(item?.quantity) %> عدد</span>
                               </div>
                             <% }) %>
                           </div>
@@ -922,7 +859,7 @@ body.modal-open {
                           <div class="flex flex-col space-y-1"> <!-- Added column container -->
                             <% order.products.forEach(item => { %>
                               <div class="flex flex-col"> <!-- Column for each product -->
-                                    <span><%= item.product.name %> - <%= toPersianDigitsForSizes(item.quantity) %> عدد</span>
+                                    <span><%= item?.product?.name %> - <%= toPersianDigitsForSizes(item?.quantity) %> عدد</span>
                               </div>
                             <% }) %>
                           </div>
@@ -1070,121 +1007,8 @@ body.modal-open {
         </div>
       </div>
     </div>
-<footer class="bg-gray-900 text-white py-12">
-  <div class="container mx-auto px-4">
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
-      <!-- درباره فروشگاه -->
-      <div>
-        <div class="flex items-center space-x-reverse space-x-3 mb-4">
-          <div
-            class="w-10 h-10 bg-gradient-to-r from-pink-500 to-rose-500 rounded-lg flex items-center justify-center"
-          >
-            <svg
-              class="w-6 h-6 text-white"
-              fill="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
-            </svg>
-          </div>
-          <h3 class="text-xl font-bold">کیدل | فروشگاه لباس کودک</h3>
-        </div>
-        <p class="text-gray-400 text-sm leading-relaxed">
-          فروشگاه تخصصی پوشاک کودک و نوزاد، با بهترین کیفیت و مناسب‌ترین قیمت
-        </p>
-        <p class="text-gray-400 text-sm leading-relaxed mt-3">
-          <i class="fas fa-phone ml-2"></i> تماس: 0905424346
-        </p>
-        <p class="text-gray-400 text-sm leading-relaxed mt-1">
-          <i class="fas fa-map-marker-alt ml-2"></i> گرگان خیابان پاسداران پاساژ وارکانا پلاک 51
-        </p>
-      </div>
+<%- include('./partials/footer') %>
 
-      <!-- دسته‌بندی محصولات -->
-      <div>
-        <h4 class="font-bold mb-4 text-pink-400">دسته‌بندی‌ها</h4>
-        <ul class="space-y-2 text-sm text-gray-400">
-          <li>
-            <a href="#" class="hover:text-pink-400 transition-colors">لباس نوزاد (۰-۲۴ ماه)</a>
-          </li>
-          <li>
-            <a href="#" class="hover:text-pink-400 transition-colors">لباس کودک (۲-۷ سال)</a>
-          </li>
-          <li>
-            <a href="#" class="hover:text-pink-400 transition-colors">لباس پسرانه</a>
-          </li>
-          <li>
-            <a href="#" class="hover:text-pink-400 transition-colors">لباس دخترانه</a>
-          </li>
-          <li>
-            <a href="#" class="hover:text-pink-400 transition-colors">ست و اکسسوری کودک</a>
-          </li>
-        </ul>
-      </div>
-
-      <!-- لینک‌های مفید -->
-      <div>
-        <h4 class="font-bold mb-4 text-pink-400">لینک‌های مفید</h4>
-        <ul class="space-y-2 text-sm text-gray-400">
-          <li>
-            <a href="#" class="hover:text-pink-400 transition-colors">درباره ما</a>
-          </li>
-          <li>
-            <a href="#" class="hover:text-pink-400 transition-colors">تماس با ما</a>
-          </li>
-          <li>
-            <a href="#" class="hover:text-pink-400 transition-colors">فروشگاه </a>
-          </li>
-        </ul>
-      </div>
-
-      <!-- شبکه‌های اجتماعی و نمادها -->
-      <div>
-        <h4 class="font-bold mb-4 text-pink-400">ما را دنبال کنید</h4>
-        <div class="flex space-x-reverse space-x-4 mb-6">
-          <a
-            href="#"
-            class="w-10 h-10 bg-gray-800 rounded-lg flex items-center justify-center hover:bg-pink-500 transition-colors"
-          >
-            <i class="fab fa-instagram text-xl"></i>
-          </a>
-          <a
-            href="#"
-            class="w-10 h-10 bg-gray-800 rounded-lg flex items-center justify-center hover:bg-pink-500 transition-colors"
-          >
-            <i class="fab fa-telegram text-xl"></i>
-          </a>
-          <a
-            href="#"
-            class="w-10 h-10 bg-gray-800 rounded-lg flex items-center justify-center hover:bg-pink-500 transition-colors"
-          >
-            <i class="fab fa-whatsapp text-xl"></i>
-          </a>
-        </div>
-        <div class="mt-4">
-          <p class="text-gray-400 text-sm mb-2">ایمیل:</p>
-          <p class="text-gray-400 text-sm">info@kidland.com</p>
-        </div>
-      </div>
-    </div>
-            <a referrerpolicy='origin' target='_blank' href='https://trustseal.enamad.ir/?id=731837&Code=jSMW53UKTzbJlysi5bIKHLWgBO1HddCW'><img referrerpolicy='origin' src='https://trustseal.enamad.ir/logo.aspx?id=731837&Code=jSMW53UKTzbJlysi5bIKHLWgBO1HddCW' alt='' style='cursor:pointer' code='jSMW53UKTzbJlysi5bIKHLWgBO1HddCW'></a>
-
-    <!-- کپی‌رایت و نمادهای اعتماد -->
-    <div class="border-t border-gray-800 mt-8 pt-8">
-      <div class="flex flex-col md:flex-row justify-between items-center gap-4">
-          
-        <div class="text-center text-sm text-gray-400">
-          <p>© 1406 فروشگاه کیدل. تمامی حقوق محفوظ است.</p>
-        </div>
-        <div class="flex space-x-reverse space-x-3">
-          <span class="text-xs text-gray-500">پشتیبانی ۲۴ ساعته</span>
-          <span class="text-xs text-gray-500">ارسال سریع</span>
-          <span class="text-xs text-gray-500">تضمین اصالت کالا</span>
-        </div>
-      </div>
-    </div>
-  </div>
-</footer>
 <div id="logout-modal" class="fixed inset-0 bg-gray-900/60 backdrop-blur-sm hidden items-center justify-center z-50 p-4" style="background-color: rgba(0, 0, 0, 0.5);">
     <div class="bg-white rounded-2xl max-w-sm w-full mx-4 shadow-2xl transform transition-all duration-300" id="logout-modal-content">
         <!-- هدر مودال با خط جداکننده -->

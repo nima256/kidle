@@ -347,6 +347,7 @@ const upload = multer();
 const Product = require("../models/Product");
 const { body, validationResult } = require("express-validator");
 const mongoose = require("mongoose");
+const Category = require("../models/Category");
 
 // For access to req.body
 router.use(express.json());
@@ -555,12 +556,52 @@ router.post(
 // صفحه موفقیت
 router.get("/payment-success", async (req, res) => {
   const orderNum = req.query.orderNum || req.session.OrderNum;
-  res.render("PaymentSuccess", { OrderNum: orderNum });
+
+    const allCategories = await Category.find({ 
+      categoryType: "product",
+      isActive: true 
+    });
+    
+    // ساخت ساختار درختی برای منو
+    const categoryMap = {};
+    allCategories.forEach(cat => {
+      categoryMap[cat._id] = { ...cat.toObject(), children: [] };
+    });
+    
+    const menuCategories = [];
+    allCategories.forEach(cat => {
+      if (cat.parentId && categoryMap[cat.parentId]) {
+        categoryMap[cat.parentId].children.push(categoryMap[cat._id]);
+      } else if (!cat.parentId) {
+        menuCategories.push(categoryMap[cat._id]);
+      }
+    });
+  res.render("PaymentSuccess", { OrderNum: orderNum , menuCategories});
 });
 
 // صفحه شکست (برای مواقعی که نیاز باشه)
 router.get("/payment-failed", async (req, res) => {
-  res.render("PaymentFailed", { OrderNum: req.session.OrderNum });
+
+      const allCategories = await Category.find({ 
+      categoryType: "product",
+      isActive: true 
+    });
+    
+    // ساخت ساختار درختی برای منو
+    const categoryMap = {};
+    allCategories.forEach(cat => {
+      categoryMap[cat._id] = { ...cat.toObject(), children: [] };
+    });
+    
+    const menuCategories = [];
+    allCategories.forEach(cat => {
+      if (cat.parentId && categoryMap[cat.parentId]) {
+        categoryMap[cat.parentId].children.push(categoryMap[cat._id]);
+      } else if (!cat.parentId) {
+        menuCategories.push(categoryMap[cat._id]);
+      }
+    });
+  res.render("PaymentFailed", { OrderNum: req.session.OrderNum, menuCategories });
 });
 
 module.exports = router;
