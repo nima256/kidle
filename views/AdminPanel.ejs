@@ -358,7 +358,60 @@
     text-anchor: middle;
     font-weight: 500;
 }
+.sidebar-item {
+    position: relative;
+}
 
+#newOrdersBadge {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    color: white;
+    font-size: 10px;
+    font-weight: bold;
+    min-width: 18px;
+    height: 18px;
+    border-radius: 18px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 5px;
+    box-shadow: 0 2px 5px rgba(239, 68, 68, 0.4);
+    animation: pulse 1.5s infinite;
+    z-index: 10;
+    line-height: 1;
+}
+
+/* استایل برای اعداد بزرگتر */
+#newOrdersBadge.badge-large {
+    min-width: 24px;
+    height: 20px;
+    font-size: 9px;
+    padding: 0 5px;
+}
+
+/* انیمیشن پالس */
+@keyframes pulse {
+    0% { 
+        transform: translateY(-50%) scale(1);
+        box-shadow: 0 2px 5px rgba(239, 68, 68, 0.4);
+    }
+    50% { 
+        transform: translateY(-50%) scale(1.15);
+        box-shadow: 0 4px 10px rgba(239, 68, 68, 0.6);
+    }
+    100% { 
+        transform: translateY(-50%) scale(1);
+        box-shadow: 0 2px 5px rgba(239, 68, 68, 0.4);
+    }
+}
+
+/* وقتی badge 0 هست (مخفی) */
+#newOrdersBadge.hidden {
+    display: none !important;
+}
 
     </style>
 
@@ -399,10 +452,6 @@
                 <div class="flex items-center space-x-reverse space-x-2 md:space-x-4">
                     <!-- Notifications -->
                     <div class="relative">
-                        <button onclick="toggleNotifications()" class="p-2 md:p-3 text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-full transition-all">
-                            <i class="fas fa-bell text-lg"></i>
-                            <span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center animate-pulse">3</span>
-                        </button>
                         
                         <!-- Notifications Dropdown -->
                         <div id="notificationsMenu" class="hidden absolute left-0 mt-2 w-80 max-w-sm glass-card rounded-lg shadow-lg border border-gray-200 z-50">
@@ -495,9 +544,15 @@
                     <i class="fas fa-tags text-lg"></i>
                     <span class="font-medium">مدیریت</span>
                 </button>
-                <button onclick="showSection('orders')" class="sidebar-item w-full text-right px-3 md:px-4 py-3 md:py-4 rounded-lg text-gray-700 transition-all duration-300 flex items-center space-x-reverse space-x-3">
-                    <i class="fas fa-shopping-cart text-lg"></i>
-                    <span class="font-medium">سفارشات</span>
+                <button onclick="showSection('orders')" class="sidebar-item w-full text-right px-3 md:px-4 py-3 md:py-4 rounded-lg text-gray-700 transition-all duration-300 flex items-center justify-between group hover:bg-gradient-to-l hover:from-blue-600 hover:to-indigo-600">
+                    <div class="flex items-center space-x-reverse space-x-3">
+                        <i class="fas fa-shopping-cart text-lg group-hover:text-white"></i>
+                        <span class="font-medium group-hover:text-white">سفارشات</span>
+                    </div>
+                    <span id="newOrdersBadge" class="hidden">
+                        0
+                    </span>
+                </button>
                 </button>
                 <button onclick="showSection('weblogs')" class="sidebar-item w-full text-right px-3 md:px-4 py-3 md:py-4 rounded-lg text-gray-700 transition-all duration-300 flex items-center space-x-reverse space-x-3">
                     <i class="fas fa-newspaper text-lg"></i>
@@ -1684,18 +1739,10 @@
             overlay.classList.remove('show');
         }
 
-        // Navigation Functions
-        function toggleNotifications() {
-            const menu = document.getElementById('notificationsMenu');
-            menu.classList.toggle('hidden');
-        }
-
         function toggleProfileMenu() {
             const menu = document.getElementById('profileMenu');
             menu.classList.toggle('hidden');
         }
-
-
 
         function showSection(section) {
             // Close mobile sidebar
@@ -1719,19 +1766,23 @@
             
             // Load section data
             if (section === 'dashboard') {
-            setTimeout(() => {
-                initChart();
-                if (typeof initVisitsChart === 'function') {
-                    initVisitsChart();
-                }
-            }, 100);
+                setTimeout(() => {
+                    initChart();
+                    if (typeof initVisitsChart === 'function') {
+                        initVisitsChart();
+                    }
+                }, 100);
             } else if (section === 'products') {
                 loadProducts();
             } else if (section === 'categories') {
                 loadCategories();
                 loadBrands();
+                loadDiscounts();
             } else if (section === 'orders') {
-                loadOrders();
+                loadOrdersFromServer();
+                setTimeout(() => {
+                    markOrdersAsSeen();
+                }, 2000);
             } else if (section === 'weblogs') {  // اضافه کن
                 loadWeblogs();
                 loadWeblogCategories();
@@ -1752,8 +1803,10 @@
             const tbody = document.getElementById('productsTableBody');
             tbody.innerHTML = '';
 
+            const reversedProducts = [...products].reverse();
+
             
-            products.forEach((product, index) => {
+            reversedProducts.forEach((product, index) => {
                 const brandName = product.brand?.name || 
                                 (typeof product.brand === 'string' ? 'در حال بارگذاری...' : 'نامشخص');
                 
@@ -2249,8 +2302,10 @@
         function loadCategories() {
             const container = document.getElementById('categoriesList');
             container.innerHTML = '';
+
+            const reversedCategories = [...categories].reverse();
             
-            categories.forEach((category, index) => {
+            reversedCategories.forEach((category, index) => {
                 const item = document.createElement('div');
                 item.className = 'category-item p-3 md:p-4 rounded-xl flex justify-between items-center';
                 item.innerHTML = `
@@ -2271,8 +2326,10 @@
         function loadBrands() {
             const container = document.getElementById('brandsList');
             container.innerHTML = '';
+
+            const reversedBrands = [...brands].reverse();
             
-            brands.forEach((brand, index) => {
+            reversedBrands.forEach((brand, index) => {
                 const item = document.createElement('div');
                 item.className = 'category-item p-3 md:p-4 rounded-xl flex justify-between items-center';
                 item.innerHTML = `
@@ -2300,8 +2357,10 @@
                 container.innerHTML = '<div class="text-center text-gray-500 p-4">هیچ کد تخفیفی وجود ندارد</div>';
                 return;
             }
+
+            const reversedDiscounts = [...discounts].reverse();
             
-            discounts.forEach((discount, index) => {
+            reversedDiscounts.forEach((discount, index) => {
                 const item = document.createElement('div');
                 item.className = 'category-item p-3 md:p-4 rounded-xl flex justify-between items-center';
                 
@@ -2987,14 +3046,92 @@
             currentItemType = null;
         }
 
-        let orders = <%- JSON.stringify(orders) %>;
+        let orders = [];
+
+        async function loadOrdersFromServer() {
+            try {
+                const response = await fetch('/admin/api/orders');
+                const data = await response.json();
+                
+                if (data.success) {
+                    orders = data.orders;
+                    renderOrders();  // رندر کردن
+                    return true;
+                }
+            } catch (error) {
+                console.error('Error loading orders:', error);
+            }
+            return false;
+        }
+
+        function renderOrders() {
+            const tbody = document.getElementById('ordersTableBody');
+            tbody.innerHTML = '';
+            
+            orders.forEach((order, index) => {
+                const row = document.createElement('tr');
+                row.className = 'product-row transition-all duration-300';
+                
+                const statusClasses = {
+                    'در حال پردازش': 'bg-yellow-100 text-yellow-800',
+                    'بسته بندی شده': 'bg-blue-100 text-blue-800',
+                    'در حال ارسال': 'bg-purple-100 text-purple-800',
+                    'تحویل داده شد': 'bg-green-100 text-green-800',
+                    'لغو شده': 'bg-red-100 text-red-800'
+                };
+
+                let classForStatus;
+                if (order.status === "در حال پردازش") {
+                    classForStatus = statusClasses['در حال پردازش']
+                } else if (order.status === "بسته بندی شده") {
+                    classForStatus = statusClasses['بسته بندی شده']
+                } else if (order.status === "در حال ارسال") {
+                    classForStatus = statusClasses['در حال ارسال']
+                } else if (order.status === "تحویل داده شد") {
+                    classForStatus = statusClasses['تحویل داده شد']
+                } else if (order.status === "لغو شده") {
+                    classForStatus = statusClasses['لغو شده']
+                }
+                
+                // استفاده از formattedDateTime یا fallback به createTarikh
+                const dateTimeDisplay = order.formattedDateTime || order.createTarikh;
+                                
+                row.innerHTML = `
+                    <td class="px-3 md:px-6 py-3 md:py-4 text-xs md:text-sm font-medium text-gray-900">${order.OrderNum}</td>
+                    <td class="px-3 md:px-6 py-3 md:py-4 text-xs md:text-sm text-gray-900 hidden md:table-cell">${order.user?.fullName || 'نامشخص'}</td>
+                    <td class="px-3 md:px-6 py-3 md:py-4 text-xs md:text-sm font-semibold text-green-600">${toPersianDigits(order.totalPrice)} تومان</td>
+                    <td class="px-3 md:px-6 py-3 md:py-4">
+                        <select onchange="updateOrderStatus('${order._id}', this)" 
+                            class="${classForStatus} px-2 md:px-3 py-1 rounded-full text-xs font-medium border-none">
+                            <option value="pending" ${order.status === 'در حال پردازش' ? 'selected' : ''}>در حال پردازش</option>
+                            <option value="processing" ${order.status === 'بسته بندی شده' ? 'selected' : ''}>بسته بندی شده</option>
+                            <option value="shipping" ${order.status === 'در حال ارسال' ? 'selected' : ''}>در حال ارسال</option>
+                            <option value="delivered" ${order.status === 'تحویل داده شد' ? 'selected' : ''}>تحویل داده شد</option>
+                            <option value="cancelled" ${order.status === 'لغو شده' ? 'selected' : ''}>لغو شده</option>
+                        </select>
+                    </td>
+                    <td class="px-3 md:px-6 py-3 md:py-4 text-xs md:text-sm text-gray-600 hidden sm:table-cell">
+                        ${dateTimeDisplay}
+                    </td>
+                    <td class="px-3 md:px-6 py-3 md:py-4">
+                        <button onclick="viewOrder('${order._id}')" class="action-btn p-1 md:p-2 text-blue-600 hover:bg-blue-50 rounded-full transition-all">
+                            <i class="fas fa-eye text-sm"></i>
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
 
         // Order Functions
         function loadOrders() {
             const tbody = document.getElementById('ordersTableBody');
             tbody.innerHTML = '';
+
+            const reversedOrders = [...orders].reverse();
             
-            orders.forEach((order, index) => {
+            reversedOrders.forEach((order, index) => {
                 const row = document.createElement('tr');
                 row.className = 'product-row transition-all duration-300';
                 
@@ -3099,8 +3236,10 @@
                 tbody.innerHTML = '<tr><td colspan="8" class="text-center py-8 text-gray-500">هیچ مقاله‌ای وجود ندارد</td></tr>';
                 return;
             }
+
+            const reversedWeblogs = [...weblogs].reverse();
             
-            weblogs.forEach((weblog, index) => {
+            reversedWeblogs.forEach((weblog, index) => {
                 const row = document.createElement('tr');
                 row.className = 'product-row transition-all duration-300';
                 
@@ -4173,6 +4312,50 @@ function logout() {
     showAdminLogoutModal();
 }
 
+async function fetchNewOrdersCount() {
+    try {
+        const response = await fetch('/admin/api/new-orders-count');
+        const data = await response.json();
+        
+        console.log('New orders count response:', data);
+        
+        if (data.success && data.count > 0) {
+            const badge = document.getElementById('newOrdersBadge');
+            const count = data.count > 99 ? '99+' : (data.count > 9 ? '9+' : data.count);
+            badge.textContent = count;
+            
+            // اضافه کردن کلاس برای اعداد بزرگ
+            if (data.count > 9) {
+                badge.classList.add('badge-large');
+            } else {
+                badge.classList.remove('badge-large');
+            }
+            
+            badge.classList.remove('hidden');
+        } else {
+            document.getElementById('newOrdersBadge').classList.add('hidden');
+        }
+    } catch (error) {
+        console.error('Error fetching new orders count:', error);
+    }
+}
+
+// تابع برای مارک کردن سفارشات به عنوان دیده شده
+async function markOrdersAsSeen() {
+    try {
+        const response = await fetch('/admin/api/mark-orders-seen', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' }
+        });
+        
+        if (response.ok) {
+            document.getElementById('newOrdersBadge').classList.add('hidden');
+            console.log('Orders marked as seen');
+        }
+    } catch (error) {
+        console.error('Error marking orders as seen:', error);
+    }
+}
 
         // Initialize
         document.addEventListener('DOMContentLoaded', function() {
@@ -4187,6 +4370,13 @@ function logout() {
             loadDiscounts();
             loadOrders();
             loadWeblogs();
+
+            fetchNewOrdersCount();  // چک کردن اولیه سفارشات جدید
+            setInterval(fetchNewOrdersCount, 5000);  // هر 30 ثانیه یکبار چک کن
+            
+            if (window.location.hash === '#orders') {
+                markOrdersAsSeen();
+            }
         });
     </script>
 </body>

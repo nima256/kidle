@@ -17,6 +17,7 @@ const Brand = require("../models/Brand");
 const DiscountCode = require("../models/DiscountCode");
 const Visit = require("../models/Visit");
 const RecentAction = require("../models/RecentAction");
+const AdminNotification = require("../models/AdminNotification");
 
 const { getPersianDate } = require("../helper/getPersianDate");
 const Weblog = require("../models/Weblog");
@@ -1780,6 +1781,112 @@ router.get("/api/orders-stats", async (req, res) => {
     console.error("Error:", error);
     res.json({ success: false, error: error.message });
   }
+});
+
+router.get("/api/new-orders-count", async (req, res) => {
+  try {
+    const adminId = req.admin?._id;
+    if (!adminId) {
+      return res.status(401).json({ success: false, message: "ادمین یافت نشد" });
+    }
+    
+    // دریافت آخرین سفارش دیده شده
+    let notification = await AdminNotification.findOne({ adminId });
+    
+    let query = { 
+      status: { $nin: ["لغو شده", "در انتظار پرداخت"] }
+    };
+    
+    if (notification && notification.lastSeenOrderId) {
+      const lastSeenOrder = await Order.findById(notification.lastSeenOrderId);
+      if (lastSeenOrder && lastSeenOrder.createdAt) {
+        query.createdAt = { $gt: lastSeenOrder.createdAt };
+      }
+    }
+    
+    const newOrdersCount = await Order.countDocuments(query);
+    
+    res.json({
+      success: true,
+      count: newOrdersCount,
+      hasNew: newOrdersCount > 0
+    });
+  } catch (error) {
+    console.error("Error getting new orders count:", error);
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+// مارک کردن سفارشات به عنوان دیده شده
+router.post("/api/mark-orders-seen", async (req, res) => {
+  try {
+    const adminId = req.admin?._id;
+    if (!adminId) {
+      return res.status(401).json({ success: false });
+    }
+    
+    const latestOrder = await Order.findOne({ 
+      status: { $nin: ["لغو شده", "در انتظار پرداخت"] }
+    }).sort({ createdAt: -1 });
+    
+    if (latestOrder) {
+      await AdminNotification.findOneAndUpdate(
+        { adminId },
+        { 
+          lastSeenOrderId: latestOrder._id,
+          lastSeenAt: new Date()
+        },
+        { upsert: true, new: true }
+      );
+    }
+    
+    res.json({ success: true });
+  } catch (error) {
+    console.error("Error marking orders as seen:", error);
+    res.status(500).json({ success: false });
+  }
+});
+
+router.get("/api/orders", async (req, res) => {
+    try {
+        const orders = await Order.find({})
+            .populate("user", "fullName email phone")
+            .populate("products.product")
+            .sort({ createdAt: -1 });
+            
+        // تبدیل زمان‌ها به وقت ایران
+        const formattedOrders = orders.map(order => {
+            const orderObj = order.toObject();
+            
+            // تبدیل createdAt به وقت ایران
+            if (orderObj.createdAt) {
+                const date = new Date(orderObj.createdAt);
+                // فرمت: ۱۴۰۴/۰۳/۰۱ ۱۵:۳۰:۰۰
+                orderObj.formattedDateTime = date.toLocaleString('fa-IR', {
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit',
+                    hour12: false
+                });
+            }
+            
+            return orderObj;
+        });
+        
+        res.json({
+            success: true,
+            orders: formattedOrders
+        });
+    } catch (error) {
+        console.error("Error fetching orders:", error);
+        res.status(500).json({
+            success: false,
+            message: error.message
+        });
+    }
 });
 
 
