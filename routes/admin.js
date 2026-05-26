@@ -1410,171 +1410,198 @@ router.get("/weblogs", async (req, res) => {
 });
 
 // افزودن مقاله جدید
-router.post("/weblogs/add", validateWeblog, async (req, res) => {
-  try {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({
-        success: false,
-        message: "خطا در اعتبارسنجی",
-        errors: errors.array(),
-      });
+router.post("/weblogs/add", async (req, res) => {
+    try {
+        const {
+            title,
+            description,
+            content,
+            images,
+            categories,
+            tags,
+            readingTime,
+            isFeatured,
+            isPublished,
+            metaTitle,
+            metaDescription
+        } = req.body;
+
+        // اعتبارسنجی
+        if (!title || !description || !content) {
+            return res.status(400).json({ success: false, message: 'عنوان، توضیحات و محتوا الزامی هستند' });
+        }
+
+        // پردازش صحیح تصاویر
+        let processedImages = [];
+        if (images && Array.isArray(images)) {
+            processedImages = images.map(img => {
+                // اگر img رشته است (URL) به آبجکت تبدیل کن
+                if (typeof img === 'string') {
+                    return {
+                        url: img,
+                        filename: img.split('/').pop() || 'unknown'
+                    };
+                }
+                // اگر img آبجکت است و url دارد
+                if (img && typeof img === 'object' && img.url) {
+                    return {
+                        url: img.url,
+                        filename: img.filename || img.url.split('/').pop() || 'unknown'
+                    };
+                }
+                return null;
+            }).filter(img => img !== null);
+        }
+
+        // تولید slug
+        const slug = title
+            .toString()
+            .trim()
+            .toLowerCase()
+            .replace(/\s+/g, '-')
+            .replace(/[^\u0600-\u06FF\uFB8A\u067E\u0686\u06AF\u200C\u0629\u0640a-z0-9\-]/g, '')
+            .replace(/\-{2,}/g, '-')
+            .replace(/^\-+|\-+$/g, '');
+
+        const weblog = new Weblog({
+            title,
+            slug,
+            description,
+            content,
+            images: processedImages,
+            categories: categories || [],
+            tags: tags || [],
+            readingTime: readingTime || 5,
+            isFeatured: isFeatured || false,
+            isPublished: isPublished || false,
+            metaTitle: metaTitle || title,
+            metaDescription: metaDescription || description,
+            author: req.admin._id,
+            createTarikh: getPersianDate(),
+            updateTarikh: getPersianDate()
+        });
+
+        await weblog.save();
+        
+        // populate نویسنده
+        await weblog.populate('author', 'fullName');
+        await weblog.populate('categories', 'name');
+        
+        res.status(201).json({ 
+            success: true, 
+            message: 'مقاله با موفقیت ایجاد شد',
+            weblog
+        });
+        
+    } catch (error) {
+        console.error('Error creating weblog:', error);
+        res.status(500).json({ success: false, message: error.message });
     }
-
-    const {
-      title,
-      slug,
-      description,
-      content,
-      images,
-      categories,
-      tags,
-      readingTime,
-      isFeatured,
-      isPublished,
-      metaTitle,
-      metaDescription,
-    } = req.body;
-
-    let formattedImages = [];
-    if (images && images.length > 0) {
-      formattedImages = images.map(img => {
-        // استخراج filename از URL
-        const filename = img.split('/').pop();
-        return {
-          url: img,
-          filename: filename
-        };
-      });
-    }
-
-    const weblog = new Weblog({
-      title,
-      slug,
-      description,
-      content,
-      images: formattedImages,
-      categories: categories || [],
-      tags: tags || [],
-      readingTime: readingTime || 5,
-      isFeatured: isFeatured || false,
-      isPublished: isPublished || false,
-      metaTitle,
-      metaDescription,
-      author: req.session.userId,
-      createTarikh: getPersianDate(),
-      updateTarikh: getPersianDate(),
-    });
-
-    await weblog.save();
-
-    const populatedWeblog = await Weblog.findById(weblog._id)
-      .populate("author", "fullName email")
-      .populate("categories", "name");
-
-    res.status(201).json({
-      success: true,
-      message: "مقاله با موفقیت ایجاد شد",
-      weblog: populatedWeblog,
-    });
-  } catch (error) {
-    console.error("Error creating weblog:", error);
-    res.status(500).json({
-      success: false,
-      message: "خطا در ایجاد مقاله",
-      error: error.message,
-    });
-  }
 });
+
+
 
 // ویرایش مقاله
-router.put("/weblogs/edit/:id", validateWeblog, async (req, res) => {
-  try {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({
-        success: false,
-        message: "خطا در اعتبارسنجی",
-        errors: errors.array(),
-      });
-    }
+router.put("/weblogs/edit/:id", async (req, res) => {
+    try {
+        const { id } = req.params;
+        
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            return res.status(400).json({ success: false, message: "شناسه مقاله نامعتبر است" });
+        }
+        
+        const {
+            title,
+            description,
+            content,
+            images,
+            categories,
+            tags,
+            readingTime,
+            isFeatured,
+            isPublished,
+            metaTitle,
+            metaDescription
+        } = req.body;
 
-    const { id } = req.params;
-    
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-      return res.status(400).json({
-        success: false,
-        message: "شناسه مقاله نامعتبر است",
-      });
-    }
+        // پردازش صحیح تصاویر
+        let processedImages = [];
+        if (images && Array.isArray(images)) {
+            processedImages = images.map(img => {
+                // اگر img رشته است (URL) به آبجکت تبدیل کن
+                if (typeof img === 'string') {
+                    return {
+                        url: img,
+                        filename: img.split('/').pop() || 'unknown'
+                    };
+                }
+                // اگر img آبجکت است و url دارد
+                if (img && typeof img === 'object' && img.url) {
+                    return {
+                        url: img.url,
+                        filename: img.filename || img.url.split('/').pop() || 'unknown'
+                    };
+                }
+                return null;
+            }).filter(img => img !== null);
+        }
 
-    const {
-      title,
-      description,
-      content,
-      images,
-      categories,
-      tags,
-      readingTime,
-      isFeatured,
-      isPublished,
-      metaTitle,
-      metaDescription,
-    } = req.body;
+        // تولید slug جدید اگر title تغییر کرده باشد
+        let slug;
+        const existingWeblog = await Weblog.findById(id);
+        if (existingWeblog && existingWeblog.title !== title) {
+            slug = title
+                .toString()
+                .trim()
+                .toLowerCase()
+                .replace(/\s+/g, '-')
+                .replace(/[^\u0600-\u06FF\uFB8A\u067E\u0686\u06AF\u200C\u0629\u0640a-z0-9\-]/g, '')
+                .replace(/\-{2,}/g, '-')
+                .replace(/^\-+|\-+$/g, '');
+        }
 
-    let formattedImages = [];
-    if (images && images.length > 0) {
-      formattedImages = images.map(img => {
-        const filename = img.split('/').pop();
-        return {
-          url: img,
-          filename: filename
+        const updateData = {
+            title,
+            description,
+            content,
+            images: processedImages,
+            categories: categories || [],
+            tags: tags || [],
+            readingTime: readingTime || 5,
+            isFeatured: isFeatured || false,
+            isPublished: isPublished || false,
+            metaTitle: metaTitle || title,
+            metaDescription: metaDescription || description,
+            updateTarikh: getPersianDate()
         };
-      });
+        
+        if (slug) {
+            updateData.slug = slug;
+        }
+
+        const weblog = await Weblog.findByIdAndUpdate(
+            id,
+            updateData,
+            { new: true, runValidators: true }
+        ).populate('author', 'fullName').populate('categories', 'name');
+
+        if (!weblog) {
+            return res.status(404).json({ success: false, message: 'مقاله یافت نشد' });
+        }
+
+        res.json({ 
+            success: true, 
+            message: 'مقاله با موفقیت به‌روزرسانی شد',
+            weblog
+        });
+        
+    } catch (error) {
+        console.error('Error updating weblog:', error);
+        res.status(500).json({ success: false, message: error.message });
     }
-
-    const updatedWeblog = await Weblog.findByIdAndUpdate(
-      id,
-      {
-        title,
-        description,
-        content,
-        images: formattedImages,
-        categories: categories || [],
-        tags: tags || [],
-        readingTime: readingTime || 5,
-        isFeatured: isFeatured || false,
-        isPublished: isPublished || false,
-        metaTitle,
-        metaDescription,
-        updateTarikh: getPersianDate(),
-      },
-      { new: true, runValidators: true }
-    )
-      .populate("author", "fullName email")
-      .populate("categories", "name");
-
-    if (!updatedWeblog) {
-      return res.status(404).json({
-        success: false,
-        message: "مقاله یافت نشد",
-      });
-    }
-
-    res.json({
-      success: true,
-      message: "مقاله با موفقیت ویرایش شد",
-      weblog: updatedWeblog,
-    });
-  } catch (error) {
-    console.error("Error updating weblog:", error);
-    res.status(500).json({
-      success: false,
-      message: "خطا در ویرایش مقاله",
-      error: error.message,
-    });
-  }
 });
+
+
 
 // حذف مقاله
 router.delete("/weblogs/delete/:id", async (req, res) => {
@@ -1928,6 +1955,108 @@ router.put("/api/category-description/:id", async (req, res) => {
     res.status(500).json({ success: false, message: error.message });
   }
 });
+
+router.get("/api/weblogs", async (req, res) => {
+  try {
+    const weblogs = await Weblog.find({})
+      .populate("author", "fullName email")
+      .populate("categories", "name")
+      .sort({ createdAt: -1 });
+    
+    res.json({
+      success: true,
+      weblogs,
+    });
+  } catch (error) {
+    console.error("Error fetching weblogs:", error);
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+});
+
+
+// دریافت یک مقاله
+router.get("/api/weblogs/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({
+        success: false,
+        message: "شناسه مقاله نامعتبر است",
+      });
+    }
+
+    const weblog = await Weblog.findById(id)
+      .populate("author", "fullName email")
+      .populate("categories", "name");
+
+    if (!weblog) {
+      return res.status(404).json({
+        success: false,
+        message: "مقاله یافت نشد",
+      });
+    }
+
+    res.json({
+      success: true,
+      weblog,
+    });
+  } catch (error) {
+    console.error("Error fetching weblog:", error);
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+});
+
+// حذف مقاله
+router.delete("/api/weblogs/delete/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({
+        success: false,
+        message: "شناسه مقاله نامعتبر است",
+      });
+    }
+
+    const weblog = await Weblog.findByIdAndDelete(id);
+    
+    if (!weblog) {
+      return res.status(404).json({
+        success: false,
+        message: "مقاله یافت نشد",
+      });
+    }
+
+    res.json({
+      success: true,
+      message: "مقاله با موفقیت حذف شد",
+    });
+  } catch (error) {
+    console.error("Error deleting weblog:", error);
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+});
+
+function generateSlug(text) {
+    return text
+        .toString()
+        .trim()
+        .toLowerCase()
+        .replace(/\s+/g, '-')           // فاصله را به خط تیره تبدیل کن
+        .replace(/[^\u0600-\u06FF\uFB8A\u067E\u0686\u06AF\u200C\u0629\u0640a-z0-9\-]/g, '') // فقط فارسی و انگلیسی و اعداد
+        .replace(/\-{2,}/g, '-')        // خط تیره های تکراری را حذف کن
+        .replace(/^\-+|\-+$/g, '');     // خط تیره اول و آخر را حذف کن
+}
 
 
 

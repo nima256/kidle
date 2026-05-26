@@ -628,15 +628,9 @@
 
 <script>
 // ==================== دیتای مقالات ====================
-const posts = [
-  { id: 1, category: "مد کودک", title: "چطور برای بهار، لباس‌های نرم و لایه‌ای کودک انتخاب کنیم؟", date: "۱۴۰۴/۰۲/۱۵", author: "نگار کریمی", readTime: 3, description: "در روزهای بهاری که هوا گاهی خنک و گاهی گرم می‌شود، انتخاب لباس لایه‌ای و سبک به کودک کمک می‌کند راحت‌تر بازی کند.", imageIcon: "fa-shirt", fullContent: "<p>بهار فصل تغییرات ملایم هواست؛ صبح‌ها ممکن است کمی خنک باشد و ظهرها کودک هنگام بازی احساس گرما کند. بهترین انتخاب برای این فصل، لباس‌هایی هستند که سبک، قابل تنفس و لایه‌لایه باشند.</p><h2>چرا لایه‌پوشی برای کودک مهم است؟</h2><p>کودکان هنگام بازی تحرک زیادی دارند و دمای بدنشان سریع تغییر می‌کند. یک ژاکت سبک، یک تی‌شرت نخی و شلوار راحت، ترکیبی ساده اما کاربردی برای روزهای بهاری است.</p><ul><li>پارچه‌های نخی و لطیف را انتخاب کنید.</li><li>از لباس‌های خیلی تنگ یا سنگین دوری کنید.</li><li>رنگ‌های روشن و گرم حس شادی بیشتری ایجاد می‌کنند.</li></ul><p>در کیدل، لباس‌های کودکانه با نگاه به راحتی، سادگی و زیبایی طراحی می‌شوند تا کودک هم آزادانه حرکت کند و هم ظاهر دوست‌داشتنی داشته باشد.</p>" },
-  { id: 2, category: "مراقبت لباس", title: "راهنمای شست‌وشوی لباس کودک بدون آسیب به بافت پارچه", date: "۱۴۰۴/۰۲/۱۰", author: "سارا راد", readTime: 4, description: "لباس کودک به شست‌وشوی دقیق‌تری نیاز دارد. با چند نکته ساده می‌توانید رنگ و لطافت لباس‌ها را حفظ کنید.", imageIcon: "fa-hand-sparkles", fullContent: "<p>پوست کودکان حساس‌تر از بزرگسالان است و لباس‌هایی که مستقیم با پوست در تماس هستند باید با دقت بیشتری شسته شوند.</p><h2>انتخاب شوینده مناسب</h2><p>بهتر است از شوینده‌های ملایم و بدون عطر تند استفاده کنید. این کار احتمال حساسیت پوستی را کاهش می‌دهد و بافت لباس را نرم نگه می‌دارد.</p><ul><li>لباس‌ها را بر اساس رنگ جدا کنید.</li><li>از آب خیلی داغ استفاده نکنید.</li><li>لباس‌های ظریف را پشت‌ورو بشویید.</li></ul><p>اگر لباس چاپ یا گلدوزی دارد، خشک‌کردن در سایه کمک می‌کند طرح آن دیرتر کمرنگ شود.</p>" },
-  { id: 3, category: "سبک زندگی", title: "رنگ‌های آرامش‌بخش برای استایل روزمره کودکان", date: "۱۴۰۴/۰۲/۰۵", author: "مهسا نوری", readTime: 3, description: "رنگ‌ها روی حس‌وحال کودک تأثیر می‌گذارند. پالت‌های پاستلی می‌توانند ظاهری آرام، شاد و هماهنگ بسازند.", imageIcon: "fa-palette", fullContent: "<p>رنگ‌های پاستلی مثل صورتی ملایم، کرم، هلویی و بژ روشن، برای لباس کودک انتخاب‌هایی گرم و دلنشین هستند.</p><h2>چگونه رنگ‌ها را ترکیب کنیم؟</h2><p>برای یک ظاهر متعادل، یک رنگ اصلی نرم انتخاب کنید و آن را با رنگ‌های خنثی مثل کرم یا شیری همراه کنید.</p><ul><li>صورتی ملایم با بژ روشن ترکیبی لطیف می‌سازد.</li><li>هلویی با سفید، استایلی تمیز و شاد دارد.</li><li>رنگ‌های خیلی تند را فقط در جزئیات کوچک استفاده کنید.</li></ul><p>هدف از انتخاب رنگ، ایجاد حس راحتی و شادی است؛ نه شلوغ‌کردن بیش از حد استایل کودک.</p>" },
-  { id: 4, category: "سلامت کودک", title: "چه پارچه‌هایی برای پوست حساس کودک مناسب‌تر هستند؟", date: "۱۴۰۴/۰۱/۲۸", author: "دکتر لیلا شفیعی", readTime: 5, description: "انتخاب پارچه مناسب نقش مهمی در سلامت پوست کودک دارد؛ مخصوصاً برای کودکانی که پوست حساس یا مستعد خشکی دارند.", imageIcon: "fa-heartbeat", fullContent: "<p>پوست کودک ظریف است و تماس طولانی با پارچه‌های زبر یا الیاف نامناسب می‌تواند باعث قرمزی، خارش یا ناراحتی شود.</p><h2>پارچه‌های پیشنهادی</h2><p>نخ پنبه، لینن نرم و ترکیب‌های تنفس‌پذیر، گزینه‌هایی مناسب برای لباس روزمره کودک هستند.</p><ul><li>به برچسب ترکیب پارچه توجه کنید.</li><li>لباس را قبل از اولین استفاده بشویید.</li><li>در فصل گرم از لباس‌های سبک‌تر استفاده کنید.</li></ul><p>لباس سالم، لباسی است که کودک در آن احساس آزادی، آرامش و سبکی کند.</p>" },
-  { id: 5, category: "راهنمای خرید", title: "۵ نکته برای خرید هوشمندانه لباس کودک در هر فصل", date: "۱۴۰۴/۰۱/۲۰", author: "پریسا واعظی", readTime: 4, description: "خرید لباس کودک فقط انتخاب طرح زیبا نیست. سایز، جنس، کاربرد و دوام هم نقش مهمی در خرید بهتر دارند.", imageIcon: "fa-cart-shopping", fullContent: "<p>کودکان سریع رشد می‌کنند، بنابراین خرید لباس باید هم زیبا باشد و هم از نظر اندازه و کاربرد، منطقی انتخاب شود.</p><h2>قبل از خرید به چه چیزهایی توجه کنیم؟</h2><p>به فصل، میزان استفاده، راحتی هنگام بازی و قابلیت شست‌وشوی آسان توجه کنید. لباس کودک باید همراه روزمره او باشد، نه مانع حرکتش.</p><ul><li>یک سایز خیلی بزرگ‌تر نخرید؛ آزادی مناسب کافی است.</li><li>لباس‌های قابل ترکیب با چند آیتم دیگر انتخاب کنید.</li><li>دوام دوخت و کیفیت پارچه را بررسی کنید.</li></ul><p>خرید هوشمندانه یعنی انتخاب لباسی که هم کودک دوستش داشته باشد و هم والدین از کیفیت و کاربرد آن راضی باشند.</p>" }
-];
-
+let posts = [];
 let currentCategory = "all";
+let currentPost = null;
 
 // ==================== توابع کمکی ====================
 function toPersianNumber(num) {
@@ -644,74 +638,193 @@ function toPersianNumber(num) {
   return num.toString().replace(/\d/g, d => digits[parseInt(d)]);
 }
 
+function toPersianDate(dateString) {
+  if (!dateString) return '';
+  const date = new Date(dateString);
+  return date.toLocaleDateString('fa-IR');
+}
+
+async function fetchCategories() {
+  try {
+    const response = await fetch('/api/weblog/categories');
+    const data = await response.json();
+    if (data.success) {
+      return data.categories;
+    }
+    return [];
+  } catch (error) {
+    console.error('Error fetching categories:', error);
+    return [];
+  }
+}
+
+async function fetchLatestPosts() {
+  try {
+    const response = await fetch('/api/weblog/latest');
+    const data = await response.json();
+    if (data.success) {
+      return data.posts;
+    }
+    return [];
+  } catch (error) {
+    console.error('Error fetching latest posts:', error);
+    return [];
+  }
+}
+
+async function fetchPostsByCategory(category) {
+  try {
+    const url = category === 'all' 
+      ? '/api/weblog/latest' 
+      : `/api/weblog/posts?category=${category}`;
+    const response = await fetch(url);
+    const data = await response.json();
+    if (data.success) {
+      return data.posts;
+    }
+    return [];
+  } catch (error) {
+    console.error('Error fetching posts:', error);
+    return [];
+  }
+}
+
+async function fetchSinglePost(slug) {
+  try {
+    const response = await fetch(`/api/weblog/post/${slug}`);
+    const data = await response.json();
+    if (data.success) {
+      return { post: data.post, relatedPosts: data.relatedPosts };
+    }
+    return null;
+  } catch (error) {
+    console.error('Error fetching post:', error);
+    return null;
+  }
+}
+
+async function fetchStats() {
+  try {
+    const response = await fetch('/api/weblog/stats');
+    const data = await response.json();
+    if (data.success) {
+      document.getElementById('stat-articles').textContent = toPersianNumber(data.stats.articles);
+      document.getElementById('stat-satisfaction').textContent = `${toPersianNumber(data.stats.satisfaction)}٪`;
+      document.getElementById('stat-writers').textContent = toPersianNumber(data.stats.writers);
+      document.getElementById('stat-comments').textContent = toPersianNumber(data.stats.comments);
+    }
+  } catch (error) {
+    console.error('Error fetching stats:', error);
+  }
+}
+
+async function renderCategories() {
+  const categories = await fetchCategories();
+  const categoriesContainer = document.querySelector('.chip-scroll');
+  if (!categoriesContainer) return;
+  
+  let categoriesHtml = `
+    <button class="category-chip active px-5 py-2.5 rounded-full bg-pink-500 text-white font-bold whitespace-nowrap shadow-md" data-cat="all">همه</button>
+  `;
+  
+  categories.forEach(cat => {
+    categoriesHtml += `
+      <button class="category-chip px-5 py-2.5 rounded-full bg-white/70 text-rose-700 font-bold whitespace-nowrap hover:bg-white transition" data-cat="${cat.name}">
+        ${cat.name}
+      </button>
+    `;
+  });
+  
+  categoriesContainer.innerHTML = categoriesHtml;
+  setupCategories();
+}
+
+
 // ==================== نمایش مقالات در صفحه اصلی ====================
-function renderArticles() {
+async function renderArticles() {
   const grid = document.getElementById("articles-grid");
   if (!grid) return;
-  grid.innerHTML = "";
   
-  const filtered = posts.filter(p => currentCategory === "all" || p.category === currentCategory);
+  const skeleton = document.getElementById("skeleton-grid");
+  if (skeleton) skeleton.classList.remove("hidden");
+  if (grid) grid.classList.add("hidden");
+  
+  const filtered = await fetchPostsByCategory(currentCategory);
+  posts = filtered;
+  
+  if (skeleton) skeleton.classList.add("hidden");
+  if (grid) grid.classList.remove("hidden");
+  
+  grid.innerHTML = "";
   
   filtered.forEach(post => {
     const card = document.createElement("div");
+    const categoryName = post.categories && post.categories[0] ? post.categories[0].name : 'عمومی';
+    const authorName = post.authorDetails ? post.authorDetails.fullName : 'کیدل مگ';
+    const imageIcon = post.images && post.images[0] ? 
+      `<img src="${post.images[0].url}" class="w-full h-full object-cover rounded-xl">` : 
+      `<i class="fas fa-tshirt text-5xl text-pink-400"></i>`;
+    
     card.className = "article-card rounded-2xl p-3 shadow-sm fade-in";
     card.innerHTML = `
-      <div class="image-placeholder rounded-xl h-44 flex items-center justify-center">
-        <i class="fas ${post.imageIcon || 'fa-tshirt'} text-5xl text-pink-400"></i>
+      <div class="image-placeholder rounded-xl h-44 flex items-center justify-center overflow-hidden">
+        ${imageIcon}
       </div>
       <div class="pt-4">
         <div class="flex flex-wrap gap-2 mb-2">
-          <span class="bg-pink-100 text-pink-600 text-xs font-bold px-3 py-1 rounded-full">${post.category}</span>
-          <span class="bg-amber-50 text-rose-600 text-xs font-bold px-3 py-1 rounded-full"><i class="far fa-clock ml-1"></i> ${toPersianNumber(post.readTime)} دقیقه</span>
+          <span class="bg-pink-100 text-pink-600 text-xs font-bold px-3 py-1 rounded-full">${categoryName}</span>
+          <span class="bg-amber-50 text-rose-600 text-xs font-bold px-3 py-1 rounded-full"><i class="far fa-clock ml-1"></i> ${toPersianNumber(post.readingTime)} دقیقه</span>
         </div>
         <h3 class="font-extrabold text-rose-800 text-base leading-6 line-clamp-2 min-h-[48px]">${post.title}</h3>
         <div class="flex gap-3 text-xs text-rose-500 mt-2">
-          <span><i class="far fa-calendar ml-1"></i> ${post.date}</span>
-          <span><i class="far fa-user ml-1"></i> ${post.author}</span>
+          <span><i class="far fa-calendar ml-1"></i> ${toPersianDate(post.publishedAt)}</span>
+          <span><i class="far fa-user ml-1"></i> ${authorName}</span>
         </div>
         <p class="text-sm text-rose-600 mt-2 line-clamp-3">${post.description}</p>
-        <button class="read-more-btn w-full mt-3 bg-pink-500 hover:bg-pink-600 text-white font-bold py-2.5 rounded-xl transition" data-id="${post.id}">
+        <a href="/weblog/${post.slug}" class="read-more-link block w-full mt-3 bg-pink-500 hover:bg-pink-600 text-white font-bold py-2.5 rounded-xl transition text-center">
           ادامه مطلب <i class="fas fa-arrow-left mr-1"></i>
-        </button>
+        </a>
       </div>
     `;
     grid.appendChild(card);
   });
-  
-  document.querySelectorAll(".read-more-btn").forEach(btn => {
-    btn.addEventListener("click", (e) => {
-      const id = parseInt(btn.dataset.id);
-      showSinglePost(id);
-    });
-  });
 }
 
 // ==================== نمایش صفحه تکی مقاله با نوار ناوبری ====================
-function showSinglePost(postId) {
-  const post = posts.find(p => p.id === postId);
-  if (!post) return;
+async function showSinglePost(slug) {
+  const data = await fetchSinglePost(slug);
+  if (!data) return;
   
-  const otherPosts = posts.filter(p => p.id !== postId).slice(0, 4);
+  const post = data.post;
+  const relatedPosts = data.relatedPosts;
+  currentPost = post;
+  
+  const categoryName = post.categories && post.categories[0] ? post.categories[0].name : 'عمومی';
+  const authorName = post.authorDetails ? post.authorDetails.fullName : 'کیدل مگ';
+  const mainImage = post.images && post.images[0] ? 
+    `<img src="${post.images[0].url}" class="w-full h-full object-cover rounded-2xl">` : 
+    `<i class="fas fa-tshirt text-7xl text-pink-400"></i>`;
   
   const content = `
     <div class="grid lg:grid-cols-3 gap-8">
       <div class="lg:col-span-2">
         <div class="bg-white rounded-3xl p-5 shadow-xl border border-rose-100">
-          <div class="image-placeholder rounded-2xl h-64 flex items-center justify-center">
-            <i class="fas ${post.imageIcon || 'fa-tshirt'} text-7xl text-pink-400"></i>
+          <div class="image-placeholder rounded-2xl h-64 flex items-center justify-center overflow-hidden">
+            ${mainImage}
           </div>
           <div class="mt-6">
             <div class="flex flex-wrap gap-2 mb-4">
-              <span class="bg-pink-100 text-pink-600 text-xs font-bold px-3 py-1 rounded-full">${post.category}</span>
-              <span class="bg-amber-50 text-rose-600 text-xs font-bold px-3 py-1 rounded-full"><i class="far fa-clock ml-1"></i> ${toPersianNumber(post.readTime)} دقیقه</span>
+              <span class="bg-pink-100 text-pink-600 text-xs font-bold px-3 py-1 rounded-full">${categoryName}</span>
+              <span class="bg-amber-50 text-rose-600 text-xs font-bold px-3 py-1 rounded-full"><i class="far fa-clock ml-1"></i> ${toPersianNumber(post.readingTime)} دقیقه</span>
             </div>
             <h1 class="text-2xl md:text-3xl font-extrabold text-rose-800">${post.title}</h1>
             <div class="flex gap-4 text-sm text-rose-500 mt-4 pb-4 border-b border-rose-100">
-              <span><i class="far fa-calendar ml-1"></i> ${post.date}</span>
-              <span><i class="far fa-user ml-1"></i> ${post.author}</span>
+              <span><i class="far fa-calendar ml-1"></i> ${toPersianDate(post.publishedAt)}</span>
+              <span><i class="far fa-user ml-1"></i> ${authorName}</span>
+              <span><i class="far fa-eye ml-1"></i> ${toPersianNumber(post.viewCount)} بازدید</span>
             </div>
             <div class="post-content mt-6 text-rose-700 leading-loose">
-              ${post.fullContent}
+              ${post.content}
             </div>
           </div>
         </div>
@@ -720,16 +833,19 @@ function showSinglePost(postId) {
         <div class="bg-white/80 backdrop-blur rounded-2xl p-5 sticky top-4 shadow-lg border border-rose-100">
           <h3 class="font-extrabold text-rose-800 text-lg mb-4">مقالات دیگر</h3>
           <div class="space-y-3">
-            ${otherPosts.map(p => `
-              <button class="related-post w-full text-right flex gap-3 items-center p-2 rounded-xl hover:bg-rose-50 transition" data-id="${p.id}">
-                <div class="w-14 h-14 rounded-xl bg-gradient-to-br from-pink-100 to-amber-100 flex items-center justify-center shrink-0">
-                  <i class="fas ${p.imageIcon || 'fa-tshirt'} text-pink-400 text-xl"></i>
+            ${relatedPosts.map(p => `
+              <a href="/weblog/${p.slug}" class="related-post-link w-full text-right flex gap-3 items-center p-2 rounded-xl hover:bg-rose-50 transition no-underline">
+                <div class="w-14 h-14 rounded-xl bg-gradient-to-br from-pink-100 to-amber-100 flex items-center justify-center shrink-0 overflow-hidden">
+                  ${p.images && p.images[0] ? 
+                    `<img src="${p.images[0].url}" class="w-full h-full object-cover rounded-xl">` : 
+                    `<i class="fas fa-tshirt text-pink-400 text-xl"></i>`
+                  }
                 </div>
                 <div>
                   <h4 class="font-bold text-rose-800 text-sm line-clamp-2">${p.title}</h4>
-                  <span class="text-xs text-rose-500">${p.date}</span>
+                  <span class="text-xs text-rose-500">${toPersianDate(p.publishedAt)}</span>
                 </div>
-              </button>
+              </a>
             `).join("")}
           </div>
         </div>
@@ -739,27 +855,27 @@ function showSinglePost(postId) {
   
   document.getElementById("singlePostContent").innerHTML = content;
   document.getElementById("singlePostView").classList.remove("hidden");
+  document.getElementById("mainContent").classList.add("hidden");
   document.body.style.overflow = "hidden";
   
-  document.querySelectorAll(".related-post").forEach(btn => {
-    btn.addEventListener("click", () => {
-      const id = parseInt(btn.dataset.id);
-      showSinglePost(id);
-      window.scrollTo(0, 0);
-    });
-  });
+  // به‌روزرسانی URL بدون رفرش
+  window.history.pushState({ slug: post.slug }, post.title, `/weblog/${post.slug}`);
 }
 
 // ==================== بستن صفحه تکی ====================
 function closeSinglePost() {
   document.getElementById("singlePostView").classList.add("hidden");
+  document.getElementById("mainContent").classList.remove("hidden");
   document.body.style.overflow = "auto";
+  
+  // بازگشت به URL اصلی
+  window.history.pushState({}, '', '/weblog');
 }
 
 // ==================== دسته‌بندی‌ها ====================
 function setupCategories() {
   document.querySelectorAll(".category-chip").forEach(btn => {
-    btn.addEventListener("click", () => {
+    btn.addEventListener("click", async () => {
       document.querySelectorAll(".category-chip").forEach(b => {
         b.classList.remove("active", "bg-pink-500", "text-white");
         b.classList.add("bg-white/70", "text-rose-700");
@@ -772,10 +888,27 @@ function setupCategories() {
       if (filterSpan) {
         filterSpan.textContent = currentCategory === "all" ? "نمایش همه مقالات" : `نمایش: ${currentCategory}`;
       }
-      renderArticles();
+      await renderArticles();
     });
   });
 }
+
+function handleInitialSlug() {
+  const initialSlug = '<%= typeof initialSlug !== "undefined" ? initialSlug : "" %>';
+  if (initialSlug && initialSlug !== '') {
+    showSinglePost(initialSlug);
+  }
+}
+
+window.addEventListener('popstate', (event) => {
+  const path = window.location.pathname;
+  if (path === '/weblog' || path === '/weblog/') {
+    closeSinglePost();
+  } else if (path.startsWith('/weblog/')) {
+    const slug = path.replace('/weblog/', '');
+    showSinglePost(slug);
+  }
+});
 
 // ==================== خبرنامه ====================
 function setupNewsletter() {
@@ -793,7 +926,7 @@ function setupNewsletter() {
       msg.textContent = "عضویت شما با موفقیت ثبت شد! به خانواده کیدل خوش آمدید.";
       msg.classList.remove("hidden");
       document.getElementById("newsletterEmail").value = "";
-      setTimeout(() => msg.classList.add("hidden"), 800);
+      setTimeout(() => msg.classList.add("hidden"), 3000);
     });
   }
 }
@@ -900,7 +1033,8 @@ function handleResendOtp(elementId) {
 }
 
 // ==================== راه‌اندازی اولیه ====================
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
+
   // نمایش اسکلت و بعد محتوا
   setTimeout(() => {
     const skeleton = document.getElementById("skeleton-grid");
@@ -910,15 +1044,23 @@ document.addEventListener("DOMContentLoaded", () => {
     renderArticles();
   }, 700);
   
-  setupCategories();
+  setupCategories(); 
+
+  await renderCategories();
+  await renderArticles();
+  await fetchStats();
   setupNewsletter();
+  handleInitialSlug();
   
   // دکمه‌های بستن صفحه تکی
   const closeSinglePostBtn = document.getElementById("closeSinglePostBtn");
   if (closeSinglePostBtn) closeSinglePostBtn.addEventListener("click", closeSinglePost);
   
   const singlePostLogo = document.getElementById("singlePostLogo");
-  if (singlePostLogo) singlePostLogo.addEventListener("click", (e) => { e.preventDefault(); closeSinglePost(); });
+  if (singlePostLogo) singlePostLogo.addEventListener("click", (e) => { 
+    e.preventDefault(); 
+    closeSinglePost(); 
+  });
   
   const logo = document.getElementById("logo");
   if (logo) logo.addEventListener("click", (e) => { e.preventDefault(); closeSinglePost(); window.scrollTo(0, 0); });

@@ -235,6 +235,7 @@ const mobileRoutes = require("./routes/mobile");
 const cartRoutes = require("./routes/cart");
 const orderRoutes = require("./routes/order");
 const adminRoutes = require("./routes/admin");
+const weblogRoutes = require('./routes/weblog');
 const { isLoggedIn } = require("./middlewares/isLoggedIn");
 
 app.use("/api/", apiLimiter);
@@ -243,6 +244,7 @@ app.use("/api/mobile", mobileRoutes);
 app.use("/api/cart", cartRoutes);
 app.use("/api/order", orderRoutes);
 app.use("/admin", adminRoutes);
+app.use('/', weblogRoutes);
 
 app.locals.toPersianDigitsForSizes = function (input) {
   if (input === undefined || input === null) return "";
@@ -704,16 +706,24 @@ app.get(
 
 app.get("/weblog", async (req, res) => {
   try {
-    const weblogs = await Weblog.find({})
+    // دریافت مقالات با مرتب‌سازی جدیدترین اول
+    const weblogs = await Weblog.find({ isPublished: true })
       .populate("categories")
-      .populate("author");
-      const user = await User.findById(req.session.userId)
-    .populate("cart.productId")
-    .populate("orders");
+      .populate("author", "fullName")
+      .sort({ createdAt: -1 });  // جدیدترین اول
+    
+    // دریافت دسته‌بندی‌های وبلاگ (categoryType: "weblog")
+    const weblogCategories = await Category.find({ 
+      categoryType: "weblog",
+      isActive: true 
+    }).populate('children');
+    
+    const user = await User.findById(req.session.userId)
+      .populate("cart.productId")
+      .populate("orders");
 
-  const cartCount = user?.cart?.length || 0;
+    const cartCount = user?.cart?.length || 0;
 
-  
     const allCategories = await Category.find({ 
       categoryType: "product",
       isActive: true 
@@ -734,8 +744,18 @@ app.get("/weblog", async (req, res) => {
       }
     });
 
-    res.render("Weblog", { weblogs,user, cartCount, menuCategories }); // Render empty initially
+    let singlePost;
+
+    res.render("Weblog", {
+      weblogs,
+      weblogCategories,  // دسته‌بندی‌های وبلاگ
+      user, 
+      cartCount, 
+      menuCategories,
+      singlePost,
+    });
   } catch (err) {
+    console.error(err);
     res.status(500).render("error", { message: "خطا در بارگزاری وبلاگ" });
   }
 });
@@ -904,6 +924,27 @@ app.get("/api/weblogs/:id/related", async (req, res) => {
     res.json(related);
   } catch (err) {
     res.status(500).json({ error: err.message });
+  }
+});
+
+app.get("/api/weblogs/:slug", async (req, res) => {
+  try {
+    const { slug } = req.params;
+    const weblog = await Weblog.findOne({ slug })
+      .populate("author", "fullName email")
+      .populate("categories", "name slug");
+    
+    if (!weblog) {
+      return res.status(404).json({ success: false, message: "مقاله یافت نشد" });
+    }
+    
+    res.json({
+      success: true,
+      weblog
+    });
+  } catch (error) {
+    console.error("Error fetching weblog:", error);
+    res.status(500).json({ success: false, message: error.message });
   }
 });
 
@@ -1100,6 +1141,42 @@ app.get("/category/:slug", async (req, res) => {
     console.error("Category page error:", error);
     res.status(500).render("500", { message: "خطای سرور" });
   }
+});
+
+app.get('/weblog/:slug', async (req, res) => {
+      const user = await User.findById(req.session.userId)
+      .populate("cart.productId")
+      .populate("orders");
+
+    const cartCount = user?.cart?.length || 0;
+
+    const allCategories = await Category.find({ 
+      categoryType: "product",
+      isActive: true 
+    });
+    
+    // ساخت ساختار درختی برای منو
+    const categoryMap = {};
+    allCategories.forEach(cat => {
+      categoryMap[cat._id] = { ...cat.toObject(), children: [] };
+    });
+    
+    const menuCategories = [];
+    allCategories.forEach(cat => {
+      if (cat.parentId && categoryMap[cat.parentId]) {
+        categoryMap[cat.parentId].children.push(categoryMap[cat._id]);
+      } else if (!cat.parentId) {
+        menuCategories.push(categoryMap[cat._id]);
+      }
+    });
+
+  res.render('weblog', { 
+    initialSlug: req.params.slug,
+    isSinglePost: true,
+    menuCategories,
+    user,
+    cartCount 
+  });
 });
 
 app.get("/sitemap.xml", async (req, res) => {
