@@ -1456,62 +1456,34 @@ document.addEventListener('DOMContentLoaded', function() {
       </div>
       
       <!-- محتوای تب ویژگی‌های کلیدی -->
-      <div id="tab-features" class="tab-content">
-        <div class="overflow-x-auto">
-          <table class="key-features-table w-full">
-            <tbody>
-              <tr>
-                <td>جنس پارچه</td>
-                <td><%= product.fabric ? product.fabric : 'پنبه و الاستیک' %></td>
-              </tr>
-              <tr>
-                <td>ترکیبات</td>
-                <td><%= product.material ? product.material : '۹۵٪ پنبه، ۵٪ الاستیک' %></td>
-              </tr>
-              <tr>
-                <td>الگو</td>
-                <td><%= product.pattern ? product.pattern : 'ساده' %></td>
-              </tr>
-              <tr>
-                <td>یقه</td>
-                <td><%= product.neckStyle ? product.neckStyle : 'گرد' %></td>
-              </tr>
-              <tr>
-                <td>آستین</td>
-                <td><%= product.sleeveStyle ? product.sleeveStyle : 'کوتاه' %></td>
-              </tr>
-              <tr>
-                <td>قد</td>
-                <td><%= product.length ? product.length : 'متوسط (۶۵-۷۰ سانتی‌متر)' %></td>
-              </tr>
-              <tr>
-                <td>ست</td>
-                <td><%= product.setType ? product.setType : 'تک' %></td>
-              </tr>
-              <tr>
-                <td>نوع بسته‌بندی</td>
-                <td><%= product.packaging ? product.packaging : 'کیسه پارچه‌ای' %></td>
-              </tr>
-              <tr>
-                <td>شماره مجوز</td>
-                <td><%= product.licenseNumber ? product.licenseNumber : 'IR-۱۲۳۴۵۶۷۸' %></td>
-              </tr>
-              <tr>
-                <td>کد محصول</td>
-                <td><%= product.sku ? product.sku : (typeof product._id === 'string' ? product._id.slice(-8) : (product._id && product._id.toString ? product._id.toString().slice(-8) : '۱۲۳۴۵۶۷۸')) %></td>
-              </tr>
-              <tr>
-                <td>کشور سازنده</td>
-                <td><%= product.country ? product.country : 'ایران' %></td>
-              </tr>
-              <tr>
-                <td>روش شستشو</td>
-                <td><%= product.washingMethod ? product.washingMethod : 'ماشینی با آب سرد' %></td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
+<div id="tab-features" class="tab-content">
+  <div class="overflow-x-auto">
+    <table class="key-features-table w-full">
+      <tbody>
+        <% if (product.specifications && product.specifications.length > 0) { %>
+          <% product.specifications.forEach(spec => { %>
+            <tr>
+              <td class="px-4 py-3 font-semibold text-gray-700 bg-gray-50 rounded-r-xl w-1/3">
+                <%= spec.key %>
+              </td>
+              <td class="px-4 py-3 text-gray-600 rounded-l-xl">
+                <%= spec.value %>
+              </td>
+            </tr>
+          <% }); %>
+        <% } else { %>
+          <tr>
+            <td colspan="2" class="px-4 py-8 text-center text-gray-400">
+              <i class="fas fa-info-circle ml-2"></i>
+              هیچ ویژگی کلیدی برای این محصول ثبت نشده است.
+            </td>
+          </tr>
+        <% } %>
+      </tbody>
+    </table>
+  </div>
+</div>
+
     </div>
     
     <!-- بخش نظرات محصول -->
@@ -1968,6 +1940,8 @@ if (document.readyState === 'loading') {
               if (tabId) switchTab(tabId);
             });
           });
+
+          // switchTab('description');
       });
 
       function toEnglishDigits(str) {
