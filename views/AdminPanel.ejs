@@ -3577,95 +3577,150 @@ function renderWeblogsTable() {
 
 
 
-        function viewOrder(id) {
-            const order = orders.find(p => p._id === id);
-            
-            const statusClasses = {
-                'در حال پردازش': 'bg-yellow-100 text-yellow-800',
-                'بسته بندی شده': 'bg-blue-100 text-blue-800',
-                'در حال ارسال': 'bg-purple-100 text-purple-800',
-                'تحویل داده شد': 'bg-green-100 text-green-800',
-                'لغو شده': 'bg-red-100 text-red-800'
-            };
+function viewOrder(id) {
+    const order = orders.find(p => p._id === id);
+    
+    const statusClasses = {
+        'در حال پردازش': 'bg-yellow-100 text-yellow-800',
+        'بسته بندی شده': 'bg-blue-100 text-blue-800',
+        'در حال ارسال': 'bg-purple-100 text-purple-800',
+        'تحویل داده شد': 'bg-green-100 text-green-800',
+        'لغو شده': 'bg-red-100 text-red-800',
+        'در انتظار پرداخت': 'bg-orange-100 text-orange-800',
+        'پرداخت شده': 'bg-teal-100 text-teal-800'
+    };
 
-            let classForStatus;
-
-            if (order.status === "در حال پردازش") {
-                classForStatus = statusClasses['در حال پردازش']
-            } else if (order.status === "بسته بندی شده") {
-                classForStatus = statusClasses['بسته بندی شده']
-            } else if (order.status === "در حال ارسال") {
-                classForStatus = statusClasses['در حال ارسال']
-            } else if (order.status === "تحویل داده شد") {
-                classForStatus = statusClasses['تحویل داده شد']
-            } else if (order.status === "لغو شده") {
-                classForStatus = statusClasses['لغو شده']
-            }
-            
-            let productsHtml = '';
-            order.products.forEach(product => {
-                productsHtml += `
-                    <div class="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
-                        <div>
-                            <p class="font-medium text-gray-800">${product.nameAtPurchase}</p>
-                            <p class="text-sm text-gray-600">تعداد: ${product.quantity}</p>
-                            <p class="text-sm text-gray-600">رنگ: ${product.selectedColor}</p>
-                            <p class="text-sm text-gray-600">سایز: ${product.selectedSize}</p>
+    let classForStatus;
+    if (order.status === "در حال پردازش") {
+        classForStatus = statusClasses['در حال پردازش']
+    } else if (order.status === "بسته بندی شده") {
+        classForStatus = statusClasses['بسته بندی شده']
+    } else if (order.status === "در حال ارسال") {
+        classForStatus = statusClasses['در حال ارسال']
+    } else if (order.status === "تحویل داده شد") {
+        classForStatus = statusClasses['تحویل داده شد']
+    } else if (order.status === "لغو شده") {
+        classForStatus = statusClasses['لغو شده']
+    } else if (order.status === "در انتظار پرداخت") {
+        classForStatus = statusClasses['در انتظار پرداخت']
+    } else if (order.status === "پرداخت شده") {
+        classForStatus = statusClasses['پرداخت شده']
+    }
+    
+    let productsHtml = '';
+    order.products.forEach(product => {
+        productsHtml += `
+            <div class="flex justify-between items-center p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-all">
+                <div class="flex-1">
+                    <p class="font-medium text-gray-800">${product.nameAtPurchase}</p>
+                    <div class="flex flex-wrap gap-3 mt-1 text-sm text-gray-500">
+                        <span><i class="fas fa-palette ml-1"></i> رنگ: ${product.selectedColor}</span>
+                        <span><i class="fas fa-ruler ml-1"></i> سایز: ${product.selectedSize}</span>
+                        <span><i class="fas fa-hashtag ml-1"></i> تعداد: ${product.quantity}</span>
+                    </div>
+                </div>
+                <div class="text-left">
+                    <p class="font-semibold text-gray-800">${toPersianDigits(product.priceAtPurchase)} تومان</p>
+                    <p class="text-xs text-gray-400">قیمت واحد</p>
+                </div>
+            </div>
+        `;
+    });
+    
+    // محاسبه جمع کل
+    const shippingCost = 35000;
+    const finalTotal = order.totalPrice + shippingCost;
+    
+    const detailsHtml = `
+        <div class="flex justify-between items-start mb-6">
+            <div>
+                <h3 class="text-xl font-bold text-gray-800">سفارش شماره ${order.OrderNum}</h3>
+                <p class="text-sm text-gray-500 mt-1">تاریخ ثبت: ${order.createTarikh}</p>
+            </div>
+            <button onclick="downloadOrderInvoice('${order._id}')" 
+                    class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg transition-all flex items-center gap-2 shadow-md hover:shadow-lg">
+                <i class="fas fa-file-pdf text-lg"></i>
+                <span>صدور فاکتور PDF</span>
+            </button>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+            <div class="glass-card p-4 rounded-xl">
+                <span class="font-semibold text-gray-700 flex items-center gap-2"><i class="fas fa-user"></i> اطلاعات مشتری:</span>
+                <div class="mt-2 space-y-1 text-gray-600">
+                    <p><span class="font-medium">نام:</span> ${order.user?.fullName || 'نامشخص'}</p>
+                    <p><span class="font-medium">تلفن:</span> ${order.user?.phone || 'نامشخص'}</p>
+                    <p><span class="font-medium">ایمیل:</span> ${order.user?.email || 'نامشخص'}</p>
+                </div>
+            </div>
+            <div class="glass-card p-4 rounded-xl">
+                <span class="font-semibold text-gray-700 flex items-center gap-2"><i class="fas fa-truck"></i> اطلاعات ارسال:</span>
+                <div class="mt-2 space-y-1 text-gray-600">
+                    <p><span class="font-medium">آدرس:</span> ${order.province}، ${order.city}، ${order.address}</p>
+                    <p><span class="font-medium">کد پستی:</span> ${order.postcode}</p>
+                    <p><span class="font-medium">روش ارسال:</span> ${order.delivery || 'تیپاکس'}</p>
+                    ${order.trackingNumber ? `<p><span class="font-medium">شماره مرسوله:</span> ${order.trackingNumber}</p>` : ''}
+                </div>
+            </div>
+        </div>
+        
+        <div class="glass-card p-4 rounded-xl mb-6">
+            <div class="flex justify-between items-center mb-4">
+                <span class="font-semibold text-gray-700 flex items-center gap-2"><i class="fas fa-box"></i> محصولات سفارش:</span>
+                <span class="text-sm ${order.status === 'تحویل داده شد' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'} px-3 py-1 rounded-full">${order.status}</span>
+            </div>
+            <div class="space-y-3">
+                ${productsHtml}
+            </div>
+        </div>
+        
+        <div class="bg-gradient-to-l from-gray-50 to-white rounded-xl p-4">
+            <div class="space-y-2">
+                <div class="flex justify-between items-center py-2 border-b border-gray-200">
+                    <span class="text-gray-600">جمع کل محصولات:</span>
+                    <span class="font-semibold">${toPersianDigits(order.originalPrice)} تومان</span>
+                </div>
+                ${order.discountAmount > 0 ? `
+                    <div class="flex justify-between items-center py-2 border-b border-gray-200">
+                        <span class="text-gray-600">تخفیف:</span>
+                        <span class="text-red-500 font-semibold">-${toPersianDigits(order.discountAmount)} تومان</span>
+                    </div>
+                    ${order.discount && order.discount.code ? `
+                        <div class="flex justify-between items-center py-2 border-b border-gray-200">
+                            <span class="text-gray-600">کد تخفیف:</span>
+                            <span class="text-purple-600 font-semibold">${order.discount.code}</span>
                         </div>
-                        <p class="font-semibold text-gray-800">${toPersianDigits(product.priceAtPurchase)} تومان</p>
-                    </div>
-                `;
-            });
-            
-            const detailsHtml = `
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                    <div class="glass-card p-4 rounded-xl">
-                        <span class="font-semibold text-gray-700">شماره سفارش:</span>
-                        <span class="text-gray-800 block text-lg">${order.OrderNum}</span>
-                    </div>
-                    <div class="glass-card p-4 rounded-xl">
-                        <span class="font-semibold text-gray-700">نام مشتری:</span>
-                        <span class="text-gray-800 block">${order.user.fullName}</span>
-                    </div>
-                    ${
-                        order.discount ? `
-                            <div class="glass-card p-4 rounded-xl">
-                                <span class="font-semibold text-gray-700">مبلغ قبل تخفیف:</span>
-                                <span class="text-green-600 font-semibold block text-lg">${toPersianDigits(order.originalPrice)} تومان</span>
-                            </div>
-                            <div class="glass-card p-4 rounded-xl">
-                                <span class="font-semibold text-gray-700">مبلغ کل بعد تخفیف:</span>
-                                <span class="text-green-600 font-semibold block text-lg">${toPersianDigits(order.totalPrice)} تومان</span>
-                            </div>
-                        ` : `
-                            <div class="glass-card p-4 rounded-xl">
-                                <span class="font-semibold text-gray-700">مبلغ:</span>
-                                <span class="text-green-600 font-semibold block text-lg">${toPersianDigits(order.originalPrice)} تومان</span>
-                            </div>
-                        `
-                    }
-
-                    <div class="glass-card p-4 rounded-xl">
-                        <span class="font-semibold text-gray-700">وضعیت:</span>
-                        <span class="inline-block mt-1 px-3 py-1 rounded-full text-sm font-medium ${classForStatus}">${order.status}</span>
-                    </div>
-                    <div class="glass-card p-4 rounded-xl">
-                        <span class="font-semibold text-gray-700">تاریخ سفارش:</span>
-                        <span class="text-gray-800 block">${order.createTarikh}</span>
-                    </div>
+                    ` : ''}
+                ` : ''}
+                <div class="flex justify-between items-center py-2 border-b border-gray-200">
+                    <span class="text-gray-600">هزینه ارسال:</span>
+                    <span class="font-semibold">${toPersianDigits(35000)} تومان</span>
                 </div>
-                
-                <div class="glass-card p-4 rounded-xl">
-                    <h4 class="font-semibold text-gray-700 mb-4">محصولات سفارش:</h4>
-                    <div class="space-y-3">
-                        ${productsHtml}
-                    </div>
+                <div class="flex justify-between items-center pt-3">
+                    <span class="text-lg font-bold text-gray-800">مبلغ قابل پرداخت:</span>
+                    <span class="text-2xl font-bold text-green-600">${toPersianDigits(finalTotal)} تومان</span>
                 </div>
-            `;
-            
-            document.getElementById('orderDetails').innerHTML = detailsHtml;
-            document.getElementById('orderModal').classList.remove('hidden');
-        }
+                ${order.paymentStatus ? `
+                    <div class="mt-3 pt-3 border-t border-gray-200">
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-600">وضعیت پرداخت:</span>
+                            <span class="${order.paymentStatus === 'پرداخت شده' ? 'text-green-600' : 'text-red-600'} font-semibold">${order.paymentStatus}</span>
+                        </div>
+                        ${order.paymentMethod ? `
+                            <div class="flex justify-between items-center mt-1">
+                                <span class="text-gray-600">روش پرداخت:</span>
+                                <span class="text-gray-700">${order.paymentMethod}</span>
+                            </div>
+                        ` : ''}
+                    </div>
+                ` : ''}
+            </div>
+        </div>
+    `;
+    
+    document.getElementById('orderDetails').innerHTML = detailsHtml;
+    document.getElementById('orderModal').classList.remove('hidden');
+}
 
         async function viewWeblog(id) {
             try {

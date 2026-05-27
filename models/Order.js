@@ -197,18 +197,14 @@ const orderSchema = new Schema(
   }
 );
 
-orderSchema.pre("save", function (next) {
-  this.updateTarikh = getPersianDate();
-
-  // Track status changes
-  if (this.isModified("status")) {
-    this.statusHistory = this.statusHistory || [];
-    this.statusHistory.push({
-      status: this.status,
-      changedBy: this._updatedBy, // Should be set before save
-    });
+orderSchema.pre('save', async function(next) {
+  if (!this.OrderNum) {
+    const date = new Date();
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const count = await this.constructor.countDocuments();
+    this.OrderNum = `ORD-${year}${month}-${String(count + 1).padStart(4, '0')}`;
   }
-
   next();
 });
 
