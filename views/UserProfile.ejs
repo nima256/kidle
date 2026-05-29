@@ -613,6 +613,7 @@ body.modal-open {
                     discount: order.discount, 
                     address: order.address,
                     delivery: order.delivery,
+                    status: order.status,
                     products: order.products.map(p => ({
                       name: p.product.name,
                       image: p.product.images[0].url,
@@ -744,6 +745,7 @@ body.modal-open {
                           discount: order.discount, 
                           address: order.address,
                           delivery: order.delivery,
+                          status: order.status,
                           products: order.products.map(p => ({
                             name: p.product.name,
                             image: p.product.images[0].url,
@@ -874,6 +876,7 @@ body.modal-open {
                           discount: order.discount, 
                           address: order.address,
                           delivery: order.delivery,
+                          status: order.status,
                           products: order.products.map(p => ({
                             name: p.product.name,
                             image: p.product.images[0].url,
@@ -999,128 +1002,97 @@ body.modal-open {
     </main>
 
     <!-- Order Details Modal -->
-    <div
-      id="order-modal"
-      class="fixed inset-0 bg-black/50 backdrop-blur-sm hidden items-center justify-center z-50 p-4"
-    >
-      <div
-        class="bg-white rounded-3xl max-w-2xl w-full max-h-[90vh] overflow-y-auto"
-      >
-        <div
-          class="bg-gradient-to-r from-blue-500 to-purple-600 p-6 rounded-t-3xl"
-        >
-          <div class="flex items-center justify-between">
-            <h3 class="text-xl font-bold text-white">جزئیات سفارش</h3>
-            <button
-              onclick="closeOrderModal()"
-              class="text-white hover:text-gray-200"
-            >
-              <svg
-                class="w-6 h-6"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M6 18L18 6M6 6l12 12"
-                ></path>
-              </svg>
-            </button>
-          </div>
+    <div id="order-modal" class="fixed inset-0 bg-black/70 backdrop-blur-md hidden items-center justify-center z-50 p-4" style="background-color: rgba(0, 0, 0, 0.7);">
+    <div class="bg-white rounded-3xl max-w-2xl w-full mx-4 shadow-2xl transform transition-all duration-300 overflow-hidden" id="order-modal-content">
+        <!-- هدر با گرادینت -->
+        <div class="bg-gradient-to-r from-blue-600 to-purple-600 p-5">
+            <div class="flex items-center justify-between">
+                <h3 class="text-xl font-bold text-white">جزئیات سفارش</h3>
+                <button onclick="closeOrderModal()" class="text-white hover:text-gray-200 transition-colors">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
         </div>
 
-        <div class="p-6 space-y-6">
-          <!-- Order Info -->
-          <div class="bg-gray-50 rounded-2xl p-4">
-            <div class="grid grid-cols-2 gap-4 text-sm">
-              <div>
-                <span class="text-gray-600">شماره سفارش:</span>
-                <span
-                  id="modal-order-id"
-                  class="font-semibold text-gray-800 mr-2"
-                ></span>
-              </div>
-              <div>
-                <span class="text-gray-600">تاریخ:</span>
-                <span
-                  id="modal-order-date"
-                  class="font-semibold text-gray-800 mr-2"
-                ></span>
-              </div>
-              <div>
-                <span class="text-gray-600">وضعیت:</span>
-                <span
-                  class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800 mr-2"
-                >
-                  تحویل شده
-                </span>
-              </div>
-              <div>
-                <span class="text-gray-600">مبلغ کل:</span>
-                <span
-                  id="modal-order-price"
-                  class="font-bold text-blue-600 mr-2"
-                ></span>
-              </div>
+        <div class="p-5 space-y-5 max-h-[80vh] overflow-y-auto">
+            <!-- اطلاعات سفارش - کارت با سایه -->
+            <div class="bg-gray-50 rounded-xl p-4 border border-gray-100">
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <span class="text-gray-500 text-sm">شماره سفارش:</span>
+                        <p id="modal-order-id" class="font-bold text-gray-800 text-lg"></p>
+                    </div>
+                    <div>
+                        <span class="text-gray-500 text-sm">تاریخ ثبت:</span>
+                        <p id="modal-order-date" class="font-bold text-gray-800" dir="ltr" style="text-align: right;"></p>
+                    </div>
+                    <div>
+                        <span class="text-gray-500 text-sm">وضعیت:</span>
+                        <p id="modal-order-status" class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium"></p>
+                    </div>
+                    <div>
+                        <span class="text-gray-500 text-sm">مبلغ کل:</span>
+                        <p id="modal-order-price" class="font-bold text-blue-600 text-lg"></p>
+                    </div>
+                </div>
             </div>
-          </div>
 
-          <!-- Customer Info -->
-          <div>
-            <h4 class="font-semibold text-gray-800 mb-3">اطلاعات مشتری</h4>
-            <div class="bg-purple-50 rounded-2xl p-4">
-              <p class="text-gray-700">
-                <span class="font-medium">نام:</span> <%= user.fullName %>
-              </p>
-              <p class="text-gray-700 mt-2">
-                آدرس:
-                <span class="font-medium" id="addressForInfo"></span>
-              </p>
-              <p class="text-gray-700 mt-2">
-                <span class="font-medium">تلفن:</span> <%= user.mobile %>
-              </p>
-              <p class="text-gray-700 mt-2">
-                روش ارسال:
-                <span class="font-medium" id="deliveryForInfo"></span>
-              </p>
+            <!-- اطلاعات مشتری -->
+            <div>
+                <h4 class="font-semibold text-gray-800 mb-2 flex items-center gap-2">
+                    <svg class="w-5 h-5 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                    </svg>
+                    اطلاعات مشتری
+                </h4>
+                <div class="bg-purple-50 rounded-xl p-4 space-y-2">
+                    <p class="text-gray-700"><span class="font-medium">نام:</span> <%= user.fullName %></p>
+                    <p class="text-gray-700"><span class="font-medium">آدرس:</span> <span id="addressForInfo"></span></p>
+                    <p class="text-gray-700"><span class="font-medium">تلفن:</span> <%= toPersianDigitsForSizes(user.mobile) %></p>
+                    <p class="text-gray-700"><span class="font-medium">روش ارسال:</span> <span id="deliveryForInfo"></span></p>
+                </div>
             </div>
-          </div>
 
-          <!-- Products -->
-          <div>
-            <h4 class="font-semibold text-gray-800 mb-3">محصولات</h4>
-              <div id="modal-products-container"> 
-
-              </div>
-          </div>
-
-          <!-- Payment Summary -->
-          <div class="bg-blue-50 rounded-2xl p-4">
-            <h4 class="font-semibold text-gray-800 mb-3">خلاصه پرداخت</h4>
-            <div class="space-y-2 text-sm">
-              <div class="flex justify-between">
-                <span class="text-gray-600">جمع کالاها:</span>
-                <span id="modal-total-price" class="font-medium"></span>
-              </div>
-              <div class="flex justify-between">
-                <span class="text-gray-600">تخفیف:</span>
-                <span id="modal-discount-price" class="font-medium"></span>
-              </div>
-              <div class="border-t border-gray-200 pt-2 flex justify-between">
-                <span class="font-semibold text-gray-800">مبلغ نهایی:</span>
-                <span
-                  id="modal-final-price"
-                  class="font-bold text-blue-600"
-                ></span>
-              </div>
+            <!-- محصولات -->
+            <div>
+                <h4 class="font-semibold text-gray-800 mb-2 flex items-center gap-2">
+                    <svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
+                    </svg>
+                    محصولات سفارش
+                </h4>
+                <div id="modal-products-container" class="space-y-3"></div>
             </div>
-          </div>
+
+            <!-- خلاصه پرداخت -->
+            <div>
+                <h4 class="font-semibold text-gray-800 mb-2 flex items-center gap-2">
+                    <svg class="w-5 h-5 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    خلاصه پرداخت
+                </h4>
+                <div class="bg-blue-50 rounded-xl p-4 space-y-2">
+                    <div class="flex justify-between">
+                        <span class="text-gray-600">جمع کالاها:</span>
+                        <span id="modal-total-price" class="font-medium"></span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-600">تخفیف:</span>
+                        <span id="modal-discount-price" class="font-medium text-red-500"></span>
+                    </div>
+                    <div class="border-t border-blue-200 pt-2 flex justify-between">
+                        <span class="font-bold text-gray-800">مبلغ نهایی:</span>
+                        <span id="modal-final-price" class="font-bold text-blue-600 text-lg"></span>
+                    </div>
+                </div>
+            </div>
         </div>
-      </div>
     </div>
+</div>
+
 <%- include('./partials/footer') %>
 
 <div id="logout-modal" class="fixed inset-0 bg-gray-900/60 backdrop-blur-sm hidden items-center justify-center z-50 p-4" style="background-color: rgba(0, 0, 0, 0.5);">
@@ -1509,89 +1481,120 @@ document.querySelectorAll('.mobile-dropdown-trigger').forEach(trigger => {
 
       // Order modal functionality
         function showOrderDetails(element) {
-            const orderData = JSON.parse(element.getAttribute('data-order'));
-            const productsContainer = document.getElementById("modal-products-container");
-
-            productsContainer.innerHTML = '';
-
-
-              orderData.products.forEach(product => {
-              productsContainer.innerHTML += `
-                <div class="bg-green-50 rounded-2xl p-4 mb-3">
-                  <div class="flex items-center space-x-4 space-x-reverse">
-                    <div
-                      class="w-16 h-16 bg-gradient-to-br from-pink-400 to-purple-500 rounded-2xl flex items-center justify-center"
-                    >
-                     <img src="${product.image}" alt="">
+    const orderData = JSON.parse(element.getAttribute('data-order'));
+    const productsContainer = document.getElementById("modal-products-container");
+    
+    // جلوگیری از اسکرول بدنه
+    document.body.style.overflow = 'hidden';
+    
+    productsContainer.innerHTML = '';
+    
+    orderData.products.forEach(product => {
+        productsContainer.innerHTML += `
+            <div class="bg-green-50 rounded-xl p-3 border border-green-100">
+                <div class="flex gap-3">
+                    <div class="w-16 h-16 rounded-xl overflow-hidden bg-gray-100 flex-shrink-0">
+                        <img src="${product.image}" alt="${product.name}" class="w-full h-full object-cover">
                     </div>
                     <div class="flex-1">
-                      <h5
-                        id="modal-product-name"
-                        class="font-medium text-gray-800"
-                      >
-                      ${product.name}
-                      </h5>
-                      <p id="modal-product-count" class="text-sm text-gray-600" style="margin-top: 10px;font-size: 14px;">تعداد: ${toPersianDigits(product.quantity)} </p>
-                      <p id="modal-product-count" class="text-sm text-gray-600" style="margin-top: 10px;font-size: 14px;">رنگ: ${product.selectedColor} </p>
-                      <p id="modal-product-count" class="text-sm text-gray-600" style="margin-top: 10px;font-size: 14px;">سایز: ${product.selectedSize} </p>
+                        <h5 class="font-medium text-gray-800 text-sm">${product.name}</h5>
+                        <div class="flex flex-wrap gap-2 mt-1 text-xs text-gray-500">
+                            <span>تعداد: ${toPersianDigits(product.quantity)}</span>
+                            <span>رنگ: ${product.selectedColor || '-'}</span>
+                            <span>سایز: ${product.selectedSize || '-'}</span>
+                        </div>
                     </div>
                     <div class="text-left">
-                      ${
-                      product.offerPrice
-                          ? `
-                            <p id="modal-product-price" class="font-semibold text-gray-800 line-through">${toPersianDigits(product.price)}</p>
-                            <p id="modal-product-price" class="font-semibold text-gray-800 font-bold text-xl">${toPersianDigits(product.offerPrice)}</p>
-                          `
-                          : `
-                            <p class="text-gray-600 text-right">${toPersianDigits(product.price)}</p>
-                          `
-                      }
+                        ${product.offerPrice ? `
+                            <p class="text-gray-400 line-through text-xs">${toPersianDigits(product.price)}</p>
+                            <p class="font-bold text-pink-600">${toPersianDigits(product.offerPrice)} تومان</p>
+                        ` : `
+                            <p class="font-bold text-gray-800">${toPersianDigits(product.price)} تومان</p>
+                        `}
                     </div>
-                  </div>
                 </div>
-              `;
-            });
-
-            // Update order information
-            document.getElementById("modal-order-id").textContent = `#${orderData.id}`;
-            document.getElementById("modal-order-date").textContent = orderData.date;
-            document.getElementById("modal-order-price").textContent = `${toPersianDigits(orderData.totalPrice)} تومان`;
-            document.getElementById("addressForInfo").textContent = orderData.address;
-            document.getElementById("deliveryForInfo").textContent = orderData.delivery;
-
-            // Update discount information
-            const discountElement = document.getElementById("modal-discount-price");
-            if (orderData.discountAmount > 0) {
-                discountElement.textContent = `${toPersianDigits(orderData.discountAmount)} تومان`;
-                if (orderData.discount?.originalValue) {
-                    discountElement.textContent += ` (${orderData.discount.originalValue})`;
-                }
-                discountElement.classList.add("text-red-600");
-            } else {
-                discountElement.textContent = "بدون تخفیف";
-                discountElement.classList.remove("text-red-600");
-            }
-
-            // Update price summary
-            document.getElementById("modal-total-price").textContent = `${toPersianDigits(orderData.originalPrice)} تومان`;
-            document.getElementById("modal-final-price").textContent = `${toPersianDigits(orderData.totalPrice)} تومان`;
-
-            // Show modal
-            document.getElementById('order-modal').classList.remove('hidden');
-            document.getElementById('order-modal').classList.add('flex');
+            </div>
+        `;
+    });
+    
+    // آپدیت اطلاعات
+    document.getElementById("modal-order-id").textContent = `#${orderData.id}`;
+    document.getElementById("modal-order-date").textContent = orderData.date;
+    document.getElementById("modal-order-price").textContent = `${toPersianDigits(orderData.totalPrice)} تومان`;
+    document.getElementById("addressForInfo").textContent = orderData.address;
+    document.getElementById("deliveryForInfo").textContent = orderData.delivery;
+    
+    // آپدیت وضعیت با رنگ مناسب
+    const statusElement = document.getElementById("modal-order-status");
+    const status = orderData.status;
+    let statusColor = '';
+    switch(status) {
+        case 'تحویل داده شد': statusColor = 'bg-green-100 text-green-800'; break;
+        case 'در حال ارسال': statusColor = 'bg-blue-100 text-blue-800'; break;
+        case 'بسته بندی شده': statusColor = 'bg-purple-100 text-purple-800'; break;
+        case 'در حال پردازش': statusColor = 'bg-yellow-100 text-yellow-800'; break;
+        case 'در انتظار پرداخت': statusColor = 'bg-orange-100 text-orange-800'; break;
+        case 'لغو شده': statusColor = 'bg-red-100 text-red-800'; break;
+        default: statusColor = 'bg-gray-100 text-gray-800';
+    }
+    statusElement.className = `inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${statusColor}`;
+    statusElement.textContent = status;
+    
+    // خلاصه پرداخت
+    const discountElement = document.getElementById("modal-discount-price");
+    if (orderData.discountAmount > 0) {
+        discountElement.textContent = `${toPersianDigits(orderData.discountAmount)} تومان`;
+        if (orderData.discount?.originalValue) {
+            discountElement.textContent += ` (${orderData.discount.originalValue})`;
         }
+    } else {
+        discountElement.textContent = "بدون تخفیف";
+    }
+    
+    document.getElementById("modal-total-price").textContent = `${toPersianDigits(orderData.originalPrice)} تومان`;
+    document.getElementById("modal-final-price").textContent = `${toPersianDigits(orderData.totalPrice)} تومان`;
+    
+    // نمایش مودال
+    const modal = document.getElementById('order-modal');
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+    setTimeout(() => {
+        document.getElementById('order-modal-content').classList.add('scale-100');
+    }, 10);
+}
 
-      function closeOrderModal() {
-        document.getElementById("order-modal").classList.add("hidden");
-        document.getElementById("order-modal").classList.remove("flex");
-      }
+function closeOrderModal() {
+    const modal = document.getElementById('order-modal');
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
+    // آزاد کردن اسکرول بدنه
+    document.body.style.overflow = '';
+    document.body.classList.remove('modal-open');
+}
 
-      // Close modal when clicking outside
-      document.getElementById("order-modal").addEventListener("click", (e) => {
-        if (e.target === e.currentTarget) {
-          closeOrderModal();
+const orderModal = document.getElementById('order-modal');
+if (orderModal) {
+    // حذف event listener های قبلی
+    const newOrderModal = orderModal.cloneNode(true);
+    orderModal.parentNode.replaceChild(newOrderModal, orderModal);
+    
+    // اضافه کردن event listener جدید
+    newOrderModal.addEventListener('click', (e) => {
+        if (e.target === newOrderModal) {
+            closeOrderModal();
         }
-      });
+    });
+}
+
+// بستن با دکمه ESC
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+        const modal = document.getElementById('order-modal');
+        if (modal && !modal.classList.contains('hidden')) {
+            closeOrderModal();
+        }
+    }
+});
 
       async function logout() {
         if (confirm('آیا از خروج از حساب کاربری خود مطمئن هستید؟')) {
@@ -1707,72 +1710,6 @@ async function confirmLogout() {
         closeLogoutModal();
     }
 }
-
-// تابع کمکی برای برگرداندن آیکون مناسب بر اساس وضعیت سفارش
-function getStatusIcon(status) {
-    switch(status) {
-        case 'تحویل داده شد':
-            return `
-                <div class="w-12 h-12 bg-green-500 rounded-2xl flex items-center justify-center">
-                    <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
-                    </svg>
-                </div>
-            `;
-        case 'در حال ارسال':
-            return `
-                <div class="w-12 h-12 bg-blue-500 rounded-2xl flex items-center justify-center">
-                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8l4 4L15 6"></path>
-                    </svg>
-                </div>
-            `;
-        case 'بسته بندی شده':
-            return `
-                <div class="w-12 h-12 bg-purple-500 rounded-2xl flex items-center justify-center">
-                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
-                    </svg>
-                </div>
-            `;
-        case 'در حال پردازش':
-            return `
-                <div class="w-12 h-12 bg-blue-400 rounded-2xl flex items-center justify-center">
-                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <circle cx="12" cy="12" r="10" stroke-width="2"></circle>
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6l4 2"></path>
-                    </svg>
-                </div>
-            `;
-        case 'در انتظار پرداخت':
-            return `
-                <div class="w-12 h-12 bg-yellow-500 rounded-2xl flex items-center justify-center">
-                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                    </svg>
-                </div>
-            `;
-        case 'لغو شده':
-            return `
-                <div class="w-12 h-12 bg-red-500 rounded-2xl flex items-center justify-center">
-                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                    </svg>
-                </div>
-            `;
-        default:
-            return `
-                <div class="w-12 h-12 bg-gray-500 rounded-2xl flex items-center justify-center">
-                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <circle cx="12" cy="12" r="10" stroke-width="2"></circle>
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01"></path>
-                    </svg>
-                </div>
-            `;
-    }
-}
-
     </script>
     
   </body>
