@@ -1248,7 +1248,6 @@ document.addEventListener("DOMContentLoaded", async () => {
           if (forgotStep2) forgotStep2.classList.add("active");
           startCountdown("forgot-resend-timer", 120);
           setupOtpInputs("#forgot-step-2");
-          if (data.otp) console.log("OTP for testing:", data.otp);
         } else { showNotificationInPopUp(data.message, 'error'); }
       })
       .catch(err => { console.error("Error:", err); showNotificationInPopUp("مشکلی در ارتباط با سرور به وجود آمده است", 'error'); });

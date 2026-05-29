@@ -737,7 +737,6 @@ document.addEventListener('DOMContentLoaded', function() {
       authButton.addEventListener('click', function(e) {
         e.preventDefault();
         e.stopPropagation();
-        console.log('دکمه کاربر کلیک شد - باز کردن پاپ‌آپ');
         authPopup.classList.remove('hidden');
         // تابع switchTab باید قبلاً تعریف شده باشد
         if (typeof switchTab === 'function') {

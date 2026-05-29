@@ -380,14 +380,12 @@ function updateCharts(salesData, visitsData) {
 
 // تبدیل داده‌های EJS به فرمت مناسب برای نمودار
 function prepareSalesData(monthlyData) {
-  console.log('prepareSalesData received:', monthlyData);
   
   const months = ['فروردین', 'اردیبهشت', 'خرداد', 'تیر', 'مرداد', 'شهریور', 
                   'مهر', 'آبان', 'آذر', 'دی', 'بهمن', 'اسفند'];
   
   // اگر داده نداریم، داده تست بساز
   if (!monthlyData || monthlyData.length === 0) {
-    console.log('No data, using test data');
     return {
       labels: ['فروردین', 'اردیبهشت', 'خرداد', 'تیر', 'مرداد', 'شهریور'],
       values: [450000, 620000, 780000, 550000, 890000, 940000]
@@ -421,7 +419,6 @@ function prepareSalesData(monthlyData) {
   
   // اگر باز هم داده نداشتیم
   if (labels.length === 0) {
-    console.log('No valid data, using test data');
     return {
       labels: ['فروردین', 'اردیبهشت', 'خرداد', 'تیر', 'مرداد', 'شهریور'],
       values: [450, 620, 780, 550, 890, 940]
@@ -435,7 +432,6 @@ function prepareSalesData(monthlyData) {
     values.unshift(0);
   }
   
-  console.log('Final sales data:', { labels, values });
   return { labels, values };
 }
 

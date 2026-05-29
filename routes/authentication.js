@@ -44,7 +44,6 @@ router.post("/signUp", upload.none(), validateSignUp, async (req, res) => {
   try {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      console.log('Validation errors:', errors.array()); // اضافه کنید
       return errorResponse(res, 400, "خطا در اعتبارسنجی", {
         errors: errors.array(),
       });

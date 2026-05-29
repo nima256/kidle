@@ -483,7 +483,6 @@ body.menu-open {
       authButton.addEventListener('click', function(e) {
         e.preventDefault();
         e.stopPropagation();
-        console.log('دکمه کاربر کلیک شد - باز کردن پاپ‌آپ');
         authPopup.classList.remove('hidden');
         // تابع switchTab باید قبلاً تعریف شده باشد
         if (typeof switchTab === 'function') {
@@ -1777,7 +1776,6 @@ if (scrollLeftBtn && scrollRightBtn && slider) {
             if (forgotStep2) forgotStep2.classList.add("active");
             startCountdown("forgot-resend-timer", 120);
             setupOtpInputs("#forgot-step-2");
-            if (data.otp) console.log("OTP for testing:", data.otp);
           } else {
             showNotificationInPopUp(data.message, 'error');
           }
@@ -2359,11 +2357,6 @@ if (scrollLeftBtn && scrollRightBtn && slider) {
                     forgotStep2.classList.add("active");
                     startCountdown("forgot-resend-timer", 120);
                     setupOtpInputs("#forgot-step-2");
-                    
-                    // For development only - show OTP in console
-                    if (data.otp) {
-                      console.log("OTP for testing:", data.otp);
-                    }
                   } else {
                     showNotificationInPopUp(data.message, 'error');
                   }
