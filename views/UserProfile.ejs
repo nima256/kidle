@@ -626,21 +626,59 @@ body.modal-open {
                 >
                   <div class="flex items-center justify-between mb-4">
                     <div class="flex items-center space-x-3 space-x-reverse">
-                      <div
-                        class="w-12 h-12 bg-green-500 rounded-2xl flex items-center justify-center"
-                      >
-                        <svg
-                          class="w-6 h-6 text-white"
-                          fill="currentColor"
-                          viewBox="0 0 20 20"
-                        >
-                          <path
-                            fill-rule="evenodd"
-                            d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                            clip-rule="evenodd"
-                          ></path>
-                        </svg>
-                      </div>
+                            <div class="w-12 h-12 rounded-2xl flex items-center justify-center
+                                <%=
+                                order.status === 'تحویل داده شد' ? 'bg-green-500' :
+                                order.status === 'لغو شده' ? 'bg-red-500' :
+                                order.status === 'در حال ارسال' ? 'bg-blue-500' :
+                                order.status === 'بسته بندی شده' ? 'bg-orange-500' :
+                                order.status === 'در حال پردازش' ? 'bg-purple-500' :
+                                order.status === 'پرداخت شده' ? 'bg-cyan-500' :
+                                'bg-yellow-500'
+                                %>">
+
+                                <% if(order.status === 'در انتظار پرداخت'){ %>
+                                <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
+                                  <path d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 11H7v-2h4V6h2v7z"/>
+                                </svg>
+                                <% } else if(order.status === 'پرداخت شده'){ %>
+                                <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                  <path fill-rule="evenodd"
+                                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9
+                                    10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                    clip-rule="evenodd"/>
+                                </svg>
+                                <% } else if(order.status === 'در حال پردازش'){ %>
+                                <svg class="w-6 h-6 text-white animate-spin" fill="none" viewBox="0 0 24 24">
+                                  <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" opacity=".3"/>
+                                  <path fill="currentColor" d="M12 2a10 10 0 0110 10h-4a6 6 0 00-6-6V2z"/>
+                                </svg>
+                                <% } else if(order.status === 'بسته بندی شده'){ %>
+                                <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
+                                  <path d="M12 2L3 7l9 5 9-5-9-5zm-7 7v8l7 5v-8L5 9zm14 0l-7 5v8l7-5V9z"/>
+                                </svg>
+                                <% } else if(order.status === 'در حال ارسال'){ %>
+                                <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
+                                  <path d="M3 5h11v8H3V5zm12 2h3l3 4v2h-6V7zm-8 9a2 2 0 100-4 2 2 0 000 4zm10 0a2 2 0 100-4 2 2 0 000 4z"/>
+                                </svg>
+                                <% } else if(order.status === 'تحویل داده شد'){ %>
+                                <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                  <path fill-rule="evenodd"
+                                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9
+                                    10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                    clip-rule="evenodd"/>
+                                </svg>
+                                <% } else if(order.status === 'لغو شده'){ %>
+                                <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                  <path fill-rule="evenodd"
+                                    d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414
+                                    1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10
+                                    11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10
+                                    4.293 5.707a1 1 0 010-1.414z"
+                                    clip-rule="evenodd"/>
+                                </svg>
+                                <% } %>
+                            </div>
                       <div>
                         <h3 class="font-semibold text-gray-800">
                           سفارش #<%= order.OrderNum %>
@@ -718,22 +756,60 @@ body.modal-open {
                       >
                         <div class="flex items-center justify-between mb-4">
                           <div class="flex items-center space-x-3 space-x-reverse">
-                            <div
-                              class="w-12 h-12 bg-green-500 rounded-2xl flex items-center justify-center"
-                            >
-                              <svg
-                                class="w-6 h-6 text-white"
-                                fill="currentColor"
-                                viewBox="0 0 20 20"
-                              >
-                                <path
-                                  fill-rule="evenodd"
-                                  d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                                  clip-rule="evenodd"
-                                ></path>
-                              </svg>
+                            <div class="w-12 h-12 rounded-2xl flex items-center justify-center
+                                <%=
+                                order.status === 'تحویل داده شد' ? 'bg-green-500' :
+                                order.status === 'لغو شده' ? 'bg-red-500' :
+                                order.status === 'در حال ارسال' ? 'bg-blue-500' :
+                                order.status === 'بسته بندی شده' ? 'bg-orange-500' :
+                                order.status === 'در حال پردازش' ? 'bg-purple-500' :
+                                order.status === 'پرداخت شده' ? 'bg-cyan-500' :
+                                'bg-yellow-500'
+                                %>">
+
+                                <% if(order.status === 'در انتظار پرداخت'){ %>
+                                <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
+                                  <path d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 11H7v-2h4V6h2v7z"/>
+                                </svg>
+                                <% } else if(order.status === 'پرداخت شده'){ %>
+                                <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                  <path fill-rule="evenodd"
+                                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9
+                                    10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                    clip-rule="evenodd"/>
+                                </svg>
+                                <% } else if(order.status === 'در حال پردازش'){ %>
+                                <svg class="w-6 h-6 text-white animate-spin" fill="none" viewBox="0 0 24 24">
+                                  <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" opacity=".3"/>
+                                  <path fill="currentColor" d="M12 2a10 10 0 0110 10h-4a6 6 0 00-6-6V2z"/>
+                                </svg>
+                                <% } else if(order.status === 'بسته بندی شده'){ %>
+                                <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
+                                  <path d="M12 2L3 7l9 5 9-5-9-5zm-7 7v8l7 5v-8L5 9zm14 0l-7 5v8l7-5V9z"/>
+                                </svg>
+                                <% } else if(order.status === 'در حال ارسال'){ %>
+                                <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
+                                  <path d="M3 5h11v8H3V5zm12 2h3l3 4v2h-6V7zm-8 9a2 2 0 100-4 2 2 0 000 4zm10 0a2 2 0 100-4 2 2 0 000 4z"/>
+                                </svg>
+                                <% } else if(order.status === 'تحویل داده شد'){ %>
+                                <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                  <path fill-rule="evenodd"
+                                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9
+                                    10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                    clip-rule="evenodd"/>
+                                </svg>
+                                <% } else if(order.status === 'لغو شده'){ %>
+                                <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                  <path fill-rule="evenodd"
+                                    d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414
+                                    1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10
+                                    11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10
+                                    4.293 5.707a1 1 0 010-1.414z"
+                                    clip-rule="evenodd"/>
+                                </svg>
+                                <% } %>
                             </div>
-                            <div>
+                              <div>
                               <h3 class="font-semibold text-gray-800">
                                 سفارش #<%= order.OrderNum %>
                               </h3>
@@ -810,20 +886,58 @@ body.modal-open {
                       >
                         <div class="flex items-center justify-between mb-4">
                           <div class="flex items-center space-x-3 space-x-reverse">
-                            <div
-                              class="w-12 h-12 bg-green-500 rounded-2xl flex items-center justify-center"
-                            >
-                              <svg
-                                class="w-6 h-6 text-white"
-                                fill="currentColor"
-                                viewBox="0 0 20 20"
-                              >
-                                <path
-                                  fill-rule="evenodd"
-                                  d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                                  clip-rule="evenodd"
-                                ></path>
-                              </svg>
+                            <div class="w-12 h-12 rounded-2xl flex items-center justify-center
+                                <%=
+                                order.status === 'تحویل داده شد' ? 'bg-green-500' :
+                                order.status === 'لغو شده' ? 'bg-red-500' :
+                                order.status === 'در حال ارسال' ? 'bg-blue-500' :
+                                order.status === 'بسته بندی شده' ? 'bg-orange-500' :
+                                order.status === 'در حال پردازش' ? 'bg-purple-500' :
+                                order.status === 'پرداخت شده' ? 'bg-cyan-500' :
+                                'bg-yellow-500'
+                                %>">
+
+                                <% if(order.status === 'در انتظار پرداخت'){ %>
+                                <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
+                                  <path d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 11H7v-2h4V6h2v7z"/>
+                                </svg>
+                                <% } else if(order.status === 'پرداخت شده'){ %>
+                                <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                  <path fill-rule="evenodd"
+                                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9
+                                    10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                    clip-rule="evenodd"/>
+                                </svg>
+                                <% } else if(order.status === 'در حال پردازش'){ %>
+                                <svg class="w-6 h-6 text-white animate-spin" fill="none" viewBox="0 0 24 24">
+                                  <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" opacity=".3"/>
+                                  <path fill="currentColor" d="M12 2a10 10 0 0110 10h-4a6 6 0 00-6-6V2z"/>
+                                </svg>
+                                <% } else if(order.status === 'بسته بندی شده'){ %>
+                                <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
+                                  <path d="M12 2L3 7l9 5 9-5-9-5zm-7 7v8l7 5v-8L5 9zm14 0l-7 5v8l7-5V9z"/>
+                                </svg>
+                                <% } else if(order.status === 'در حال ارسال'){ %>
+                                <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
+                                  <path d="M3 5h11v8H3V5zm12 2h3l3 4v2h-6V7zm-8 9a2 2 0 100-4 2 2 0 000 4zm10 0a2 2 0 100-4 2 2 0 000 4z"/>
+                                </svg>
+                                <% } else if(order.status === 'تحویل داده شد'){ %>
+                                <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                  <path fill-rule="evenodd"
+                                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9
+                                    10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                    clip-rule="evenodd"/>
+                                </svg>
+                                <% } else if(order.status === 'لغو شده'){ %>
+                                <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                  <path fill-rule="evenodd"
+                                    d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414
+                                    1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10
+                                    11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10
+                                    4.293 5.707a1 1 0 010-1.414z"
+                                    clip-rule="evenodd"/>
+                                </svg>
+                                <% } %>
                             </div>
                             <div>
                               <h3 class="font-semibold text-gray-800">
@@ -1591,6 +1705,71 @@ async function confirmLogout() {
         console.error('Logout error:', error);
         showNotification('خطا در ارتباط با سرور', 'error');
         closeLogoutModal();
+    }
+}
+
+// تابع کمکی برای برگرداندن آیکون مناسب بر اساس وضعیت سفارش
+function getStatusIcon(status) {
+    switch(status) {
+        case 'تحویل داده شد':
+            return `
+                <div class="w-12 h-12 bg-green-500 rounded-2xl flex items-center justify-center">
+                    <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                    </svg>
+                </div>
+            `;
+        case 'در حال ارسال':
+            return `
+                <div class="w-12 h-12 bg-blue-500 rounded-2xl flex items-center justify-center">
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8l4 4L15 6"></path>
+                    </svg>
+                </div>
+            `;
+        case 'بسته بندی شده':
+            return `
+                <div class="w-12 h-12 bg-purple-500 rounded-2xl flex items-center justify-center">
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
+                    </svg>
+                </div>
+            `;
+        case 'در حال پردازش':
+            return `
+                <div class="w-12 h-12 bg-blue-400 rounded-2xl flex items-center justify-center">
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <circle cx="12" cy="12" r="10" stroke-width="2"></circle>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6l4 2"></path>
+                    </svg>
+                </div>
+            `;
+        case 'در انتظار پرداخت':
+            return `
+                <div class="w-12 h-12 bg-yellow-500 rounded-2xl flex items-center justify-center">
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                </div>
+            `;
+        case 'لغو شده':
+            return `
+                <div class="w-12 h-12 bg-red-500 rounded-2xl flex items-center justify-center">
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </div>
+            `;
+        default:
+            return `
+                <div class="w-12 h-12 bg-gray-500 rounded-2xl flex items-center justify-center">
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <circle cx="12" cy="12" r="10" stroke-width="2"></circle>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01"></path>
+                    </svg>
+                </div>
+            `;
     }
 }
 
