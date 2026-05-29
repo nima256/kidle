@@ -98,12 +98,36 @@
       margin-bottom: 1.15rem;
     }
 
-    .post-content h2 {
-      font-weight: 800;
-      margin-top: 2rem;
-      margin-bottom: 0.85rem;
-      font-size: 1.5rem;
-    }
+.post-content h1,
+.post-content h2,
+.post-content h3,
+.post-content h4 {
+  line-height: 1.9;
+}
+
+.post-content h1 {
+  font-size: 2rem;
+  font-weight: 900;
+  margin: 2.5rem 0 1rem;
+}
+
+.post-content h2 {
+  font-size: 1.5rem;
+  font-weight: 800;
+  margin: 2rem 0 0.85rem;
+}
+
+.post-content h3 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin: 1.5rem 0 0.75rem;
+}
+
+.post-content h4 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin: 1.25rem 0 0.5rem;
+}
 
     .post-content ul {
       list-style: none;
@@ -286,6 +310,85 @@
 .cart-count {
     top: -8px;
     left: -8px;
+}
+/* استایل جدول محتویات */
+.table-of-contents {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    padding: 1.25rem;
+    margin-bottom: 2rem;
+    direction: rtl;
+}
+
+.table-of-contents h4 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #1e293b;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid #3b82f6;
+    display: inline-block;
+}
+
+.table-of-contents ul {
+    list-style: none;
+    padding-right: 0;
+    margin: 0;
+}
+
+.table-of-contents li {
+    margin: 0.5rem 0;
+    line-height: 1.5;
+}
+
+.table-of-contents a {
+    color: #475569;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    display: inline-block;
+    padding: 0.25rem 0;
+    font-size: 0.9rem;
+}
+
+.table-of-contents a:hover {
+    color: #3b82f6;
+    transform: translateX(-4px);
+}
+
+.table-of-contents .toc-level-1 {
+    padding-right: 0;
+    font-weight: 600;
+}
+
+.table-of-contents .toc-level-2 {
+    padding-right: 1.25rem;
+    font-weight: normal;
+}
+
+.table-of-contents .toc-level-3 {
+    padding-right: 2.5rem;
+    font-size: 0.85rem;
+    color: #64748b;
+}
+
+/* انیمیشن اسکرول نرم */
+html {
+    scroll-behavior: smooth;
+}
+
+/* استایل برای هایلایت کردن سرتیتر هنگام اسکرول */
+.section-highlight {
+    animation: highlightFlash 0.5s ease;
+}
+
+@keyframes highlightFlash {
+    0% {
+        background-color: rgba(59, 130, 246, 0.2);
+    }
+    100% {
+        background-color: transparent;
+    }
 }
   </style>
 </head>
@@ -812,6 +915,7 @@ async function showSinglePost(slug) {
           <div class="image-placeholder rounded-2xl h-64 flex items-center justify-center overflow-hidden">
             ${mainImage}
           </div>
+          <div id="postTOC" class="mb-6"></div>
           <div class="mt-6">
             <div class="flex flex-wrap gap-2 mb-4">
               <span class="bg-pink-100 text-pink-600 text-xs font-bold px-3 py-1 rounded-full">${categoryName}</span>
@@ -823,7 +927,7 @@ async function showSinglePost(slug) {
               <span><i class="far fa-user ml-1"></i> ${authorName}</span>
               <span><i class="far fa-eye ml-1"></i> ${toPersianNumber(post.viewCount)} بازدید</span>
             </div>
-            <div class="post-content mt-6 text-rose-700 leading-loose">
+            <div id="postContent" class="post-content mt-6 text-rose-700 leading-loose">
               ${post.content}
             </div>
           </div>
@@ -854,9 +958,17 @@ async function showSinglePost(slug) {
   `;
   
   document.getElementById("singlePostContent").innerHTML = content;
+  
+  // نمایش صفحه تکی مقاله
   document.getElementById("singlePostView").classList.remove("hidden");
   document.getElementById("mainContent").classList.add("hidden");
-  document.body.style.overflow = "hidden";
+  // حذف overflow: hidden از body - مهمترین قسمت
+  document.body.style.overflow = "auto";
+  
+  // با تأخیر بیشتر TOC رو بساز
+  setTimeout(function() {
+      generateTableOfContents('#postContent', '#postTOC');
+  }, 200);
   
   // به‌روزرسانی URL بدون رفرش
   window.history.pushState({ slug: post.slug }, post.title, `/weblog/${post.slug}`);
@@ -1346,6 +1458,144 @@ document.addEventListener("DOMContentLoaded", async () => {
   setupOtpInputs("#register-step-2");
   setupOtpInputs("#forgot-step-2");
 });
+// تابع تولید جدول محتویات خودکار
+// تابع تولید جدول محتویات خودکار
+// تابع تولید جدول محتویات خودکار
+function generateTableOfContents(contentSelector, tocContainerSelector) {
+    const contentElement = document.querySelector(contentSelector);
+    const tocContainer = document.querySelector(tocContainerSelector);
+    
+    if (!contentElement || !tocContainer) return;
+    
+    // پیدا کردن تمام هدینگ‌ها (h1, h2, h3)
+    const headings = contentElement.querySelectorAll('h1, h2, h3');
+    
+    if (headings.length === 0) {
+        tocContainer.style.display = 'none';
+        return;
+    }
+    
+    tocContainer.style.display = 'block';
+    
+    // ساخت HTML جدول محتویات
+    let tocHTML = '<div class="table-of-contents">';
+    tocHTML += '<h4>📑 فهرست مطالب</h4>';
+    tocHTML += '<ul>';
+    
+    headings.forEach((heading, index) => {
+        // ایجاد id یکتا برای هر هدینگ
+        const id = `heading-${index}-${Date.now()}-${Math.random().toString(36).substr(2, 6)}`;
+        heading.id = id;
+        
+        // اضافه کردن کلاس برای استایل‌بندی
+        const level = heading.tagName.toLowerCase();
+        heading.classList.add(`toc-heading-${level}`);
+        
+        // ساخت لینک در TOC
+        const text = heading.textContent;
+        const levelClass = `toc-level-${level}`;
+        
+        tocHTML += `
+            <li class="${levelClass}">
+                <a href="#${id}" class="toc-link" data-target="${id}">
+                    ${level === 'h1' ? '📌 ' : level === 'h2' ? '• ' : '◦ '}
+                    ${text}
+                </a>
+            </li>
+        `;
+    });
+    
+    tocHTML += '</ul></div>';
+    
+    tocContainer.innerHTML = tocHTML;
+    
+    // اضافه کردن event listener برای لینک‌ها با offset بیشتر
+    const tocLinks = document.querySelectorAll('.toc-link');
+    tocLinks.forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            const targetId = this.dataset.target;
+            const targetElement = document.getElementById(targetId);
+            
+            if (targetElement) {
+                // اسکرول نرم به بخش مورد نظر با offset بیشتر برای navbar
+                const navbarHeight = 80; // افزایش offset (navbar صفحه تکی مقاله)
+                const elementPosition = targetElement.getBoundingClientRect().top;
+                const offsetPosition = window.pageYOffset + elementPosition - navbarHeight;
+                
+                const scrollContainer = document.getElementById('singlePostView');
+
+                scrollContainer.scrollTo({
+                    top: targetElement.offsetTop - navbarHeight,
+                    behavior: 'smooth'
+                });
+                
+                // هایلایت کردن بخش
+                targetElement.classList.add('section-highlight');
+                setTimeout(() => {
+                    targetElement.classList.remove('section-highlight');
+                }, 1000);
+                
+                // آپدیت URL بدون رفرش
+                history.pushState(null, null, `#${targetId}`);
+            }
+        });
+    });
+    
+    // بررسی URL برای اسکرول خودکار بعد از ساخت TOC
+    setTimeout(function() {
+        if (window.location.hash) {
+            const targetId = window.location.hash.substring(1);
+            const targetElement = document.getElementById(targetId);
+            
+            if (targetElement) {
+                const navbarHeight = 80;
+                const elementPosition = targetElement.getBoundingClientRect().top;
+                const offsetPosition = window.pageYOffset + elementPosition - navbarHeight;
+                
+                const scrollContainer = document.getElementById('singlePostView');
+
+                scrollContainer.scrollTo({
+                    top: targetElement.offsetTop - navbarHeight,
+                    behavior: 'smooth'
+                });
+                
+                targetElement.classList.add('section-highlight');
+                setTimeout(() => {
+                    targetElement.classList.remove('section-highlight');
+                }, 1000);
+            }
+        }
+    }, 300); // تأخیر بیشتر
+}
+
+// تابع برای اسکرول به بخش مورد نظر از URL (وقتی صفحه لود میشه)
+function scrollToHeadingFromUrl() {
+    if (window.location.hash) {
+        const targetId = window.location.hash.substring(1);
+        const targetElement = document.getElementById(targetId);
+        
+        if (targetElement) {
+            setTimeout(() => {
+                const offset = 80;
+                const elementPosition = targetElement.getBoundingClientRect().top;
+                const offsetPosition = elementPosition + window.pageYOffset - offset;
+                
+                const scrollContainer = document.getElementById('singlePostView');
+
+                scrollContainer.scrollTo({
+                    top: targetElement.offsetTop - 80,
+                    behavior: 'smooth'
+                });
+         
+                targetElement.classList.add('section-highlight');
+                setTimeout(() => {
+                    targetElement.classList.remove('section-highlight');
+                }, 1000);
+            }, 500);
+        }
+    }
+}
 </script>
 </body>
 </html>

@@ -772,6 +772,85 @@ body.menu-open {
     top: -8px;
     left: -8px;
 }
+/* استایل جدول محتویات */
+.table-of-contents {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    padding: 1.25rem;
+    margin-bottom: 2rem;
+    direction: rtl;
+}
+
+.table-of-contents h4 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #1e293b;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid #3b82f6;
+    display: inline-block;
+}
+
+.table-of-contents ul {
+    list-style: none;
+    padding-right: 0;
+    margin: 0;
+}
+
+.table-of-contents li {
+    margin: 0.5rem 0;
+    line-height: 1.5;
+}
+
+.table-of-contents a {
+    color: #475569;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    display: inline-block;
+    padding: 0.25rem 0;
+    font-size: 0.9rem;
+}
+
+.table-of-contents a:hover {
+    color: #3b82f6;
+    transform: translateX(-4px);
+}
+
+.table-of-contents .toc-level-1 {
+    padding-right: 0;
+    font-weight: 600;
+}
+
+.table-of-contents .toc-level-2 {
+    padding-right: 1.25rem;
+    font-weight: normal;
+}
+
+.table-of-contents .toc-level-3 {
+    padding-right: 2.5rem;
+    font-size: 0.85rem;
+    color: #64748b;
+}
+
+/* انیمیشن اسکرول نرم */
+html {
+    scroll-behavior: smooth;
+}
+
+/* استایل برای هایلایت کردن سرتیتر هنگام اسکرول */
+.section-highlight {
+    animation: highlightFlash 0.5s ease;
+}
+
+@keyframes highlightFlash {
+    0% {
+        background-color: rgba(59, 130, 246, 0.2);
+    }
+    100% {
+        background-color: transparent;
+    }
+}
     </style>
   </head>
   <body class="bg-white min-h-screen">
@@ -1448,10 +1527,12 @@ document.addEventListener('DOMContentLoaded', function() {
           ویژگی‌های کلیدی
         </button>
       </div>
-      
+
+      <div id="productTOC" class="mb-6"></div>
+
       <!-- محتوای تب توضیحات محصول -->
       <div id="tab-description" class="tab-content active">
-        <div class="text-gray-700 leading-relaxed text-base">
+        <div id="productDescriptionContent" class="text-gray-700 leading-relaxed text-base">
           <%- product.description %>
         </div>
       </div>
@@ -1932,6 +2013,13 @@ if (document.readyState === 'loading') {
             if (tabContents[tabId]) {
               tabContents[tabId].classList.add('active');
             }
+            if (tabId === 'description') {
+                setTimeout(function() {
+                    if (typeof generateTableOfContents === 'function') {
+                        generateTableOfContents('#productDescriptionContent', '#productTOC');
+                    }
+                }, 100);
+            }
           }
           
           // اضافه کردن event listener به دکمه‌های تب
@@ -2036,6 +2124,11 @@ document.addEventListener('DOMContentLoaded', function() {
       actualSize: false
     });
   }
+    setTimeout(function() {
+        if (typeof generateTableOfContents === 'function') {
+            generateTableOfContents('#productDescriptionContent', '#productTOC');
+        }
+    }, 200);
 });
 // گالری تصاویر
 // گالری تصاویر پیشرفته
@@ -2172,6 +2265,113 @@ function toPersianDigits(str) {
   if (str === undefined || str === null) return '۰';
   const num = str.toString();
   return num.replace(/\d/g, d => '۰۱۲۳۴۵۶۷۸۹'[d]);
+}
+
+// تابع تولید جدول محتویات خودکار
+function generateTableOfContents(contentSelector, tocContainerSelector) {
+    const contentElement = document.querySelector(contentSelector);
+    const tocContainer = document.querySelector(tocContainerSelector);
+    
+    if (!contentElement || !tocContainer) return;
+    
+    // پیدا کردن تمام هدینگ‌ها (h1, h2, h3)
+    const headings = contentElement.querySelectorAll('h1, h2, h3');
+    
+    if (headings.length === 0) {
+        tocContainer.style.display = 'none';
+        return;
+    }
+    
+    tocContainer.style.display = 'block';
+    
+    // ساخت HTML جدول محتویات
+    let tocHTML = '<div class="table-of-contents">';
+    tocHTML += '<h4>📑 فهرست مطالب</h4>';
+    tocHTML += '<ul>';
+    
+    headings.forEach((heading, index) => {
+        // ایجاد id یکتا برای هر هدینگ
+        const id = `heading-${index}-${Date.now()}-${Math.random().toString(36).substr(2, 6)}`;
+        heading.id = id;
+        
+        // اضافه کردن کلاس برای استایل‌بندی
+        const level = heading.tagName.toLowerCase();
+        heading.classList.add(`toc-heading-${level}`);
+        
+        // ساخت لینک در TOC
+        const text = heading.textContent;
+        const levelClass = `toc-level-${level}`;
+        
+        tocHTML += `
+            <li class="${levelClass}">
+                <a href="#${id}" class="toc-link" data-target="${id}">
+                    ${level === 'h1' ? '📌 ' : level === 'h2' ? '• ' : '◦ '}
+                    ${text}
+                </a>
+            </li>
+        `;
+    });
+    
+    tocHTML += '</ul></div>';
+    
+    tocContainer.innerHTML = tocHTML;
+    
+    // اضافه کردن event listener برای لینک‌ها
+    const tocLinks = document.querySelectorAll('.toc-link');
+    tocLinks.forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            const targetId = this.dataset.target;
+            const targetElement = document.getElementById(targetId);
+            
+            if (targetElement) {
+                // اسکرول نرم به بخش مورد نظر
+                const offset = 80; // فاصله از بالا (برای navbar)
+                const elementPosition = targetElement.getBoundingClientRect().top;
+                const offsetPosition = elementPosition + window.pageYOffset - offset;
+                
+                window.scrollTo({
+                    top: offsetPosition,
+                    behavior: 'smooth'
+                });
+                
+                // هایلایت کردن بخش
+                targetElement.classList.add('section-highlight');
+                setTimeout(() => {
+                    targetElement.classList.remove('section-highlight');
+                }, 1000);
+                
+                // آپدیت URL بدون رفرش
+                history.pushState(null, null, `#${targetId}`);
+            }
+        });
+    });
+}
+
+// تابع برای اسکرول به بخش مورد نظر از URL (وقتی صفحه لود میشه)
+function scrollToHeadingFromUrl() {
+    if (window.location.hash) {
+        const targetId = window.location.hash.substring(1);
+        const targetElement = document.getElementById(targetId);
+        
+        if (targetElement) {
+            setTimeout(() => {
+                const offset = 80;
+                const elementPosition = targetElement.getBoundingClientRect().top;
+                const offsetPosition = elementPosition + window.pageYOffset - offset;
+                
+                window.scrollTo({
+                    top: offsetPosition,
+                    behavior: 'smooth'
+                });
+                
+                targetElement.classList.add('section-highlight');
+                setTimeout(() => {
+                    targetElement.classList.remove('section-highlight');
+                }, 1000);
+            }, 500);
+        }
+    }
 }
 
 </script>
