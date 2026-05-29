@@ -802,7 +802,7 @@ async function showSinglePost(slug) {
   const categoryName = post.categories && post.categories[0] ? post.categories[0].name : 'عمومی';
   const authorName = post.authorDetails ? post.authorDetails.fullName : 'کیدل مگ';
   const mainImage = post.images && post.images[0] ? 
-    `<img src="${post.images[0].url}" class="w-full h-full object-cover rounded-2xl">` : 
+    `<img src="${post.images[0].url}" class="w-full h-full object-cover rounded-2xl" title="${post.images[0].caption}">` : 
     `<i class="fas fa-tshirt text-7xl text-pink-400"></i>`;
   
   const content = `

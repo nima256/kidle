@@ -1264,6 +1264,7 @@ document.addEventListener('DOMContentLoaded', function() {
         id="main-image"
         src="<%= product.images[0].url %>"
         alt="<%= product.name %>"
+        title="<%= product.images[0].caption %>"
         class="main-image w-full h-80 lg:h-96 object-contain rounded-2xl cursor-pointer"
         onclick="openGallery(0)"
       />

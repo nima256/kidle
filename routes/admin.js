@@ -1431,7 +1431,7 @@ router.post("/weblogs/add", async (req, res) => {
             return res.status(400).json({ success: false, message: 'عنوان، توضیحات و محتوا الزامی هستند' });
         }
 
-        // پردازش صحیح تصاویر
+        // پردازش صحیح تصاویر با حفظ caption و alt
         let processedImages = [];
         if (images && Array.isArray(images)) {
             processedImages = images.map(img => {
@@ -1439,14 +1439,18 @@ router.post("/weblogs/add", async (req, res) => {
                 if (typeof img === 'string') {
                     return {
                         url: img,
-                        filename: img.split('/').pop() || 'unknown'
+                        filename: img.split('/').pop() || 'unknown',
+                        caption: '',
+                        alt: ''
                     };
                 }
                 // اگر img آبجکت است و url دارد
                 if (img && typeof img === 'object' && img.url) {
                     return {
                         url: img.url,
-                        filename: img.filename || img.url.split('/').pop() || 'unknown'
+                        filename: img.filename || img.url.split('/').pop() || 'unknown',
+                        caption: img.caption || img.alt || '',
+                        alt: img.alt || img.caption || ''
                     };
                 }
                 return null;
@@ -1501,6 +1505,7 @@ router.post("/weblogs/add", async (req, res) => {
 
 
 
+
 // ویرایش مقاله
 router.put("/weblogs/edit/:id", async (req, res) => {
     try {
@@ -1510,7 +1515,7 @@ router.put("/weblogs/edit/:id", async (req, res) => {
             return res.status(400).json({ success: false, message: "شناسه مقاله نامعتبر است" });
         }
         
-        const {
+      const {
             title,
             description,
             content,
@@ -1524,44 +1529,43 @@ router.put("/weblogs/edit/:id", async (req, res) => {
             metaDescription
         } = req.body;
 
-        // پردازش صحیح تصاویر
+        // پردازش صحیح تصاویر با حفظ caption و alt
         let processedImages = [];
         if (images && Array.isArray(images)) {
             processedImages = images.map(img => {
-                // اگر img رشته است (URL) به آبجکت تبدیل کن
                 if (typeof img === 'string') {
                     return {
                         url: img,
-                        filename: img.split('/').pop() || 'unknown'
+                        filename: img.split('/').pop() || 'unknown',
+                        caption: '',
+                        alt: ''
                     };
                 }
-                // اگر img آبجکت است و url دارد
                 if (img && typeof img === 'object' && img.url) {
                     return {
                         url: img.url,
-                        filename: img.filename || img.url.split('/').pop() || 'unknown'
+                        filename: img.filename || img.url.split('/').pop() || 'unknown',
+                        caption: img.caption || img.alt || '',
+                        alt: img.alt || img.caption || ''
                     };
                 }
                 return null;
             }).filter(img => img !== null);
         }
 
-        // تولید slug جدید اگر title تغییر کرده باشد
-        let slug;
-        const existingWeblog = await Weblog.findById(id);
-        if (existingWeblog && existingWeblog.title !== title) {
-            slug = title
-                .toString()
-                .trim()
-                .toLowerCase()
-                .replace(/\s+/g, '-')
-                .replace(/[^\u0600-\u06FF\uFB8A\u067E\u0686\u06AF\u200C\u0629\u0640a-z0-9\-]/g, '')
-                .replace(/\-{2,}/g, '-')
-                .replace(/^\-+|\-+$/g, '');
-        }
+        // تولید slug جدید
+        const slug = title
+            .toString()
+            .trim()
+            .toLowerCase()
+            .replace(/\s+/g, '-')
+            .replace(/[^\u0600-\u06FF\uFB8A\u067E\u0686\u06AF\u200C\u0629\u0640a-z0-9\-]/g, '')
+            .replace(/\-{2,}/g, '-')
+            .replace(/^\-+|\-+$/g, '');
 
         const updateData = {
             title,
+            slug,
             description,
             content,
             images: processedImages,
@@ -1572,15 +1576,12 @@ router.put("/weblogs/edit/:id", async (req, res) => {
             isPublished: isPublished || false,
             metaTitle: metaTitle || title,
             metaDescription: metaDescription || description,
-            updateTarikh: getPersianDate()
+            updateTarikh: getPersianDate(),
+            updatedAt: Date.now()
         };
-        
-        if (slug) {
-            updateData.slug = slug;
-        }
 
         const weblog = await Weblog.findByIdAndUpdate(
-            id,
+            req.params.id,
             updateData,
             { new: true, runValidators: true }
         ).populate('author', 'fullName').populate('categories', 'name');
@@ -1589,18 +1590,17 @@ router.put("/weblogs/edit/:id", async (req, res) => {
             return res.status(404).json({ success: false, message: 'مقاله یافت نشد' });
         }
 
-        res.json({ 
+        res.status(200).json({ 
             success: true, 
-            message: 'مقاله با موفقیت به‌روزرسانی شد',
+            message: 'مقاله با موفقیت ویرایش شد',
             weblog
         });
         
     } catch (error) {
-        console.error('Error updating weblog:', error);
+        console.error('Error editing weblog:', error);
         res.status(500).json({ success: false, message: error.message });
     }
 });
-
 
 
 // حذف مقاله

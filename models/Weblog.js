@@ -61,6 +61,8 @@ const weblogSchema = mongoose.Schema(
           type: String,
           required: true,
         },
+        caption: String,
+        alt: String
       },
     ],
     author: {

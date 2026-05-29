@@ -211,11 +211,11 @@ app.use(async (req, res, next) => {
 
 app.use(flash());
 
-const apiLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // limit each IP to 100 requests per windowMs
-  message: "Too many requests from this IP, please try again later",
-});
+// const apiLimiter = rateLimit({
+//   windowMs: 15 * 60 * 1000, // 15 minutes
+//   max: 100, // limit each IP to 100 requests per windowMs
+//   message: "Too many requests from this IP, please try again later",
+// });
 
 const initDirectories = () => {
   const dirs = ["public/uploads", "public/uploads/temp"];
@@ -238,7 +238,7 @@ const adminRoutes = require("./routes/admin");
 const weblogRoutes = require('./routes/weblog');
 const { isLoggedIn } = require("./middlewares/isLoggedIn");
 
-app.use("/api/", apiLimiter);
+// app.use("/api/", apiLimiter);
 app.use("/api/authentication", authenticationRoutes);
 app.use("/api/mobile", mobileRoutes);
 app.use("/api/cart", cartRoutes);

@@ -555,7 +555,12 @@ router.post(
 
 // صفحه موفقیت
 router.get("/payment-success", async (req, res) => {
-  const orderNum = req.query.orderNum || req.session.OrderNum;
+    const user = await User.findById(req.session.userId)
+      .populate("cart.productId")
+      .populate("orders");
+
+    const cartCount = user?.cart?.length || 0;
+    const orderNum = req.query.orderNum || req.session.OrderNum;
 
     const allCategories = await Category.find({ 
       categoryType: "product",
@@ -576,13 +581,18 @@ router.get("/payment-success", async (req, res) => {
         menuCategories.push(categoryMap[cat._id]);
       }
     });
-  res.render("PaymentSuccess", { OrderNum: orderNum , menuCategories});
+ res.render("PaymentSuccess", { OrderNum: orderNum , menuCategories, user, cartCount});
 });
 
 // صفحه شکست (برای مواقعی که نیاز باشه)
 router.get("/payment-failed", async (req, res) => {
+    const user = await User.findById(req.session.userId)
+      .populate("cart.productId")
+      .populate("orders");
 
-      const allCategories = await Category.find({ 
+    const cartCount = user?.cart?.length || 0;
+    
+    const allCategories = await Category.find({ 
       categoryType: "product",
       isActive: true 
     });
@@ -601,7 +611,7 @@ router.get("/payment-failed", async (req, res) => {
         menuCategories.push(categoryMap[cat._id]);
       }
     });
-  res.render("PaymentFailed", { OrderNum: req.session.OrderNum, menuCategories });
+  res.render("PaymentFailed", { OrderNum: req.session.OrderNum, menuCategories, user ,cartCount });
 });
 
 module.exports = router;

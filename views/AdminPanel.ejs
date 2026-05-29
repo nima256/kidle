@@ -428,6 +428,95 @@
     color: white;
 }
 
+.enhanced-link {
+    position: relative;
+    text-decoration: none;
+    border-bottom: 1px dashed #3b82f6;
+    transition: all 0.2s ease;
+}
+
+.enhanced-link:hover {
+    color: #2563eb;
+    border-bottom-color: #2563eb;
+}
+
+.custom-tooltip {
+    animation: tooltipFadeIn 0.2s ease;
+}
+
+@keyframes tooltipFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-5px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.image-figure,
+.weblog-image-figure {
+    margin: 20px 0;
+    transition: all 0.3s ease;
+}
+
+.image-figure:hover,
+.weblog-image-figure:hover {
+    transform: translateY(-2px);
+}
+
+.image-caption,
+.weblog-image-caption {
+    font-size: 13px;
+    color: #6b7280;
+    text-align: center;
+    margin-top: 8px;
+    padding: 4px;
+    border-bottom: 1px solid #e5e7eb;
+    transition: all 0.2s ease;
+}
+
+.image-caption:focus,
+.weblog-image-caption:focus {
+    outline: none;
+    border-bottom-color: #3b82f6;
+    color: #374151;
+}
+
+/* استایل برای تصاویر در حال لود */
+img[src="/loading.gif"] {
+    opacity: 0.5;
+    filter: blur(2px);
+}
+#editWeblogModal {
+    z-index: 100;
+}
+
+/* پاپ‌آپ کپشن باید z-index بالاتر داشته باشد */
+.caption-popup {
+    z-index: 1000 !important;
+}
+
+.relative.group {
+    transition: all 0.3s ease;
+}
+
+.relative.group:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.caption-input {
+    background-color: #f9fafb;
+    transition: all 0.2s ease;
+}
+
+.caption-input:focus {
+    background-color: white;
+    border-color: #3b82f6;
+}
+
 
     </style>
 
@@ -1599,8 +1688,36 @@
     }
 </style>
 
-
     <script>
+const Parchment = Quill.import('parchment');
+const BlockEmbed = Quill.import('blots/block/embed');
+
+class CustomHTMLBlot extends BlockEmbed {
+    static create(value) {
+        const node = super.create();
+        node.innerHTML = value;
+        return node;
+    }
+    
+    static value(node) {
+        return node.innerHTML;
+    }
+}
+
+function escapeHtml(text) {
+    if (!text) return '';
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+CustomHTMLBlot.blotName = 'html';
+CustomHTMLBlot.tagName = 'div';
+CustomHTMLBlot.className = 'custom-html';
+
+if (!Quill.imports['blots/html']) {
+    Quill.register(CustomHTMLBlot);
+}
         function setupModalCleanup() {
             const editModal = document.getElementById('editModal');
             if (editModal) {
@@ -1618,88 +1735,178 @@
         // در ابتدای اسکریپت این رو فراخوانی کنید
         setupModalCleanup();
 
-        function imageHandler() {
-            const input = document.createElement('input');
-            input.setAttribute('type', 'file');
-            input.setAttribute('accept', 'image/*');
-            input.click();
-            
-            input.onchange = async function() {
-                const file = input.files[0];
-                if (!file) return;
-                
-                try {
-                    // Show loading state
-                    const range = window.quillInstance.getSelection();
-                    const placeholderIndex = range.index;
-                    window.quillInstance.insertEmbed(placeholderIndex, 'image', '/loading.gif');
-                    
-                    // Upload image
-                    const formData = new FormData();
-                    formData.append('image', file);
-                    
-                    const response = await fetch('/admin/upload-image', {
-                        method: 'POST',
-                        body: formData
-                    });
-                    
-                    const result = await response.json();
-                    
-                    if (result.success && result.url) {
-                        // Replace placeholder with actual image
-                        window.quillInstance.deleteText(placeholderIndex, 1);
-                        window.quillInstance.insertEmbed(placeholderIndex, 'image', result.url);
-                    } else {
-                        window.quillInstance.deleteText(placeholderIndex, 1);
-                        console.error('Image upload failed:', result.error);
-                    }
-                } catch (error) {
-                    console.error('Error uploading image:', error);
-                    if (window.quillInstance && placeholderIndex !== undefined) {
-                        window.quillInstance.deleteText(placeholderIndex, 1);
-                    }
-                }
-            };
-        }
+function enhanceLinksWithTooltip(editorElement) {
+    const editor = editorElement.querySelector('.ql-editor');
+    if (!editor) return;
+    
+    // مشاهده تغییرات در ویرایشگر
+    const observer = new MutationObserver(function(mutations) {
+        mutations.forEach(function(mutation) {
+            if (mutation.type === 'childList' || mutation.type === 'subtree') {
+                addTooltipsToLinks(editor);
+            }
+        });
+    });
+    
+    observer.observe(editor, { childList: true, subtree: true });
+    addTooltipsToLinks(editor);
+}
 
-        function weblogImageHandler() {
-            const input = document.createElement('input');
-            input.setAttribute('type', 'file');
-            input.setAttribute('accept', 'image/*');
-            input.click();
+function addTooltipsToLinks(container) {
+    const links = container.querySelectorAll('a');
+    links.forEach(link => {
+        if (!link.hasAttribute('data-tooltip-enhanced')) {
+            const href = link.getAttribute('href');
+            const text = link.textContent;
             
-            input.onchange = async function() {
-                const file = input.files[0];
-                if (!file) return;
-                
-                try {
-                    const range = weblogQuillEditor.getSelection();
-                    const placeholderIndex = range ? range.index : 0;
-                    weblogQuillEditor.insertEmbed(placeholderIndex, 'image', '/loading.gif');
-                    
-                    const formData = new FormData();
-                    formData.append('image', file);
-                    
-                    const response = await fetch('/admin/upload-image', {
-                        method: 'POST',
-                        body: formData
-                    });
-                    
-                    const result = await response.json();
-                    
-                    if (result.success && result.url) {
-                        weblogQuillEditor.deleteText(placeholderIndex, 1);
-                        weblogQuillEditor.insertEmbed(placeholderIndex, 'image', result.url);
-                    } else {
-                        weblogQuillEditor.deleteText(placeholderIndex, 1);
-                        showNotification('خطا در آپلود تصویر', 'error');
-                    }
-                } catch (error) {
-                    console.error('Error uploading image:', error);
-                    showNotification('خطا در آپلود تصویر', 'error');
-                }
-            };
+            // افزودن title attribute برای tooltip
+            if (!link.getAttribute('title')) {
+                link.setAttribute('title', `لینک: ${text || href}`);
+            }
+            
+            // افزودن کلاس برای استایل بهتر
+            link.classList.add('enhanced-link');
+            link.setAttribute('data-tooltip-enhanced', 'true');
+            
+            // افزودن event listeners
+            link.addEventListener('mouseenter', showCustomTooltip);
+            link.addEventListener('mouseleave', hideCustomTooltip);
         }
+    });
+}
+
+function showCustomTooltip(e) {
+    const link = e.target;
+    const href = link.getAttribute('href');
+    const title = link.getAttribute('title') || link.textContent;
+    
+    // بررسی اگر لینک داخلی یا خارجی است
+    const isExternal = href && (href.startsWith('http://') || href.startsWith('https://'));
+    const tooltipText = isExternal ? 
+        `${title}\nباز کردن در صفحه جدید` : 
+        `${title}\n${href}`;
+    
+    const tooltip = document.createElement('div');
+    tooltip.className = 'custom-tooltip';
+    tooltip.textContent = tooltipText;
+    tooltip.style.cssText = `
+        position: fixed;
+        background: #333;
+        color: #fff;
+        padding: 6px 12px;
+        border-radius: 6px;
+        font-size: 12px;
+        z-index: 10000;
+        white-space: nowrap;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        pointer-events: none;
+    `;
+    
+    document.body.appendChild(tooltip);
+    
+    const rect = link.getBoundingClientRect();
+    tooltip.style.top = rect.bottom + 5 + 'px';
+    tooltip.style.left = rect.left + 'px';
+    
+    link._tooltip = tooltip;
+}
+
+function hideCustomTooltip(e) {
+    if (e.target._tooltip) {
+        e.target._tooltip.remove();
+        delete e.target._tooltip;
+    }
+}
+
+// بهبود لینک‌ها در Quill
+function enhanceLinkHandler() {
+    const range = window.quillInstance.getSelection();
+    if (range) {
+        // پرسیدن آدرس لینک
+        let url = prompt('لطفاً آدرس لینک را وارد کنید:', 'https://');
+        if (url) {
+            // پرسیدن عنوان لینک (tooltip)
+            let title = prompt('لطفاً عنوان لینک را وارد کنید (برای نمایش در هاور):', url);
+            
+            // ایجاد لینک
+            window.quillInstance.format('link', url);
+            
+            // بعد از ایجاد لینک، title و target را اضافه کن
+            setTimeout(() => {
+                const editor = document.querySelector('#editor .ql-editor');
+                if (editor) {
+                    const newLink = editor.querySelector('a[href="' + url + '"]');
+                    if (newLink) {
+                        if (title && title !== url) {
+                            newLink.setAttribute('title', title);
+                        } else {
+                            newLink.setAttribute('title', 'لینک: ' + url);
+                        }
+                        // باز شدن در صفحه جدید برای لینک‌های خارجی
+                        if (url.startsWith('http://') || url.startsWith('https://')) {
+                            newLink.setAttribute('target', '_blank');
+                            newLink.setAttribute('rel', 'noopener noreferrer');
+                        }
+                        newLink.classList.add('enhanced-link');
+                    }
+                }
+            }, 100);
+        }
+    }
+}
+
+function imageHandler() {
+    const input = document.createElement('input');
+    input.setAttribute('type', 'file');
+    input.setAttribute('accept', 'image/*');
+    input.click();
+    
+    input.onchange = async function() {
+        const file = input.files[0];
+        if (!file) return;
+        
+        try {
+            const range = window.quillInstance.getSelection();
+            const placeholderIndex = range ? range.index : 0;
+            window.quillInstance.insertEmbed(placeholderIndex, 'image', '/loading.gif');
+            
+            const formData = new FormData();
+            formData.append('image', file);
+            
+            const response = await fetch('/admin/upload-image', {
+                method: 'POST',
+                body: formData
+            });
+            
+            const result = await response.json();
+            
+            if (result.success && result.url) {
+                window.quillInstance.deleteText(placeholderIndex, 1);
+                
+                // پرسیدن توضیحات از کاربر
+                const captionText = prompt('لطفاً توضیحات تصویر را وارد کنید:', '');
+                
+                // ساخت کد HTML کامل با figure و figcaption
+                let htmlToInsert = `<figure class="image-figure" style="margin: 15px 0; text-align: center;">
+                    <img src="${result.url}" alt="${escapeHtml(captionText || '')}" title="${escapeHtml(captionText || '')}" style="max-width: 100%; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                    <figcaption class="image-caption" style="font-size: 13px; color: #666; margin-top: 8px; padding: 5px; border-bottom: 1px dashed #ddd; cursor: text; text-align: center;" contenteditable="true">${escapeHtml(captionText || '')}</figcaption>
+                </figure>`;
+                
+                // درج HTML در ویرایشگر
+                window.quillInstance.insertEmbed(placeholderIndex, 'html', htmlToInsert);
+                
+                showNotification('تصویر با موفقیت آپلود شد', 'success');
+            } else {
+                window.quillInstance.deleteText(placeholderIndex, 1);
+                showNotification('خطا در آپلود تصویر', 'error');
+            }
+        } catch (error) {
+            console.error('Error uploading image:', error);
+            showNotification('خطا در آپلود تصویر', 'error');
+        }
+    };
+}
+
 
         async function uploadWeblogImages(files) {
     if (!files || files.length === 0) return [];
@@ -1754,106 +1961,114 @@ async function removeWeblogImage(buttonElement, imageUrl, filename) {
     }
 }
 
-// نمایش پیش‌نمایش تصاویر مقاله
-function displayWeblogImagePreviews(images) {
-    const container = document.getElementById('weblogImagePreviews');
-    if (!container) return;
-    
-    container.innerHTML = '';
-    
-    images.forEach(image => {
-        const imgContainer = document.createElement('div');
-        imgContainer.className = 'relative';
-        imgContainer.dataset.filename = image.filename;
-        imgContainer.innerHTML = `
-            <img src="${image.url}" class="w-20 h-20 object-cover rounded-lg border border-gray-200">
-            <button type="button" onclick="removeWeblogImage(this, '${image.url}', '${image.filename}')" 
-                class="absolute top-0 right-0 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs hover:bg-red-600 transition-all">
-                ×
-            </button>
-        `;
-        container.appendChild(imgContainer);
-    });
-}
-
-
-
-
-
         // تابع راه‌اندازی ویرایشگر
-        function initQuillEditor(initialContent = '') {
-            // اگر ویرایشگر از قبل وجود دارد و نیاز به آپدیت داریم
-            if (window.quillInstance) {
-                if (initialContent !== undefined) {
-                    window.quillInstance.root.innerHTML = initialContent;
-                }
-                return;
-            }
+function initQuillEditor(initialContent = '') {
+    if (window.quillInstance) {
+        if (initialContent !== undefined) {
+            window.quillInstance.root.innerHTML = initialContent;
+        }
+        return;
+    }
 
-            const editorElement = document.getElementById('editor');
-            if (!editorElement) {
-                console.error('Editor element not found!');
-                return;
-            }
+    const editorElement = document.getElementById('editor');
+    if (!editorElement) {
+        console.error('Editor element not found!');
+        return;
+    }
 
-            // تنظیمات کامل toolbar
-            const toolbarOptions = [
-                ['bold', 'italic', 'underline', 'strike'],
-                ['blockquote', 'code-block'],
-                [{ 'header': 1 }, { 'header': 2 }],
-                [{ 'list': 'ordered'}, { 'list': 'bullet' }],
-                [{ 'script': 'sub'}, { 'script': 'super' }],
-                [{ 'indent': '-1'}, { 'indent': '+1' }],
-                [{ 'direction': 'rtl' }],
-                [{ 'size': ['small', false, 'large', 'huge'] }],
-                [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
-                [{ 'color': [] }, { 'background': [] }],
-                [{ 'font': [] }],
-                [{ 'align': [] }],
-                ['clean'],
-                ['link', 'image', 'video']  // لینک اینجا اضافه شده
-            ];
+    const toolbarOptions = [
+        ['bold', 'italic', 'underline', 'strike'],
+        ['blockquote', 'code-block'],
+        [{ 'header': 1 }, { 'header': 2 }],
+        [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+        [{ 'script': 'sub'}, { 'script': 'super' }],
+        [{ 'indent': '-1'}, { 'indent': '+1' }],
+        [{ 'direction': 'rtl' }],
+        [{ 'size': ['small', false, 'large', 'huge'] }],
+        [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+        [{ 'color': [] }, { 'background': [] }],
+        [{ 'font': [] }],
+        [{ 'align': [] }],
+        ['clean'],
+        ['link', 'image', 'video'],
+        [{ 'custom': 'html' }]
+    ];
 
-            // ایجاد ویرایشگر جدید
-            window.quillInstance = new Quill('#editor', {
-                theme: 'snow',
-                modules: {
-                    toolbar: {
-                        container: toolbarOptions,
-                        handlers: {
-                            image: imageHandler,
-                            link: function() {  // هندلر دستی برای لینک
-                                let value = prompt('لطفاً آدرس لینک را وارد کنید:', 'https://');
-                                if (value) {
-                                    this.quill.format('link', value);
-                                }
+    window.quillInstance = new Quill('#editor', {
+        theme: 'snow',
+        modules: {
+            toolbar: {
+                container: toolbarOptions,
+                handlers: {
+                    image: imageHandler,
+                    link: function() {
+                        const range = weblogQuillEditor.getSelection();
+                        if (range) {
+                            let url = prompt('لطفاً آدرس لینک را وارد کنید:', 'https://');
+                            if (url) {
+                                let title = prompt('لطفاً عنوان لینک را وارد کنید:', url);
+                                weblogQuillEditor.format('link', url);
+                                setTimeout(() => {
+                                    const editor = document.querySelector('#weblogEditor .ql-editor');
+                                    if (editor) {
+                                        const newLink = editor.querySelector('a[href="' + url + '"]');
+                                        if (newLink) {
+                                            if (title && title !== url) {
+                                                newLink.setAttribute('title', title);
+                                            }
+                                            if (url.startsWith('http')) {
+                                                newLink.setAttribute('target', '_blank');
+                                                newLink.setAttribute('rel', 'noopener noreferrer');
+                                            }
+                                            newLink.classList.add('enhanced-link');
+                                        }
+                                    }
+                                }, 100);
+                            }
+                        }
+                    },
+                    'html': function() {
+                        const range = window.quillInstance.getSelection();
+                        if (range) {
+                            const htmlCode = prompt('کد HTML خود را وارد کنید:', '<figure><img src="" alt=""><figcaption></figcaption></figure>');
+                            if (htmlCode) {
+                                window.quillInstance.insertEmbed(range.index, 'html', htmlCode);
                             }
                         }
                     }
-                },
-                placeholder: 'توضیحات محصول را اینجا بنویسید...'
-            });
+                }
+            },
+            clipboard: {
+                matchVisual: false
+            }
+        },
+        placeholder: 'توضیحات محصول را اینجا بنویسید...'
+    });
 
-            // تنظیم محتوای اولیه
-            if (initialContent) {
-                window.quillInstance.root.innerHTML = initialContent;
-            }
+    if (initialContent) {
+        window.quillInstance.root.innerHTML = initialContent;
+    }
 
-            // اتصال به فیلد مخفی برای فرم
-            const descriptionField = document.getElementById('editDescription');
-            if (descriptionField) {
-                window.quillInstance.on('text-change', function() {
-                    descriptionField.value = window.quillInstance.root.innerHTML;
-                });
-            }
-            
-            // تنظیم RTL
-            const editorContainer = document.querySelector('#editor .ql-editor');
-            if (editorContainer) {
-                editorContainer.style.direction = 'rtl';
-                editorContainer.style.textAlign = 'right';
-            }
-        }
+    const descriptionField = document.getElementById('editDescription');
+    if (descriptionField) {
+        window.quillInstance.on('text-change', function() {
+            descriptionField.value = window.quillInstance.root.innerHTML;
+            setTimeout(() => {
+                enhanceLinksWithTooltip(document.getElementById('editor'));
+            }, 100);
+        });
+    }
+    
+    const editorContainer = document.querySelector('#editor .ql-editor');
+    if (editorContainer) {
+        editorContainer.style.direction = 'rtl';
+        editorContainer.style.textAlign = 'right';
+    }
+    
+    setTimeout(() => {
+        enhanceLinksWithTooltip(document.getElementById('editor'));
+    }, 500);
+}
         // راه‌اندازی ویرایشگر هنگام بارگذاری صفحه
         document.addEventListener('DOMContentLoaded', initQuillEditor);
 
@@ -1877,62 +2092,108 @@ function displayWeblogImagePreviews(images) {
         let weblogCategoriesList = [];
 
 
-        function initWeblogQuillEditor(initialContent = '') {
-            if (weblogQuillEditor) {
-                weblogQuillEditor.root.innerHTML = initialContent;
-                return;
-            }
-            
-            const editorElement = document.getElementById('weblogEditor');
-            if (!editorElement) return;
-            
-            const toolbarOptions = [
-                ['bold', 'italic', 'underline', 'strike'],
-                ['blockquote', 'code-block'],
-                [{ 'header': 1 }, { 'header': 2 }],
-                [{ 'list': 'ordered'}, { 'list': 'bullet' }],
-                [{ 'script': 'sub'}, { 'script': 'super' }],
-                [{ 'indent': '-1'}, { 'indent': '+1' }],
-                [{ 'direction': 'rtl' }],
-                [{ 'size': ['small', false, 'large', 'huge'] }],
-                [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
-                [{ 'color': [] }, { 'background': [] }],
-                [{ 'font': [] }],
-                [{ 'align': [] }],
-                ['clean'],
-                ['link', 'image', 'video']
-            ];
-            
-            weblogQuillEditor = new Quill('#weblogEditor', {
-                theme: 'snow',
-                modules: {
-                    toolbar: {
-                        container: toolbarOptions,
-                        handlers: {
-                            image: weblogImageHandler
+function initWeblogQuillEditor(initialContent = '') {
+    if (weblogQuillEditor) {
+        weblogQuillEditor.root.innerHTML = initialContent;
+        return;
+    }
+    
+    const editorElement = document.getElementById('weblogEditor');
+    if (!editorElement) {
+        console.error('weblogEditor element not found!');
+        return;
+    }
+    
+    const toolbarOptions = [
+        ['bold', 'italic', 'underline', 'strike'],
+        ['blockquote', 'code-block'],
+        [{ 'header': 1 }, { 'header': 2 }],
+        [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+        [{ 'script': 'sub'}, { 'script': 'super' }],
+        [{ 'indent': '-1'}, { 'indent': '+1' }],
+        [{ 'direction': 'rtl' }],
+        [{ 'size': ['small', false, 'large', 'huge'] }],
+        [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+        [{ 'color': [] }, { 'background': [] }],
+        [{ 'font': [] }],
+        [{ 'align': [] }],
+        ['clean'],
+        ['link', 'image', 'video'],
+        [{ 'custom': 'html' }] 
+    ];
+    
+    weblogQuillEditor = new Quill('#weblogEditor', {
+        theme: 'snow',
+        modules: {
+            toolbar: {
+                container: toolbarOptions,
+                handlers: {
+                    image: weblogImageHandler,
+                    link: function() {
+                        const range = categoryDescQuill.getSelection();  // ✅ درست
+                        if (range) {
+                            let url = prompt('لطفاً آدرس لینک را وارد کنید:', 'https://');
+                            if (url) {
+                                let title = prompt('لطفاً عنوان لینک را وارد کنید:', url);
+                                categoryDescQuill.format('link', url);
+                                setTimeout(() => {
+                                    const editor = document.querySelector('#categoryDescEditor .ql-editor');
+                                    if (editor) {
+                                        const newLink = editor.querySelector('a[href="' + url + '"]');
+                                        if (newLink) {
+                                            if (title && title !== url) {
+                                                newLink.setAttribute('title', title);
+                                            }
+                                            if (url.startsWith('http')) {
+                                                newLink.setAttribute('target', '_blank');
+                                                newLink.setAttribute('rel', 'noopener noreferrer');
+                                            }
+                                            newLink.classList.add('enhanced-link');
+                                        }
+                                    }
+                                }, 100);
+                            }
+                        }
+                    },
+                    'html': function() {
+                        const range = categoryDescQuill.getSelection();  // ✅ درست
+                        if (range) {
+                            const htmlCode = prompt('کد HTML خود را وارد کنید:', '<figure><img src="" alt=""><figcaption></figcaption></figure>');
+                            if (htmlCode) {
+                                categoryDescQuill.insertEmbed(range.index, 'html', htmlCode);
+                            }
                         }
                     }
-                },
-                placeholder: 'محتوای مقاله را اینجا بنویسید...'
-            });
-            
-            if (initialContent) {
-                weblogQuillEditor.root.innerHTML = initialContent;
+                }
             }
-            
-            const contentField = document.getElementById('weblogContent');
-            if (contentField) {
-                weblogQuillEditor.on('text-change', function() {
-                    contentField.value = weblogQuillEditor.root.innerHTML;
-                });
-            }
-            
-            const editorContainer = document.querySelector('#weblogEditor .ql-editor');
-            if (editorContainer) {
-                editorContainer.style.direction = 'rtl';
-                editorContainer.style.textAlign = 'right';
-            }
-        }
+        },
+        placeholder: 'محتوای مقاله را اینجا بنویسید...'
+    });
+    
+    if (initialContent) {
+        weblogQuillEditor.root.innerHTML = initialContent;
+    }
+    
+    const contentField = document.getElementById('weblogContent');
+    if (contentField) {
+        weblogQuillEditor.on('text-change', function() {
+            contentField.value = weblogQuillEditor.root.innerHTML;
+            setTimeout(() => {
+                enhanceLinksWithTooltip(document.getElementById('weblogEditor'));
+            }, 100);
+        });
+    }
+    
+    const editorContainer = document.querySelector('#weblogEditor .ql-editor');
+    if (editorContainer) {
+        editorContainer.style.direction = 'rtl';
+        editorContainer.style.textAlign = 'right';
+    }
+    
+    setTimeout(() => {
+        enhanceLinksWithTooltip(document.getElementById('weblogEditor'));
+    }, 500);
+}
 
 
 
@@ -1942,14 +2203,11 @@ function displayWeblogImagePreviews(images) {
         let salesChart;
         
         function initChart() {
-            console.log('initChart called');
             
             // گرفتن داده سفارشات ماهانه از سرور
             const monthlyOrdersData = <%- JSON.stringify(visitStats?.monthlyOrders || []) %>;
-            console.log('Monthly orders data from server:', monthlyOrdersData);
             
             const chartData = prepareOrdersChartData(monthlyOrdersData);
-            console.log('Final chart data:', chartData);
             
             setTimeout(() => {
                 drawSalesChart(chartData);
@@ -2327,18 +2585,43 @@ function displayWeblogImagePreviews(images) {
             const imagePreviews = document.getElementById('imagePreviews');
             imagePreviews.innerHTML = '';
             if (product.images && product.images.length > 0) {
-                product.images.forEach(image => {
-                const imgContainer = document.createElement('div');
-                imgContainer.className = 'relative';
-                imgContainer.dataset.filename = image.filename;
-                imgContainer.innerHTML = `
-                    <img src="${image.url}" class="w-20 h-20 object-cover rounded-lg">
-                    <button type="button" onclick="removeImage(this, '${image.url}', '${image.filename}')" 
-                    class="absolute top-0 right-0 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center">
-                    ×
-                    </button>
-                `;
-                imagePreviews.appendChild(imgContainer);
+                product.images.forEach((image, idx) => {
+                    const imgContainer = document.createElement('div');
+                    imgContainer.className = 'relative group border border-gray-200 rounded-lg p-2 bg-gray-50';
+                    imgContainer.style.width = '180px';
+                    imgContainer.dataset.filename = image.filename;
+                    imgContainer.dataset.caption = image.caption || image.alt || '';
+                    imgContainer.innerHTML = `
+                        <div class="relative">
+                            <img src="${image.url}" class="w-full h-32 object-cover rounded-lg" alt="${escapeHtml(image.caption || image.alt || '')}" title="${escapeHtml(image.caption || image.alt || '')}">
+                            <button type="button" onclick="removeImage(this, '${image.url}', '${image.filename}')" 
+                                class="absolute top-2 right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs hover:bg-red-600 transition-all opacity-0 group-hover:opacity-100">
+                                ×
+                            </button>
+                        </div>
+                        <div class="mt-2">
+                            <div class="flex items-center gap-1">
+                                <i class="fas fa-pen text-gray-400 text-xs"></i>
+                                <input type="text" 
+                                    class="caption-input w-full text-xs border border-gray-200 rounded px-2 py-1 focus:border-blue-400 focus:outline-none" 
+                                    value="${escapeHtml(image.caption || image.alt || '')}" 
+                                    placeholder="توضیح تصویر..."
+                                    data-filename="${image.filename}">
+                            </div>
+                        </div>
+                    `;
+                    imagePreviews.appendChild(imgContainer);
+                    
+                    const captionInput = imgContainer.querySelector('.caption-input');
+                    captionInput.addEventListener('change', function() {
+                        const newCaption = this.value.trim();
+                        imgContainer.dataset.caption = newCaption;
+                        const img = imgContainer.querySelector('img');
+                        if (img) {
+                            img.setAttribute('alt', newCaption);
+                            img.setAttribute('title', newCaption);
+                        }
+                    });
                 });
             }
             document.getElementById('editImages').addEventListener('change', handleImageUpload);
@@ -2346,52 +2629,77 @@ function displayWeblogImagePreviews(images) {
             document.getElementById('editModal').classList.remove('hidden');
         }
 
-        async function handleImageUpload(event) {
-        const files = event.target.files;
-        if (!files || files.length === 0) return;
+async function handleImageUpload(event) {
+    const files = event.target.files;
+    if (!files || files.length === 0) return;
 
+    for (const file of files) {
         const formData = new FormData();
-        for (let i = 0; i < files.length; i++) {
-            formData.append('images', files[i]);
-        }
+        formData.append('images', file);
 
         try {
             const response = await fetch('/admin/upload-images', {
-            method: 'POST',
-            body: formData,
+                method: 'POST',
+                body: formData,
             });
 
             const result = await response.json();
             
             if (!response.ok) {
-            throw new Error(result.error || 'خطا در آپلود تصویر');
+                throw new Error(result.error || 'خطا در آپلود تصویر');
             }
 
-            // Display the uploaded images
-            const imagePreviews = document.getElementById('imagePreviews');
-            result.images.forEach(img => {
-            const displayUrl = img.url.startsWith('http') ? img.url : `${window.location.origin}${img.url}`;
+            // درخواست کپشن از کاربر
+            const captionText = prompt('لطفاً توضیحات تصویر را وارد کنید:', '');
             
+            const imagePreviews = document.getElementById('imagePreviews');
             const imgContainer = document.createElement('div');
-            imgContainer.className = 'relative';
-            imgContainer.dataset.filename = img.filename;
+            imgContainer.className = 'relative group border border-gray-200 rounded-lg p-2 bg-gray-50';
+            imgContainer.style.width = '180px';
+            imgContainer.dataset.filename = result.images[0].filename;
+            imgContainer.dataset.caption = captionText || '';
+            
             imgContainer.innerHTML = `
-                <img src="${displayUrl}" class="w-20 h-20 object-cover rounded-lg">
-                <button type="button" onclick="removeImage(this, '${img.url}', '${img.filename}')" 
-                class="absolute top-0 right-0 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center">
-                ×
-                </button>
+                <div class="relative">
+                    <img src="${result.images[0].url}" class="w-full h-32 object-cover rounded-lg">
+                    <button type="button" onclick="removeImage(this, '${result.images[0].url}', '${result.images[0].filename}')" 
+                        class="absolute top-2 right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs hover:bg-red-600 transition-all opacity-0 group-hover:opacity-100">
+                        ×
+                    </button>
+                </div>
+                <div class="mt-2">
+                    <div class="flex items-center gap-1">
+                        <i class="fas fa-pen text-gray-400 text-xs"></i>
+                        <input type="text" 
+                               class="caption-input w-full text-xs border border-gray-200 rounded px-2 py-1 focus:border-blue-400 focus:outline-none" 
+                               value="${escapeHtml(captionText || '')}" 
+                               placeholder="توضیح تصویر..."
+                               data-filename="${result.images[0].filename}">
+                    </div>
+                </div>
             `;
             imagePreviews.appendChild(imgContainer);
+            
+            // افزودن event listener برای ذخیره کپشن
+            const captionInput = imgContainer.querySelector('.caption-input');
+            captionInput.addEventListener('change', function() {
+                const newCaption = this.value.trim();
+                imgContainer.dataset.caption = newCaption;
+                const img = imgContainer.querySelector('img');
+                if (img) {
+                    img.setAttribute('alt', newCaption);
+                    img.setAttribute('title', newCaption);
+                }
             });
 
-            // Clear the file input
             event.target.value = '';
+            
         } catch (error) {
             console.error('Image upload error:', error);
             showNotification('خطا در آپلود تصویر: ' + error.message, 'error');
         }
-        }
+    }
+}
 
         // Image removal function
         async function removeImage(buttonElement, imageUrl, filename) {
@@ -2975,6 +3283,9 @@ function addWeblog() {
     
     if (weblogQuillEditor) {
         weblogQuillEditor.root.innerHTML = '';
+    } else {
+        // اگر ویرایشگر ساخته نشده، بساز
+        initWeblogQuillEditor('');
     }
     
     // پاک کردن پیش‌نمایش تصاویر
@@ -3000,7 +3311,9 @@ function addWeblog() {
     document.getElementById('editWeblogModal').classList.remove('hidden');
     
     setTimeout(() => {
-        initWeblogQuillEditor('');
+        if (!weblogQuillEditor) {
+            initWeblogQuillEditor('');
+        }
     }, 100);
 }
 
@@ -3792,6 +4105,7 @@ function viewOrder(id) {
         });
 
         // ذخیره مقاله
+// ذخیره مقاله با تصاویر دارای کپشن
 document.getElementById('weblogForm').addEventListener('submit', async function(e) {
     e.preventDefault();
     
@@ -3799,28 +4113,32 @@ document.getElementById('weblogForm').addEventListener('submit', async function(
         document.getElementById('weblogContent').value = weblogQuillEditor.root.innerHTML;
     }
     
-    // جمع‌آوری تصاویر موجود (که در preview هستند و حذف نشده‌اند)
+    // جمع‌آوری تصاویر موجود (که در preview هستند)
     const existingImages = [];
     const previewContainer = document.getElementById('weblogImagePreviews');
     if (previewContainer) {
-        previewContainer.querySelectorAll('.relative').forEach(container => {
-            const img = container.querySelector('img');
-            const filename = container.dataset.filename;
+        const items = previewContainer.querySelectorAll('.relative.group');
+        items.forEach((item) => {
+            const img = item.querySelector('img');
+            const captionInput = item.querySelector('.caption-input');
+            const filename = item.dataset.filename;
             if (img && img.src) {
                 existingImages.push({
                     url: img.src,
-                    filename: filename
+                    filename: filename,
+                    caption: captionInput ? captionInput.value.trim() : (item.dataset.caption || ''),
+                    alt: captionInput ? captionInput.value.trim() : (item.dataset.caption || '')
                 });
             }
         });
     }
     
-    // آپلود تصاویر جدید
+    // آپلود تصاویر جدید با کپشن
     const fileInput = document.getElementById('weblogImages');
     let newImages = [];
     if (fileInput && fileInput.files.length > 0) {
         const filesArray = Array.from(fileInput.files);
-        newImages = await uploadWeblogImages(filesArray);
+        newImages = await uploadWeblogImagesWithCaption(filesArray);
     }
     
     // ترکیب تصاویر موجود و جدید
@@ -3830,7 +4148,12 @@ document.getElementById('weblogForm').addEventListener('submit', async function(
         title: document.getElementById('weblogTitle').value.trim(),
         description: document.getElementById('weblogDescription').value.trim(),
         content: document.getElementById('weblogContent').value,
-        images: allImages,
+        images: allImages.map(img => ({
+            url: img.url,
+            filename: img.filename,
+            alt: img.caption || '',
+            title: img.caption || ''
+        })),
         categories: Array.from(document.getElementById('weblogCategories').selectedOptions).map(opt => opt.value),
         tags: document.getElementById('weblogTags').value ? document.getElementById('weblogTags').value.split(',').map(t => t.trim()).filter(t => t) : [],
         readingTime: parseInt(document.getElementById('weblogReadingTime').value),
@@ -3843,11 +4166,6 @@ document.getElementById('weblogForm').addEventListener('submit', async function(
     // اعتبارسنجی
     if (!data.title || data.title.trim().length === 0) {
         showNotification('عنوان مقاله الزامی است', 'error');
-        return;
-    }
-    
-    if (!data.description || data.description.trim().length === 0) {
-        showNotification('توضیحات کوتاه الزامی است', 'error');
         return;
     }
     
@@ -3902,23 +4220,89 @@ document.getElementById('weblogImages')?.addEventListener('change', async functi
     const files = e.target.files;
     if (!files || files.length === 0) return;
     
-    const newImages = await uploadWeblogImages(Array.from(files));
+    // برای هر فایل، کپشن بگیر
+    const imagesWithCaptions = [];
+    for (const file of files) {
+        const caption = prompt(`لطفاً توضیحات تصویر "${file.name}" را وارد کنید:`, '');
+        
+        const formData = new FormData();
+        formData.append('images', file);
+        
+        try {
+            const response = await fetch('/admin/upload-images', {
+                method: 'POST',
+                body: formData
+            });
+            
+            const result = await response.json();
+            
+            if (!response.ok) {
+                throw new Error(result.error || 'خطا در آپلود تصویر');
+            }
+            
+            if (result.images && result.images.length > 0) {
+                imagesWithCaptions.push({
+                    url: result.images[0].url,
+                    filename: result.images[0].filename,
+                    caption: caption || '',
+                    alt: caption || ''
+                });
+            }
+        } catch (error) {
+            console.error('Image upload error:', error);
+            showNotification('خطا در آپلود تصویر: ' + error.message, 'error');
+        }
+    }
     
-    // اضافه کردن تصاویر جدید به preview
+    // اضافه کردن تصاویر به preview
     const previewContainer = document.getElementById('weblogImagePreviews');
-    if (previewContainer && newImages.length > 0) {
-        newImages.forEach(image => {
+    if (previewContainer && imagesWithCaptions.length > 0) {
+        if (!window.currentWeblogImages) {
+            window.currentWeblogImages = [];
+        }
+        
+        imagesWithCaptions.forEach((image, idx) => {
+            window.currentWeblogImages.push(image);
+            
             const imgContainer = document.createElement('div');
-            imgContainer.className = 'relative';
+            imgContainer.className = 'relative group border border-gray-200 rounded-lg p-2 bg-gray-50';
+            imgContainer.style.width = '200px';
             imgContainer.dataset.filename = image.filename;
+            imgContainer.dataset.caption = image.caption;
             imgContainer.innerHTML = `
-                <img src="${image.url}" class="w-20 h-20 object-cover rounded-lg border border-gray-200">
-                <button type="button" onclick="removeWeblogImage(this, '${image.url}', '${image.filename}')" 
-                    class="absolute top-0 right-0 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs hover:bg-red-600 transition-all">
-                    ×
-                </button>
+                <div class="relative">
+                    <img src="${image.url}" class="w-full h-32 object-cover rounded-lg" alt="${escapeHtml(image.caption)}" title="${escapeHtml(image.caption)}">
+                    <button type="button" onclick="removeWeblogImage(this, '${image.url}', '${image.filename}')" 
+                        class="absolute top-2 right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs hover:bg-red-600 transition-all opacity-0 group-hover:opacity-100">
+                        ×
+                    </button>
+                </div>
+                <div class="mt-2">
+                    <div class="flex items-center gap-1">
+                        <i class="fas fa-pen text-gray-400 text-xs"></i>
+                        <input type="text" 
+                               class="caption-input w-full text-xs border border-gray-200 rounded px-2 py-1 focus:border-blue-400 focus:outline-none" 
+                               value="${escapeHtml(image.caption)}" 
+                               placeholder="توضیح تصویر..."
+                               data-index="${window.currentWeblogImages.length - 1}">
+                    </div>
+                </div>
             `;
             previewContainer.appendChild(imgContainer);
+            
+            // event listener برای ذخیره کپشن
+            const captionInput = imgContainer.querySelector('.caption-input');
+            captionInput.addEventListener('change', function() {
+                const idx = parseInt(this.dataset.index);
+                if (window.currentWeblogImages[idx]) {
+                    window.currentWeblogImages[idx].caption = this.value.trim();
+                    const img = imgContainer.querySelector('img');
+                    if (img) {
+                        img.setAttribute('alt', this.value.trim());
+                        img.setAttribute('title', this.value.trim());
+                    }
+                }
+            });
         });
     }
     
@@ -4221,13 +4605,19 @@ document.getElementById('weblogImages')?.addEventListener('change', async functi
             
             // جمع‌آوری تصاویر
             const images = [];
-            document.querySelectorAll('#imagePreviews img').forEach(img => {
-                const container = img.parentElement;
-                images.push({
-                    url: img.src,
-                    filename: container.dataset.filename
-                });
+            document.querySelectorAll('#imagePreviews > div').forEach(container => {
+                const img = container.querySelector('img');
+                const captionInput = container.querySelector('.caption-input');
+                if (img && img.src) {
+                    images.push({
+                        url: img.src,
+                        filename: container.dataset.filename,
+                        caption: captionInput ? captionInput.value.trim() : (container.dataset.caption || ''),
+                        alt: captionInput ? captionInput.value.trim() : (container.dataset.caption || '')
+                    });
+                }
             });
+
             
             // ساخت آبجکت داده
             const data = {
@@ -4565,12 +4955,9 @@ function closeModal(modalId) {
 
 
 function initVisitsChart() {
-    console.log('initVisitsChart called');
     const visitsData = <%- JSON.stringify(visitStats?.last7Days || []) %>;
-    console.log('Visits data:', visitsData);
     
     const formattedData = prepareVisitsData(visitsData);
-    console.log('Formatted visits data:', formattedData);
     
     setTimeout(() => {
         drawVisitsChart(formattedData);
@@ -4621,7 +5008,6 @@ function prepareOrdersChartData(ordersData) {
         values.push(orderMap.get(monthNum) || 0);
     }
     
-    console.log('Orders chart data:', { labels, values });
     return { labels, values };
 }
 
@@ -4722,7 +5108,6 @@ async function fetchNewOrdersCount() {
         const response = await fetch('/admin/api/new-orders-count');
         const data = await response.json();
         
-        console.log('New orders count response:', data);
         
         if (data.success && data.count > 0) {
             const badge = document.getElementById('newOrdersBadge');
@@ -4755,7 +5140,6 @@ async function markOrdersAsSeen() {
         
         if (response.ok) {
             document.getElementById('newOrdersBadge').classList.add('hidden');
-            console.log('Orders marked as seen');
         }
     } catch (error) {
         console.error('Error marking orders as seen:', error);
@@ -4914,7 +5298,8 @@ function initCategoryDescQuill(initialContent = '') {
         [{ 'font': [] }],
         [{ 'align': [] }],
         ['clean'],
-        ['link', 'image', 'video']
+        ['link', 'image', 'video'],
+        [{ 'custom': 'html' }]
     ];
     
     categoryDescQuill = new Quill('#categoryDescEditor', {
@@ -4923,7 +5308,42 @@ function initCategoryDescQuill(initialContent = '') {
             toolbar: {
                 container: toolbarOptions,
                 handlers: {
-                    image: categoryDescImageHandler
+                    image: categoryDescImageHandler,
+                    link: function() {
+                        const range = weblogQuillEditor.getSelection();
+                        if (range) {
+                            let url = prompt('لطفاً آدرس لینک را وارد کنید:', 'https://');
+                            if (url) {
+                                let title = prompt('لطفاً عنوان لینک را وارد کنید:', url);
+                                weblogQuillEditor.format('link', url);
+                                setTimeout(() => {
+                                    const editor = document.querySelector('#weblogEditor .ql-editor');
+                                    if (editor) {
+                                        const newLink = editor.querySelector('a[href="' + url + '"]');
+                                        if (newLink) {
+                                            if (title && title !== url) {
+                                                newLink.setAttribute('title', title);
+                                            }
+                                            if (url.startsWith('http')) {
+                                                newLink.setAttribute('target', '_blank');
+                                                newLink.setAttribute('rel', 'noopener noreferrer');
+                                            }
+                                            newLink.classList.add('enhanced-link');
+                                        }
+                                    }
+                                }, 100);
+                            }
+                        }
+                    },
+                    'html': function() {
+                        const range = window.quillInstance.getSelection();
+                        if (range) {
+                            const htmlCode = prompt('کد HTML خود را وارد کنید:', '<figure><img src="" alt=""><figcaption></figcaption></figure>');
+                            if (htmlCode) {
+                                window.quillInstance.insertEmbed(range.index, 'html', htmlCode);
+                            }
+                        }
+                    }
                 }
             }
         },
@@ -5041,9 +5461,189 @@ async function loadWeblogCategories() {
     }
 }
 
+function weblogImageHandler() {
+    const input = document.createElement('input');
+    input.setAttribute('type', 'file');
+    input.setAttribute('accept', 'image/*');
+    input.click();
+    
+    input.onchange = async function() {
+        const file = input.files[0];
+        if (!file) return;
+        
+        try {
+            const range = weblogQuillEditor.getSelection();
+            const placeholderIndex = range ? range.index : 0;
+            weblogQuillEditor.insertEmbed(placeholderIndex, 'image', '/loading.gif');
+            
+            const formData = new FormData();
+            formData.append('image', file);
+            
+            const response = await fetch('/admin/upload-image', {
+                method: 'POST',
+                body: formData
+            });
+            
+            const result = await response.json();
+            
+            if (result.success && result.url) {
+                weblogQuillEditor.deleteText(placeholderIndex, 1);
+                
+                const captionText = prompt('لطفاً توضیحات تصویر را وارد کنید:', '');
+                
+                const htmlToInsert = `<figure class="weblog-image-figure" style="margin: 20px 0; text-align: center;">
+                    <img src="${result.url}" alt="${escapeHtml(captionText || '')}" title="${escapeHtml(captionText || '')}" style="max-width: 100%; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                    <figcaption class="weblog-image-caption" style="font-size: 13px; color: #666; margin-top: 8px; padding: 5px; border-bottom: 1px dashed #ddd; cursor: text; text-align: center;" contenteditable="true">${escapeHtml(captionText || '')}</figcaption>
+                </figure>`;
+                
+                weblogQuillEditor.insertEmbed(placeholderIndex, 'html', htmlToInsert);
+                
+                showNotification('تصویر با موفقیت آپلود شد', 'success');
+            } else {
+                weblogQuillEditor.deleteText(placeholderIndex, 1);
+                showNotification('خطا در آپلود تصویر', 'error');
+            }
+        } catch (error) {
+            console.error('Error uploading image:', error);
+            showNotification('خطا در آپلود تصویر', 'error');
+        }
+    };
+}
 
+// آپلود تصاویر مقاله با قابلیت کپشن
+// نسخه ساده‌تر با prompt (بدون پاپ‌آپ اضافی)
+async function uploadWeblogImagesWithCaption(files) {
+    if (!files || files.length === 0) return [];
+    
+    const uploadedImages = [];
+    
+    for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        
+        const formData = new FormData();
+        formData.append('images', file);
+        
+        try {
+            const response = await fetch('/admin/upload-images', {
+                method: 'POST',
+                body: formData
+            });
+            
+            const result = await response.json();
+            
+            if (!response.ok) {
+                throw new Error(result.error || 'خطا در آپلود تصویر');
+            }
+            
+            if (result.images && result.images.length > 0) {
+                const imageData = result.images[0];
+                const captionText = prompt('لطفاً توضیحات تصویر را وارد کنید:', '');
+                
+                uploadedImages.push({
+                    url: imageData.url,
+                    filename: imageData.filename,
+                    caption: captionText || '',
+                    alt: captionText || ''
+                });
+            }
+        } catch (error) {
+            console.error('Image upload error:', error);
+            showNotification('خطا در آپلود تصویر: ' + error.message, 'error');
+        }
+    }
+    
+    return uploadedImages;
+}
 
+// نمایش پیش‌نمایش تصاویر مقاله با قابلیت ویرایش کپشن
+function displayWeblogImagePreviews(images) {
+    const container = document.getElementById('weblogImagePreviews');
+    if (!container) return;
+    
+    container.innerHTML = '';
+    
+    images.forEach((image, index) => {
+        const imgContainer = document.createElement('div');
+        imgContainer.className = 'relative group border border-gray-200 rounded-lg p-2 bg-gray-50';
+        imgContainer.style.width = '200px';
+        imgContainer.dataset.filename = image.filename;
+        imgContainer.dataset.caption = image.caption || image.alt || '';
+        imgContainer.innerHTML = `
+            <div class="relative">
+                <img src="${image.url}" class="w-full h-32 object-cover rounded-lg" alt="${escapeHtml(image.caption || image.alt || '')}" title="${escapeHtml(image.caption || image.alt || '')}">
+                <button type="button" onclick="removeWeblogImage(this, '${image.url}', '${image.filename}')" 
+                    class="absolute top-2 right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs hover:bg-red-600 transition-all opacity-0 group-hover:opacity-100">
+                    ×
+                </button>
+            </div>
+            <div class="mt-2">
+                <div class="flex items-center gap-1">
+                    <i class="fas fa-pen text-gray-400 text-xs"></i>
+                    <input type="text" 
+                           class="caption-input w-full text-xs border border-gray-200 rounded px-2 py-1 focus:border-blue-400 focus:outline-none" 
+                           value="${escapeHtml(image.caption || image.alt || '')}" 
+                           placeholder="توضیح تصویر..."
+                           data-index="${index}">
+                </div>
+            </div>
+        `;
+        container.appendChild(imgContainer);
+        
+        // افزودن event listener برای ذخیره کپشن هنگام تغییر
+        const captionInput = imgContainer.querySelector('.caption-input');
+        captionInput.addEventListener('change', function() {
+            const newCaption = this.value.trim();
+            imgContainer.dataset.caption = newCaption;
+            const img = imgContainer.querySelector('img');
+            if (img) {
+                img.setAttribute('alt', newCaption);
+                img.setAttribute('title', newCaption);
+            }
+            // آپدیت کردن در آرایه images (اختیاری)
+            if (window.currentWeblogImages && window.currentWeblogImages[index]) {
+                window.currentWeblogImages[index].caption = newCaption;
+            }
+        });
+    });
+}
 
+// تابع کمکی برای escape کردن HTML
+function escapeHtml(text) {
+    if (!text) return '';
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+// حذف تصویر مقاله با کپشن
+async function removeWeblogImageWithCaption(buttonElement, imageUrl, filename, index) {
+    if (!confirm('آیا از حذف این تصویر مطمئن هستید؟')) return;
+    
+    try {
+        const response = await fetch('/admin/delete-image', {
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ filename })
+        });
+        
+        const result = await response.json();
+        
+        if (!response.ok) {
+            throw new Error(result.error || 'حذف تصویر انجام نشد');
+        }
+        
+        buttonElement.parentElement.remove();
+        showNotification('تصویر با موفقیت حذف شد', 'success');
+        
+        // به‌روزرسانی آرایه تصاویر
+        if (window.currentWeblogImages) {
+            window.currentWeblogImages.splice(index, 1);
+        }
+    } catch (error) {
+        console.error('Image deletion error:', error);
+        showNotification('خطا در حذف تصویر: ' + error.message, 'error');
+    }
+}
     </script>
 </body>
 </html>
