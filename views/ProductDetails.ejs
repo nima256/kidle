@@ -1399,7 +1399,7 @@ document.addEventListener('DOMContentLoaded', function() {
               <%= product?.name %>
             </h1>
             <p class="text-gray-600 mb-5 text-lg">
-              برند: <%= product?.brand.name %>
+              برند: <%= product?.brandName %>
             </p>
             <div class="flex items-center space-x-4 space-x-reverse mb-6">
               <% if (product?.offerPrice) { %>
@@ -1420,47 +1420,12 @@ document.addEventListener('DOMContentLoaded', function() {
               >
               <% } %>
             </div>
-            <div class="flex items-center space-x-3 space-x-reverse">
-              <% const fullStars = Math.floor(product?.rating); %> <% const
-              halfStar = product?.rating % 1 >= 0.5; %> <% const emptyStars = 5
-              - fullStars - (halfStar ? 1 : 0); %>
-              <div class="flex text-yellow-400">
-                <% for (let i = 0; i < fullStars; i++) { %>
-                <!-- Full Star -->
-                <svg class="w-5 h-5 fill-current" viewBox="0 0 20 20">
-                  <path
-                    d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"
-                  />
-                </svg>
-                <% } %> <% if (halfStar) { %>
-                <!-- Half Star (custom SVG or CSS) -->
-                <svg class="w-5 h-5 fill-current" viewBox="0 0 20 20">
-                  <defs>
-                    <linearGradient id="halfGrad">
-                      <stop offset="50%" stop-color="currentColor" />
-                      <stop offset="50%" stop-color="transparent" />
-                    </linearGradient>
-                  </defs>
-                  <path
-                    d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"
-                    fill="url(#halfGrad)"
-                  />
-                </svg>
-                <% } %> <% for (let i = 0; i < emptyStars; i++) { %>
-                <!-- Empty Star -->
-                <svg
-                  class="w-5 h-5 text-gray-300 fill-current"
-                  viewBox="0 0 20 20"
-                >
-                  <path
-                    d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"
-                  />
-                </svg>
-                <% } %>
+            <div class="flex items-center space-x-3 space-x-reverse" id="rating-section">
+                <div class="flex text-yellow-400" id="stars-container"></div>
               </div>
               <span class="text-gray-600 text-sm font-medium"
-                >(<%= product?.reviewsNum %> نظر)</span
-              >
+                >(<%= product?.reviewsNum %> نظر)
+              </span>
             </div>
           </div>
     <!-- رنگ -->
@@ -2373,6 +2338,59 @@ function scrollToHeadingFromUrl() {
         }
     }
 }
+
+function renderStars(rating, reviewsNum) {
+  const starsContainer = document.getElementById('stars-container');
+  if (!starsContainer) return;
+  
+  const fullStars = Math.floor(rating || 0);
+  const halfStar = (rating || 0) % 1 >= 0.5;
+  const emptyStars = 5 - fullStars - (halfStar ? 1 : 0);
+  
+  let starsHtml = '';
+  
+  // ستاره‌های پر
+  for (let i = 0; i < fullStars; i++) {
+    starsHtml += `<svg class="w-5 h-5 fill-current text-yellow-400" viewBox="0 0 20 20">
+      <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/>
+    </svg>`;
+  }
+  
+  // نیم ستاره
+  if (halfStar) {
+    starsHtml += `<svg class="w-5 h-5 fill-current text-yellow-400" viewBox="0 0 20 20">
+      <defs>
+        <linearGradient id="halfGrad">
+          <stop offset="50%" stop-color="currentColor"/>
+          <stop offset="50%" stop-color="#e5e7eb"/>
+        </linearGradient>
+      </defs>
+      <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z" fill="url(#halfGrad)"/>
+    </svg>`;
+  }
+  
+  // ستاره‌های خالی
+  for (let i = 0; i < emptyStars; i++) {
+    starsHtml += `<svg class="w-5 h-5 fill-current text-gray-300" viewBox="0 0 20 20">
+      <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/>
+    </svg>`;
+  }
+  
+  starsContainer.innerHTML = starsHtml;
+  
+  const reviewsSpan = document.getElementById('reviews-count');
+  if (reviewsSpan) {
+    reviewsSpan.textContent = `(${toPersianDigitsForComments(reviewsNum || 0)} نظر)`;
+  }
+}
+
+// اجرا کن بعد از لود صفحه
+document.addEventListener('DOMContentLoaded', function() {
+  const productRating = <%= product?.rating || 0 %>;
+  const productReviews = <%= product?.reviewsNum || 0 %>;
+  renderStars(productRating, productReviews);
+});
+
 
 </script>
   </body>

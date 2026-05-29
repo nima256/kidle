@@ -1143,13 +1143,20 @@ app.get("/category/:slug", async (req, res) => {
   }
 });
 
+function toPersianDate(dateString) {
+  if (!dateString) return '';
+  const date = new Date(dateString);
+  return date.toLocaleDateString('fa-IR');
+}
+
 app.get('/weblog/:slug', async (req, res) => {
-      const user = await User.findById(req.session.userId)
+  try {
+    const user = await User.findById(req.session.userId)
       .populate("cart.productId")
       .populate("orders");
 
     const cartCount = user?.cart?.length || 0;
-
+    
     const allCategories = await Category.find({ 
       categoryType: "product",
       isActive: true 
@@ -1169,15 +1176,63 @@ app.get('/weblog/:slug', async (req, res) => {
         menuCategories.push(categoryMap[cat._id]);
       }
     });
-
-  res.render('weblog', { 
-    initialSlug: req.params.slug,
-    isSinglePost: true,
-    menuCategories,
-    user,
-    cartCount 
-  });
+    const { slug } = req.params;
+    
+    // دریافت اطلاعات مقاله با اسلاگ مشخص
+    const post = await Weblog.findOne({ slug, isPublished: true })
+      .populate('categories')
+      .populate('author');
+    
+    if (!post) {
+      return res.status(404).render('404', { message: 'مقاله مورد نظر یافت نشد' });
+    }
+    
+    // افزایش بازدید
+    post.viewCount = (post.viewCount || 0) + 1;
+    await post.save();
+    
+    // دریافت مقالات مرتبط (دسته‌بندی مشابه)
+    let relatedPosts = [];
+    if (post.categories && post.categories.length > 0) {
+      const categoryIds = post.categories.map(cat => cat._id);
+      relatedPosts = await Weblog.find({
+        _id: { $ne: post._id },
+        categories: { $in: categoryIds },
+        isPublished: true
+      })
+      .limit(5)
+      .sort({ publishedAt: -1 });
+    }
+    
+    // اگر مقاله مرتبط کم بود، با جدیدترین مقالات پر کن
+    if (relatedPosts.length < 3) {
+      const extraPosts = await Weblog.find({
+        _id: { $ne: post._id },
+        isPublished: true
+      })
+      .limit(5 - relatedPosts.length)
+      .sort({ publishedAt: -1 });
+      
+      relatedPosts = [...relatedPosts, ...extraPosts];
+    }
+    
+    res.render('WeblogDetails', {
+      post,
+      relatedPosts,
+      title: post.title,
+      description: post.description,
+      menuCategories, 
+      user,
+      cartCount,
+      toPersianDate
+    });
+    
+  } catch (error) {
+    console.error('Error in weblog details route:', error);
+    res.status(500).render('error', { message: 'خطا در بارگذاری مقاله' });
+  }
 });
+
 
 app.get("/sitemap.xml", async (req, res) => {
   try {

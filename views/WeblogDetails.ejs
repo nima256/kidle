@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= post.title %> | کیدل مگ</title>
+  <meta name="description" content="<%= post.description %>">
+  
+  <!-- Tailwind CSS -->
+  <link rel="stylesheet" href="/tailwind.min.css">
+  
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  
+  <style>
+    @font-face {
+      font-family: "MyFont";
+      src: url("/fonts/Vazirmatn-Light.ttf");
+      font-weight: 400;
+      font-style: normal;
+      font-display: swap;
+    }
+    
+    body {
+      font-family: "MyFont", sans-serif;
+      background: linear-gradient(135deg, #fff8f1 0%, #fff1f4 52%, #f8eadf 100%);
+      min-height: 100vh;
+    }
+
+    .post-content p {
+      line-height: 2.25;
+      margin-bottom: 1.15rem;
+    }
+
+    .post-content h1,
+    .post-content h2,
+    .post-content h3,
+    .post-content h4 {
+      line-height: 1.9;
+    }
+
+    .post-content h1 {
+      font-size: 2rem;
+      font-weight: 900;
+      margin: 2.5rem 0 1rem;
+    }
+
+    .post-content h2 {
+      font-size: 1.5rem;
+      font-weight: 800;
+      margin: 2rem 0 0.85rem;
+    }
+
+    .post-content h3 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin: 1.5rem 0 0.75rem;
+    }
+
+    .post-content ul {
+      list-style: none;
+      padding: 0;
+      margin: 1rem 0 1.5rem;
+    }
+
+    .post-content li {
+      position: relative;
+      padding-right: 1.35rem;
+      margin-bottom: 0.65rem;
+      line-height: 2;
+    }
+
+    .post-content li::before {
+      content: "•";
+      position: absolute;
+      right: 0;
+      color: #ee97ab;
+      font-weight: 800;
+    }
+
+    .line-clamp-2 {
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    /* استایل جدول محتویات */
+    .table-of-contents {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 16px;
+      padding: 1.25rem;
+      margin-bottom: 2rem;
+      direction: rtl;
+    }
+
+    .table-of-contents h4 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #1e293b;
+      margin-bottom: 1rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 2px solid #3b82f6;
+      display: inline-block;
+    }
+
+    .table-of-contents ul {
+      list-style: none;
+      padding-right: 0;
+      margin: 0;
+    }
+
+    .table-of-contents li {
+      margin: 0.5rem 0;
+      line-height: 1.5;
+    }
+
+    .table-of-contents a {
+      color: #475569;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      display: inline-block;
+      padding: 0.25rem 0;
+      font-size: 0.9rem;
+    }
+
+    .table-of-contents a:hover {
+      color: #3b82f6;
+      transform: translateX(-4px);
+    }
+
+    .table-of-contents .toc-level-1 {
+      padding-right: 0;
+      font-weight: 600;
+    }
+
+    .table-of-contents .toc-level-2 {
+      padding-right: 1.25rem;
+    }
+
+    .table-of-contents .toc-level-3 {
+      padding-right: 2.5rem;
+      font-size: 0.85rem;
+      color: #64748b;
+    }
+
+    .section-highlight {
+      animation: highlightFlash 0.5s ease;
+    }
+
+    @keyframes highlightFlash {
+      0% { background-color: rgba(59, 130, 246, 0.2); }
+      100% { background-color: transparent; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- نوار ناوبری -->
+<%- include('./partials/navbar') %>
+
+<!-- محتوای اصلی -->
+<div class="max-w-6xl mx-auto px-4 py-6 mt-16">
+  <div class="grid lg:grid-cols-3 gap-8">
+    <!-- ستون اصلی مقاله -->
+    <div class="lg:col-span-2">
+      <div class="bg-white rounded-3xl p-5 shadow-xl border border-rose-100">
+        <!-- تصویر اصلی -->
+        <div class="rounded-2xl h-64 flex items-center justify-center overflow-hidden bg-gradient-to-br from-pink-100 to-amber-100">
+          <% if (post.images && post.images[0]) { %>
+            <img src="<%= post.images[0].url %>" class="w-full h-full object-cover rounded-2xl" alt="<%= post.images[0].caption %>" title="<%= post.images[0].caption %>">
+          <% } else { %>
+            <i class="fas fa-tshirt text-7xl text-pink-400"></i>
+          <% } %>
+        </div>
+        
+        <!-- جدول محتویات -->
+        <div id="postTOC" class="mb-6 mt-6"></div>
+        
+        <!-- اطلاعات مقاله -->
+        <div class="mt-4">
+          <div class="flex flex-wrap gap-2 mb-4">
+            <% if (post.categories && post.categories[0]) { %>
+              <span class="bg-pink-100 text-pink-600 text-xs font-bold px-3 py-1 rounded-full"><%= post.categories[0].name %></span>
+            <% } %>
+            <span class="bg-amber-50 text-rose-600 text-xs font-bold px-3 py-1 rounded-full">
+              <i class="far fa-clock ml-1"></i> <%= toPersianDigits(post.readingTime) %> دقیقه
+            </span>
+          </div>
+          
+          <h1 class="text-2xl md:text-3xl font-extrabold text-rose-800"><%= post.title %></h1>
+          
+          <div class="flex gap-4 text-sm text-rose-500 mt-4 pb-4 border-b border-rose-100">
+            <span><i class="far fa-calendar ml-1"></i> <%= toPersianDate(post.publishedAt) %></span>
+            <span><i class="far fa-user ml-1"></i> <%= post.authorDetails ? post.authorDetails.fullName : 'کیدل مگ' %></span>
+            <span><i class="far fa-eye ml-1"></i> <%= toPersianDigits(post.viewCount) %> بازدید</span>
+          </div>
+          
+          <!-- محتوای مقاله -->
+          <div id="postContent" class="post-content mt-6 text-rose-700 leading-loose">
+            <%- post.content %>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- ستون مقالات مرتبط -->
+    <div>
+      <div class="bg-white/80 backdrop-blur rounded-2xl p-5 sticky top-24 shadow-lg border border-rose-100">
+        <h3 class="font-extrabold text-rose-800 text-lg mb-4">مقالات دیگر</h3>
+        <div class="space-y-3">
+          <% relatedPosts.forEach(p => { %>
+            <a href="/weblog/<%= p.slug %>" class="related-post-link w-full text-right flex gap-3 items-center p-2 rounded-xl hover:bg-rose-50 transition no-underline">
+              <div class="w-14 h-14 rounded-xl bg-gradient-to-br from-pink-100 to-amber-100 flex items-center justify-center shrink-0 overflow-hidden">
+                <% if (p.images && p.images[0]) { %>
+                  <img src="<%= p.images[0].url %>" class="w-full h-full object-cover rounded-xl" alt="<%= p.title %>">
+                <% } else { %>
+                  <i class="fas fa-tshirt text-pink-400 text-xl"></i>
+                <% } %>
+              </div>
+              <div>
+                <h4 class="font-bold text-rose-800 text-sm line-clamp-2"><%= p.title %></h4>
+                <span class="text-xs text-rose-500"><%= toPersianDate(p.publishedAt) %></span>
+              </div>
+            </a>
+          <% }) %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- فوتر -->
+<%- include('./partials/footer') %>
+
+<script>
+function toPersianNumber(num) {
+  const digits = ['۰','۱','۲','۳','۴','۵','۶','۷','۸','۹'];
+  return num.toString().replace(/\d/g, d => digits[parseInt(d)]);
+}
+
+function toPersianDate(dateString) {
+  if (!dateString) return '';
+  const date = new Date(dateString);
+  return date.toLocaleDateString('fa-IR');
+}
+
+function toPersianDate(dateString) {
+  if (!dateString) return '';
+  const date = new Date(dateString);
+  return date.toLocaleDateString('fa-IR');
+}
+
+function generateTableOfContents() {
+  const contentElement = document.getElementById('postContent');
+  const tocContainer = document.getElementById('postTOC');
+  
+  if (!contentElement || !tocContainer) return;
+  
+  const headings = contentElement.querySelectorAll('h1, h2, h3');
+  
+  if (headings.length === 0) {
+    tocContainer.style.display = 'none';
+    return;
+  }
+  
+  tocContainer.style.display = 'block';
+  
+  let tocHTML = '<div class="table-of-contents">';
+  tocHTML += '<h4>📑 فهرست مطالب</h4>';
+  tocHTML += '<ul>';
+  
+  headings.forEach((heading, index) => {
+    // ایجاد id یکتا برای هر هدینگ
+    const id = `heading-${index}-${Date.now()}`;
+    heading.id = id;
+    
+    const level = heading.tagName.toLowerCase();
+    const text = heading.textContent;
+    const levelClass = `toc-level-${level}`;
+    
+    tocHTML += `
+      <li class="${levelClass}">
+        <a href="#${id}" class="toc-link" data-target="${id}">
+          ${level === 'h1' ? '📌 ' : level === 'h2' ? '• ' : '◦ '}
+          ${text}
+        </a>
+      </li>
+    `;
+  });
+  
+  tocHTML += '</ul></div>';
+  tocContainer.innerHTML = tocHTML;
+  
+  // اسکرول نرم - اصلاح شده برای صفحه عادی
+  const tocLinks = document.querySelectorAll('.toc-link');
+  tocLinks.forEach(link => {
+    link.addEventListener('click', function(e) {
+      e.preventDefault();
+      const targetId = this.dataset.target;
+      const targetElement = document.getElementById(targetId);
+      
+      if (targetElement) {
+        const navbarHeight = 80; // ارتفاع navbar ثابت
+        const elementPosition = targetElement.getBoundingClientRect().top;
+        const offsetPosition = elementPosition + window.pageYOffset - navbarHeight;
+        
+        window.scrollTo({
+          top: offsetPosition,
+          behavior: 'smooth'
+        });
+        
+        targetElement.classList.add('section-highlight');
+        setTimeout(() => {
+          targetElement.classList.remove('section-highlight');
+        }, 1000);
+        
+        // به‌روزرسانی URL بدون رفرش
+        history.pushState(null, null, `#${targetId}`);
+      }
+    });
+  });
+  
+  // اسکرول به هش اگر در URL وجود داشته باشد
+  setTimeout(() => {
+    if (window.location.hash) {
+      const targetId = window.location.hash.substring(1);
+      const targetElement = document.getElementById(targetId);
+      if (targetElement) {
+        const navbarHeight = 80;
+        const elementPosition = targetElement.getBoundingClientRect().top;
+        const offsetPosition = elementPosition + window.pageYOffset - navbarHeight;
+        
+        window.scrollTo({
+          top: offsetPosition,
+          behavior: 'smooth'
+        });
+        
+        targetElement.classList.add('section-highlight');
+        setTimeout(() => {
+          targetElement.classList.remove('section-highlight');
+        }, 1000);
+      }
+    }
+  }, 500);
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  generateTableOfContents();
+});
+</script>
+
+</body>
+</html>

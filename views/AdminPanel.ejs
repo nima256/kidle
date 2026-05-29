@@ -1440,7 +1440,7 @@ img[src="/loading.gif"] {
             
             <!-- Footer با دکمه‌ها -->
             <div class="sticky bottom-0 bg-gray-50 border-t border-gray-200 px-5 md:px-7 py-4 flex flex-col sm:flex-row justify-end gap-3">
-                <button type="button" onclick="closeModal('editModal')" 
+                <button type="button" onclick="closeModalAndReset('editModal')" 
                     class="px-6 py-2.5 border-2 border-gray-300 rounded-xl text-gray-700 font-medium hover:bg-gray-100 hover:border-gray-400 transition-all duration-200 order-2 sm:order-1">
                     انصراف
                 </button>
@@ -1964,9 +1964,7 @@ async function removeWeblogImage(buttonElement, imageUrl, filename) {
         // تابع راه‌اندازی ویرایشگر
 function initQuillEditor(initialContent = '') {
     if (window.quillInstance) {
-        if (initialContent !== undefined) {
-            window.quillInstance.root.innerHTML = initialContent;
-        }
+        window.quillInstance.root.innerHTML = initialContent || '';
         return;
     }
 
@@ -2001,7 +1999,7 @@ function initQuillEditor(initialContent = '') {
                 handlers: {
                     image: imageHandler,
                     link: function() {
-                        const range = weblogQuillEditor.getSelection();
+                        const range = window.quillInstance.getSelection();
                         if (range) {
                             let url = prompt('لطفاً آدرس لینک را وارد کنید:', 'https://');
                             if (url) {
@@ -2418,6 +2416,10 @@ function initWeblogQuillEditor(initialContent = '') {
         let currentProduct = {};
 
         async function addProduct() {
+            resetEditModal();
+
+            
+
             currentProductId = null;
             currentProduct = {};
             
@@ -2904,7 +2906,7 @@ async function handleImageUpload(event) {
             
             container.innerHTML = '';
             
-            if (!discounts || discounts.length === 0) {
+            if (!discounts || !Array.isArray(discounts) || discounts.length === 0) {
                 container.innerHTML = '<div class="text-center text-gray-500 p-4">هیچ کد تخفیفی وجود ندارد</div>';
                 return;
             }
@@ -3190,6 +3192,10 @@ async function handleImageUpload(event) {
                 loadDiscounts();
                 closeDiscountModal();
                 showNotification(isEditing ? 'تخفیف با موفقیت ویرایش شد' : 'تخفیف جدید با موفقیت اضافه شد', 'success');
+
+                setTimeout(() => {
+                      location.reload();
+                  }, 500);
                 
             } catch (error) {
                 console.error('Error saving discount:', error);
@@ -3198,7 +3204,7 @@ async function handleImageUpload(event) {
         }
 
         async function deleteDiscount(id) {
-            if (!id) {
+            if (!id || id === 'undefined') {
                 showNotification('شناسه تخفیف معتبر نیست', 'error');
                 return;
             }
@@ -3605,6 +3611,10 @@ async function editWeblog(id) {
 
                 showNotification('تغییرات با موفقیت ذخیره شد', 'success');
                 closeEditModal();
+
+                setTimeout(() => {
+                      location.reload();
+                  }, 500);
             
             } catch (error) {
                 console.error('Error saving changes:', error);
@@ -3703,7 +3713,14 @@ async function editWeblog(id) {
         // Order Functions
         function loadOrders() {
             const tbody = document.getElementById('ordersTableBody');
+            if (!tbody) return;
+
             tbody.innerHTML = '';
+
+            if (!orders || orders.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" class="text-center py-8 text-gray-500">هیچ سفارشی وجود ندارد</td></tr>';
+                return;
+            }
 
             const reversedOrders = [...orders].reverse();
             
@@ -3732,10 +3749,12 @@ async function editWeblog(id) {
                 } else if (order.status === "لغو شده") {
                     classForStatus = statusClasses['لغو شده']
                 }
+
+                const userName = order.user?.fullName || order.user?.name || 'نامشخص';
                                 
                 row.innerHTML = `
                     <td class="px-3 md:px-6 py-3 md:py-4 text-xs md:text-sm font-medium text-gray-900">${order.OrderNum}</td>
-                    <td class="px-3 md:px-6 py-3 md:py-4 text-xs md:text-sm text-gray-900 hidden md:table-cell">${order.user.fullName}</td>
+                    <td class="px-3 md:px-6 py-3 md:py-4 text-xs md:text-sm text-gray-900 hidden md:table-cell">${userName}</td>
                     <td class="px-3 md:px-6 py-3 md:py-4 text-xs md:text-sm font-semibold text-green-600">${toPersianDigits(order.totalPrice)} تومان</td>
                     <td class="px-3 md:px-6 py-3 md:py-4">
                     <select onchange="updateOrderStatus('${order._id}', this)" 
@@ -4207,6 +4226,10 @@ document.getElementById('weblogForm').addEventListener('submit', async function(
         renderWeblogsTable();
         closeModal('editWeblogModal');
         showNotification(currentWeblogId ? 'مقاله با موفقیت ویرایش شد' : 'مقاله جدید با موفقیت اضافه شد', 'success');
+
+        setTimeout(() => {
+            location.reload();
+        }, 500);
         
     } catch (error) {
         console.error('Error saving weblog:', error);
@@ -4421,7 +4444,7 @@ document.getElementById('weblogImages')?.addEventListener('change', async functi
               addProductToTable(result.product);
               
               // یا صفحه را رفرش کنید
-              setTimeout(() => location.reload(), 1000);
+              setTimeout(() => location.reload(), 500);
             } else {
               throw new Error(result.message);
             }
@@ -4739,6 +4762,10 @@ document.getElementById('weblogImages')?.addEventListener('change', async functi
                     addSizeField();
                     addSpecField();
                 }
+
+                setTimeout(() => {
+                      location.reload();
+                  }, 500);
                 
             } catch (error) {
                 console.error('Error:', error);
@@ -4949,7 +4976,75 @@ function closeModal(modalId) {
     } else if (modal) {
         modal.classList.add('hidden');
     }
+    
+    // اگر مودال ویرایش محصول بسته شد، اطلاعات رو ریست کن
+    if (modalId === 'editModal') {
+        resetEditModal();
+    }
 }
+
+function resetEditModal() {
+    // ریست کردن currentProductId
+    currentProductId = null;
+    currentProduct = {};
+    
+    // ریست کردن Quill editor
+    if (window.quillInstance) {
+        window.quillInstance.root.innerHTML = '';
+        document.getElementById('editDescription').value = '';
+    }
+    
+    // ریست کردن فرم
+    const form = document.getElementById('editForm');
+    if (form) {
+        form.reset();
+    }
+    
+    // پاک کردن فیلدهای داینامیک
+    document.getElementById('colorFields').innerHTML = '';
+    document.getElementById('sizeFields').innerHTML = '';
+    document.getElementById('specFields').innerHTML = '';
+    document.getElementById('imagePreviews').innerHTML = '';
+
+    if (colorFields) colorFields.innerHTML = '';
+    if (sizeFields) sizeFields.innerHTML = '';
+    if (specFields) specFields.innerHTML = '';
+    if (imagePreviews) imagePreviews.innerHTML = '';
+
+    
+    // اضافه کردن فیلدهای پیش‌فرض
+    addColorField();
+    addSizeField();
+    addSpecField();
+    
+    // ریست کردن وضعیت تخفیف
+    const hasDiscount = document.getElementById('hasDiscount');
+    const offerPrice = document.getElementById('editOfferPrice');
+    if (hasDiscount) {
+        hasDiscount.checked = false;
+    }
+    if (offerPrice) {
+        offerPrice.disabled = true;
+        offerPrice.value = '';
+        delete offerPrice.dataset.lastValue;
+    }
+    
+    // حذف هایلایت خطاها
+    clearFormErrors();
+
+    const modalTitle = document.getElementById('modalTitle');
+    const submitBtnText = document.getElementById('submitBtnText');
+    if (modalTitle) modalTitle.textContent = 'افزودن محصول جدید';
+    if (submitBtnText) submitBtnText.textContent = 'افزودن محصول';
+
+    
+    // تغییر عنوان به حالت پیش‌فرض
+    const categorySelect = document.getElementById('editCategory');
+    const brandSelect = document.getElementById('editBrand');
+    if (categorySelect) categorySelect.value = '';
+    if (brandSelect) brandSelect.value = '';
+}
+
 
 
 function initVisitsChart() {
@@ -5050,7 +5145,14 @@ function closeAdminLogoutModal() {
 }
 
 // بستن با کلیک روی پس‌زمینه
-document.addEventListener('click', function(event) {
+document.addEventListener('click', function(e) {
+    if (e.target.classList.contains('modal')) {
+        e.target.classList.add('hidden');
+        // اگر مودال ویرایش محصول بود، ریست کن
+        if (e.target.id === 'editModal') {
+            resetEditModal();
+        }
+    }
     const modal = document.getElementById('logout-modal');
     if (event.target === modal) {
         closeAdminLogoutModal();
@@ -5248,6 +5350,8 @@ function renderCategoryList(categories) {
 
 // انتخاب دسته‌بندی برای ویرایش
 async function selectCategoryForEdit(categoryId, categoryName, currentDescription) {
+    if (!categoryId) return;
+
     currentSelectedCategory = categoryId;
     
     // آپدیت UI
@@ -5264,11 +5368,11 @@ async function selectCategoryForEdit(categoryId, categoryName, currentDescriptio
     document.getElementById('categoryNoSelection').classList.add('hidden');
     
     // مقداردهی ویرایشگر
-    if (!categoryDescQuill) {
-        initCategoryDescQuill(currentDescription);
-    } else {
+    if (categoryDescQuill) {
         categoryDescQuill.root.innerHTML = currentDescription || '';
         document.getElementById('categoryDescValue').value = currentDescription || '';
+    } else {
+        initCategoryDescQuill(currentDescription);
     }
 }
 
@@ -5641,6 +5745,12 @@ async function removeWeblogImageWithCaption(buttonElement, imageUrl, filename, i
         showNotification('خطا در حذف تصویر: ' + error.message, 'error');
     }
 }
+
+function closeModalAndReset(modalId) {
+    resetEditModal();
+    closeModal(modalId);
+}
+
     </script>
 </body>
 </html>

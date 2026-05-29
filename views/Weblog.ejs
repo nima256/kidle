@@ -683,51 +683,7 @@ html {
     </div>
   </section>
 </div>
-
-<!-- ==================== صفحه تکی مقاله (همراه با نوار ناوبری) ==================== -->
-<div id="singlePostView" class="hidden fixed inset-0 bg-white z-40 overflow-auto">
-  <!-- نوار ناوبری برای صفحه تکی مقاله -->
-  <nav style="background: white; box-shadow: 0 2px 10px rgba(0,0,0,0.1); position: sticky; top: 0; left: 0; right: 0; z-index: 50; padding: 12px 20px;">
-    <div style="max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
-      <a href="#" id="singlePostLogo" style="display: flex; align-items: center; gap: 8px; text-decoration: none;">
-        <div class="w-10 h-10 rounded-2xl bg-pink-400 flex items-center justify-center shadow-lg">
-          <i class="fas fa-child text-white text-xl"></i>
-        </div>
-        <div>
-          <span class="block text-xl font-extrabold text-rose-800">کیدل</span>
-          <span class="block text-xs text-rose-600">فروشگاه لباس کودک</span>
-        </div>
-      </a>
-      <div class="flex items-center space-x-4 space-x-reverse">
-        <div class="relative">
-          <button class="relative text-gray-700 hover:text-pink-500 transition-colors">
-            <a href="/cart">
-              <i class="fas fa-shopping-bag text-xl"></i>
-            </a>
-          </button>
-        </div>
-        <button id="singlePostAuthBtn" class="text-gray-700 hover:text-pink-500 transition-colors">
-          <i class="fas fa-user text-xl"></i>
-        </button>
-        <button id="closeSinglePostBtn" class="text-gray-700 hover:text-pink-500 transition-colors">
-          <i class="fas fa-times text-xl"></i>
-        </button>
-      </div>
-    </div>
-  </nav>
-  
-  <div class="max-w-6xl mx-auto px-4 py-6">
-    <div id="singlePostContent"></div>
-  </div>
-
-  <!-- ==================== فوتر برای صفحه تکی مقاله ==================== -->
 <%- include('./partials/footer') %>
-
-</div>
-
-<!-- ==================== فوتر ==================== -->
-<%- include('./partials/footer') %>
-
 
 <script>
 // ==================== دیتای مقالات ====================
@@ -884,110 +840,31 @@ async function renderArticles() {
           <span><i class="far fa-user ml-1"></i> ${authorName}</span>
         </div>
         <p class="text-sm text-rose-600 mt-2 line-clamp-3">${post.description}</p>
-        <a href="/weblog/${post.slug}" class="read-more-link block w-full mt-3 bg-pink-500 hover:bg-pink-600 text-white font-bold py-2.5 rounded-xl transition text-center">
+        <button onclick="window.location.href='/weblog/${post.slug}';" class="read-more-btn w-full mt-3 bg-pink-500 hover:bg-pink-600 text-white font-bold py-2.5 rounded-xl transition text-center">
           ادامه مطلب <i class="fas fa-arrow-left mr-1"></i>
-        </a>
+        </button>
       </div>
     `;
     grid.appendChild(card);
   });
-}
-
-// ==================== نمایش صفحه تکی مقاله با نوار ناوبری ====================
-async function showSinglePost(slug) {
-  const data = await fetchSinglePost(slug);
-  if (!data) return;
   
-  const post = data.post;
-  const relatedPosts = data.relatedPosts;
-  currentPost = post;
-  
-  const categoryName = post.categories && post.categories[0] ? post.categories[0].name : 'عمومی';
-  const authorName = post.authorDetails ? post.authorDetails.fullName : 'کیدل مگ';
-  const mainImage = post.images && post.images[0] ? 
-    `<img src="${post.images[0].url}" class="w-full h-full object-cover rounded-2xl" title="${post.images[0].caption}">` : 
-    `<i class="fas fa-tshirt text-7xl text-pink-400"></i>`;
-  
-  const content = `
-    <div class="grid lg:grid-cols-3 gap-8">
-      <div class="lg:col-span-2">
-        <div class="bg-white rounded-3xl p-5 shadow-xl border border-rose-100">
-          <div class="image-placeholder rounded-2xl h-64 flex items-center justify-center overflow-hidden">
-            ${mainImage}
-          </div>
-          <div id="postTOC" class="mb-6"></div>
-          <div class="mt-6">
-            <div class="flex flex-wrap gap-2 mb-4">
-              <span class="bg-pink-100 text-pink-600 text-xs font-bold px-3 py-1 rounded-full">${categoryName}</span>
-              <span class="bg-amber-50 text-rose-600 text-xs font-bold px-3 py-1 rounded-full"><i class="far fa-clock ml-1"></i> ${toPersianNumber(post.readingTime)} دقیقه</span>
-            </div>
-            <h1 class="text-2xl md:text-3xl font-extrabold text-rose-800">${post.title}</h1>
-            <div class="flex gap-4 text-sm text-rose-500 mt-4 pb-4 border-b border-rose-100">
-              <span><i class="far fa-calendar ml-1"></i> ${toPersianDate(post.publishedAt)}</span>
-              <span><i class="far fa-user ml-1"></i> ${authorName}</span>
-              <span><i class="far fa-eye ml-1"></i> ${toPersianNumber(post.viewCount)} بازدید</span>
-            </div>
-            <div id="postContent" class="post-content mt-6 text-rose-700 leading-loose">
-              ${post.content}
-            </div>
-          </div>
-        </div>
-      </div>
-      <div>
-        <div class="bg-white/80 backdrop-blur rounded-2xl p-5 sticky top-4 shadow-lg border border-rose-100">
-          <h3 class="font-extrabold text-rose-800 text-lg mb-4">مقالات دیگر</h3>
-          <div class="space-y-3">
-            ${relatedPosts.map(p => `
-              <a href="/weblog/${p.slug}" class="related-post-link w-full text-right flex gap-3 items-center p-2 rounded-xl hover:bg-rose-50 transition no-underline">
-                <div class="w-14 h-14 rounded-xl bg-gradient-to-br from-pink-100 to-amber-100 flex items-center justify-center shrink-0 overflow-hidden">
-                  ${p.images && p.images[0] ? 
-                    `<img src="${p.images[0].url}" class="w-full h-full object-cover rounded-xl">` : 
-                    `<i class="fas fa-tshirt text-pink-400 text-xl"></i>`
-                  }
-                </div>
-                <div>
-                  <h4 class="font-bold text-rose-800 text-sm line-clamp-2">${p.title}</h4>
-                  <span class="text-xs text-rose-500">${toPersianDate(p.publishedAt)}</span>
-                </div>
-              </a>
-            `).join("")}
-          </div>
-        </div>
-      </div>
-    </div>
-  `;
-  
-  document.getElementById("singlePostContent").innerHTML = content;
-  
-  // نمایش صفحه تکی مقاله
-  document.getElementById("singlePostView").classList.remove("hidden");
-  document.getElementById("mainContent").classList.add("hidden");
-  // حذف overflow: hidden از body - مهمترین قسمت
-  document.body.style.overflow = "auto";
-  
-  // با تأخیر بیشتر TOC رو بساز
-  setTimeout(function() {
-      generateTableOfContents('#postContent', '#postTOC');
-  }, 200);
-  
-  // به‌روزرسانی URL بدون رفرش
-  window.history.pushState({ slug: post.slug }, post.title, `/weblog/${post.slug}`);
-}
-
-// ==================== بستن صفحه تکی ====================
-function closeSinglePost() {
-  document.getElementById("singlePostView").classList.add("hidden");
-  document.getElementById("mainContent").classList.remove("hidden");
-  document.body.style.overflow = "auto";
-  
-  // بازگشت به URL اصلی
-  window.history.pushState({}, '', '/weblog');
+  // اضافه کردن event listener به دکمه‌های ادامه مطلب
+  document.querySelectorAll('.read-more-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      const slug = btn.getAttribute('data-slug');
+      if (slug) {
+        showSinglePost(slug);
+      }
+    });
+  });
 }
 
 // ==================== دسته‌بندی‌ها ====================
 function setupCategories() {
   document.querySelectorAll(".category-chip").forEach(btn => {
-    btn.addEventListener("click", async () => {
+    btn.addEventListener("click", async (e) => {
+      e.preventDefault();
       document.querySelectorAll(".category-chip").forEach(b => {
         b.classList.remove("active", "bg-pink-500", "text-white");
         b.classList.add("bg-white/70", "text-rose-700");
@@ -1001,24 +878,26 @@ function setupCategories() {
         filterSpan.textContent = currentCategory === "all" ? "نمایش همه مقالات" : `نمایش: ${currentCategory}`;
       }
       await renderArticles();
+      
+      // آپدیت URL بدون رفرش
+      window.history.pushState({}, '', '/weblog');
     });
   });
-}
-
-function handleInitialSlug() {
-  const initialSlug = '<%= typeof initialSlug !== "undefined" ? initialSlug : "" %>';
-  if (initialSlug && initialSlug !== '') {
-    showSinglePost(initialSlug);
-  }
 }
 
 window.addEventListener('popstate', (event) => {
   const path = window.location.pathname;
   if (path === '/weblog' || path === '/weblog/') {
-    closeSinglePost();
+    // فقط اگه صفحه تکی باز هست ببندش
+    const singlePostView = document.getElementById("singlePostView");
+    if (singlePostView && !singlePostView.classList.contains("hidden")) {
+      closeSinglePost();
+    }
   } else if (path.startsWith('/weblog/')) {
     const slug = path.replace('/weblog/', '');
-    showSinglePost(slug);
+    if (slug && slug !== '') {
+      showSinglePost(slug);
+    }
   }
 });
 
@@ -1166,13 +1045,20 @@ document.addEventListener("DOMContentLoaded", async () => {
   
   // دکمه‌های بستن صفحه تکی
   const closeSinglePostBtn = document.getElementById("closeSinglePostBtn");
-  if (closeSinglePostBtn) closeSinglePostBtn.addEventListener("click", closeSinglePost);
-  
+  if (closeSinglePostBtn) {
+    closeSinglePostBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      closeSinglePost();
+    });
+  }
+
   const singlePostLogo = document.getElementById("singlePostLogo");
-  if (singlePostLogo) singlePostLogo.addEventListener("click", (e) => { 
-    e.preventDefault(); 
-    closeSinglePost(); 
-  });
+  if (singlePostLogo) {
+    singlePostLogo.addEventListener("click", (e) => { 
+      e.preventDefault(); 
+      closeSinglePost(); 
+    });
+  }
   
   const logo = document.getElementById("logo");
   if (logo) logo.addEventListener("click", (e) => { e.preventDefault(); closeSinglePost(); window.scrollTo(0, 0); });
@@ -1458,116 +1344,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   setupOtpInputs("#register-step-2");
   setupOtpInputs("#forgot-step-2");
 });
-// تابع تولید جدول محتویات خودکار
-// تابع تولید جدول محتویات خودکار
-// تابع تولید جدول محتویات خودکار
-function generateTableOfContents(contentSelector, tocContainerSelector) {
-    const contentElement = document.querySelector(contentSelector);
-    const tocContainer = document.querySelector(tocContainerSelector);
-    
-    if (!contentElement || !tocContainer) return;
-    
-    // پیدا کردن تمام هدینگ‌ها (h1, h2, h3)
-    const headings = contentElement.querySelectorAll('h1, h2, h3');
-    
-    if (headings.length === 0) {
-        tocContainer.style.display = 'none';
-        return;
-    }
-    
-    tocContainer.style.display = 'block';
-    
-    // ساخت HTML جدول محتویات
-    let tocHTML = '<div class="table-of-contents">';
-    tocHTML += '<h4>📑 فهرست مطالب</h4>';
-    tocHTML += '<ul>';
-    
-    headings.forEach((heading, index) => {
-        // ایجاد id یکتا برای هر هدینگ
-        const id = `heading-${index}-${Date.now()}-${Math.random().toString(36).substr(2, 6)}`;
-        heading.id = id;
-        
-        // اضافه کردن کلاس برای استایل‌بندی
-        const level = heading.tagName.toLowerCase();
-        heading.classList.add(`toc-heading-${level}`);
-        
-        // ساخت لینک در TOC
-        const text = heading.textContent;
-        const levelClass = `toc-level-${level}`;
-        
-        tocHTML += `
-            <li class="${levelClass}">
-                <a href="#${id}" class="toc-link" data-target="${id}">
-                    ${level === 'h1' ? '📌 ' : level === 'h2' ? '• ' : '◦ '}
-                    ${text}
-                </a>
-            </li>
-        `;
-    });
-    
-    tocHTML += '</ul></div>';
-    
-    tocContainer.innerHTML = tocHTML;
-    
-    // اضافه کردن event listener برای لینک‌ها با offset بیشتر
-    const tocLinks = document.querySelectorAll('.toc-link');
-    tocLinks.forEach(link => {
-        link.addEventListener('click', function(e) {
-            e.preventDefault();
-            const targetId = this.dataset.target;
-            const targetElement = document.getElementById(targetId);
-            
-            if (targetElement) {
-                // اسکرول نرم به بخش مورد نظر با offset بیشتر برای navbar
-                const navbarHeight = 80; // افزایش offset (navbar صفحه تکی مقاله)
-                const elementPosition = targetElement.getBoundingClientRect().top;
-                const offsetPosition = window.pageYOffset + elementPosition - navbarHeight;
-                
-                const scrollContainer = document.getElementById('singlePostView');
-
-                scrollContainer.scrollTo({
-                    top: targetElement.offsetTop - navbarHeight,
-                    behavior: 'smooth'
-                });
-                
-                // هایلایت کردن بخش
-                targetElement.classList.add('section-highlight');
-                setTimeout(() => {
-                    targetElement.classList.remove('section-highlight');
-                }, 1000);
-                
-                // آپدیت URL بدون رفرش
-                history.pushState(null, null, `#${targetId}`);
-            }
-        });
-    });
-    
-    // بررسی URL برای اسکرول خودکار بعد از ساخت TOC
-    setTimeout(function() {
-        if (window.location.hash) {
-            const targetId = window.location.hash.substring(1);
-            const targetElement = document.getElementById(targetId);
-            
-            if (targetElement) {
-                const navbarHeight = 80;
-                const elementPosition = targetElement.getBoundingClientRect().top;
-                const offsetPosition = window.pageYOffset + elementPosition - navbarHeight;
-                
-                const scrollContainer = document.getElementById('singlePostView');
-
-                scrollContainer.scrollTo({
-                    top: targetElement.offsetTop - navbarHeight,
-                    behavior: 'smooth'
-                });
-                
-                targetElement.classList.add('section-highlight');
-                setTimeout(() => {
-                    targetElement.classList.remove('section-highlight');
-                }, 1000);
-            }
-        }
-    }, 300); // تأخیر بیشتر
-}
 
 // تابع برای اسکرول به بخش مورد نظر از URL (وقتی صفحه لود میشه)
 function scrollToHeadingFromUrl() {
