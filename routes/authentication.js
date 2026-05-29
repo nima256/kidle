@@ -545,7 +545,7 @@ router.post("/admin/login", async (req, res) => {
 });
 
 // خروج ادمین
-router.post("/admin/logout", async (req, res) => {
+router.post("/logout", async (req, res) => {
   try {
     req.session.destroy((err) => {
       if (err) {
