@@ -49,12 +49,57 @@ const storage = multer.diskStorage({
     cb(null, uploadDir);
   },
   filename: function (req, file, cb) {
-    const uniqueName = `${Date.now()}-${Math.round(
-      Math.random() * 1e9
-    )}${path.extname(file.originalname)}`;
+    // اسم موقت با timestamp
+    const uniqueName = `${Date.now()}-${Math.round(Math.random() * 1e9)}${path.extname(file.originalname)}`;
     cb(null, uniqueName);
   },
 });
+
+async function moveImagesToProductFolder(productId, productName, images, captions) {
+  const sanitizedProductName = productName
+    .replace(/[^a-zA-Z0-9\u0600-\u06FF\s]/g, '')
+    .trim()
+    .replace(/\s+/g, '_');
+  
+  const productFolder = path.join("public/uploads/products", `${productId}_${sanitizedProductName}`);
+  
+  // ایجاد پوشه محصول اگر وجود نداره
+  if (!fs.existsSync(productFolder)) {
+    fs.mkdirSync(productFolder, { recursive: true });
+  }
+  
+  const processedImages = [];
+  
+  for (let i = 0; i < images.length; i++) {
+    const image = images[i];
+    const caption = captions[i] || `image_${i + 1}`;
+    
+    // اسم فایل از کپشن + timestamp
+    const sanitizedCaption = caption
+      .replace(/[^a-zA-Z0-9\u0600-\u06FF\s]/g, '')
+      .trim()
+      .replace(/\s+/g, '_')
+      .substring(0, 50); // حداکثر 50 کاراکتر
+    
+    const newFilename = `${sanitizedCaption || 'image'}_${Date.now()}_${i}.webp`;
+    const tempPath = image.path || path.join("public/uploads", image.filename);
+    const newPath = path.join(productFolder, newFilename);
+    
+    // انتقال فایل
+    if (fs.existsSync(tempPath)) {
+      fs.renameSync(tempPath, newPath);
+      processedImages.push({
+        url: `/uploads/products/${productId}_${sanitizedProductName}/${newFilename}`,
+        filename: newFilename,
+        caption: caption,
+        alt: caption
+      });
+    }
+  }
+  
+  return processedImages;
+}
+
 
 const upload = multer({ storage });
 
@@ -208,20 +253,56 @@ router.post(
 
 router.delete("/delete-image", async (req, res) => {
   try {
-    const { filename } = req.body;
+    const { filename, productId, productName } = req.body;
 
     if (!filename) {
       return res.status(400).json({ error: "Filename is required" });
     }
 
-    const filePath = path.join("public/uploads", filename);
+    let fileDeleted = false;
 
-    if (fs.existsSync(filePath)) {
-      fs.unlinkSync(filePath);
-      res.status(200).json({ success: true });
-    } else {
-      res.status(404).json({ error: "File not found" });
+    
+    if (productId && productName) {
+      const sanitizedProductName = productName
+        .replace(/[^a-zA-Z0-9\u0600-\u06FF\s]/g, '')
+        .trim()
+        .replace(/\s+/g, '_');
+      
+      const productFolder = path.join("public/uploads/products", `${productId}_${sanitizedProductName}`);
+      const filePath = path.join(productFolder, filename);
+      
+      if (fs.existsSync(filePath)) {
+        fs.unlinkSync(filePath);
+        fileDeleted = true;
+        console.log(`تصویر از پوشه محصول حذف شد: ${filePath}`);
+      }
     }
+
+    // روش دوم: اگر فایل توی مسیر قدیمی (public/uploads) باشه
+    if (!fileDeleted) {
+      const oldFilePath = path.join("public/uploads", filename);
+      if (fs.existsSync(oldFilePath)) {
+        fs.unlinkSync(oldFilePath);
+        fileDeleted = true;
+        console.log(`تصویر از پوشه قدیمی حذف شد: ${oldFilePath}`);
+      }
+    }
+
+    // روش سوم: توی پوشه temp نگاه کن
+    if (!fileDeleted) {
+      const tempFilePath = path.join("public/uploads/temp", filename);
+      if (fs.existsSync(tempFilePath)) {
+        fs.unlinkSync(tempFilePath);
+        fileDeleted = true;
+        console.log(`تصویر از پوشه temp حذف شد: ${tempFilePath}`);
+      }
+    }
+
+    if (!fileDeleted) {
+      return res.status(404).json({ error: "فایل یافت نشد" });
+    }
+
+    res.status(200).json({ success: true });
   } catch (error) {
     console.error("Image deletion error:", error);
     res.status(500).json({
@@ -462,15 +543,31 @@ router.post("/products/add", async (req, res, next) => {
       );
     }
 
+    const tempImages = req.body.images || [];
+    delete req.body.images;
+
+
     const productData = {
       ...req.body,
       images: req.body.images || [],
       discount,
       createTarikh: getPersianDate(),
       updateTarikh: getPersianDate(),
+      images: []
     };
 
     const product = new Product(productData);
+    await product.save();
+
+    const captions = tempImages.map(img => img.caption || img.alt || '');
+    const processedImages = await moveImagesToProductFolder(
+      product._id, 
+      product.name, 
+      tempImages,
+      captions
+    );
+
+    product.images = processedImages;
     await product.save();
 
     if (product.countInStock <= 0) {
@@ -763,6 +860,34 @@ router.delete("/products/delete/:id",async (req, res, next) => {
         success: false,
         message: "محصول یافت نشد",
       });
+    }
+
+    const sanitizedProductName = product.name
+      .replace(/[^a-zA-Z0-9\u0600-\u06FF\s]/g, '')
+      .trim()
+      .replace(/\s+/g, '_');
+    
+    const productFolder = path.join("public/uploads/products", `${product._id}_${sanitizedProductName}`);
+    
+    if (fs.existsSync(productFolder)) {
+      // حذف تمام فایل‌های داخل پوشه
+      const files = fs.readdirSync(productFolder);
+      for (const file of files) {
+        fs.unlinkSync(path.join(productFolder, file));
+      }
+      // حذف خود پوشه
+      fs.rmdirSync(productFolder);
+      console.log(`پوشه محصول ${product._id} حذف شد`);
+    }
+
+    // همچنین تصاویر قدیمی که ممکن است در پوشه قدیمی باشند رو هم پاک کن
+    if (product.images && product.images.length > 0) {
+      for (const img of product.images) {
+        const oldImagePath = path.join("public/uploads", img.filename);
+        if (fs.existsSync(oldImagePath)) {
+          fs.unlinkSync(oldImagePath);
+        }
+      }
     }
 
     await Product.findByIdAndDelete(req.params.id);
@@ -2053,5 +2178,27 @@ function generateSlug(text) {
         .replace(/^\-+|\-+$/g, '');     // خط تیره اول و آخر را حذف کن
 }
 
+router.post("/upload-temp-image", upload.single("image"), async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ error: "فایلی ارسال نشده" });
+    }
+    
+    // فقط ذخیره موقت، بدون پردازش نهایی
+    const tempFile = {
+      url: `/uploads/temp/${req.file.filename}`,
+      filename: req.file.filename,
+      tempPath: req.file.path
+    };
+    
+    res.json({
+      success: true,
+      ...tempFile
+    });
+  } catch (error) {
+    console.error("Temp upload error:", error);
+    res.status(500).json({ error: error.message });
+  }
+});
 
 module.exports = router;
