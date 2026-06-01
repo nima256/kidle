@@ -2417,19 +2417,21 @@ function initWeblogQuillEditor(initialContent = '') {
 
         async function addProduct() {
             resetEditModal();
-
-            
-
             currentProductId = null;
             currentProduct = {};
             
             document.getElementById('editForm').reset();
-
             document.getElementById('colorFields').innerHTML = '';
             document.getElementById('sizeFields').innerHTML = '';
             document.getElementById('specFields').innerHTML = '';
             document.getElementById('imagePreviews').innerHTML = '';
             document.getElementById('editImages').addEventListener('change', handleImageUpload);
+
+            const imageInput = document.getElementById('editImages');
+            const newImageInput = imageInput.cloneNode(true);
+            imageInput.parentNode.replaceChild(newImageInput, imageInput);
+            newImageInput.addEventListener('change', handleImageUpload);
+            newImageInput.id = 'editImages';
             
             addColorField();
             addSizeField();
@@ -2587,7 +2589,7 @@ function initWeblogQuillEditor(initialContent = '') {
             if (product.images && product.images.length > 0) {
                 product.images.forEach((image, idx) => {
                     const imgContainer = document.createElement('div');
-                    imgContainer.className = 'relative group border border-gray-200 rounded-lg p-2 bg-gray-50';
+                    imgContainer.className = 'relative group border border-gray-200 rounded-lg p-2 bg-gray-50 hover:shadow-md transition-all duration-200';
                     imgContainer.style.width = '180px';
                     imgContainer.dataset.filename = image.filename;
                     imgContainer.dataset.caption = image.caption || image.alt || '';
@@ -2595,15 +2597,15 @@ function initWeblogQuillEditor(initialContent = '') {
                         <div class="relative">
                             <img src="${image.url}" class="w-full h-32 object-cover rounded-lg" alt="${escapeHtml(image.caption || image.alt || '')}" title="${escapeHtml(image.caption || image.alt || '')}">
                             <button type="button" onclick="removeImage(this, '${image.url}', '${image.filename}')" 
-                                class="absolute top-2 right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs hover:bg-red-600 transition-all opacity-0 group-hover:opacity-100">
-                                ×
+                                class="absolute top-2 right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs hover:bg-red-600 transition-all opacity-0 group-hover:opacity-100 z-10">
+                                <i class="fas fa-times text-xs"></i>
                             </button>
                         </div>
                         <div class="mt-2">
                             <div class="flex items-center gap-1">
                                 <i class="fas fa-pen text-gray-400 text-xs"></i>
                                 <input type="text" 
-                                    class="caption-input w-full text-xs border border-gray-200 rounded px-2 py-1 focus:border-blue-400 focus:outline-none" 
+                                    class="caption-input w-full text-xs border border-gray-200 rounded px-2 py-1 focus:border-blue-400 focus:outline-none focus:ring-1 focus:ring-blue-200" 
                                     value="${escapeHtml(image.caption || image.alt || '')}" 
                                     placeholder="توضیح تصویر..."
                                     data-filename="${image.filename}">
@@ -2624,6 +2626,7 @@ function initWeblogQuillEditor(initialContent = '') {
                     });
                 });
             }
+
             document.getElementById('editImages').addEventListener('change', handleImageUpload);
 
             document.getElementById('editModal').classList.remove('hidden');
@@ -2633,9 +2636,23 @@ async function handleImageUpload(event) {
     const files = event.target.files;
     if (!files || files.length === 0) return;
 
-    for (const file of files) {
+    // دریافت کپشن برای هر تصویر قبل از آپلود
+    const imagesWithCaptions = [];
+    for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        // درخواست کپشن از کاربر برای هر فایل
+        const captionText = prompt(`لطفاً توضیحات تصویر "${file.name}" را وارد کنید:`, '');
+        
+        imagesWithCaptions.push({
+            file: file,
+            caption: captionText || ''
+        });
+    }
+
+    // آپلود تصاویر یکی یکی با کپشن
+    for (const item of imagesWithCaptions) {
         const formData = new FormData();
-        formData.append('images', file);
+        formData.append('images', item.file);
 
         try {
             const response = await fetch('/admin/upload-images', {
@@ -2648,58 +2665,20 @@ async function handleImageUpload(event) {
             if (!response.ok) {
                 throw new Error(result.error || 'خطا در آپلود تصویر');
             }
-
-            // درخواست کپشن از کاربر
-            const captionText = prompt('لطفاً توضیحات تصویر را وارد کنید:', '');
             
-            const imagePreviews = document.getElementById('imagePreviews');
-            const imgContainer = document.createElement('div');
-            imgContainer.className = 'relative group border border-gray-200 rounded-lg p-2 bg-gray-50';
-            imgContainer.style.width = '180px';
-            imgContainer.dataset.filename = result.images[0].filename;
-            imgContainer.dataset.caption = captionText || '';
-            
-            imgContainer.innerHTML = `
-                <div class="relative">
-                    <img src="${result.images[0].url}" class="w-full h-32 object-cover rounded-lg">
-                    <button type="button" onclick="removeImage(this, '${result.images[0].url}', '${result.images[0].filename}')" 
-                        class="absolute top-2 right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs hover:bg-red-600 transition-all opacity-0 group-hover:opacity-100">
-                        ×
-                    </button>
-                </div>
-                <div class="mt-2">
-                    <div class="flex items-center gap-1">
-                        <i class="fas fa-pen text-gray-400 text-xs"></i>
-                        <input type="text" 
-                               class="caption-input w-full text-xs border border-gray-200 rounded px-2 py-1 focus:border-blue-400 focus:outline-none" 
-                               value="${escapeHtml(captionText || '')}" 
-                               placeholder="توضیح تصویر..."
-                               data-filename="${result.images[0].filename}">
-                    </div>
-                </div>
-            `;
-            imagePreviews.appendChild(imgContainer);
-            
-            // افزودن event listener برای ذخیره کپشن
-            const captionInput = imgContainer.querySelector('.caption-input');
-            captionInput.addEventListener('change', function() {
-                const newCaption = this.value.trim();
-                imgContainer.dataset.caption = newCaption;
-                const img = imgContainer.querySelector('img');
-                if (img) {
-                    img.setAttribute('alt', newCaption);
-                    img.setAttribute('title', newCaption);
-                }
-            });
-
-            event.target.value = '';
+            // اضافه کردن تصویر به پیش‌نمایش با کپشن
+            addImageToPreview(result.images[0], item.caption);
             
         } catch (error) {
             console.error('Image upload error:', error);
             showNotification('خطا در آپلود تصویر: ' + error.message, 'error');
         }
     }
+
+    // پاک کردن input file
+    event.target.value = '';
 }
+
 
         // Image removal function
         async function removeImage(buttonElement, imageUrl, filename) {
@@ -2720,8 +2699,21 @@ async function handleImageUpload(event) {
             throw new Error(result.error || 'حذف تصویر انجام نشد');
             }
 
-            // Remove the image preview
-            buttonElement.parentElement.remove();
+            const container = buttonElement.closest('.relative.group');
+            if (container) {
+                // حذف کل کانتینر
+                container.remove();
+            } else {
+                // اگر با روش قبلی پیدا نشد، از طریق parent چند مرحله‌ای برو بالا
+                let parent = buttonElement.parentElement;
+                for (let i = 0; i < 5; i++) {
+                    if (parent && parent.classList && parent.classList.contains('group')) {
+                        parent.remove();
+                        break;
+                    }
+                    if (parent) parent = parent.parentElement;
+                }
+            }
             
             showNotification('تصویر با موفقیت حذف شد', 'success');
         } catch (error) {
@@ -5753,6 +5745,50 @@ function closeModalAndReset(modalId) {
     resetEditModal();
     closeModal(modalId);
 }
+
+function addImageToPreview(imageData, captionText) {
+    const imagePreviews = document.getElementById('imagePreviews');
+    const imgContainer = document.createElement('div');
+    imgContainer.className = 'relative group border border-gray-200 rounded-lg p-2 bg-gray-50 hover:shadow-md transition-all duration-200';
+    imgContainer.style.width = '180px';
+    imgContainer.dataset.filename = imageData.filename;
+    imgContainer.dataset.caption = captionText || '';
+    
+    imgContainer.innerHTML = `
+        <div class="relative">
+            <img src="${imageData.url}" class="w-full h-32 object-cover rounded-lg" alt="${escapeHtml(captionText || '')}" title="${escapeHtml(captionText || '')}">
+            <button type="button" onclick="removeImage(this, '${imageData.url}', '${imageData.filename}')" 
+                class="absolute top-2 right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs hover:bg-red-600 transition-all opacity-0 group-hover:opacity-100 z-10">
+                <i class="fas fa-times text-xs"></i>
+            </button>
+        </div>
+        <div class="mt-2">
+            <div class="flex items-center gap-1">
+                <i class="fas fa-pen text-gray-400 text-xs"></i>
+                <input type="text" 
+                       class="caption-input w-full text-xs border border-gray-200 rounded px-2 py-1 focus:border-blue-400 focus:outline-none focus:ring-1 focus:ring-blue-200" 
+                       value="${escapeHtml(captionText || '')}" 
+                       placeholder="توضیح تصویر..."
+                       data-filename="${imageData.filename}">
+            </div>
+        </div>
+    `;
+    imagePreviews.appendChild(imgContainer);
+    
+    // افزودن event listener برای ذخیره کپشن
+    const captionInput = imgContainer.querySelector('.caption-input');
+    captionInput.addEventListener('change', function() {
+        const newCaption = this.value.trim();
+        imgContainer.dataset.caption = newCaption;
+        const img = imgContainer.querySelector('img');
+        if (img) {
+            img.setAttribute('alt', newCaption);
+            img.setAttribute('title', newCaption);
+        }
+    });
+}
+
+
 
     </script>
 </body>
