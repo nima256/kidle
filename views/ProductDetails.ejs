@@ -4,12 +4,15 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="robots" content="noindex, nofollow">
-    <title><%= product?.name %> | محصولات شیگلم</title>
+    <title><%= product?.name %></title>
     <meta
       name="description"
       content="<%= product?.lilDescription %>"
     />
-    <meta name="keywords" content="<%= product?.tags.join(", ") %>" />
+    <meta property="og:title" content="<%= product?.name || 'نام محصول' %>">
+    <meta property="og:description" content="<%= product?.lilDescription || 'توضیحات محصول' %>">
+    <meta property="og:image" content="<%= product?.images?.[0]?.url || '/default-image.jpg' %>">
+    <meta property="og:type" content="website">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lightgallery/2.7.1/css/lightgallery.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/lightgallery/2.7.1/lightgallery.min.js"></script>
 
@@ -1451,7 +1454,7 @@ document.addEventListener('DOMContentLoaded', function() {
         <button class="volume-option bg-gray-50 hover:bg-gray-100 py-2 rounded-xl text-center font-medium border border-gray-200 <%= (index === 0 || product.sizes.length === 1) ? 'selected bg-gradient-to-r from-pink-500 to-rose-500 text-white border-transparent' : '' %>" 
                 data-volume="<%= toPersianDigitsForSizes(size.size) %>">
           <div class="text-base font-bold"><%= toPersianDigitsForSizes(size.size) %></div>
-          <div class="volume-usage text-xs <%= (index === 0 || product.sizes.length === 1) ? 'text-white/90' : 'text-gray-500' %>"><%= size.usage %></div>
+          <div class="volume-usage text-xs <%= (index === 0 || product.sizes.length === 1) ? 'text-white/90' : 'text-gray-500' %>"><%= size?.usage || "" %></div>
         </button>
         <% }) %>
       </div>
@@ -2027,7 +2030,7 @@ if (document.readyState === 'loading') {
           .then((res) => res.json())
           .then((data) => {
               if (data.success) {
-                  showNotification(`محصول ${productName} با رنگ ${selectedColor} و سایز ${selectedSize} به سبد خرید اضافه شد`, 'success');
+                  showNotification(`محصول مورد نظر به سبد خرید اضافه شد`, 'success');
                   setTimeout(() => {
                       location.reload();
                   }, 800);

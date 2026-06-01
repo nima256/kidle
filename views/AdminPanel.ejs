@@ -2772,8 +2772,8 @@ async function handleImageUpload(event) {
             sizeField.className = 'flex items-center gap-2';
             sizeField.innerHTML = `
                 <input type="text" name="sizes[${sizeId}][size]" placeholder="سایز" value="${size}"
-                    class="flex-1 px-3 py-2 sborder border-gray-300 rounded-lg"> 
-                <input type="text" name="sizes[${sizeId}][usage]" placeholder="کاربرد" value="${usage}"
+                    class="flex-1 px-3 py-2 border border-gray-300 rounded-lg"> 
+                <input type="text" name="sizes[${sizeId}][usage]" placeholder="کاربرد (اختیاری)" value="${usage}"
                     class="flex-1 px-3 py-2 border border-gray-300 rounded-lg">
                 <button type="button" onclick="this.parentElement.remove()" class="text-red-500">×</button>
             `;
@@ -4680,8 +4680,11 @@ document.getElementById('weblogImages')?.addEventListener('change', async functi
                 if (inputs.length >= 2) {
                     const size = inputs[0].value.trim();
                     const usage = inputs[1].value.trim();
-                    if (size && usage) {
-                        data.sizes.push({ size, usage });
+                    if (size) {
+                        data.sizes.push({ 
+                            size: size, 
+                            usage: usage || '' 
+                        });
                     }
                 }
             });

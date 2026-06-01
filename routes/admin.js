@@ -572,11 +572,6 @@ const validateProductUpdate = [
     .trim()
     .notEmpty()
     .withMessage("سایز الزامی است"),
-  body("sizes.*.usage")
-    .optional()
-    .trim()
-    .notEmpty()
-    .withMessage("کاربرد سایز الزامی است"),
   body("specifications.*.key")
     .optional()
     .trim()

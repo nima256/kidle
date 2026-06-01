@@ -162,12 +162,10 @@ const productSchema = mongoose.Schema(
       {
         size: {
           type: String,
-          required: [true, "سایز الزامی است"],
           trim: true,
         },
         usage: {
           type: String,
-          required: [true, "کاربرد سایز الزامی است"],
           trim: true,
         },
       },
