@@ -9,6 +9,17 @@
       name="description"
       content="<%= product?.lilDescription %>"
     />
+
+    <meta name="product_id" content="<%= product?._id %>">
+    <meta name="product_name" content="<%= product?.name %>">
+    <meta name="product_price" content="<%= (product?.offerPrice && product.offerPrice > 0) ? product.offerPrice : product?.price %>">
+    <meta name="availability" content="<%= product?.isOutOfStock ? 'outofstock' : 'instock' %>">
+    <% if (product?.guarantee) { %>
+      <meta name="guarantee" content="<%= product.guarantee %>">
+    <% } else { %>
+      <meta name="guarantee" content="گارانتی اصالت و سلامت فیزیکی کالا">
+    <% } %>
+
     <meta property="og:title" content="<%= product?.name || 'نام محصول' %>">
     <meta property="og:description" content="<%= product?.lilDescription || 'توضیحات محصول' %>">
     <meta property="og:image" content="<%= product?.images?.[0]?.url || '/default-image.jpg' %>">
