@@ -15,6 +15,28 @@
 
   <!-- یا نسخه قدیمی‌تر که در ایران کار می‌کند -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <link rel="canonical" href="https://kidel.ir/weblog" />
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Blog",
+  "name": "مجله کیدل",
+  "description": "مقالات آموزشی و تخصصی در مورد مد، لباس بچگانه و سبک زندگی کودکان",
+  "url": "https://kidel.ir/weblog",
+  "blogPost": [
+    <% for(let i = 0; i < Math.min(weblogs.length, 5); i++) { %>
+    {
+      "@type": "BlogPosting",
+      "headline": "<%= weblogs[i].title %>",
+      "url": "https://kidel.ir/weblog/<%= weblogs[i].slug %>",
+      "datePublished": "<%= weblogs[i].createdAt?.toISOString() %>",
+      "description": "<%= weblogs[i].description %>"
+    }<%= i < Math.min(weblogs.length, 5)-1 ? ',' : '' %>
+    <% } %>
+  ]
+}
+</script>
   
   <style>
     /* فونت وزیرمتن - در صورت عدم دسترسی از فونت سیستمی استفاده می‌شود */

@@ -27,6 +27,55 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/lightgallery/2.7.1/plugins/zoom/lg-zoom.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/lightgallery/2.7.1/plugins/thumbnail/lg-thumbnail.min.js"></script>
 
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Product",
+  "name": "<%= product.name %>",
+  "image": "<%= product.images && product.images[0] ? 'https://kidel.ir' + product.images[0].url : 'https://kidel.ir/images/default.jpg' %>",
+  "description": "<%= product.lilDescription || product.description?.substring(0, 150) %>",
+  "sku": "<%= product._id %>",
+  "mpn": "<%= product._id %>",
+  "brand": {
+    "@type": "Brand",
+    "name": "<%= product.brand?.name || 'کیدل' %>"
+  },
+  "offers": {
+    "@type": "Offer",
+    "price": "<%= priceInIRR %>",
+    "priceCurrency": "IRR",
+    "priceValidUntil": "<%= new Date(Date.now() + 30*24*60*60*1000).toISOString().split('T')[0] %>",
+    "availability": "<%= product.isOutOfStock ? 'https://schema.org/OutOfStock' : 'https://schema.org/InStock' %>",
+    "url": "https://kidel.ir/productDetails/<%= product.slug %>",
+    "seller": {
+      "@type": "Organization",
+      "name": "کیدل"
+    }
+  },
+  "color": [
+    <% if(product.colors && product.colors.length) { %>
+      <% product.colors.forEach(function(color, index) { %>
+        "<%= color.name %>"<%= index < product.colors.length-1 ? ',' : '' %>
+      <% }) %>
+    <% } %>
+  ],
+  "size": [
+    <% if(product.sizes && product.sizes.length) { %>
+      <% product.sizes.forEach(function(size, index) { %>
+        "<%= size.size %>"<%= index < product.sizes.length-1 ? ',' : '' %>
+      <% }) %>
+    <% } %>
+  ]
+}
+</script>
+
+
+<% if (product && product.slug) { %>
+  <link rel="canonical" href="https://kidel.ir/productDetails/<%= product.slug %>" />
+<% } else { %>
+  <link rel="canonical" href="https://kidel.ir<%= req.originalUrl.split('?')[0] %>" />
+<% } %>
+
     <!-- <link
       href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700&display=swap"
       rel="stylesheet"

@@ -23,6 +23,37 @@
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/vazir-font/30.1.0/font-face.css"
     />
+    <link rel="canonical" href="https://kidel.ir/shop" />
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "ItemList",
+      "name": "همه محصولات لباس کیدل",
+      "description": "لیست کامل محصولات فروشگاه لباس کیدل شامل لباس دخترانه، پسرانه و نوزادی",
+      "url": "https://kidel.ir/shop",
+      "numberOfItems": "<%= products.length %>",
+      "itemListElement": [
+        <% for(let i = 0; i < Math.min(products.length, 10); i++) { %>
+        {
+          "@type": "ListItem",
+          "position": <%= i+1 %>,
+          "url": "https://kidel.ir/productDetails/<%= products[i].slug %>"
+        }<%= i < Math.min(products.length, 10)-1 ? ',' : '' %>
+        <% } %>
+      ]
+    }
+    </script>
+
+    <% if (typeof currentPage !== 'undefined' && typeof totalPages !== 'undefined') { %>
+      <% if (currentPage > 1) { %>
+        <link rel="prev" href="https://kidel.ir/shop?page=<%= currentPage - 1 %>" />
+      <% } %>
+      <% if (currentPage < totalPages) { %>
+        <link rel="next" href="https://kidel.ir/shop?page=<%= currentPage + 1 %>" />
+      <% } %>
+    <% } %>
+
     <style>
       @font-face {
         font-family: "MyFont";

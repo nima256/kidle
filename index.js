@@ -12,6 +12,8 @@ const { SitemapStream, streamToPromise } = require("sitemap");
 const { createGzip } = require("zlib");
 const Visit = require("./models/Visit");
 const crypto = require("crypto");
+const compression = require('compression');
+
 
 function getPersianDate(date = new Date()) {
   const year = date.toLocaleDateString('fa-IR', { year: 'numeric' });
@@ -27,8 +29,29 @@ app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 
 // Public folder for css js font and etc.
-app.use(express.static("public/"));
-app.use("/uploads", express.static(path.join(__dirname, "public/uploads")));
+app.use(express.static(path.join(__dirname, 'public/'), {
+  maxAge: '30d',
+  immutable: true
+}));
+
+app.use('/uploads', express.static(path.join(__dirname, 'public/uploads'), {
+  maxAge: '7d',  // 7 روز برای آپلودها
+  immutable: true
+}));
+
+
+
+app.use(compression({
+  level: 6, 
+  threshold: 1024,
+  filter: (req, res) => {
+    if (req.path.match(/\.(css|js|html|svg|json|xml)$/)) {
+      return true;
+    }
+    return compression.filter(req, res);
+  }
+}));
+
 
 app.use(express.json({ limit: "50mb" }));
 app.use(express.urlencoded({ limit: "50mb", extended: true }));
@@ -51,6 +74,8 @@ const Category = require("./models/Category");
 const Brand = require("./models/Brand");
 const Weblog = require("./models/Weblog");
 const User = require("./models/User");
+const ErrorLog = require('./models/ErrorLog'); // اگه مدل ساختی
+
 
 // For production
 // app.use(
@@ -210,6 +235,51 @@ app.use(async (req, res, next) => {
 
 
 app.use(flash());
+
+app.use((req, res, next) => {
+  const host = req.headers.host;
+  
+  if (host && host.startsWith('www.')) {
+    const newHost = host.replace(/^www\./, '');
+    return res.redirect(301, `https://${newHost}${req.originalUrl}`);
+  }
+  next();
+});
+
+// 2. ریدایرکت از HTTP به HTTPS (فقط در حالت production)
+if (process.env.NODE_ENV === 'production') {
+  app.use((req, res, next) => {
+    if (req.protocol === 'http') {
+      return res.redirect(301, `https://${req.headers.host}${req.originalUrl}`);
+    }
+    next();
+  });
+}
+
+app.use((req, res, next) => {
+  // لاگ 404 در کنسول
+  console.log(`[404] ${req.method} ${req.originalUrl} - IP: ${req.ip}`);
+  
+  /*
+  if (process.env.NODE_ENV === 'production') {
+    ErrorLog.create({
+      statusCode: 404,
+      message: 'Page Not Found',
+      url: req.originalUrl,
+      method: req.method,
+      ip: req.ip,
+      userAgent: req.headers['user-agent'],
+      referer: req.headers['referer']
+    }).catch(console.error);
+  }
+  */
+  
+  res.status(404).render("404", {
+    message: "صفحه پیدا نشد",
+    user: req.session.userId ? await User.findById(req.session.userId) : null,
+  });
+});
+
 
 // const apiLimiter = rateLimit({
 //   windowMs: 15 * 60 * 1000, // 15 minutes
@@ -407,9 +477,17 @@ const asyncHandler = (fn) => (req, res, next) =>
 app.get(
   "/shop",
   asyncHandler(async (req, res) => {
+    const page = parseInt(req.query.page) || 1;
+    const limit = 12;  // تعداد محصولات در هر صفحه
+    const skip = (page - 1) * limit;
+
     const products = await Product.find({})
       .populate("category")
       .populate("brand");
+
+    const totalProducts = await Product.countDocuments({});
+    const totalPages = Math.ceil(totalProducts / limit);
+
     const categories = await Category.find({ categoryType: "product" });
     const brands = await Brand.find({});
     const user = await User.findById(req.session.userId);
@@ -479,6 +557,9 @@ app.get(
       cartCount,
       user,
       menuCategories,
+      currentPage: page,
+      totalPages: totalPages,
+      totalProducts: totalProducts,
     });
   })
 );
@@ -599,7 +680,9 @@ app.get("/productDetails/:slug", async (req, res, next) => {
       }
     });
 
-    res.render("ProductDetails", { product, user, cartCount, menuCategories });
+    const priceInIRR = (product.offerPrice || product.price) * 10;
+
+    res.render("ProductDetails", { product, user, cartCount, menuCategories, priceInIRR });
   } catch (err) {
     next(err);
   }
@@ -668,7 +751,7 @@ app.get(
     }
 
 
-   const cartCount = user?.cart?.length || 0;
+  const cartCount = user?.cart?.length || 0;
 
     const allCategories = await Category.find({ 
       categoryType: "product",
@@ -791,7 +874,7 @@ app.get("/about-us", async (req, res) => {
 });
 
 app.get("/connect-us", async (req, res) => {
-   const user = await User.findById(req.session.userId)
+  const user = await User.findById(req.session.userId)
     .populate("cart.productId")
     .populate("orders");
   
@@ -881,7 +964,7 @@ app.get("/terms-and-conditions", async (req, res) => {
 });
 
 app.get("/privacy-policy", async (req, res) => {
-   const user = await User.findById(req.session.userId)
+  const user = await User.findById(req.session.userId)
     .populate("cart.productId")
     .populate("orders");
 
@@ -1278,23 +1361,47 @@ app.use(async (req, res, next) => {
 });
 
 app.use((err, req, res, next) => {
-  console.error("Unhandled error:", err);
-
-  // Determine status code
+  // لاگ خطا در کنسول با جزئیات بیشتر
+  console.error(`[500 ERROR] ${req.method} ${req.originalUrl}`);
+  console.error(`IP: ${req.ip}`);
+  console.error(`User-Agent: ${req.headers['user-agent']}`);
+  console.error(`Message: ${err.message}`);
+  console.error(`Stack: ${err.stack}`);
+  
+  // ذخیره در فایل (به جای دیتابیس ساده‌تره)
+  const logFilePath = path.join(__dirname, 'logs', 'errors.log');
+  const logDir = path.join(__dirname, 'logs');
+  
+  if (!fs.existsSync(logDir)) {
+    fs.mkdirSync(logDir, { recursive: true });
+  }
+  
+  const logEntry = `
+  [${new Date().toISOString()}] [500] ${req.method} ${req.originalUrl}
+  IP: ${req.ip}
+  User-Agent: ${req.headers['user-agent']}
+  Message: ${err.message}
+  Stack: ${err.stack}
+  ----------------------------------------
+  `;
+  
+  fs.appendFileSync(logFilePath, logEntry);
+  
+  // اگه مدل خطا داری، توی دیتابیس هم ذخیره کن
+  // ErrorLog.create({ statusCode: 500, message: err.message, url: req.originalUrl, ... }).catch(console.error);
+  
   const statusCode = err.statusCode || 500;
-
-  // Don't leak stack traces in production
-  const message =
-    process.env.NODE_ENV === "production"
-      ? "مشکلی در سایت پیش آمده است لطفا بعدا تلاش کنید!"
-      : err.message;
-
+  const message = process.env.NODE_ENV === "production"
+    ? "مشکلی در سایت پیش آمده است لطفا بعدا تلاش کنید!"
+    : err.message;
+  
   res.status(statusCode).json({
     success: false,
     message,
     ...(process.env.NODE_ENV !== "production" && { stack: err.stack }),
   });
 });
+
 
 // DB
 const connectWithRetry = async () => {
