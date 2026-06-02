@@ -481,7 +481,7 @@ app.get(
     const limit = 12;  // تعداد محصولات در هر صفحه
     const skip = (page - 1) * limit;
 
-    const products = await Product.find({})
+    const products = await Product.find({ isPublished: true })
       .populate("category")
       .populate("brand");
 

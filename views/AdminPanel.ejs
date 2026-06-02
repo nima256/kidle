@@ -879,6 +879,7 @@ img[src="/loading.gif"] {
                                 <th class="px-3 md:px-6 py-3 md:py-4 text-right text-xs md:text-sm font-semibold text-gray-700 hidden sm:table-cell">موجودی</th>
                                 <th class="px-3 md:px-6 py-3 md:py-4 text-right text-xs md:text-sm font-semibold text-gray-700">قیمت</th>
                                 <th class="px-3 md:px-6 py-3 md:py-4 text-right text-xs md:text-sm font-semibold text-gray-700">عملیات</th>
+                                <th class="px-3 md:px-6 py-3 md:py-4 text-right text-xs md:text-sm font-semibold text-gray-700">وضعیت</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-200" id="productsTableBody">
@@ -1436,6 +1437,25 @@ img[src="/loading.gif"] {
                         </label>
                     </div>
                 </div>
+
+                <div class="bg-gradient-to-r from-gray-50 to-white rounded-xl p-4 md:p-5 border border-gray-200">
+                    <h4 class="text-base md:text-lg font-bold text-gray-800 mb-4 flex items-center gap-2 border-r-4 border-emerald-500 pr-3">
+                        <i class="fas fa-globe text-emerald-500"></i>
+                        وضعیت انتشار
+                    </h4>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <label class="flex items-center gap-2 p-3 bg-gray-50 rounded-xl cursor-pointer hover:bg-gray-100 transition-all">
+                            <input type="checkbox" id="editIsPublished" class="w-4 h-4 text-emerald-600 rounded">
+                            <span class="text-sm font-medium text-gray-700">منتشر شده (فعال در فروشگاه)</span>
+                        </label>
+                        <div class="text-xs text-gray-500 flex items-center">
+                            <i class="fas fa-info-circle ml-1"></i>
+                            در صورت فعال بودن، محصول در سایت نمایش داده می‌شود
+                        </div>
+                    </div>
+                </div>
+
+
             </div>
             
             <!-- Footer با دکمه‌ها -->
@@ -2583,6 +2603,8 @@ function initWeblogQuillEditor(initialContent = '') {
             document.getElementById('editIsNewProduct').checked = product.isNewProduct || false;
             document.getElementById('editIsPopular').checked = product.isPopular || false;
 
+            document.getElementById('editIsPublished').checked = product.isPublished !== false;
+
 
             const imagePreviews = document.getElementById('imagePreviews');
             imagePreviews.innerHTML = '';
@@ -2938,9 +2960,9 @@ async function removeImage(buttonElement, imageUrl, filename) {
                 const discountType = discount.type === 'percent' ? `${discount.amount}%` : `${toPersianDigits(discount.amount)} تومان`;
                 
                 // وضعیت فعال/غیرفعال
-                const statusBadge = discount.isActive 
-                    ? '<span class="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full">فعال</span>'
-                    : '<span class="text-xs bg-red-100 text-red-800 px-2 py-1 rounded-full">غیرفعال</span>';
+                const statusBadge = product.isPublished 
+                    ? '<span class="inline-block bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full">منتشر شده</span>'
+                    : '<span class="inline-block bg-yellow-100 text-yellow-800 text-xs px-2 py-1 rounded-full">پیش‌نویس</span>';
                 
                 item.innerHTML = `
                     <div class="flex flex-col flex-1">
@@ -4671,6 +4693,7 @@ document.getElementById('weblogImages')?.addEventListener('change', async functi
                 category: [document.getElementById('editCategory').value], // چون select تکی است
                 brand: document.getElementById('editBrand').value,
                 isFeatured: document.getElementById('editIsFeatured').checked,
+                isPublished: document.getElementById('editIsPublished').checked,
                 isNewProduct: document.getElementById('editIsNewProduct').checked,
                 isPopular: document.getElementById('editIsPopular').checked,
                 colors: [],
@@ -5035,6 +5058,11 @@ function resetEditModal() {
     addColorField();
     addSizeField();
     addSpecField();
+
+    const isPublishedCheckbox = document.getElementById('editIsPublished');
+    if (isPublishedCheckbox) {
+        isPublishedCheckbox.checked = false;
+    }
     
     // ریست کردن وضعیت تخفیف
     const hasDiscount = document.getElementById('hasDiscount');

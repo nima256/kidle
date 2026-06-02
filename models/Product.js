@@ -32,8 +32,6 @@ const productSchema = mongoose.Schema(
     },
     description: {
       type: String,
-      required: [true, "توضیحات محصول الزامی است"],
-      minlength: [20, "توضیحات محصول نمی‌تواند کمتر از ۲۰ کاراکتر باشد"],
       maxlength: 1000000
     },
     images: [
@@ -201,6 +199,14 @@ const productSchema = mongoose.Schema(
     updateTarikh: {
       type: String,
     },
+    isPublished: {
+      type: Boolean,
+      default: false,  // پیش‌فرض: پیش‌نویس (منتشر نشده)
+    },
+    
+    publishedAt: {
+      type: Date,  // تاریخ انتشار (زمانی که وضعیت به true تغییر کند)
+    },
   },
   {
     timestamps: true,
@@ -219,6 +225,8 @@ const productSchema = mongoose.Schema(
     },
   }
 );
+
+
 
 productSchema.pre("validate", async function (next) {
   if (!this.slug && this.name) {
@@ -248,6 +256,10 @@ productSchema.pre("validate", async function (next) {
 
 productSchema.pre("save", function (next) {
   this.updateTarikh = getPersianDate();
+  if (this.isModified("isPublished") && this.isPublished && !this.publishedAt) {
+    this.publishedAt = new Date();
+  }
+  
   next();
 });
 
