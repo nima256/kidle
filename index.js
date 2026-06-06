@@ -74,7 +74,7 @@ const Category = require("./models/Category");
 const Brand = require("./models/Brand");
 const Weblog = require("./models/Weblog");
 const User = require("./models/User");
-const ErrorLog = require('./models/ErrorLog'); // اگه مدل ساختی
+const ErrorLog = require('./models/ErrorLog');
 
 
 // For production
@@ -306,6 +306,7 @@ const cartRoutes = require("./routes/cart");
 const orderRoutes = require("./routes/order");
 const adminRoutes = require("./routes/admin");
 const weblogRoutes = require('./routes/weblog');
+const torobRoutes = require("./routes/torobRoutes");
 const { isLoggedIn } = require("./middlewares/isLoggedIn");
 
 // app.use("/api/", apiLimiter);
@@ -313,6 +314,7 @@ app.use("/api/authentication", authenticationRoutes);
 app.use("/api/mobile", mobileRoutes);
 app.use("/api/cart", cartRoutes);
 app.use("/api/order", orderRoutes);
+app.use('/', torobRoutes);
 app.use("/admin", adminRoutes);
 app.use('/', weblogRoutes);
 

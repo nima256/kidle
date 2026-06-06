@@ -679,11 +679,6 @@ const validateProductUpdate = [
     .trim()
     .notEmpty()
     .withMessage("مقدار مشخصه الزامی است"),
-  body("tags.*")
-    .optional()
-    .trim()
-    .notEmpty()
-    .withMessage("برچسب نمی‌تواند خالی باشد"),
 ];
 
 router.put("/products/edit/:id",async (req, res, next) => {
