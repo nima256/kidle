@@ -14,7 +14,7 @@
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
     />
     <link rel="stylesheet" href="/tailwind.min.css">
-    <link rel="canonical" href="https://kidel.ir/category/<%= currentCategory.slug %>" />
+    <link rel="canonical" href="https://kidle.ir/category/<%= currentCategory.slug %>" />
     <!-- <link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet"> -->
     <link
       rel="stylesheet"
@@ -26,14 +26,14 @@
       "@type": "CollectionPage",
       "name": "<%= currentCategory.name %>",
       "description": "خرید <%= currentCategory.name %> از فروشگاه لباس کیدل. قیمت <%= currentCategory.name %> با کیفیت عالی و تنوع بالا. بهترین مدل‌های <%= currentCategory.name %> را اینجا ببینید و بخرید.",
-      "url": "https://kidel.ir/category/<%= currentCategory.slug %>",
+      "url": "https://kidle.ir/category/<%= currentCategory.slug %>",
       "numberOfItems": "<%= products.length %>",
       "itemListElement": [
         <% for(let i = 0; i < Math.min(products.length, 10); i++) { %>
         {
           "@type": "ListItem",
           "position": <%= i+1 %>,
-          "url": "https://kidel.ir/productDetails/<%= products[i].slug %>"
+          "url": "https://kidle.ir/productDetails/<%= products[i].slug %>"
         }<%= i < Math.min(products.length, 10)-1 ? ',' : '' %>
         <% } %>
       ]

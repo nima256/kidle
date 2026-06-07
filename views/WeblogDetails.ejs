@@ -8,7 +8,7 @@
   
   <!-- Tailwind CSS -->
   <link rel="stylesheet" href="/tailwind.min.css">
-  <link rel="canonical" href="https://kidel.ir/weblog/<%= post.slug %>" />
+  <link rel="canonical" href="https://kidle.ir/weblog/<%= post.slug %>" />
 
   
   <!-- Font Awesome -->
@@ -20,7 +20,7 @@
   "@type": "BlogPosting",
   "headline": "<%= post.title %>",
   "description": "<%= post.description %>",
-  "image": "<%= post.images && post.images[0] ? 'https://kidel.ir' + post.images[0].url : '' %>",
+  "image": "<%= post.images && post.images[0] ? 'https://kidle.ir' + post.images[0].url : '' %>",
   "datePublished": "<%= post.createdAt?.toISOString() %>",
   "dateModified": "<%= post.updatedAt?.toISOString() %>",
   "author": {
@@ -32,12 +32,12 @@
     "name": "کیدل",
     "logo": {
       "@type": "ImageObject",
-      "url": "https://kidel.ir/logo.png"
+      "url": "https://kidle.ir/logo.png"
     }
   },
   "mainEntityOfPage": {
     "@type": "WebPage",
-    "@id": "https://kidel.ir/weblog/<%= post.slug %>"
+    "@id": "https://kidle.ir/weblog/<%= post.slug %>"
   },
   "articleSection": "<%= post.categories?.map(c => c.name).join(', ') || '' %>"
 }

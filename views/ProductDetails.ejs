@@ -43,7 +43,7 @@
   "@context": "https://schema.org",
   "@type": "Product",
   "name": "<%= product.name %>",
-  "image": "<%= product.images && product.images[0] ? 'https://kidel.ir' + product.images[0].url : 'https://kidel.ir/images/default.jpg' %>",
+  "image": "<%= product.images && product.images[0] ? 'https://kidle.ir' + product.images[0].url : 'https://kidle.ir/images/default.jpg' %>",
   "description": "<%= product.lilDescription || product.description?.substring(0, 150) %>",
   "sku": "<%= product._id %>",
   "mpn": "<%= product._id %>",
@@ -57,7 +57,7 @@
     "priceCurrency": "IRR",
     "priceValidUntil": "<%= new Date(Date.now() + 30*24*60*60*1000).toISOString().split('T')[0] %>",
     "availability": "<%= product.isOutOfStock ? 'https://schema.org/OutOfStock' : 'https://schema.org/InStock' %>",
-    "url": "https://kidel.ir/productDetails/<%= product.slug %>",
+    "url": "https://kidle.ir/productDetails/<%= product.slug %>",
     "seller": {
       "@type": "Organization",
       "name": "کیدل"
@@ -82,9 +82,9 @@
 
 
 <% if (product && product.slug) { %>
-  <link rel="canonical" href="https://kidel.ir/productDetails/<%= product.slug %>" />
+  <link rel="canonical" href="https://kidle.ir/productDetails/<%= product.slug %>" />
 <% } else { %>
-  <link rel="canonical" href="https://kidel.ir<%= req.originalUrl.split('?')[0] %>" />
+  <link rel="canonical" href="https://kidle.ir<%= req.originalUrl.split('?')[0] %>" />
 <% } %>
 
     <!-- <link
