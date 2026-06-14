@@ -1,340 +1,395 @@
-// const express = require("express");
-// const router = express.Router();
-// const Order = require("../models/Order");
-// const User = require("../models/User");
-// const DiscountCode = require("../models/DiscountCode");
-// const { isLoggedIn } = require("../middlewares/isLoggedIn");
-// const multer = require("multer");
-// const upload = multer();
-// const Product = require("../models/Product");
-// const { body, validationResult } = require("express-validator");
-// const mongoose = require("mongoose");
-// const ZarinPal = require("zarinpal-checkout");
-// const zarinpal = ZarinPal.create("0f03c606-0e29-49be-b289-7f7ec0dc7aa3", false);
+/*
+const express = require("express");
+const router = express.Router();
+const multer = require("multer");
+const upload = multer();
+const Product = require("../models/Product");
+const { body, validationResult } = require("express-validator");
+const mongoose = require("mongoose");
+const ZarinPal = require("zarinpal-checkout");
+const zarinpal = ZarinPal.create("0f03c606-0e29-49be-b289-7f7ec0dc7aa3", false);
 
-// // For access to req.body
-// router.use(express.json());
-// router.use(express.urlencoded({ extended: true }));
 
-// const validateOrderInput = [
-//   body("postcode").trim().notEmpty().withMessage("کد پستی الزامی است"),
-//   body("address").trim().notEmpty().withMessage("آدرس الزامی است"),
-//   body("delivery").optional().trim(),
-//   body("province").trim().notEmpty().withMessage("استان الزامی است"), // اضافه کن
-//   body("city").trim().notEmpty().withMessage("شهر الزامی است"), // اضافه کن
-// ];
-// const errorResponse = (res, status, message, details = {}) => {
-//   return res.status(status).json({
-//     success: false,
-//     message,
-//     ...details,
-//   });
-// };
+const Order = require("../models/Order");
+const User = require("../models/User");
+const DiscountCode = require("../models/DiscountCode");
+const { isLoggedIn } = require("../middlewares/isLoggedIn");
+const Category = require("../models/Category");
 
-// router.post(
-//   "/",
-//   upload.none(),
-//   isLoggedIn,
-//   validateOrderInput,
-//   async (req, res) => {
-//     try {
-//       const errors = validationResult(req);
-//       if (!errors.isEmpty()) {
-//         return errorResponse(res, 400, "خطا در اعتبارسنجی", {
-//           errors: errors.array(),
-//         });
-//       }
+// For access to req.body
+router.use(express.json());
+router.use(express.urlencoded({ extended: true }));
 
-//       const userId = req.session.userId;
-//       const { postcode, address, delivery, province, city } = req.body;
+const validateOrderInput = [
+  body("postcode").trim().notEmpty().withMessage("کد پستی الزامی است"),
+  body("address").trim().notEmpty().withMessage("آدرس الزامی است"),
+  body("delivery").optional().trim(),
+  body("province").trim().notEmpty().withMessage("استان الزامی است"), // اضافه کن
+  body("city").trim().notEmpty().withMessage("شهر الزامی است"), // اضافه کن
+];
+const errorResponse = (res, status, message, details = {}) => {
+  return res.status(status).json({
+    success: false,
+    message,
+    ...details,
+  });
+};
 
-//       const user = await User.findById(userId).populate("cart.productId");
-//       if (!user) {
-//         return errorResponse(res, 404, "کاربر یافت نشد");
-//       }
+router.post(
+  "/",
+  upload.none(),
+  isLoggedIn,
+  validateOrderInput,
+  async (req, res) => {
+    try {
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        return errorResponse(res, 400, "خطا در اعتبارسنجی", {
+          errors: errors.array(),
+        });
+      }
 
-//       if (!user.cart || user.cart.length === 0) {
-//         return errorResponse(res, 400, "سبد خرید شما خالی است");
-//       }
+      const userId = req.session.userId;
+      const { postcode, address, delivery, province, city } = req.body;
 
-//       const unavailableProducts = [];
-//       let subtotal = 0;
+      const user = await User.findById(userId).populate("cart.productId");
+      if (!user) {
+        return errorResponse(res, 404, "کاربر یافت نشد");
+      }
 
-//       // ساخت آرایه محصولات با اطلاعات کامل
-//       const productsForOrder = await Promise.all(
-//         user.cart.map(async (item) => {
-//           const product = await Product.findById(item.productId);
-//           if (!product || product.stock < item.quantity) {
-//             unavailableProducts.push({
-//               productId: item.productId,
-//               name: product?.name || "نامعلوم",
-//               requested: item.quantity,
-//               available: product?.stock || 0,
-//             });
-//             return null;
-//           }
+      if (!user.cart || user.cart.length === 0) {
+        return errorResponse(res, 400, "سبد خرید شما خالی است");
+      }
 
-//           const price = product.offerPrice || product.price;
-//           subtotal += price * item.quantity;
+      const unavailableProducts = [];
+      let subtotal = 0;
 
-//           return {
-//             product: product._id,
-//             quantity: item.quantity,
-//             priceAtPurchase: price,
-//             nameAtPurchase: product.name,
-//             selectedColor: item.selectedColor, // اضافه کردن رنگ انتخاب شده
-//             selectedSize: item.selectedSize, // اضافه کردن سایز انتخاب شده
-//           };
-//         })
-//       );
+      // ساخت آرایه محصولات با اطلاعات کامل
+      const productsForOrder = await Promise.all(
+        user.cart.map(async (item) => {
+          const product = await Product.findById(item.productId);
+          if (!product || product.stock < item.quantity) {
+            unavailableProducts.push({
+              productId: item.productId,
+              name: product?.name || "نامعلوم",
+              requested: item.quantity,
+              available: product?.stock || 0,
+            });
+            return null;
+          }
 
-//       if (unavailableProducts.length > 0) {
-//         return errorResponse(res, 400, "برخی محصولات موجود نیستند", {
-//           unavailableProducts,
-//         });
-//       }
+          const price = product.offerPrice || product.price;
+          subtotal += price * item.quantity;
 
-//       // محاسبه تخفیف و قیمت نهایی
-//       let discountAmount = 0;
-//       let appliedDiscount = null;
-//       let finalPrice = subtotal;
+          return {
+            product: product._id,
+            quantity: item.quantity,
+            priceAtPurchase: price,
+            nameAtPurchase: product.name,
+            selectedColor: item.selectedColor, // اضافه کردن رنگ انتخاب شده
+            selectedSize: item.selectedSize, // اضافه کردن سایز انتخاب شده
+          };
+        })
+      );
 
-//       if (req.session.discount?.code) {
-//         const discount = await DiscountCode.findOne({
-//           code: req.session.discount.code,
-//         });
+      if (unavailableProducts.length > 0) {
+        return errorResponse(res, 400, "برخی محصولات موجود نیستند", {
+          unavailableProducts,
+        });
+      }
 
-//         const now = new Date();
-//         const isValidDiscount =
-//           discount &&
-//           discount.isActive &&
-//           (!discount.expireDate || discount.expireDate >= now) &&
-//           (!discount.usageLimit || discount.usedCount < discount.usageLimit) &&
-//           (!discount.minOrderAmount || subtotal >= discount.minOrderAmount);
+      // محاسبه تخفیف و قیمت نهایی
+      let discountAmount = 0;
+      let appliedDiscount = null;
+      let finalPrice = subtotal;
 
-//         if (isValidDiscount) {
-//           discountAmount =
-//             discount.type === "percent"
-//               ? Math.min(
-//                   Math.floor((subtotal * discount.amount) / 100),
-//                   discount.maxDiscountAmount || Infinity
-//                 )
-//               : discount.amount;
+      if (req.session.discount?.code) {
+        const discount = await DiscountCode.findOne({
+          code: req.session.discount.code,
+        });
 
-//           finalPrice = subtotal - discountAmount;
+        const now = new Date();
+        const isValidDiscount =
+          discount &&
+          discount.isActive &&
+          (!discount.expireDate || discount.expireDate >= now) &&
+          (!discount.usageLimit || discount.usedCount < discount.usageLimit) &&
+          (!discount.minOrderAmount || subtotal >= discount.minOrderAmount);
 
-//           appliedDiscount = {
-//             type: discount.type,
-//             amount: discount.amount,
-//             calculatedAmount: discountAmount,
-//             code: discount.code,
-//             originalValue:
-//               discount.type === "percent"
-//                 ? `${discount.amount}%`
-//                 : `${discount.amount} تومان`,
-//           };
+        if (isValidDiscount) {
+          discountAmount =
+            discount.type === "percent"
+              ? Math.min(
+                  Math.floor((subtotal * discount.amount) / 100),
+                  discount.maxDiscountAmount || Infinity
+                )
+              : discount.amount;
 
-//           await DiscountCode.updateOne(
-//             { _id: discount._id },
-//             { $inc: { usedCount: 1 } }
-//           );
-//         }
+          finalPrice = subtotal - discountAmount;
 
-//         req.session.discount = null;
-//       }
+          appliedDiscount = {
+            type: discount.type,
+            amount: discount.amount,
+            calculatedAmount: discountAmount,
+            code: discount.code,
+            originalValue:
+              discount.type === "percent"
+                ? `${discount.amount}%`
+                : `${discount.amount} تومان`,
+          };
 
-//       // ایجاد سفارش با اطلاعات کامل محصولات
-//       const order = new Order({
-//         OrderNum: req.session.OrderNum || `ORD-${Date.now()}`,
-//         postcode,
-//         address,
-//         province,
-//         city,
-//         user: userId,
-//         products: productsForOrder.filter((p) => p !== null), // استفاده از آرایه کامل محصولات
-//         delivery: delivery || "",
-//         originalPrice: subtotal,
-//         totalPrice: finalPrice,
-//         discount: appliedDiscount,
-//         discountAmount,
-//         status: "در انتظار پرداخت",
-//       });
+          await DiscountCode.updateOne(
+            { _id: discount._id },
+            { $inc: { usedCount: 1 } }
+          );
+        }
 
-//       try {
-//         await order.save();
+        req.session.discount = null;
+      }
 
-//         for (const item of user.cart) {
-//           const product = await Product.findById(item.productId._id);
+      // ایجاد سفارش با اطلاعات کامل محصولات
+      const order = new Order({
+        OrderNum: req.session.OrderNum || `ORD-${Date.now()}`,
+        postcode,
+        address,
+        province,
+        city,
+        user: userId,
+        products: productsForOrder.filter((p) => p !== null), // استفاده از آرایه کامل محصولات
+        delivery: delivery || "",
+        originalPrice: subtotal,
+        totalPrice: finalPrice,
+        discount: appliedDiscount,
+        discountAmount,
+        status: "در انتظار پرداخت",
+      });
+
+      try {
+        await order.save();
+
+        for (const item of user.cart) {
+          const product = await Product.findById(item.productId._id);
           
-//           // کاهش موجودی
-//           const newStock = product.countInStock - item.quantity;
-//           await Product.updateOne(
-//             { _id: item.productId._id },
-//             { 
-//               $inc: { countInStock: -item.quantity },
-//               // اگه موجودی به صفر رسید، یه فیلد isOutOfStock رو true کن
-//               $set: { 
-//                 isOutOfStock: newStock <= 0 
-//               }
-//             }
-//           );
-//         }
+          // کاهش موجودی
+          const newStock = product.countInStock - item.quantity;
+          await Product.updateOne(
+            { _id: item.productId._id },
+            { 
+              $inc: { countInStock: -item.quantity },
+              // اگه موجودی به صفر رسید، یه فیلد isOutOfStock رو true کن
+              $set: { 
+                isOutOfStock: newStock <= 0 
+              }
+            }
+          );
+        }
 
-//         await Promise.all(
-//           user.cart.map((item) =>
-//             Product.updateOne(
-//               { _id: item.productId._id },
-//               { $inc: { stock: -item.quantity } }
-//             )
-//           )
-//         );
+        await Promise.all(
+          user.cart.map((item) =>
+            Product.updateOne(
+              { _id: item.productId._id },
+              { $inc: { stock: -item.quantity } }
+            )
+          )
+        );
 
-//         user.cart = [];
-//         user.orders.push(order._id);
-//         await user.save();
+        user.cart = [];
+        user.orders.push(order._id);
+        await user.save();
 
-//         if (req.session.OrderNum) {
-//           delete req.session.OrderNum;
-//         }
+        if (req.session.OrderNum) {
+          delete req.session.OrderNum;
+        }
 
-//         const payment = await zarinpal.PaymentRequest({
-//           Amount: order.totalPrice,
-//           CallbackURL: `${process.env.WEBSITE_URL}/api/order/verify` || "http://localhost:7000/api/order/verify",
-//           Description: `سفارش ${order.OrderNum}`,
-//           Email: user.email,
-//           Mobile: user.mobile,
-//         });
+        const payment = await zarinpal.PaymentRequest({
+          Amount: order.totalPrice,
+          CallbackURL: `${process.env.WEBSITE_URL}/api/order/verify` || "http://localhost:7000/api/order/verify",
+          Description: `سفارش ${order.OrderNum}`,
+          Email: user.email,
+          Mobile: user.mobile,
+        });
 
-//         // ذخیره اطلاعات پرداخت
-//         order.paymentInfo = {
-//           authority: payment.authority,
-//           paymentUrl: payment.url,
-//         };
-//         await order.save();
+        // ذخیره اطلاعات پرداخت
+        order.paymentInfo = {
+          authority: payment.authority,
+          paymentUrl: payment.url,
+        };
+        await order.save();
 
-//         // ریدایرکت به درگاه پرداخت
-//         return res.json({
-//           success: true,
-//           paymentUrl: payment.url,
-//         });
+        // ریدایرکت به درگاه پرداخت
+        return res.json({
+          success: true,
+          paymentUrl: payment.url,
+        });
 
-//         // return res.json({
-//         //   success: true,
-//         //   message: "سفارش با موفقیت ثبت شد",
-//         //   orderId: order._id,
-//         //   orderNumber: order.OrderNum,
-//         //   total: finalPrice,
-//         //   discount: discountAmount,
-//         // });
-//       } catch (error) {
-//         console.error("Order processing error:", error);
-//         if (order._id) {
-//           await Order.deleteOne({ _id: order._id });
-//         }
-//         throw error;
-//       }
-//     } catch (error) {
-//       console.error("Order creation error:", error);
+        // return res.json({
+        //   success: true,
+        //   message: "سفارش با موفقیت ثبت شد",
+        //   orderId: order._id,
+        //   orderNumber: order.OrderNum,
+        //   total: finalPrice,
+        //   discount: discountAmount,
+        // });
+      } catch (error) {
+        console.error("Order processing error:", error);
+        if (order._id) {
+          await Order.deleteOne({ _id: order._id });
+        }
+        throw error;
+      }
+    } catch (error) {
+      console.error("Order creation error:", error);
 
-//       if (error.name === "ValidationError") {
-//         return errorResponse(res, 400, "خطا در اعتبارسنجی داده‌های سفارش");
-//       }
+      if (error.name === "ValidationError") {
+        return errorResponse(res, 400, "خطا در اعتبارسنجی داده‌های سفارش");
+      }
 
-//       if (error.code === 11000) {
-//         return errorResponse(res, 409, "شماره سفارش تکراری است");
-//       }
+      if (error.code === 11000) {
+        return errorResponse(res, 409, "شماره سفارش تکراری است");
+      }
 
-//       return errorResponse(res, 500, "خطای سرور در ثبت سفارش");
-//     }
-//   }
-// );
+      return errorResponse(res, 500, "خطای سرور در ثبت سفارش");
+    }
+  }
+);
 
-// router.get("/verify", async (req, res) => {
-//   try {
-//     const { Authority, Status } = req.query;
+router.get("/verify", async (req, res) => {
+  try {
+    const { Authority, Status } = req.query;
 
-//     if (!Authority) {
-//       return res
-//         .status(400)
-//         .json({ success: false, message: "Authority is required" });
-//     }
+    if (!Authority) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Authority is required" });
+    }
 
-//     // Log the incoming request for debugging
-//     console.log("Verification request received:", { Authority, Status });
+    // Log the incoming request for debugging
+    console.log("Verification request received:", { Authority, Status });
 
-//     // Find the order
-//     const order = await Order.findOne({ "paymentInfo.authority": Authority });
+    // Find the order
+    const order = await Order.findOne({ "paymentInfo.authority": Authority });
 
-//     if (!order) {
-//       console.error("Order not found for authority:", Authority);
-//       return res
-//         .status(404)
-//         .json({ success: false, message: "سفارش یافت نشد" });
-//     }
+    if (!order) {
+      console.error("Order not found for authority:", Authority);
+      return res
+        .status(404)
+        .json({ success: false, message: "سفارش یافت نشد" });
+    }
 
-//     if (Status !== "OK") {
-//       // Payment failed
-//       order.status = "لغو شده";
-//       await order.save();
-//       console.log("Payment failed - Status not OK");
-//       return res.redirect("/api/order/payment-failed");
-//     }
+    if (Status !== "OK") {
+      // Payment failed
+      order.status = "لغو شده";
+      await order.save();
+      console.log("Payment failed - Status not OK");
+      return res.redirect("/api/order/payment-failed");
+    }
 
-//     // Verify payment
-//     console.log(
-//       "Verifying payment for order:",
-//       order._id,
-//       "Amount:",
-//       order.totalPrice
-//     );
-//     const verification = await zarinpal.PaymentVerification({
-//       Amount: order.totalPrice, // Convert to Rials if needed
-//       Authority,
-//     });
+    // Verify payment
+    console.log(
+      "Verifying payment for order:",
+      order._id,
+      "Amount:",
+      order.totalPrice
+    );
+    const verification = await zarinpal.PaymentVerification({
+      Amount: order.totalPrice, // Convert to Rials if needed
+      Authority,
+    });
 
-//     console.log("Verification response:", verification);
+    console.log("Verification response:", verification);
 
-//     if (verification.status === 100) {
-//       // Successful payment
-//       order.paymentStatus = "پرداخت شده";
-//       order.status = "در حال پردازش";
-//       order.paymentInfo.refId = verification.refId;
-//       order.paymentInfo.cardPan = verification.cardPan;
-//       order.paymentInfo.paymentDate = new Date();
-//       await order.save();
+    if (verification.status === 100) {
+      // Successful payment
+      order.paymentStatus = "پرداخت شده";
+      order.status = "در حال پردازش";
+      order.paymentInfo.refId = verification.refId;
+      order.paymentInfo.cardPan = verification.cardPan;
+      order.paymentInfo.paymentDate = new Date();
+      await order.save();
       
-//       req.session.OrderNum = order.OrderNum;
-//       await req.session.save();
+      req.session.OrderNum = order.OrderNum;
+      await req.session.save();
 
-//       return res.redirect("/api/order/payment-success");
-//     } else {
-//       // Payment verification failed
-//       console.error("Payment verification failed:", verification.status);
-//       order.status = "لغو شده";
-//       await order.save();
-//       return res.redirect("/api/order/payment-failed");
-//     }
-//   } catch (error) {
-//     console.error("Error in verify endpoint:", error);
-//     return res.status(500).json({
-//       success: false,
-//       message: "خطای سرور",
-//       error: error.message,
-//     });
-//   }
-// });
+      return res.redirect("/api/order/payment-success");
+    } else {
+      // Payment verification failed
+      console.error("Payment verification failed:", verification.status);
+      order.status = "لغو شده";
+      await order.save();
+      return res.redirect("/api/order/payment-failed");
+    }
+  } catch (error) {
+    console.error("Error in verify endpoint:", error);
+    return res.status(500).json({
+      success: false,
+      message: "خطای سرور",
+      error: error.message,
+    });
+  }
+});
 
-// router.get("/payment-success", async (req, res) => {
-//   const orderNum = req.query.orderNum || req.session.OrderNum;
-//   res.render("PaymentSuccess", { OrderNum: orderNum  });
-// });
+router.get("/payment-success", async (req, res) => {
+    const user = await User.findById(req.session.userId)
+      .populate("cart.productId")
+      .populate("orders");
 
-// router.get("/payment-failed", async (req, res) => {
-//   res.render("PaymentFailed", { OrderNum: req.session.OrderNum });
-// });
+    const cartCount = user?.cart?.length || 0;
+    const orderNum = req.query.orderNum || req.session.OrderNum;
 
-// module.exports = router;
+    const allCategories = await Category.find({ 
+      categoryType: "product",
+      isActive: true 
+    });
+    
+    // ساخت ساختار درختی برای منو
+    const categoryMap = {};
+    allCategories.forEach(cat => {
+      categoryMap[cat._id] = { ...cat.toObject(), children: [] };
+    });
+    
+    const menuCategories = [];
+    allCategories.forEach(cat => {
+      if (cat.parentId && categoryMap[cat.parentId]) {
+        categoryMap[cat.parentId].children.push(categoryMap[cat._id]);
+      } else if (!cat.parentId) {
+        menuCategories.push(categoryMap[cat._id]);
+      }
+    });
+ res.render("PaymentSuccess", { OrderNum: orderNum , menuCategories, user, cartCount});
+});
 
+// صفحه شکست (برای مواقعی که نیاز باشه)
+router.get("/payment-failed", async (req, res) => {
+    const user = await User.findById(req.session.userId)
+      .populate("cart.productId")
+      .populate("orders");
+
+    const cartCount = user?.cart?.length || 0;
+    
+    const allCategories = await Category.find({ 
+      categoryType: "product",
+      isActive: true 
+    });
+    
+    // ساخت ساختار درختی برای منو
+    const categoryMap = {};
+    allCategories.forEach(cat => {
+      categoryMap[cat._id] = { ...cat.toObject(), children: [] };
+    });
+    
+    const menuCategories = [];
+    allCategories.forEach(cat => {
+      if (cat.parentId && categoryMap[cat.parentId]) {
+        categoryMap[cat.parentId].children.push(categoryMap[cat._id]);
+      } else if (!cat.parentId) {
+        menuCategories.push(categoryMap[cat._id]);
+      }
+    });
+  res.render("PaymentFailed", { OrderNum: req.session.OrderNum, menuCategories, user ,cartCount });
+});
+
+module.exports = router; 
+*/
 
 const express = require("express");
 const router = express.Router();

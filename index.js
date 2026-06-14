@@ -39,8 +39,6 @@ app.use('/uploads', express.static(path.join(__dirname, 'public/uploads'), {
   immutable: true
 }));
 
-
-
 app.use(compression({
   level: 6, 
   threshold: 1024,
@@ -55,8 +53,6 @@ app.use(compression({
 
 app.use(express.json({ limit: "50mb" }));
 app.use(express.urlencoded({ limit: "50mb", extended: true }));
-
-// For file uploads using multer or similar
 app.use(express.raw({ limit: "50mb" }));
 
 app.use((req, res, next) => {
@@ -65,8 +61,6 @@ app.use((req, res, next) => {
 });
 
 process.env.BSON_BUFFER_SIZE = 1024 * 1024 * 50; // 50MB
-
-// Middlewares
 
 // Models
 const Product = require("./models/Product");
@@ -78,39 +72,39 @@ const ErrorLog = require('./models/ErrorLog');
 
 
 // For production
-// app.use(
-//   session({
-//     secret: process.env.SESSION_SECRET || "your-secret-key-change-this",
-//     resave: false,
-//     saveUninitialized: false,
-//     store: MongoStore.create({
-//       mongoUrl: process.env.DB_URL,
-//       ttl: 24 * 60 * 60, // 24 ساعت
-//       autoRemove: 'native'
-//     }),
-//     cookie: {
-//       httpOnly: true,
-//       secure: process.env.NODE_ENV === 'production', // فقط HTTPS در production
-//       sameSite: 'lax',
-//       maxAge: 24 * 60 * 60 * 1000 // 24 ساعت
-//     },
-//     name: 'sessionId' // نام کوکی
-//   })
-// );
-
-// Basic Setup
 app.use(
   session({
-    secret: "randomguys",
+    secret: process.env.SESSION_SECRET || "your-secret-key-change-this",
     resave: false,
     saveUninitialized: false,
+    store: MongoStore.create({
+      mongoUrl: process.env.DB_URL,
+      ttl: 24 * 60 * 60, // 24 ساعت
+      autoRemove: 'native'
+    }),
     cookie: {
       httpOnly: true,
-      secure: false,
-      maxAge: 1000 * 60 * 60 * 1,
+      secure: process.env.NODE_ENV === 'production', // فقط HTTPS در production
+      sameSite: 'lax',
+      maxAge: 24 * 60 * 60 * 1000 // 24 ساعت
     },
+    name: 'sessionId' // نام کوکی
   })
 );
+
+// Basic Setup
+// app.use(
+//   session({
+//     secret: "randomguys",
+//     resave: false,
+//     saveUninitialized: false,
+//     cookie: {
+//       httpOnly: true,
+//       secure: false,
+//       maxAge: 1000 * 60 * 60 * 1,
+//     },
+//   })
+// );
 
 app.use(
   helmet({
@@ -163,6 +157,18 @@ app.use(
     },
   })
 );
+
+app.enable('trust proxy');
+
+app.use((req, res, next) => {
+  const host = req.get('host');
+
+  if (host === 'kidle.ir') {
+    return res.redirect(301, `https://www.kidle.ir${req.originalUrl}`);
+  }
+
+  next();
+});
 
 app.use((req, res, next) => {
   res.header("Access-Control-Allow-Origin", req.headers.origin);
@@ -219,66 +225,44 @@ app.use(async (req, res, next) => {
   next();
 });
 
-app.use(async (req, res, next) => {
-  // گرفتن 5 دسته‌بندی اصلی برای فوتر
-  const footerCategories = await Category.find({ 
-    categoryType: "product",
-    parentId: null,  // فقط دسته‌بندی‌های اصلی
-    isActive: true 
-  })
-  .limit(5)  // فقط 5 تا
-  .sort({ name: 1 });  // مرتب بر اساس نام
-  
-  res.locals.footerCategories = footerCategories;
-  next();
-});
-
 
 app.use(flash());
 
-app.use((req, res, next) => {
-  const host = req.headers.host;
-  
-  if (host && host.startsWith('www.')) {
-    const newHost = host.replace(/^www\./, '');
-    return res.redirect(301, `https://${newHost}${req.originalUrl}`);
-  }
-  next();
-});
+// app.use((req, res, next) => {
+//   // اگر host با www شروع نشده باشد
+//   if (!req.headers.host.startsWith('www.')) {
+//     // ساخت آدرس جدید با www
+//     const newHost = 'www.' + req.headers.host;
+//     const newUrl = req.protocol + '://' + newHost + req.originalUrl;
+//     console.log(newUrl)
+//     return res.redirect(301, newUrl);
+//   }
+//   next();
+// });
 
-// 2. ریدایرکت از HTTP به HTTPS (فقط در حالت production)
-if (process.env.NODE_ENV === 'production') {
-  app.use((req, res, next) => {
-    if (req.protocol === 'http') {
-      return res.redirect(301, `https://${req.headers.host}${req.originalUrl}`);
-    }
-    next();
-  });
-}
-
-app.use((req, res, next) => {
-  // لاگ 404 در کنسول
-  console.log(`[404] ${req.method} ${req.originalUrl} - IP: ${req.ip}`);
+// app.use((req, res, next) => {
+//   // لاگ 404 در کنسول
+//   console.log(`[404] ${req.method} ${req.originalUrl} - IP: ${req.ip}`);
   
-  /*
-  if (process.env.NODE_ENV === 'production') {
-    ErrorLog.create({
-      statusCode: 404,
-      message: 'Page Not Found',
-      url: req.originalUrl,
-      method: req.method,
-      ip: req.ip,
-      userAgent: req.headers['user-agent'],
-      referer: req.headers['referer']
-    }).catch(console.error);
-  }
-  */
+//   /*
+//   if (process.env.NODE_ENV === 'production') {
+//     ErrorLog.create({
+//       statusCode: 404,
+//       message: 'Page Not Found',
+//       url: req.originalUrl,
+//       method: req.method,
+//       ip: req.ip,
+//       userAgent: req.headers['user-agent'],
+//       referer: req.headers['referer']
+//     }).catch(console.error);
+//   }
+//   */
   
-  res.status(404).render("404", {
-    message: "صفحه پیدا نشد",
-    user: req.session.userId ? await User.findById(req.session.userId) : null,
-  });
-});
+//   res.status(404).render("404", {
+//     message: "صفحه پیدا نشد",
+//     user: req.session.userId ? await User.findById(req.session.userId) : null,
+//   });
+// });
 
 
 // const apiLimiter = rateLimit({
@@ -343,43 +327,19 @@ function generateOrderNumber() {
   return `ORD-${randomNum}`;
 }
 
-async function getAllCategoryIds(parentId) {
-  let ids = [parentId];
-  const children = await Category.find({ parentId, isActive: true });
+app.use(async (req, res, next) => {
+  // گرفتن 5 دسته‌بندی اصلی برای فوتر
+  const footerCategories = await Category.find({ 
+    categoryType: "product",
+    parentId: null,  // فقط دسته‌بندی‌های اصلی
+    isActive: true 
+  })
+  .limit(5)  // فقط 5 تا
+  .sort({ name: 1 });  // مرتب بر اساس نام
   
-  for (const child of children) {
-    const childIds = await getAllCategoryIds(child._id);
-    ids = [...ids, ...childIds];
-  }
-  
-  return ids;
-}
-
-async function getCategoriesWithChildren() {
-    const categories = await Category.find({ 
-        categoryType: "product",
-        isActive: true 
-    });
-    
-    // ایجاد ساختار درختی
-    const categoryMap = {};
-    categories.forEach(cat => {
-        categoryMap[cat._id] = { ...cat.toObject(), children: [] };
-    });
-    
-    const rootCategories = [];
-    categories.forEach(cat => {
-        if (cat.parentId) {
-            if (categoryMap[cat.parentId]) {
-                categoryMap[cat.parentId].children.push(categoryMap[cat._id]);
-            }
-        } else {
-            rootCategories.push(categoryMap[cat._id]);
-        }
-    });
-    
-    return rootCategories;
-}
+  res.locals.footerCategories = footerCategories;
+  next();
+});
 
 app.get("/", async (req, res) => {
   try {
@@ -410,6 +370,8 @@ app.get("/", async (req, res) => {
       parentId: null,
       isActive: true 
     });
+    
+    
     
     const products = await Product.find({ isPopular: true })
       .sort({ createdAt: -1 })
@@ -457,10 +419,10 @@ app.get("/", async (req, res) => {
     );
 
     res.render("Home", {
-      menuCategories,        // ← برای منوی نوبار (با ساختار درختی و children)
-      categories: categoriesWithCounts,  // ← برای اسلایدر هوم پیج (با productCount)
+      menuCategories,  
+      categories: categoriesWithCounts,
       products,
-      weblogs,
+      blogPosts: weblogs,
       user,
       cartCount,
       isFeaturedProducts,
@@ -653,7 +615,7 @@ app.get("/productDetails/:slug", async (req, res, next) => {
       throw error;
     }
 
-    const product = await Product.findOne({ slug });
+    const product = await Product.findOne({ slug }).populate('category');
     if (!product) {
       const error = new Error("محصول یافت نشد");
       error.statusCode = 404;

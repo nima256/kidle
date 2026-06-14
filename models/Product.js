@@ -12,6 +12,11 @@ const productSchema = mongoose.Schema(
       minlength: [3, "نام محصول نمی‌تواند کمتر از ۳ کاراکتر باشد"],
       maxlength: [100, "نام محصول نمی‌تواند بیشتر از ۱۰۰ کاراکتر باشد"],
     },
+    englishName: {
+      type: String,
+      trim: true,
+      maxlength: [100, "نام انگلیسی نمی‌تواند بیشتر از ۱۰۰ کاراکتر باشد"],
+    },
     slug: {
       type: String,
       immutable: true,
@@ -27,7 +32,6 @@ const productSchema = mongoose.Schema(
     },
     lilDescription: {
       type: String,
-      maxlength: [160, "توضیح کوتاه نمی‌تواند بیشتر از ۱۶۰ کاراکتر باشد"],
       trim: true,
     },
     description: {
@@ -296,6 +300,17 @@ productSchema.index({ "colors.hex": 1 });
 
 productSchema.set("toJSON", {
   virtual: true,
+});
+
+productSchema.add({
+  product_group_id: {
+    type: String,
+    default: null,
+  },
+  guarantee: {
+    type: String,
+    default: "",
+  },
 });
 
 const Product = mongoose.model("Product", productSchema);

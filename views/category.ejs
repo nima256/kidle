@@ -4,11 +4,16 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="robots" content="noindex, nofollow">
-    <title>فروشگاه</title>
+     <title>محصولات <%= currentCategory.name %></title>
+     <% if(currentCategory.metaDescription) { %>
+    <meta name="description" content="<%= currentCategory.metaDescription %>">
+    <% } else { %>
     <meta
       name="description"
       content="خرید <%= currentCategory.name %> از فروشگاه لباس کیدل. قیمت <%= currentCategory.name %> با کیفیت عالی و تنوع بالا. بهترین مدل‌های <%= currentCategory.name %> را اینجا ببینید و بخرید."
     />
+    <% } %>
+
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
@@ -39,6 +44,7 @@
       ]
     }
     </script>
+
     <style>
       @font-face {
         font-family: "MyFont";
@@ -348,6 +354,168 @@
         width: 24px;
         height: 24px;
       }
+
+.brands-scroll-auto {
+  max-height: 350px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: pink #f0f0f0;
+}
+
+.brands-scroll-auto::-webkit-scrollbar {
+  width: 5px;
+}
+
+.brands-scroll-auto::-webkit-scrollbar-track {
+  background: #f0f0f0;
+  border-radius: 10px;
+}
+
+.brands-scroll-auto::-webkit-scrollbar-thumb {
+  background: #636337;
+  border-radius: 10px;
+}
+
+/* اضافه کردن سایه ملایم در پایین برای نشان دادن اسکرول */
+.brands-scroll-auto {
+  position: relative;
+}
+
+.brands-scroll-auto::after {
+  content: '';
+  position: sticky;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 20px;
+  background: linear-gradient(to top, rgba(255,255,255,0.9), transparent);
+  pointer-events: none;
+  display: none;
+}
+
+.brands-scroll-auto:not(:hover)::after {
+  display: block;
+}
+@media (max-width: 640px) {
+  .brands-scroll-auto {
+    max-height: 250px;
+  }
+}
+/* استایل اسکرول برای دسته‌بندی‌ها */
+.categories-scroll-container {
+  max-height: 400px;
+  overflow-y: auto;
+  padding-left: 4px;
+  padding-right: 4px;
+  scrollbar-width: thin;
+  scrollbar-color: pink #e5e7eb;
+}
+
+/* استایل اسکرول بار برای مرورگرهای Webkit */
+.categories-scroll-container::-webkit-scrollbar {
+  width: 6px;
+}
+
+.categories-scroll-container::-webkit-scrollbar-track {
+  background: #e5e7eb;
+  border-radius: 10px;
+}
+
+.categories-scroll-container::-webkit-scrollbar-thumb {
+  background: #636337;
+  border-radius: 10px;
+}
+
+.categories-scroll-container::-webkit-scrollbar-thumb:hover {
+  background: #4a4a2a;
+}
+
+/* انیمیشن برای آیتم‌های دسته‌بندی */
+.category-chip {
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.category-chip:hover {
+  transform: translateX(-5px);
+  background: linear-gradient(135deg, #fff7ef 0%, #FFF1DB 100%);
+}
+
+      .tab-content.active,
+      .form-step.active {
+        display: block;
+      }
+
+      input:focus {
+        outline: none;
+        border-color: #636337;
+        box-shadow: 0 0 0 2px rgba(99, 99, 55, 0.2);
+      }
+
+      /* استایل کدهای تایید */
+      .otp-input {
+        width: 3rem;
+        height: 3.5rem;
+        font-size: 1.5rem;
+        text-align: center;
+        border: 1px solid #d1d5db;
+        border-radius: 0.5rem;
+        direction: ltr;
+      }
+      .otp-input:focus {
+        border-color: #636337;
+        box-shadow: 0 0 0 2px rgba(99, 99, 55, 0.2);
+      }
+
+      /* انیمیشن پاپ‌آپ */
+      @keyframes modalFadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .modal-content {
+        animation: modalFadeIn 0.3s ease-out;
+      }
+      /* استایل پایه برای آیکون‌ها */
+      .icon {
+        width: 24px;
+        height: 24px;
+        stroke: currentColor;
+        stroke-width: 2;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        fill: none;
+        transition: all 0.3s ease;
+        cursor: pointer;
+      }
+
+      .cart-icon {
+        color: #636337;
+      }
+
+      .cart-icon:hover {
+        color: #4a4a2a;
+      }
+
+      .success-icon {
+        color: #28a745;
+      }
+
+      .hidden {
+        display: none;
+      }
+
+      .icon-container {
+        width: 24px;
+        height: 24px;
+      }
 /* ترتیب المان‌ها در موبایل */
 /* جایگزین کدهای CSS که در انتهای استایل‌ها وجود دارد */
 /* ترتیب المان‌ها در موبایل */
@@ -368,7 +536,34 @@
     width: 100% !important;
   }
 }
+/* استایل اسکرول برای بخش برندها */
+.brands-scroll-container {
+  max-height: 300px;
+  overflow-y: auto;
+  padding-left: 8px;
+  padding-right: 8px;
+  scrollbar-width: thin;
+  scrollbar-color: pink #e5e7eb;
+}
 
+/* استایل اسکرول بار برای مرورگرهای Webkit (Chrome, Safari, Edge) */
+.brands-scroll-container::-webkit-scrollbar {
+  width: 6px;
+}
+
+.brands-scroll-container::-webkit-scrollbar-track {
+  background: #e5e7eb;
+  border-radius: 10px;
+}
+
+.brands-scroll-container::-webkit-scrollbar-thumb {
+  background: #636337;
+  border-radius: 10px;
+}
+
+.brands-scroll-container::-webkit-scrollbar-thumb:hover {
+  background: #4a4a2a;
+}
 /* استایل جدید برای نمایش فیلترها در موبایل به صورت آکاردئونی */
 @media (max-width: 768px) {
   .filters-toggle-btn {
@@ -377,7 +572,7 @@
     justify-content: space-between;
     width: 100%;
     padding: 12px 20px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, pink 0%, rgba(244,114,182,var(--tw-bg-opacity)) 100%);
     color: white;
     border: none;
     border-radius: 12px;
@@ -444,16 +639,6 @@
   }
 }
     /* استایل بخش توضیحات سئو */
-.seo-content {
-  position: relative;
-  overflow: hidden;
-  transition: max-height 0.5s ease;
-  max-height: 120px; /* ارتفاع اولیه برای نمایش 3 خط */
-}
-
-.seo-content.expanded {
-  max-height: 2000px; /* بعد از کلیک، تمام محتوا نمایش داده می‌شود */
-}
 
 .seo-fade {
   position: relative;
@@ -475,7 +660,7 @@
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  background: linear-gradient(135deg, #667eea, #764ba2);
+  background: linear-gradient(135deg, #636337, rgba(244,114,182,var(--tw-bg-opacity)));
   color: white;
   padding: 10px 24px;
   border-radius: 50px;
@@ -489,7 +674,7 @@
 
 .seo-toggle-btn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 10px 25px -5px rgba(102, 126, 234, 0.4);
+  box-shadow: 0 10px 25px -5px rgba(99, 99, 55, 0.4);
 }
 
 .seo-toggle-btn i {
@@ -499,21 +684,192 @@
 .seo-toggle-btn.active i {
   transform: rotate(180deg);
 }
-.nav-link::after {
-    content: "";
-    position: absolute;
-    width: 0;
-    height: 2px;
-    bottom: -4px;
-    right: 50%;
-    background: linear-gradient(90deg, #d94f86, #ec4899);
-    transition: all 0.3s ease;
-}
+
 .cart-count {
     top: -8px;
     left: -8px;
 }
+
+h2 {
+    color: #6A1B9A;
+    padding-right: 15px;
+    margin-top: 30px;
+    margin-bottom: 20px;
+    font-size: 1.8rem;
+}
+h3 {
+    color: #9C7655;
+    margin-top: 25px;
+    margin-bottom: 15px;
+    font-size: 1.4rem;
+}
+p {
+    margin-bottom: 15px;
+    text-align: justify;
+}
+strong {
+    color: #8B4513;
+    font-weight: bold;
+}
+hr {
+    margin: 30px 0;
+    border: 0;
+    height: 1px;
+    background: #ddd;
+}
+@media (max-width: 768px) {
+  #products-container {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 12px !important;
+  }
+  
+  .product-card {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    margin-bottom: 0;
+  }
+  
+  .product-card .p-6 {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 12px !important;
+  }
+  
+  /* دکمه سبد خرید همیشه در پایین کارت */
+  .product-card .p-6 > :last-child {
+    margin-top: auto;
+  }
+  
+  .product-card button {
+    margin-top: 12px;
+    width: 100%;
+    padding: 10px !important;
+    font-size: 13px;
+  }
+  
+  /* تنظیمات تصویر */
+  .product-card .w-full.h-64 {
+    height: auto !important;
+    aspect-ratio: 1 / 1 !important;
+  }
+  
+  .product-card .w-full.h-64 img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  
+  /* فونت‌های کوچک‌تر در موبایل */
+  .product-card h3 {
+    font-size: 14px !important;
+    margin-bottom: 4px !important;
+  }
+  
+  .product-card .text-gray-600.text-sm {
+    font-size: 11px !important;
+    margin-bottom: 8px !important;
+    line-height: 1.3;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  
+  .product-card .price-gradient.font-bold.text-xl {
+    font-size: 14px !important;
+  }
+  
+  .product-card .text-gray-400.line-through.text-sm {
+    font-size: 10px !important;
+  }
+  
+  /* برچسب‌ها و تخفیف‌ها */
+  .product-card .absolute.top-4.right-4,
+  .product-card .absolute.top-4.left-4 {
+    font-size: 10px !important;
+    padding: 2px 6px !important;
+  }
+  
+  .product-card .absolute.bottom-4.left-4 {
+    font-size: 10px !important;
+    padding: 2px 6px !important;
+  }
+  
+  /* امتیاز */
+  .product-card .bg-white\/80.backdrop-blur-sm {
+    font-size: 10px !important;
+  }
+  
+  /* دسته‌بندی و برند */
+  .product-card .bg-orange-100 {
+    font-size: 9px !important;
+    padding: 2px 6px !important;
+  }
+}
+/* محدود کردن متن به دو خط */
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* تنظیمات دسکتاپ */
+@media (min-width: 769px) {
+  .product-card {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .product-card .p-6 {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .product-card .p-6 .mt-auto {
+    margin-top: auto;
+  }
+}
+  @media (min-width: 768px) {
+    .desktop-menu {
+      display: flex !important;
+    }
+    .hamburger {
+      display: none !important;
+    }
+  }
+  
+  .dropdown:hover .dropdown-menu {
+    display: block !important;
+  }
+  
+  .submenu-item:hover .submenu-level2 {
+    display: block !important;
+  }
+  
+  .dropdown-menu a:hover,
+  .submenu-level2 a:hover {
+    background-color: #f5f5f5;
+  }
+  
+  .mobile-dropdown-menu,
+  .mobile-submenu-level2 {
+    transition: all 0.3s ease;
+  }
+  
+  /* استایل برای موبایل */
+  @media (max-width: 768px) {
+    .flex.items-center.space-x-4 {
+      gap: 12px;
+    }
+  }
     </style>
+
     <script>
       // کد مدیریت نمایش فیلترها در موبایل
 document.addEventListener('DOMContentLoaded', function() {
@@ -637,18 +993,130 @@ document.addEventListener('DOMContentLoaded', function() {
       });
     </script>
   </head>
-  <body
-    class="bg-gradient-to-br from-purple-50 via-pink-50 to-indigo-50 min-h-screen"
-  >
-    <!-- Notification -->
-    <div
-      id="notification"
-      class="notification bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg"
-    >
-      <span id="notification-text">فیلتر اعمال شد!</span>
-    </div>
+  <body class="min-h-screen">
 <%- include('./partials/navbar') %>
+
+
 <style>
+/* تنظیمات گرید محصولات در موبایل */
+@media (max-width: 768px) {
+  #products-container {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 12px !important;
+  }
+  
+  .product-card {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    margin-bottom: 0;
+  }
+  
+  .product-card .p-6 {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 12px !important;
+  }
+  
+  /* دکمه سبد خرید همیشه در پایین کارت */
+  .product-card .p-6 > :last-child {
+    margin-top: auto;
+  }
+  
+  .product-card button {
+    margin-top: 12px;
+    width: 100%;
+    padding: 10px !important;
+    font-size: 13px;
+  }
+  
+  /* تنظیمات تصویر */
+  .product-card .w-full.h-64 {
+    height: auto !important;
+    aspect-ratio: 1 / 1 !important;
+  }
+  
+  .product-card .w-full.h-64 img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  
+  /* فونت‌های کوچک‌تر در موبایل */
+  .product-card h3 {
+    font-size: 14px !important;
+    margin-bottom: 4px !important;
+  }
+  
+  .product-card .text-gray-600.text-sm {
+    font-size: 11px !important;
+    margin-bottom: 8px !important;
+    line-height: 1.3;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  
+  .product-card .price-gradient.font-bold.text-xl {
+    font-size: 14px !important;
+  }
+  
+  .product-card .text-gray-400.line-through.text-sm {
+    font-size: 10px !important;
+  }
+  
+  /* برچسب‌ها و تخفیف‌ها */
+  .product-card .absolute.top-4.right-4,
+  .product-card .absolute.top-4.left-4 {
+    font-size: 10px !important;
+    padding: 2px 6px !important;
+  }
+  
+  .product-card .absolute.bottom-4.left-4 {
+    font-size: 10px !important;
+    padding: 2px 6px !important;
+  }
+  
+  /* امتیاز */
+  .product-card .bg-white\/80.backdrop-blur-sm {
+    font-size: 10px !important;
+  }
+  
+  /* دسته‌بندی و برند */
+  .product-card .bg-orange-100 {
+    font-size: 9px !important;
+    padding: 2px 6px !important;
+  }
+}
+/* محدود کردن متن به دو خط */
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* تنظیمات دسکتاپ */
+@media (min-width: 769px) {
+  .product-card {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .product-card .p-6 {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .product-card .p-6 .mt-auto {
+    margin-top: auto;
+  }
+}
   @media (min-width: 768px) {
     .desktop-menu {
       display: flex !important;
@@ -758,6 +1226,7 @@ document.addEventListener('DOMContentLoaded', function() {
       authButton.addEventListener('click', function(e) {
         e.preventDefault();
         e.stopPropagation();
+        console.log('دکمه کاربر کلیک شد - باز کردن پاپ‌آپ');
         authPopup.classList.remove('hidden');
         // تابع switchTab باید قبلاً تعریف شده باشد
         if (typeof switchTab === 'function') {
@@ -1459,13 +1928,21 @@ if (scrollLeftBtn && scrollRightBtn && slider) {
       <span id="toast-message"></span>
     </div>
     <!-- بخش توضیحات سئو -->
-<% if(currentCategory.description && currentCategory.description.trim() !== '') { %>
+<% if(currentCategory && currentCategory.description && currentCategory.description.trim() !== '' && currentCategory.description !== '<p><br></p>' && currentCategory.description !== '<p></p>') { %>
 <section class="container mx-auto px-4 py-12 mt-8 border-t border-gray-200">
-    <div class="max-w-5xl mx-auto text-right">
-        <div class="prose prose-lg text-gray-600">
-            <%- currentCategory.description %>
+  <div style="padding: 20px;" class="max-w-5xl mx-auto text-right seo-fade" id="seoSection">
+      <div class="seo-content" id="seoContent">
+        <div class="max-w-5xl mx-auto text-right">
+            <div class="prose prose-lg text-gray-600">
+                <%- currentCategory.description %>
+            </div>
         </div>
-    </div>
+      </div>
+      <button class="seo-toggle-btn" id="seoToggleBtn">
+        <span>بیشتر بخوانید</span>
+        <i class="fas fa-chevron-down"></i>
+      </button>
+  </div>
 </section>
 <% } %>
 <%- include('./partials/footer') %>
@@ -1532,7 +2009,6 @@ if (scrollLeftBtn && scrollRightBtn && slider) {
 
           // State
           const productFromServer = <%- JSON.stringify(products) %>;
-
           let currentView = "grid";
           let allProducts = [...productFromServer];
           let allPrices = productFromServer.map(product => {
@@ -1558,20 +2034,8 @@ if (scrollLeftBtn && scrollRightBtn && slider) {
           const productsPerPage = 12;
 
           function initializeProducts() {
-
             // در ابتدا همه محصولات را نمایش دهید
             filteredProducts = [...allProducts];
-
-            if (selectedCategories.length > 0) {
-              filteredProducts = filteredProducts.filter(product => {
-                  const productCategories = product.category || [];
-                  return productCategories.some(cat => 
-                      selectedCategories.includes(cat.name)
-                  );
-              });
-            }
-          
-
             paginateProducts();
             renderProducts();
           }
@@ -1584,8 +2048,10 @@ if (scrollLeftBtn && scrollRightBtn && slider) {
 
               let paginationHTML = `
                   <div class="flex items-center gap-2">
-                      <button onclick="changePage(${currentPage - 1})"
-                          class="px-4 py-2 bg-white/50 rounded-xl hover:bg-white transition-all ${currentPage === 1 ? 'opacity-50 cursor-not-allowed' : ''}"
+                      <button style="
+    color: black;
+" onclick="changePage(${currentPage - 1})"
+                          class="px-4 py-2 /50 rounded-xl hover:bg-black transition-all ${currentPage === 1 ? 'opacity-50 cursor-not-allowed' : ''}"
                           ${currentPage === 1 ? 'disabled' : ''}>
                           قبلی
                       </button>`;
@@ -1600,14 +2066,18 @@ if (scrollLeftBtn && scrollRightBtn && slider) {
 
               for (let i = startPage; i <= endPage; i++) {
                   paginationHTML += `
-                      <button onclick="changePage(${i})"
-                          class="px-4 py-2 ${i === currentPage ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white' : 'bg-white/50'} rounded-xl hover:bg-white transition-all">
+                      <button style="
+    color: black;
+" onclick="changePage(${i})"
+                          class="px-4 py-2 ${i === currentPage ? 'bg-gradient-to-r from-[#636337] to-[rgba(244,114,182,var(--tw-bg-opacity))] text-white' : 'bg-white/50'} rounded-xl hover:bg-white transition-all">
                           ${toPersianDigits(i)}
                       </button>`;
               }
 
               paginationHTML += `
-                      <button onclick="changePage(${currentPage + 1})"
+                      <button style="
+    color: black;
+" onclick="changePage(${currentPage + 1})"
                           class="px-4 py-2 bg-white/50 rounded-xl hover:bg-white transition-all ${currentPage === totalPages ? 'opacity-50 cursor-not-allowed' : ''}"
                           ${currentPage === totalPages ? 'disabled' : ''}>
                           بعدی
@@ -1701,131 +2171,125 @@ if (scrollLeftBtn && scrollRightBtn && slider) {
           function toPersianDigits(str) {
             return str.toString().replace(/\d/g, d => '۰۱۲۳۴۵۶۷۸۹'[d]);
           }
-            function renderProducts() {
-            const container = document.getElementById("products-container");
-            const isListView = currentView === "list";
+           function renderProducts() {
+  const container = document.getElementById("products-container");
+  const isListView = currentView === "list";
 
-            if (displayedProducts.length === 0) {
-              container.innerHTML = `
-                <div class="col-span-full text-center py-12">
-                  <div class="text-gray-500 text-lg mb-4">محصولی یافت نشد</div>
-                  <button onclick="resetFilters()" class="px-6 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors">
-                    بازنشانی فیلترها
-                  </button>
-                </div>
-              `;
-              updatePaginationControls();
-              return;
-            }
+  if (displayedProducts.length === 0) {
+    container.innerHTML = `
+      <div class="col-span-full text-center py-12">
+        <div class="text-gray-500 text-lg mb-4">محصولی یافت نشد</div>
+        <button onclick="resetFilters()" class="px-6 py-2 bg-[#636337] text-white rounded-lg hover:bg-[#4a4a2a] transition-colors">
+          بازنشانی فیلترها
+        </button>
+      </div>
+    `;
+    updatePaginationControls();
+    return;
+  }
+
+  container.className = isListView
+    ? "space-y-6 list-view"
+    : "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8";
+
+  container.innerHTML = displayedProducts
+    .map((product) => {
+      const categoryBadges = product.category && product.category.length > 0 
+        ? product.category.map(cat => 
+            `<span class="inline-block bg-gray-100 text-gray-800 text-xs px-2 py-1 rounded-full ml-1 mb-1">
+                ${cat.name || (typeof cat === 'string' ? 'در حال بارگذاری...' : 'بدون نام')}
+            </span>`
+        ).join('')
+        : '<span class="text-gray-500 text-xs">بدون دسته‌بندی</span>';
+      
+      const brandBadge = product.brand?.name ? 
+        `<span class="inline-block bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full ml-1 mb-1">
+            <i class="fas fa-tag ml-1"></i>${product.brand.name}
+        </span>` : '';
+      
+      // استخراج آدرس تصویر با سایز 800x800
+      let imageUrl = '/images/placeholder.jpg';
+      if (product?.images && product.images.length > 0 && product.images[0]?.url) {
+        imageUrl = product.images[0].url;
+        // اگر تصویر دارای پارامتر سایز نبود، سایز 800x800 را اضافه کن
+        if (!imageUrl.includes('?') && !imageUrl.includes('size=')) {
+          imageUrl = imageUrl + '?size=800x800';
+        }
+      }
+      
+      return `
+        <div class="product-card rounded-3xl overflow-hidden shadow-xl floating-animation h-full flex flex-col">
+          ${!isListView ? `
+            <div class="relative w-full" style="aspect-ratio: 1/1;">
+              <a href="/productDetails/${product.slug}">
+                <img src="${imageUrl}" alt="${product.name}" class="w-full h-full object-cover">
+              </a>
+              ${product.isOutOfStock ? `<div class="absolute top-4 right-4 bg-red-500 text-white px-3 py-1 rounded-full text-sm font-bold animate-pulse">ناموجود</div>` : product.discount > 0 ? `<div class="absolute top-4 right-4 bg-red-500 text-white px-3 py-1 rounded-full text-sm font-bold animate-pulse">${toPersianDigits(product.discount)}% تخفیف</div>` : ''}
+              ${product.isNew ? `<div class="absolute top-4 ${product.discount ? `left-4` : `right-4`} bg-green-500 text-white px-3 py-1 rounded-full text-sm font-bold">جدید</div>` : ''}
+              
+            </div>
+          ` : ''}
+          
+          <div class="p-6 flex flex-col flex-grow ${isListView ? "flex-1" : ""}">
+            <div class="flex justify-between items-start mb-3 flex-wrap">
+              <div class="bg-orange-100 text-orange-800 px-3 py-1 rounded-full text-xs font-medium">
+                ${categoryBadges}
+                ${brandBadge}
+              </div>
+            </div>
             
+            <a href="/productDetails/${product.slug}" class="flex-grow">
+              <h3 class="font-bold text-xl text-gray-800 mb-2 text-right line-clamp-2">${product.name}</h3>
 
-            container.className = isListView
-              ? "space-y-6 list-view"
-              : "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8";
+            </a>
+            
+            <div class="mt-auto">
+              <div class="flex justify-between items-center mb-4">
+                <div class="text-right">
+                  ${product.offerPrice ? `
+                    <div class="text-gray-400 line-through text-sm">${formatPrice(product.price)} تومان</div>
+                    <div class="price-gradient font-bold text-xl">${formatPrice(product.offerPrice)} تومان</div>
+                  ` : `
+                    <div class="price-gradient font-bold text-xl">${formatPrice(product.price)} تومان</div>
+                  `}
+                </div>
+                ${product.colors && product.colors.length > 0 ? `
+                  <div class="flex gap-1">
+                    <div class="w-4 h-4 rounded-full border-2 shadow-sm" style="background-color: ${product.colors[0]}"></div>
+                  </div>
+                ` : ""}
+              </div>
+              
+              ${product.isOutOfStock || product.countInStock <= 0 ? `
+                <button disabled class="w-full bg-gradient-to-r from-red-600 to-red-700  py-3 rounded-2xl font-bold opacity-70 cursor-not-allowed shadow-lg flex items-center justify-center gap-2">
+                  <i class="fas fa-ban ml-2"></i>
+                  ناموجود
+                </button>
+              ` : `
+                <button style="
+    background-color:  pink;
+" onclick="location.href='/productDetails/${product.slug}';" class="w-full   py-3 rounded-2xl font-bold hover:opacity-90 transition-all transform hover:scale-105 shadow-lg flex items-center justify-center gap-2">
+                  <i class="fas fa-shopping-cart ml-2"></i>
+                  خرید
+                </button>
+              `}
+            </div>
+          </div>
+        </div>
+      `;
+    })
+    .join("");
 
-            container.innerHTML = displayedProducts
-              .map((product) => {
-             const categoryBadges = product.category && product.category.length > 0 
-                ? product.category.map(cat => 
-                    `<span class="inline-block bg-gray-100 text-gray-800 text-xs px-2 py-1 rounded-full mr-1 mb-1">
-                        ${cat.name || (typeof cat === 'string' ? 'در حال بارگذاری...' : 'بدون نام')}
-                    </span>`
-                ).join('')
-            : '<span class="text-gray-500 text-xs">بدون دسته‌بندی</span>';
-            const brandBadge = product.brand?.name ? 
-                `<span class="inline-block bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full ml-1 mb-1">
-                    <i class="fas fa-tag ml-1"></i>${product.brand.name}
-              </span>` : '';
-                return `
-                <div class="product-card rounded-3xl overflow-hidden shadow-xl floating-animation">
+  const totalProducts = filteredProducts.length;
+  const startItem = (currentPage - 1) * productsPerPage + 1;
+  const endItem = Math.min(currentPage * productsPerPage, totalProducts);
+  const totalPages = Math.ceil(totalProducts / productsPerPage);
 
-                            ${
-                              isListView
-                                ? ""
-                                : `
-                          <div class="relative">
-                              <div class="w-full h-64 bg-gradient-to-br flex items-center justify-center relative overflow-hidden">
-                                  <a href="/productDetails/${product.slug}">
-                                    <div class="absolute inset-0 bg-gradient-to-br"><img src=${product?.images[0]?.url} alt=${product.name}></div>
-                                  </a>
-                                  ${product.isOutOfStock ? `<div class="absolute top-4 right-4 bg-red-500 text-white px-3 py-1 rounded-full text-sm font-bold animate-pulse">ناموجود</div>` : product.discount > 0 ? `<div class="absolute top-4 right-4 bg-red-500 text-white px-3 py-1 rounded-full text-sm font-bold animate-pulse">${toPersianDigits(product.discount)}% تخفیف</div>` : ''}
-                                  ${product.isNew ? `<div class="absolute top-4 ${product.discount ? `left-4` : `right-4`} bg-green-500 text-white px-3 py-1 rounded-full text-sm font-bold">جدید</div>` : ''}
-                                  <div class="absolute bottom-4 left-4 bg-white/80 backdrop-blur-sm rounded-full px-3 py-1 text-sm">⭐ ${ toPersianDigits(product.rating)} (${toPersianDigits(product.reviewsNum)} نظر)</div>
-                              </div>
-                          </div>
-                          `
-                          }
-                          <a href="/productDetails/${product.slug}">
-                            <div class="p-6 ${isListView ? "flex-1" : ""}">
-                                <div class="flex justify-between items-start mb-3">
-                                    <div class="bg-orange-100 text-orange-800 px-3 py-1 rounded-full text-xs font-medium">
-                                        ${categoryBadges}
-                                        ${brandBadge}
-                                    </div>
-  
-                                </div>
-                                <h3 class="font-bold text-xl text-gray-800 mb-2 text-right">${
-                                  product.name
-                                }</h3>
-                                <p class="text-gray-600 text-sm mb-4 text-right">${
-                                  product.lilDescription
-                                }</p>
-                                <div class="flex justify-between items-center mb-4">
-                                  <div class="text-right">
-                                    ${
-                                      product.offerPrice
-                                        ? `
-                                          <div class="text-gray-400 line-through text-sm">${formatPrice(product.price)}</div>
-                                          <div class="price-gradient font-bold text-xl">${formatPrice(product.offerPrice)}</div>
-                                        `
-                                        : `
-                                          <div class="price-gradient font-bold text-xl">${formatPrice(product.price)}</div>
-                                        `
-                                    }
-                                  </div>
-                                    ${
-                                      product.colors.length > 0
-                                        ? `
-                                    <div class="flex gap-1">
-                                        <div class="w-4 h-4 ${product.colors} rounded-full border-2 border-white shadow-sm"></div>
-                                    </div>
-                                    `
-                                        : ""
-                                    }
-                                </div>
-                                </a>
-                                ${product.isOutOfStock || product.countInStock <= 0 ? `
-                                    <button disabled class="w-full bg-gradient-to-r from-red-600 to-red-700 text-white py-3 rounded-2xl font-bold opacity-70 cursor-not-allowed shadow-lg flex items-center justify-center gap-2">
-                                        <i class="fas fa-ban ml-2"></i>
-                                        ناموجود
-                                    </button>
-                                ` : `
-                                    <button onclick="location.href='/productDetails/${ product.slug }';" class="w-full bg-gradient-to-r from-blue-600 to-teal-600 text-white py-3 rounded-2xl font-bold hover:opacity-90 transition-all transform hover:scale-105 shadow-lg flex items-center justify-center gap-2">
-                                        <i class="fas fa-shopping-cart ml-2"></i>
-                                        افزودن به سبد خرید
-                                    </button>
-                                `}
-                                </div>
-                        </div>
+  document.getElementById("product-count").innerHTML = 
+    `نمایش <span class="font-bold">${toPersianDigits(startItem)}</span> تا <span class="font-bold">${toPersianDigits(endItem)}</span> از <span class="font-bold">${toPersianDigits(totalProducts)}</span> محصول (صفحه ${toPersianDigits(currentPage)} از ${toPersianDigits(totalPages)})`;
 
-                    `;
-              })
-              .join("");
-
-
-              const totalProducts = filteredProducts.length;
-              const startItem = (currentPage - 1) * productsPerPage + 1;
-              const endItem = Math.min(currentPage * productsPerPage, totalProducts);
-              const totalPages = Math.ceil(totalProducts / productsPerPage);
-
-
-            // Update product count
-            document.getElementById("product-count").innerHTML = 
-                `نمایش <span class="font-bold">${toPersianDigits(startItem)}</span> تا <span class="font-bold">${toPersianDigits(endItem)}</span> از <span class="font-bold">${toPersianDigits(totalProducts)}</span> محصول (صفحه ${toPersianDigits(currentPage)} از ${toPersianDigits(totalPages)})`;
-
-            updatePaginationControls();
-          }
-          // تابع افزایش عدد سبد خرید
+  updatePaginationControls();
+}          // تابع افزایش عدد سبد خرید
           function addToCart(productName) {
             // 1. پیدا کردن عنصر عدد سبد خرید
             const cartCount = document.querySelector(".cart-count");
@@ -1953,6 +2417,43 @@ if (scrollLeftBtn && scrollRightBtn && slider) {
                   displayedProducts = filteredProducts.slice(newStartIndex, newEndIndex);
               }
           }
+          
+            document.addEventListener('DOMContentLoaded', function() {
+              const seoContent = document.getElementById('seoContent');
+              const seoToggleBtn = document.getElementById('seoToggleBtn');
+              const seoSection = document.getElementById('seoSection');
+              
+              if (!seoToggleBtn || !seoContent) return;
+              
+              // اول مخفی کن
+              seoContent.style.maxHeight = '120px';
+              seoContent.style.overflow = 'hidden';
+              seoContent.style.transition = 'max-height 0.5s ease';
+              
+              const fullHeight = seoContent.scrollHeight;
+              
+              if (fullHeight <= 120) {
+                seoToggleBtn.style.display = 'none';
+                return;
+              }
+              
+              let isExpanded = false;
+              
+              seoToggleBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                isExpanded = !isExpanded;
+                
+                if (isExpanded) {
+                  seoContent.style.maxHeight = fullHeight + 'px';
+                  this.innerHTML = '<span>کمتر بخوانید</span> <i class="fas fa-chevron-up"></i>';
+                } else {
+                  seoContent.style.maxHeight = '120px';
+                  this.innerHTML = '<span>بیشتر بخوانید</span> <i class="fas fa-chevron-down"></i>';
+                  seoSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+              });
+            });
+
 
           // Event listeners
           document.addEventListener("DOMContentLoaded", function () {
@@ -1975,12 +2476,12 @@ if (scrollLeftBtn && scrollRightBtn && slider) {
               .getElementById("grid-view")
               .addEventListener("click", function () {
                 currentView = "grid";
-                this.classList.add("bg-purple-100");
+                this.classList.add("bg-[#636337]/10");
                 this.classList.remove("bg-gray-100");
                 document.getElementById("list-view").classList.add("bg-gray-100");
                 document
                   .getElementById("list-view")
-                  .classList.remove("bg-purple-100");
+                  .classList.remove("bg-[#636337]/10");
                 renderProducts();
               });
 
@@ -1988,12 +2489,12 @@ if (scrollLeftBtn && scrollRightBtn && slider) {
               .getElementById("list-view")
               .addEventListener("click", function () {
                 currentView = "list";
-                this.classList.add("bg-purple-100");
+                this.classList.add("bg-[#636337]/10");
                 this.classList.remove("bg-gray-100");
                 document.getElementById("grid-view").classList.add("bg-gray-100");
                 document
                   .getElementById("grid-view")
-                  .classList.remove("bg-purple-100");
+                  .classList.remove("bg-[#636337]/10");
                 renderProducts();
               });
 
@@ -2425,25 +2926,6 @@ if (scrollLeftBtn && scrollRightBtn && slider) {
                     }
                   });
                 });
-      // مدیریت دکمه بیشتر/کمتر برای بخش سئو
-const seoSection = document.getElementById('seoSection');
-const seoContent = document.getElementById('seoContent');
-const seoToggleBtn = document.getElementById('seoToggleBtn');
-
-if (seoToggleBtn && seoContent && seoSection) {
-  seoToggleBtn.addEventListener('click', function() {
-    const isExpanded = seoContent.classList.toggle('expanded');
-    seoSection.classList.toggle('expanded');
-    
-    if (isExpanded) {
-      this.innerHTML = '<span>کمتر بخوانید</span> <i class="fas fa-chevron-up"></i>';
-    } else {
-      this.innerHTML = '<span>بیشتر بخوانید</span> <i class="fas fa-chevron-down"></i>';
-      // اسکرول به بالای بخش سئو
-      seoSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
-  });
-}
     </script>
   </body>
 </html>

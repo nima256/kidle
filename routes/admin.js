@@ -549,6 +549,7 @@ router.post("/products/add", async (req, res, next) => {
 
     const productData = {
       ...req.body,
+      englishName: req.body.englishName || null,
       images: req.body.images || [],
       discount,
       createTarikh: getPersianDate(),
@@ -605,16 +606,6 @@ const validateProductUpdate = [
     .trim()
     .isLength({ min: 3, max: 100 })
     .withMessage("نام محصول باید بین ۳ تا ۱۰۰ کاراکتر باشد"),
-  body("lilDescription")
-    .optional()
-    .trim()
-    .isLength({ max: 160 })
-    .withMessage("توضیح کوتاه نمی‌تواند بیشتر از ۱۶۰ کاراکتر باشد"),
-  body("description")
-    .optional()
-    .trim()
-    .isLength({ min: 20 })
-    .withMessage("توضیحات محصول نمی‌تواند کمتر از ۲۰ کاراکتر باشد"),
   body("price")
     .optional()
     .isFloat({ min: 0 })
@@ -679,9 +670,17 @@ const validateProductUpdate = [
     .trim()
     .notEmpty()
     .withMessage("مقدار مشخصه الزامی است"),
+  body("englishName")
+    .optional()
+    .trim()
+    .isLength({ max: 100 })
+    .withMessage("نام انگلیسی نمی‌تواند بیشتر از ۱۰۰ کاراکتر باشد")
+    .matches(/^[a-zA-Z0-9\s\-_]*$/)
+    .withMessage("نام انگلیسی باید فقط شامل حروف انگلیسی، اعداد، فاصله، خط تیره و زیرخط باشد"),
+
 ];
 
-router.put("/products/edit/:id",async (req, res, next) => {
+router.put("/products/edit/:id", async (req, res, next) => {
   const originalJson = res.json;
   res.json = function(data) {
     if (data && data.success && data.product) {
@@ -735,32 +734,50 @@ router.put("/products/edit/:id",async (req, res, next) => {
     // آماده‌سازی داده‌های به‌روزرسانی
     const updateData = { ...req.body };
 
+    if (updateData.englishName === undefined) {
+      updateData.englishName = null;
+    }
+
     updateData.updateTarikh = getPersianDate();
 
-    // مدیریت قیمت ویژه و تخفیف
-    if (updateData.offerPrice === null || updateData.offerPrice === undefined) {
-      // اگر قیمت ویژه حذف شده
-      updateData.offerPrice = undefined;
+        const clearOfferPrice = req.body.clearOfferPrice === 'true';
+    
+    if (clearOfferPrice) {
+      // کاربر صراحتا تخفیف را حذف کرده است
+      updateData.offerPrice = null;
       updateData.discount = 0;
-    } else if (updateData.offerPrice) {
-      // اگر قیمت ویژه وجود دارد
-      const price = updateData.price || product.price;
-      updateData.discount = Math.round(
-        ((price - updateData.offerPrice) / price) * 100
-      );
+      // حذف clearOfferPrice از updateData تا به دیتابیس نرود
+      delete updateData.clearOfferPrice;
+    } 
+    else if (req.body.offerPrice !== undefined && req.body.offerPrice !== null && req.body.offerPrice !== '') {
+      // تخفیف جدید وجود دارد
+      const price = parseFloat(req.body.price) || (product ? product.price : 0);
+      const offerPrice = parseFloat(req.body.offerPrice);
+      
+      if (!isNaN(offerPrice) && offerPrice > 0 && offerPrice < price) {
+        updateData.offerPrice = offerPrice;
+        updateData.discount = Math.round(((price - offerPrice) / price) * 100);
+      } else if (offerPrice >= price) {
+        // قیمت ویژه باید کمتر از قیمت اصلی باشد
+        return res.status(400).json({
+          success: false,
+          message: "قیمت ویژه باید کمتر از قیمت اصلی باشد"
+        });
+      } else {
+        // offerPrice معتبر نیست
+        updateData.offerPrice = null;
+        updateData.discount = 0;
+      }
+    } 
+    else {
+      // هیچ تخفیفی ارسال نشده یا خالی است
+      updateData.offerPrice = null;
+      updateData.discount = 0;
     }
+    
+    // حذف فیلدهای اضافی که نباید به دیتابیس بروند
+    delete updateData.clearOfferPrice;
 
-    // حذف فیلد offerPrice اگر null است
-    if (updateData.offerPrice === null) {
-      delete updateData.offerPrice;
-    }
-
-    // مدیریت تصاویر
-    if (updateData.images && Array.isArray(updateData.images)) {
-      // You might want to merge with existing images or replace them
-      // This example replaces all images with the new array
-      updateData.images = updateData.images;
-    }
 
     // مدیریت آرایه‌ها
     const arrayFields = [
@@ -778,15 +795,9 @@ router.put("/products/edit/:id",async (req, res, next) => {
       }
     });
 
-    // محاسبه تخفیف اگر قیمت ویژه تغییر کرده
-    if (updateData.offerPrice === null || updateData.offerPrice === undefined) {
-      updateData.offerPrice = undefined;
-      updateData.discount = 0;
-    } else if (updateData.offerPrice) {
-      const price = updateData.price || product.price;
-      updateData.discount = Math.round(
-        ((price - updateData.offerPrice) / price) * 100
-      );
+    // اگر category به صورت رشته است، به آرایه تبدیل کن
+    if (updateData.category && !Array.isArray(updateData.category)) {
+      updateData.category = [updateData.category];
     }
 
     // به‌روزرسانی محصول
@@ -2040,6 +2051,7 @@ router.get("/api/category-description/:id", async (req, res) => {
     res.json({
       success: true,
       description: category.description || "",
+      metaDescription: category.metaDescription || "",
       name: category.name
     });
   } catch (error) {
@@ -2051,10 +2063,10 @@ router.get("/api/category-description/:id", async (req, res) => {
 // به‌روزرسانی توضیحات دسته‌بندی
 router.put("/api/category-description/:id", async (req, res) => {
   try {
-    const { description } = req.body;
+    const { description, metaDescription } = req.body;
     const category = await Category.findByIdAndUpdate(
       req.params.id,
-      { description, updateTarikh: getPersianDate() },
+      { description, updateTarikh: getPersianDate(), metaDescription },
       { new: true }
     );
     if (!category) {

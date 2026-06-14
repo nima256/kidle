@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
@@ -10,7 +9,6 @@
     <!-- <link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet"> -->
      <link rel="stylesheet" href="/tailwind.min.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-
     <!-- <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> -->
     <link rel="stylesheet" href="/output.css">
     <style>
@@ -548,7 +546,7 @@ img[src="/loading.gif"] {
                         <i class="fas fa-store text-lg md:text-xl"></i>
                     </div>
                     <div class="hidden sm:block">
-                        <h1 class="text-lg md:text-xl font-bold text-gray-800">فروشگاه زیبایی اودور</h1>
+                        <h1 class="text-lg md:text-xl font-bold text-gray-800">فروشگاه زیبایی کیدل</h1>
                         <p class="text-xs md:text-sm text-gray-500">پنل مدیریت</p>
                     </div>
                 </div>
@@ -1173,10 +1171,17 @@ img[src="/loading.gif"] {
                                 <textarea id="categoryDescValue" class="hidden"></textarea>
                             </div>
                             
-                            <div class="mt-4 text-sm text-gray-500">
-                                <i class="fas fa-info-circle ml-1"></i>
-                                این توضیحات در صفحه دسته‌بندی در بخش سئو نمایش داده می‌شود.
+                            <!-- فیلد توضیحات متا -->
+                            <div class="mt-6">
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                    <i class="fas fa-search ml-1 text-blue-500"></i>
+                                    توضیحات متا (Meta Description)
+                                </label>
+                                <textarea id="categoryMetaDesc" rows="3" maxlength="160"
+                                    class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-400 focus:ring-2 focus:ring-blue-200 transition-all outline-none resize-none"
+                                    placeholder="توضیحات متا برای سئو (حداکثر 160 کاراکتر)"></textarea>
                             </div>
+                            
                         </div>
                         
                         <div id="categoryNoSelection" class="text-center py-12 text-gray-500">
@@ -1240,6 +1245,16 @@ img[src="/loading.gif"] {
                             <input name="name" type="text" id="editName" required
                                 class="w-full px-4 py-2.5 border-2 border-gray-200 rounded-xl focus:border-blue-400 focus:ring-2 focus:ring-blue-200 transition-all duration-200 outline-none"
                                 placeholder="مثال: کرم ضد آفتاب SPF50">
+                        </div>
+                        
+                        <div class="md:col-span-2">
+                          <label class="block text-sm font-semibold text-gray-700 mb-2">
+                            نام انگلیسی محصول <span class="text-gray-400 text-xs">(اختیاری)</span>
+                          </label>
+                          <input name="englishName" type="text" id="editEnglishName"
+                            class="w-full px-4 py-2.5 border-2 border-gray-200 rounded-xl focus:border-blue-400 focus:ring-2 focus:ring-blue-200 transition-all duration-200 outline-none"
+                            placeholder="مثال: Sunscreen Cream SPF50">
+                          <p class="text-xs text-gray-400 mt-1">فقط حروف انگلیسی، اعداد، فاصله، خط تیره و زیرخط مجاز است</p>
                         </div>
                         
                         <div class="md:col-span-2">
@@ -1709,6 +1724,36 @@ img[src="/loading.gif"] {
 </style>
 
     <script>
+    function addHeadingShortcuts(quillInstance) {
+    if (!quillInstance || !quillInstance.root) return;
+    
+    quillInstance.root.addEventListener('keydown', function(e) {
+        if (e.shiftKey && e.altKey && !e.ctrlKey) {
+            const codeMap = {
+                'Digit1': 1, 'Digit2': 2, 'Digit3': 3,
+                'Digit4': 4, 'Digit5': 5, 'Digit6': 6,
+                'Digit0': false
+            };
+            
+            if (!(e.code in codeMap)) return;
+            
+            e.preventDefault();
+            const range = quillInstance.getSelection();
+            
+            if (range && range.length > 0) {
+                const level = codeMap[e.code];
+                const format = quillInstance.getFormat(range);
+                quillInstance.format('header', format.header === level ? false : level);
+                showNotification(
+                    level !== false ? `هدینگ ${level} اعمال شد` : 'متن عادی',
+                    'success'
+                );
+            } else {
+                showNotification('ابتدا متنی را انتخاب کنید', 'error');
+            }
+        }
+    });
+}
 const Parchment = Quill.import('parchment');
 const BlockEmbed = Quill.import('blots/block/embed');
 
@@ -2020,28 +2065,40 @@ function initQuillEditor(initialContent = '') {
                     image: imageHandler,
                     link: function() {
                         const range = window.quillInstance.getSelection();
-                        if (range) {
+                        if (range && range.length > 0) {  // بررسی اینکه متنی انتخاب شده
                             let url = prompt('لطفاً آدرس لینک را وارد کنید:', 'https://');
                             if (url) {
-                                let title = prompt('لطفاً عنوان لینک را وارد کنید:', url);
-                                weblogQuillEditor.format('link', url);
+                                let title = prompt('لطفاً عنوان لینک را وارد کنید (اختیاری):', '');
+                                
+                                // اعمال لینک روی متن انتخاب شده
+                                window.quillInstance.format('link', url);
+                                
+                                // اضافه کردن title و target به لینک ایجاد شده
                                 setTimeout(() => {
-                                    const editor = document.querySelector('#weblogEditor .ql-editor');
+                                    const editor = document.querySelector('#editor .ql-editor');
                                     if (editor) {
-                                        const newLink = editor.querySelector('a[href="' + url + '"]');
-                                        if (newLink) {
-                                            if (title && title !== url) {
-                                                newLink.setAttribute('title', title);
+                                        // پیدا کردن آخرین لینک اضافه شده در محدوده انتخاب شده
+                                        const links = editor.querySelectorAll('a');
+                                        const lastLink = links[links.length - 1];
+                                        if (lastLink && lastLink.href === url) {
+                                            if (title && title.trim()) {
+                                                lastLink.setAttribute('title', title);
+                                            } else {
+                                                lastLink.setAttribute('title', 'لینک: ' + url);
                                             }
-                                            if (url.startsWith('http')) {
-                                                newLink.setAttribute('target', '_blank');
-                                                newLink.setAttribute('rel', 'noopener noreferrer');
+                                            // باز شدن در صفحه جدید برای لینک‌های خارجی
+                                            if (url.startsWith('http://') || url.startsWith('https://')) {
+                                                lastLink.setAttribute('target', '_blank');
+                                                lastLink.setAttribute('rel', 'noopener noreferrer');
                                             }
-                                            newLink.classList.add('enhanced-link');
+                                            lastLink.classList.add('enhanced-link');
                                         }
                                     }
-                                }, 100);
+                                }, 50);
                             }
+                        } else {
+                            // اگر متنی انتخاب نشده، پیام خطا نشان بده
+                            showNotification('لطفاً ابتدا متنی را که می‌خواهید لینک شود انتخاب کنید', 'error');
                         }
                     },
                     'html': function() {
@@ -2061,6 +2118,8 @@ function initQuillEditor(initialContent = '') {
         },
         placeholder: 'توضیحات محصول را اینجا بنویسید...'
     });
+    
+    addHeadingShortcuts(window.quillInstance);
 
     if (initialContent) {
         window.quillInstance.root.innerHTML = initialContent;
@@ -2185,6 +2244,8 @@ function initWeblogQuillEditor(initialContent = '') {
         },
         placeholder: 'محتوای مقاله را اینجا بنویسید...'
     });
+    
+    addHeadingShortcuts(weblogQuillEditor);
     
     if (initialContent) {
         weblogQuillEditor.root.innerHTML = initialContent;
@@ -2323,11 +2384,20 @@ function initWeblogQuillEditor(initialContent = '') {
             tbody.innerHTML = '';
 
             const reversedProducts = [...products].reverse();
+            
+            const statusBadge = products.isPublished 
+            ? '<span class="inline-block bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full">منتشر شده</span>'
+            : '<span class="inline-block bg-yellow-100 text-yellow-800 text-xs px-2 py-1 rounded-full">پیش‌نویس</span>';
 
             
             reversedProducts.forEach((product, index) => {
                 const brandName = product.brand?.name || 
                                 (typeof product.brand === 'string' ? 'در حال بارگذاری...' : 'نامشخص');
+                                
+                                
+                const statusBadge = product.isPublished 
+                ? '<span class="inline-block bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full">منتشر شده</span>'
+                : '<span class="inline-block bg-yellow-100 text-yellow-800 text-xs px-2 py-1 rounded-full">پیش‌نویس</span>';
                 
                 const categoryBadges = product.category && product.category.length > 0 
                     ? product.category.map(cat => 
@@ -2364,6 +2434,9 @@ function initWeblogQuillEditor(initialContent = '') {
                                 <i class="fas fa-copy"></i>
                             </button>
                         </div>
+                    </td>
+                    <td class="px-3 md:px-6 py-3 md:py-4 text-xs md:text-sm">
+                        ${statusBadge}
                     </td>
                 `;
                 tbody.appendChild(row);
@@ -2514,6 +2587,7 @@ function initWeblogQuillEditor(initialContent = '') {
 
             // Populate form fields
             document.getElementById('editName').value = product.name || '';
+            document.getElementById('editEnglishName').value = product.englishName || '';
             document.getElementById('editLilDescription').value = product.lilDescription || '';
             document.getElementById('editDescription').value = product.description || '';
             document.getElementById('editPrice').value = product.price || 0;
@@ -4681,6 +4755,7 @@ document.getElementById('weblogImages')?.addEventListener('change', async functi
             // ساخت آبجکت داده
             const data = {
                 name: document.getElementById('editName').value.trim(),
+                englishName: document.getElementById('editEnglishName').value.trim() || null,
                 lilDescription: document.getElementById('editLilDescription').value.trim(),
                 description: document.getElementById('editDescription').value,
                 price: parseFloat(document.getElementById('editPrice').value),
@@ -4855,13 +4930,6 @@ document.getElementById('weblogImages')?.addEventListener('change', async functi
                 errors.push('نام محصول نمی‌تواند کمتر از ۳ کاراکتر باشد');
             } else if (data.name.trim().length > 100) {
                 errors.push('نام محصول نمی‌تواند بیشتر از ۱۰۰ کاراکتر باشد');
-            }
-
-            // بررسی توضیحات
-            if (!data.description || data.description.trim().length === 0) {
-                errors.push('توضیحات محصول الزامی است');
-            } else if (data.description.trim().length < 20) {
-                errors.push('توضیحات محصول نمی‌تواند کمتر از ۲۰ کاراکتر باشد');
             }
 
             // بررسی قیمت
@@ -5295,6 +5363,7 @@ async function markOrdersAsSeen() {
 
         // Initialize
         document.addEventListener('DOMContentLoaded', function() {
+            
             setTimeout(() => {
                 initChart();
                 initVisitsChart(); 
@@ -5397,32 +5466,92 @@ function renderCategoryList(categories) {
 
 // انتخاب دسته‌بندی برای ویرایش
 async function selectCategoryForEdit(categoryId, categoryName, currentDescription) {
-    if (!categoryId) return;
-
     currentSelectedCategory = categoryId;
-    
-    // آپدیت UI
+
+    // حذف حالت active از همه دسته‌ها
     document.querySelectorAll('.category-manager-item').forEach(item => {
-        item.classList.remove('active', 'bg-gradient-to-r', 'from-blue-600', 'to-indigo-600', 'text-white');
+        item.classList.remove(
+            'active',
+            'bg-gradient-to-r',
+            'from-blue-600',
+            'to-indigo-600',
+            'text-white'
+        );
     });
-    const selectedItem = document.querySelector(`.category-manager-item[data-id="${categoryId}"]`);
+
+    // فعال کردن دسته انتخاب شده
+    const selectedItem = document.querySelector(
+        `.category-manager-item[data-id="${categoryId}"]`
+    );
+
     if (selectedItem) {
-        selectedItem.classList.add('active', 'bg-gradient-to-r', 'from-blue-600', 'to-indigo-600', 'text-white');
+        selectedItem.classList.add(
+            'active',
+            'bg-gradient-to-r',
+            'from-blue-600',
+            'to-indigo-600',
+            'text-white'
+        );
     }
-    
+
+    // نمایش پنل ویرایش
     document.getElementById('selectedCategoryName').textContent = categoryName;
     document.getElementById('categoryEditorPanel').classList.remove('hidden');
     document.getElementById('categoryNoSelection').classList.add('hidden');
-    
-    // مقداردهی ویرایشگر
-    if (categoryDescQuill) {
-        categoryDescQuill.root.innerHTML = currentDescription || '';
-        document.getElementById('categoryDescValue').value = currentDescription || '';
-    } else {
-        initCategoryDescQuill(currentDescription);
+
+    try {
+        const response = await fetch(`/admin/api/category-description/${categoryId}`);
+        const data = await response.json();
+
+        const description = data.success
+            ? (data.description || '')
+            : (currentDescription || '');
+
+        const metaDescription = data.success
+            ? (data.metaDescription || '')
+            : '';
+
+        // مقداردهی Quill
+        if (categoryDescQuill) {
+            categoryDescQuill.root.innerHTML = description;
+        } else {
+            initCategoryDescQuill(description);
+        }
+
+        // فیلد hidden برای ذخیره
+        const descValue = document.getElementById('categoryDescValue');
+        if (descValue) {
+            descValue.value = description;
+        }
+
+        // مقداردهی Meta Description
+        const metaDescField = document.getElementById('categoryMetaDesc');
+        if (metaDescField) {
+            metaDescField.value = metaDescription;
+        }
+
+        // شمارنده کاراکتر
+        const metaDescCount = document.getElementById('metaDescCount');
+        if (metaDescCount) {
+            metaDescCount.textContent = `${metaDescription.length}/160`;
+        }
+
+    } catch (error) {
+        console.error('Error loading category data:', error);
+
+        // fallback
+        if (categoryDescQuill) {
+            categoryDescQuill.root.innerHTML = currentDescription || '';
+        } else {
+            initCategoryDescQuill(currentDescription || '');
+        }
+
+        const descValue = document.getElementById('categoryDescValue');
+        if (descValue) {
+            descValue.value = currentDescription || '';
+        }
     }
 }
-
 // مقداردهی ویرایشگر Quill برای دسته‌بندی
 function initCategoryDescQuill(initialContent = '') {
     if (categoryDescQuill) {
@@ -5498,6 +5627,8 @@ function initCategoryDescQuill(initialContent = '') {
         placeholder: 'توضیحات دسته‌بندی را اینجا بنویسید...'
     });
     
+    addHeadingShortcuts(categoryDescQuill);
+    
     if (initialContent) {
         categoryDescQuill.root.innerHTML = initialContent;
     }
@@ -5563,12 +5694,13 @@ document.getElementById('saveCategoryDescBtn')?.addEventListener('click', async 
     }
     
     const description = categoryDescQuill ? categoryDescQuill.root.innerHTML : '';
+    const metaDescription = document.getElementById('categoryMetaDesc')?.value?.trim() || '';
     
     try {
         const response = await fetch(`/admin/api/category-description/${currentSelectedCategory}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ description })
+            body: JSON.stringify({ description, metaDescription  })
         });
         
         const result = await response.json();
@@ -5845,6 +5977,68 @@ function addImageToPreview(imageData, captionText, isNewProduct = true) {
 }
 
 
+function saveActiveSection(sectionName) {
+    localStorage.setItem('adminActiveSection', sectionName);
+}
+
+// تابع برای بارگذاری بخش فعال از localStorage
+function loadActiveSection() {
+    const savedSection = localStorage.getItem('adminActiveSection');
+    if (savedSection && savedSection !== 'dashboard') {
+        // اگر بخش ذخیره شده وجود داشت و داشبورد نبود، اون رو نمایش بده
+        showSection(savedSection);
+    } else {
+        // در غیر این صورت داشبورد رو نشون بده
+        showSection('dashboard');
+    }
+}
+
+// تابع showSection رو تغییر بده تا بخش فعال رو ذخیره کنه
+const originalShowSection = showSection;
+window.showSection = function(section) {
+    // ذخیره کردن در localStorage
+    saveActiveSection(section);
+    // اجرای تابع اصلی
+    originalShowSection(section);
+}
+
+// وقتی صفحه لود شد، بخش ذخیره شده رو بارگذاری کن
+document.addEventListener('DOMContentLoaded', function() {
+    // ابتدا بخش‌ها رو پنهان کن (برای جلوگیری از چشمک زدن)
+    const sections = ['dashboard', 'products', 'categories', 'orders', 'weblogs', 'category-manager'];
+    sections.forEach(section => {
+        const content = document.getElementById(section + 'Content');
+        if (content) content.classList.add('hidden');
+    });
+    
+    // بعد از اینکه همه چیز آماده شد، بخش ذخیره شده رو نشون بده
+    setTimeout(() => {
+        loadActiveSection();
+        
+        // اگر در URL هش وجود داشت، اولویت با هش هست
+        if (window.location.hash) {
+            const hashSection = window.location.hash.substring(1);
+            if (sections.includes(hashSection)) {
+                showSection(hashSection);
+            }
+        }
+    }, 100);
+    
+    // بقیه کدهای DOMContentLoaded قبلی‌ات رو همینجا نگه دار...
+});
+
+document.addEventListener('DOMContentLoaded', function() {
+    document.body.addEventListener('input', function(e) {
+        if (e.target.id === 'categoryMetaDesc') {
+            const count = e.target.value.length;
+            const counter = document.getElementById('metaDescCount');
+            if (counter) {
+                counter.textContent = `${count}/160`;
+                counter.className = count > 150 ? 'text-red-500' : count > 120 ? 'text-yellow-500' : '';
+            }
+        }
+    });
+});
 
 
     </script>

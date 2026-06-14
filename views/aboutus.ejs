@@ -24,757 +24,419 @@
   }
 }
 </script>
-  <style>
-    @font-face {
-      font-family: "MyFont";
-      src: url("/fonts/Vazirmatn-Light.ttf");
-      font-weight: 400;
-      font-style: normal;
-      font-display: swap;
-    }
-
-    html, body {
-      height: 100%;
-      width: 100%;
-      margin: 0;
-      font-family: "MyFont", sans-serif;
-    }
-
-    body {
-      font-family: "MyFont", sans-serif;
-    }
-
-    * {
-      box-sizing: border-box;
-      font-family: "MyFont", sans-serif;
-    }
-
-    /* استایل‌های نوبار */
-    .cart-count {
-      top: -8px;
-      left: -8px;
-    }
-
-    .nav-link {
-      transition: all 0.3s ease;
-      position: relative;
-    }
-
-    .nav-link:hover::after {
-      width: 100%;
-      right: 0;
-    }
-
-    .dropdown:hover .dropdown-menu {
-      display: block !important;
-    }
-    
-    .submenu-item:hover .submenu-level2 {
-      display: block !important;
-    }
-    
-    .dropdown-menu a:hover,
-    .submenu-level2 a:hover {
-      background-color: #f5f5f5;
-    }
-
-    @media (min-width: 768px) {
-      .desktop-menu {
-        display: flex !important;
-      }
-      .hamburger {
-        display: none !important;
-      }
-    }
-
-    body.menu-open {
-      overflow: hidden;
-      position: fixed;
-      width: 100%;
-      height: 100%;
-    }
-
-    /* استایل‌های اصلی صفحه */
-    .soft-grid {
-      background-image:
-        radial-gradient(circle at 12% 18%, rgba(255, 117, 162, 0.22) 0, transparent 28%),
-        radial-gradient(circle at 82% 14%, rgba(255, 214, 229, 0.92) 0, transparent 30%),
-        radial-gradient(circle at 54% 88%, rgba(255, 143, 184, 0.22) 0, transparent 34%),
-        linear-gradient(135deg, #fff7fa 0%, #ffeef5 48%, #fffafc 100%);
-    }
-
-    .orb {
-      position: absolute;
-      border-radius: 999px;
-      filter: blur(1px);
-      opacity: 0.85;
-      animation: floaty 8s ease-in-out infinite;
-      pointer-events: none;
-    }
-
-    .orb-one {
-      width: 118px;
-      height: 118px;
-      background: rgba(255, 143, 184, 0.24);
-      top: 8%;
-      right: 8%;
-      animation-delay: 0s;
-    }
-
-    .orb-two {
-      width: 78px;
-      height: 78px;
-      background: rgba(255, 196, 217, 0.48);
-      bottom: 12%;
-      left: 12%;
-      animation-delay: 1.3s;
-    }
-
-    .orb-three {
-      width: 42px;
-      height: 42px;
-      background: rgba(211, 77, 123, 0.16);
-      top: 58%;
-      right: 18%;
-      animation-delay: 2.1s;
-    }
-
-    @keyframes floaty {
-      0%, 100% { transform: translateY(0%) scale(1); }
-      50% { transform: translateY(-16%) scale(1.04); }
-    }
-
-    .glass-card {
-      background: rgba(255, 255, 255, 0.68);
-      border: 1px solid rgba(255, 174, 203, 0.42);
-      box-shadow: 0 28px 80px rgba(193, 74, 118, 0.16);
-      backdrop-filter: blur(22px);
-    }
-
-    .nav-button {
-      transition: transform 180ms ease, background 180ms ease, color 180ms ease, box-shadow 180ms ease;
-    }
-
-    .nav-button:hover {
-      transform: translateY(-2px);
-    }
-
-    .nav-button.active {
-      background: #d94f86;
-      color: #ffffff;
-      box-shadow: 0 14px 32px rgba(217, 79, 134, 0.28);
-    }
-
-    .page-panel {
-      display: none;
-      animation: riseIn 420ms ease both;
-    }
-
-    .page-panel.active {
-      display: block;
-    }
-
-    @keyframes riseIn {
-      from {
-        opacity: 0;
-        transform: translateY(4%);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0%);
-      }
-    }
-
-    .mini-line {
-      height: 1px;
-      background: linear-gradient(90deg, transparent, rgba(217, 79, 134, 0.42), transparent);
-    }
-
-    .focus-ring:focus-visible {
-      outline: 3px solid rgba(217, 79, 134, 0.45);
-      outline-offset: 3px;
-    }
-
-    /* استایل‌های پاپ‌آپ احراز هویت */
-    .tab-content {
-      display: none;
-    }
-    .tab-content.active {
-      display: block;
-    }
-    .form-step {
-      display: none;
-    }
-    .form-step.active {
-      display: block;
-    }
-    .otp-input {
-      width: 3rem;
-      height: 3.5rem;
-      font-size: 1.5rem;
-      text-align: center;
-      border: 1px solid #d1d5db;
-      border-radius: 0.5rem;
-    }
-    .modal-content {
-      animation: modalFadeIn 0.3s ease-out;
-    }
-    @keyframes modalFadeIn {
-      from {
-        opacity: 0;
-        transform: translateY(20px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    /* استایل ریسپانسیو برای نوبار موبایل */
-    @media (max-width: 768px) {
-      .flex.items-center.space-x-4 {
-        gap: 12px;
-      }
-    }
-
-.cart-count {
-    top: -8px;
-    left: -8px;
-}
-  </style>
- </head>
- <body class="h-full w-full overflow-hidden">
-  <div id="app" class="soft-grid relative h-full w-full overflow-auto text-[#4c2335]">
-   <div class="orb orb-one"></div>
-   <div class="orb orb-two"></div>
-   <div class="orb orb-three"></div>
-
-   <!-- ==================== نوبار (Navbar) جدید ==================== -->
-<%- include('./partials/navbar') %>
-
-   <!-- ==================== پاپ‌آپ احراز هویت ==================== -->
-   <div id="auth-popup" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
-    <div class="bg-white rounded-xl shadow-lg w-full max-w-md mx-4 modal-content">
-      <!-- Tab Navigation -->
-      <div class="flex border-b">
-        <button id="login-tab" class="tab-btn flex-1 py-4 text-center font-medium text-pink-500 border-b-2 border-pink-500">
-          ورود
-        </button>
-        <button id="register-tab" class="tab-btn flex-1 py-4 text-center font-medium text-gray-500">
-          ثبت نام
-        </button>
-        <button id="forgot-tab" class="tab-btn flex-1 py-4 text-center font-medium text-gray-500">
-          بازیابی رمز
-        </button>
-      </div>
-
-      <!-- Login Form -->
-      <div id="login-content" class="tab-content active p-6">
-        <h2 class="text-xl font-bold text-gray-800 mb-5 text-center">ورود به حساب کاربری</h2>
-        <form action="/api/authentication/signIn" method="post" id="login-form" class="space-y-5">
-          <div>
-            <label class="block text-gray-700 mb-2" for="login-phone">شماره موبایل</label>
-            <input type="tel" name="mobile" id="login-phone" class="w-full px-4 py-3 rounded-lg border" placeholder="09xxxxxxxxx" required />
-          </div>
-          <div>
-            <label class="block text-gray-700 mb-2" for="login-password">رمز عبور</label>
-            <input type="password" name="password" id="login-password" class="w-full px-4 py-3 rounded-lg border" placeholder="رمز عبور خود را وارد کنید" required />
-          </div>
-          <button type="submit" class="w-full bg-pink-500 hover:bg-pink-600 text-white py-3 rounded-lg font-medium transition-colors">
-            ورود
-          </button>
-        </form>
-      </div>
-
-      <!-- Registration Form -->
-      <div id="register-content" class="tab-content p-6">
-        <div id="register-step-1" class="form-step active">
-          <h2 class="text-xl font-bold text-gray-800 mb-5 text-center">ایجاد حساب کاربری</h2>
-          <form id="register-form" class="space-y-4">
-            <div>
-              <label class="block text-gray-700 mb-2" for="register-name">نام و نام خانوادگی</label>
-              <input type="text" name="fullName" id="register-name" class="w-full px-4 py-3 rounded-lg border" placeholder="نام کامل خود را وارد کنید" required />
-            </div>
-            <div>
-              <label class="block text-gray-700 mb-2" for="register-phone">شماره موبایل</label>
-              <input type="tel" name="mobile" id="register-phone" class="w-full px-4 py-3 rounded-lg border" placeholder="09xxxxxxxxx" required />
-            </div>
-            <div>
-              <label class="block text-gray-700 mb-2" for="register-email">ایمیل</label>
-              <input type="email" name="email" id="register-email" class="w-full px-4 py-3 rounded-lg border" placeholder="email@example.com" />
-            </div>
-            <div>
-              <label class="block text-gray-700 mb-2" for="register-password">رمز عبور</label>
-              <input type="password" name="password" id="register-password" class="w-full px-4 py-3 rounded-lg border" placeholder="حداقل 8 کاراکتر" required />
-            </div>
-            <div>
-              <label class="block text-gray-700 mb-2" for="register-confirm-password">تکرار رمز عبور</label>
-              <input type="password" name="confirmPassword" id="register-confirm-password" class="w-full px-4 py-3 rounded-lg border" placeholder="تکرار رمز عبور" required />
-            </div>
-            <button type="submit" class="w-full bg-pink-500 hover:bg-pink-600 text-white py-3 rounded-lg font-medium transition-colors mt-2">
-              ثبت نام
-            </button>
-          </form>
-        </div>
-
-        <div id="register-step-2" class="form-step">
-          <h2 class="text-xl font-bold text-gray-800 mb-2 text-center">تایید شماره موبایل</h2>
-          <p class="text-gray-600 text-center mb-5">
-            کد تایید به شماره <span id="register-phone-display" class="font-bold"></span> ارسال شد
-          </p>
-          <form id="register-verification-form" class="space-y-5">
-            <div class="text-center">
-              <label class="block text-gray-700 mb-4 text-center">کد تایید را وارد کنید</label>
-              <div class="flex justify-center gap-2 mb-3">
-                <input type="text" maxlength="1" class="otp-input w-12 h-14 text-center text-xl border rounded-lg" dir="ltr" required />
-                <input type="text" maxlength="1" class="otp-input w-12 h-14 text-center text-xl border rounded-lg" dir="ltr" required />
-                <input type="text" maxlength="1" class="otp-input w-12 h-14 text-center text-xl border rounded-lg" dir="ltr" required />
-                <input type="text" maxlength="1" class="otp-input w-12 h-14 text-center text-xl border rounded-lg" dir="ltr" required />
-                <input type="text" maxlength="1" class="otp-input w-12 h-14 text-center text-xl border rounded-lg" dir="ltr" required />
-              </div>
-              <div id="register-resend-timer" class="text-sm text-gray-500 mb-3">ارسال مجدد کد تا <span>۰۲:۰۰</span></div>
-            </div>
-            <button type="submit" class="w-full bg-pink-500 hover:bg-pink-600 text-white py-3 rounded-lg font-medium transition-colors">
-              تایید و ورود
-            </button>
-            <button type="button" id="register-back-btn" class="w-full bg-white text-pink-500 py-3 rounded-lg font-medium border border-pink-500 hover:bg-pink-50 transition-colors">
-              بازگشت
-            </button>
-          </form>
-        </div>
-      </div>
-
-      <!-- Forgot Password Form -->
-      <div id="forgot-content" class="tab-content p-6">
-        <div id="forgot-step-1" class="form-step active">
-          <h2 class="text-xl font-bold text-gray-800 mb-5 text-center">بازیابی رمز عبور</h2>
-          <form id="forgot-form" class="space-y-5">
-            <div>
-              <label class="block text-gray-700 mb-2" for="forgot-phone">شماره موبایل</label>
-              <input type="tel" id="forgot-phone" class="w-full px-4 py-3 rounded-lg border" placeholder="09xxxxxxxxx" required />
-            </div>
-            <button type="submit" class="w-full bg-pink-500 hover:bg-pink-600 text-white py-3 rounded-lg font-medium transition-colors">
-              ارسال کد تایید
-            </button>
-          </form>
-        </div>
-
-        <div id="forgot-step-2" class="form-step">
-          <h2 class="text-xl font-bold text-gray-800 mb-2 text-center">تایید کد</h2>
-          <p class="text-gray-600 text-center mb-5">
-            کد تایید به شماره <span id="forgot-phone-display" class="font-bold"></span> ارسال شد
-          </p>
-          <form id="forgot-verification-form" class="space-y-5">
-            <div class="text-center">
-              <label class="block text-gray-700 mb-4 text-center">کد تایید را وارد کنید</label>
-              <div class="flex justify-center gap-2 mb-3">
-                <input type="text" maxlength="1" class="otp-input w-12 h-14 text-center text-xl border rounded-lg" dir="ltr" required />
-                <input type="text" maxlength="1" class="otp-input w-12 h-14 text-center text-xl border rounded-lg" dir="ltr" required />
-                <input type="text" maxlength="1" class="otp-input w-12 h-14 text-center text-xl border rounded-lg" dir="ltr" required />
-                <input type="text" maxlength="1" class="otp-input w-12 h-14 text-center text-xl border rounded-lg" dir="ltr" required />
-                <input type="text" maxlength="1" class="otp-input w-12 h-14 text-center text-xl border rounded-lg" dir="ltr" required />
-              </div>
-              <div id="forgot-resend-timer" class="text-sm text-gray-500 mb-3">ارسال مجدد کد تا <span>۰۲:۰۰</span></div>
-            </div>
-            <button type="submit" class="w-full bg-pink-500 hover:bg-pink-600 text-white py-3 rounded-lg font-medium transition-colors">
-              تایید
-            </button>
-            <button type="button" id="forgot-back-btn" class="w-full bg-white text-pink-500 py-3 rounded-lg font-medium border border-pink-500 hover:bg-pink-50 transition-colors">
-              بازگشت
-            </button>
-          </form>
-        </div>
-
-        <div id="forgot-step-3" class="form-step">
-          <h2 class="text-xl font-bold text-gray-800 mb-5 text-center">تعیین رمز عبور جدید</h2>
-          <form id="new-password-form" class="space-y-5">
-            <div>
-              <label class="block text-gray-700 mb-2" for="new-password">رمز عبور جدید</label>
-              <input type="password" id="new-password" class="w-full px-4 py-3 rounded-lg border" placeholder="حداقل 6 کاراکتر" required />
-            </div>
-            <div>
-              <label class="block text-gray-700 mb-2" for="confirm-new-password">تکرار رمز عبور جدید</label>
-              <input type="password" id="confirm-new-password" class="w-full px-4 py-3 rounded-lg border" placeholder="تکرار رمز عبور جدید" required />
-            </div>
-            <button type="submit" class="w-full bg-pink-500 hover:bg-pink-600 text-white py-3 rounded-lg font-medium transition-colors">
-              ذخیره و ورود
-            </button>
-          </form>
-        </div>
-      </div>
-    </div>
-   </div>
-
-   <!-- فاصله برای جبران نوبار fixed -->
-   <div style="height: 80px;"></div>
-
-   <!-- محتوای اصلی صفحه -->
-   <header class="relative z-10 w-full px-5 pt-7 md:px-10 md:pt-10">
-    <div class="mx-auto flex w-full max-w-6xl flex-col gap-5 md:flex-row md:items-center md:justify-between">
-     <div>
-      <h2 id="siteTitle" class="text-3xl font-extrabold tracking-tight md:text-5xl"> اطلاعات و پشتیبانی</h2>
-     </div>
-     <div class="glass-card rounded-[2rem] p-3">
-<div class="grid grid-cols-2 gap-2 sm:grid-cols-4 md:grid-cols-2 lg:grid-cols-4">
-  <a href="/contact-us" class="nav-button active focus-ring rounded-2xl px-4 py-3 text-sm font-bold text-[#7a4058] text-center block" style="text-decoration: none;">
-    تماس با ما
-  </a>
-  <a href="/connect-us" class="nav-button focus-ring rounded-2xl px-4 py-3 text-sm font-bold text-[#7a4058] text-center block" style="text-decoration: none;">
-    ارتباط با ما
-  </a>
-  <a href="/terms-and-conditions" class="nav-button focus-ring rounded-2xl px-4 py-3 text-sm font-bold text-[#7a4058] text-center block" style="text-decoration: none;">
-    قوانین
-  </a>
-  <a href="/privacy-policy" class="nav-button focus-ring rounded-2xl px-4 py-3 text-sm font-bold text-[#7a4058] text-center block" style="text-decoration: none;">
-    حریم خصوصی
-  </a>
-</div>
-     </div>
-    </div>
-   </header>
-   <main class="relative z-10 w-full px-5 py-7 md:px-10 md:py-10">
-    <div class="mx-auto grid w-full max-w-6xl gap-6 lg:grid-cols-[0.85fr_1.15fr]">
-     <aside class="glass-card rounded-[2.2rem] p-6 md:p-8">
-      <h2 class="text-2xl font-extrabold">پشتیبانی فنی</h2>
-      <p class="mt-3 leading-8 text-[#7a4058]">اگر مشکلی در فرایند سایت و سفارشات دارید با این شماره تماس بگیرید</p>
-      <p class="mt-3 leading-8 text-[#7a4058]">09054243464</p>
-      <div class="mini-line my-7"></div>
-     </aside>
-     <section class="glass-card min-h-[420px] rounded-[2.2rem] p-6 md:p-10" aria-live="polite">
-      
-     </section>
-    </div>
-   </main>
-<%- include('./partials/footer') %>
-
-  </div>
-
-
-  <!-- ==================== اسکریپت‌های نوبار و احراز هویت ==================== -->
-  <script>
-    // توابع کمکی
-    function toPersianDigits(num) {
-      if (num === undefined || num === null) return '۰';
-      return num.toString().replace(/\d/g, d => '۰۱۲۳۴۵۶۷۸۹'[d]);
-    }
-
-    function showNotification(message, type = 'info') {
-      const notification = document.createElement('div');
-      notification.className = `fixed z-50 px-4 py-3 rounded-lg shadow-lg text-white text-sm sm:text-base ${
-        type === 'success' ? 'bg-green-500' :
-        type === 'error' ? 'bg-red-500' :
-        'bg-blue-500'
-      } top-4 left-1/2 -translate-x-1/2 sm:left-auto sm:translate-x-0 sm:top-6 sm:right-6 w-[calc(100%-2rem)] max-w-xs sm:max-w-sm`;
-      notification.textContent = message;
-      document.body.appendChild(notification);
-      notification.classList.add('transform', 'transition-all', 'duration-300', 'translate-y-2', 'opacity-0');
-      setTimeout(() => notification.classList.remove('translate-y-2', 'opacity-0'), 10);
-      setTimeout(() => {
-        notification.classList.add('opacity-0', 'translate-y-2');
-        setTimeout(() => notification.remove(), 300);
-      }, 800);
-    }
-
-    document.addEventListener("DOMContentLoaded", function() {
-      // منوی همبرگری موبایل
-      var menuBtn = document.getElementById('menu-btn');
-      var mobileMenu = document.getElementById('mobile-menu');
-      
-      if (menuBtn && mobileMenu) {
-        menuBtn.onclick = function(e) {
-          e.stopPropagation();
-          if (mobileMenu.style.display === 'none' || mobileMenu.style.display === '') {
-            mobileMenu.style.display = 'flex';
-          } else {
-            mobileMenu.style.display = 'none';
-          }
-        };
-      }
-      
-      // ساب‌منوی موبایل
-      var mobileTriggers = document.querySelectorAll('.mobile-dropdown-trigger');
-      mobileTriggers.forEach(function(trigger) {
-        trigger.onclick = function(e) {
-          e.stopPropagation();
-          var menu = this.nextElementSibling;
-          var icon = this.querySelector('i');
-          if (menu.style.display === 'none' || menu.style.display === '') {
-            menu.style.display = 'block';
-            icon.style.transform = 'rotate(180deg)';
-          } else {
-            menu.style.display = 'none';
-            icon.style.transform = 'rotate(0deg)';
-          }
-        };
-      });
-      
-      var subTriggers = document.querySelectorAll('.mobile-submenu-trigger');
-      subTriggers.forEach(function(trigger) {
-        trigger.onclick = function(e) {
-          e.stopPropagation();
-          var submenu = this.nextElementSibling;
-          var icon = this.querySelector('i');
-          if (submenu.style.display === 'none' || submenu.style.display === '') {
-            submenu.style.display = 'block';
-            icon.style.transform = 'rotate(180deg)';
-          } else {
-            submenu.style.display = 'none';
-            icon.style.transform = 'rotate(0deg)';
-          }
-        };
-      });
-
-      // ====== مدیریت پاپ‌آپ احراز هویت ======
-      var authButton = document.getElementById('user-auth-button');
-      var authPopup = document.getElementById('auth-popup');
-      
-      function switchTab(activeTab) {
-        const tabs = { login: document.getElementById('login-tab'), register: document.getElementById('register-tab'), forgot: document.getElementById('forgot-tab') };
-        const contents = { login: document.getElementById('login-content'), register: document.getElementById('register-content'), forgot: document.getElementById('forgot-content') };
-        
-        Object.values(tabs).forEach(tab => {
-          if(tab) {
-            tab.classList.remove('border-pink-500', 'text-pink-500');
-            tab.classList.add('text-gray-500');
-          }
-        });
-        Object.values(contents).forEach(content => {
-          if(content) content.classList.remove('active');
-        });
-        if(tabs[activeTab]) {
-          tabs[activeTab].classList.add('border-pink-500', 'text-pink-500');
-          tabs[activeTab].classList.remove('text-gray-500');
+    <style>
+        @font-face {
+            font-family: MyFont;
+            src: url("/fonts/Vazirmatn-Light.ttf");
+            font-weight: 400;
+            font-style: normal;
+            font-display: swap
         }
-        if(contents[activeTab]) contents[activeTab].classList.add('active');
-      }
-      
-      if (authButton && authPopup) {
-        authButton.addEventListener('click', function(e) {
-          e.preventDefault();
-          e.stopPropagation();
-          authPopup.classList.remove('hidden');
-          switchTab('login');
-        });
-        
-        authPopup.addEventListener('click', function(e) {
-          if (e.target === authPopup) {
-            authPopup.classList.add('hidden');
-          }
-        });
-      }
 
-      // OTP inputs setup
-      function setupOtpInputs(containerSelector) {
-        const inputs = Array.from(document.querySelectorAll(`${containerSelector} .otp-input`));
-        if (inputs.length === 0) return;
-        inputs.forEach((input, index) => {
-          input.addEventListener('input', function() {
-            if (this.value.length === 1 && index > 0) {
-              inputs[index - 1].focus();
-            }
-          });
-          input.addEventListener('keydown', function(e) {
-            if (e.key === 'Backspace' && this.value.length === 0 && index < inputs.length - 1) {
-              inputs[index + 1].focus();
-            }
-          });
-        });
-      }
-      
-      setupOtpInputs('#register-step-2');
-      setupOtpInputs('#forgot-step-2');
-      
-      // Register form
-      const registerForm = document.getElementById('register-form');
-      const registerStep1 = document.getElementById('register-step-1');
-      const registerStep2 = document.getElementById('register-step-2');
-      const registerPhoneDisplay = document.getElementById('register-phone-display');
-      
-      if (registerForm) {
-        registerForm.addEventListener('submit', function(e) {
-          e.preventDefault();
-          const phone = document.getElementById('register-phone').value;
-          if(registerPhoneDisplay) registerPhoneDisplay.textContent = phone;
-          if(registerStep1) registerStep1.classList.remove('active');
-          if(registerStep2) registerStep2.classList.add('active');
-          
-          fetch('/api/mobile/sendOtp', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ mobile: phone })
-          }).catch(err => console.log('OTP send error:', err));
-        });
-      }
-      
-      const registerBackBtn = document.getElementById('register-back-btn');
-      if (registerBackBtn) {
-        registerBackBtn.addEventListener('click', function() {
-          if(registerStep2) registerStep2.classList.remove('active');
-          if(registerStep1) registerStep1.classList.add('active');
-        });
-      }
-      
-      // Login form
-      const loginForm = document.getElementById('login-form');
-      if (loginForm) {
-        loginForm.addEventListener('submit', function(e) {
-          e.preventDefault();
-          const formData = new FormData(loginForm);
-          fetch('/api/authentication/signIn', {
-            method: 'POST',
-            body: formData
-          })
-          .then(res => res.json())
-          .then(data => {
-            if (data.success) {
-              showNotification(data.message, 'success');
-              setTimeout(() => location.reload(), 800);
-              if(authPopup) authPopup.classList.add('hidden');
-            } else {
-              showNotification(data.message, 'error');
-            }
-          }).catch(err => showNotification('خطا در ارتباط با سرور', 'error'));
-        });
-      }
-    });
-  </script>
-
-  <script>
-    // اسکریپت‌های اصلی صفحه (تب‌ها و تنظیمات SDK)
-    const defaultConfig = {
-      background_color: "#fff7fa",
-      surface_color: "#ffffff",
-      text_color: "#4c2335",
-      primary_action_color: "#d94f86",
-      secondary_action_color: "#7a4058",
-      font_family: "Vazirmatn",
-      font_size: 16,
-      site_title: "مرکز اطلاعات و پشتیبانی",
-      site_subtitle: "همه چیز درباره تماس، ارتباط، قوانین و حریم خصوصی در یک فضای ساده و آرام.",
-      contact_title: "تماس با ما",
-      contact_body: "برای دریافت راهنمایی، ثبت درخواست یا پرسیدن سوال، از طریق ایمیل، شماره تماس یا فرم‌های ارتباطی برند با ما در تماس باشید. ما تلاش می‌کنیم پاسخ‌ها دقیق، محترمانه و سریع باشند.",
-      connect_title: "ارتباط با ما",
-      connect_body: "ما به گفت‌وگوهای واقعی و سازنده اهمیت می‌دهیم. پیشنهادها، همکاری‌ها، بازخوردها و ایده‌های خود را با ما به اشتراک بگذارید تا تجربه بهتری برای شما بسازیم.",
-      terms_title: "قوانین و مقررات",
-      terms_body: "استفاده از خدمات به معنای پذیرش قوانین، احترام به حقوق کاربران و رعایت چارچوب‌های اخلاقی و قانونی است. لطفاً پیش از استفاده، شرایط را با دقت مطالعه کنید.",
-      privacy_title: "سیاست حریم خصوصی",
-      privacy_body: "حفظ حریم خصوصی کاربران برای ما مهم است. اطلاعاتی که با ما به اشتراک می‌گذارید فقط برای ارائه خدمات بهتر، پاسخ‌گویی و بهبود تجربه شما استفاده می‌شود.",
-      footer_text: "ساخته شده با ظاهری لطیف، ساده و قابل اعتماد."
-    };
-
-    function getConfigValue(config, key) {
-      return config[key] || defaultConfig[key];
-    }
-
-    function applyText(id, value) {
-      const element = document.getElementById(id);
-      if (element) element.textContent = value;
-    }
-
-    async function onConfigChange(config) {
-      const backgroundColor = getConfigValue(config, "background_color");
-      const surfaceColor = getConfigValue(config, "surface_color");
-      const textColor = getConfigValue(config, "text_color");
-      const primaryActionColor = getConfigValue(config, "primary_action_color");
-      const secondaryActionColor = getConfigValue(config, "secondary_action_color");
-      const fontFamily = getConfigValue(config, "font_family");
-      const fontSize = Number(config.font_size || defaultConfig.font_size);
-
-      const app = document.getElementById("app");
-      app.style.color = textColor;
-      app.style.background = `radial-gradient(circle at 12% 18%, ${primaryActionColor}22 0, transparent 28%), radial-gradient(circle at 82% 14%, #ffd6e5 0, transparent 30%), linear-gradient(135deg, ${backgroundColor} 0%, #ffeef5 48%, ${surfaceColor} 100%)`;
-      app.style.fontFamily = `${fontFamily}, Vazirmatn, Tahoma, sans-serif`;
-
-      document.querySelectorAll(".glass-card").forEach((card) => {
-        card.style.backgroundColor = `${surfaceColor}ad`;
-        card.style.borderColor = `${primaryActionColor}4d`;
-      });
-
-      document.querySelectorAll(".nav-button").forEach((button) => {
-        if (button.classList.contains("active")) {
-          button.style.backgroundColor = primaryActionColor;
-          button.style.color = surfaceColor;
-        } else {
-          button.style.backgroundColor = "transparent";
-          button.style.color = secondaryActionColor;
+        body,
+        html {
+            height: 100%;
+            width: 100%;
+            margin: 0;
+            font-family: MyFont, sans-serif
         }
-      });
 
-      applyText("siteTitle", getConfigValue(config, "site_title"));
-      applyText("siteSubtitle", getConfigValue(config, "site_subtitle"));
-      applyText("contactTitle", getConfigValue(config, "contact_title"));
-      applyText("contactBody", getConfigValue(config, "contact_body"));
-      applyText("connectTitle", getConfigValue(config, "connect_title"));
-      applyText("connectBody", getConfigValue(config, "connect_body"));
-      applyText("termsTitle", getConfigValue(config, "terms_title"));
-      applyText("termsBody", getConfigValue(config, "terms_body"));
-      applyText("privacyTitle", getConfigValue(config, "privacy_title"));
-      applyText("privacyBody", getConfigValue(config, "privacy_body"));
-      applyText("footerText", getConfigValue(config, "footer_text"));
-    }
+        body {
+            font-family: MyFont, sans-serif
+        }
 
-    function setActivePage(pageName) {
-      document.querySelectorAll(".page-panel").forEach((panel) => {
-        panel.classList.remove("active");
-      });
+        * {
+            box-sizing: border-box;
+            font-family: MyFont, sans-serif
+        }
 
-      const targetPanel = document.getElementById(`page-${pageName}`);
-      if (targetPanel) targetPanel.classList.add("active");
+        .cart-count {
+            top: -8px;
+            left: -8px
+        }
 
-      document.querySelectorAll(".nav-button").forEach((button) => {
-        const isActive = button.dataset.page === pageName;
-        button.classList.toggle("active", isActive);
-        button.setAttribute("aria-selected", isActive ? "true" : "false");
-      });
+        .nav-link {
+            transition: all .3s ease;
+            position: relative
+        }
 
-      const config = window.elementSdk ? window.elementSdk.config : defaultConfig;
-      onConfigChange(config);
-    }
+        .nav-link:hover::after {
+            width: 100%;
+            right: 0
+        }
 
-    document.querySelectorAll(".nav-button").forEach((button) => {
-      button.addEventListener("click", () => {
-        setActivePage(button.dataset.page);
-      });
-    });
+        .dropdown:hover .dropdown-menu {
+            display: block !important
+        }
 
-    if (window.elementSdk) {
-      window.elementSdk.init({
-        defaultConfig,
-        onConfigChange,
-        mapToCapabilities: (config) => ({
-          recolorables: [
-            { get: () => config.background_color || defaultConfig.background_color, set: (value) => { config.background_color = value; window.elementSdk.setConfig({ background_color: value }); } },
-            { get: () => config.surface_color || defaultConfig.surface_color, set: (value) => { config.surface_color = value; window.elementSdk.setConfig({ surface_color: value }); } },
-            { get: () => config.text_color || defaultConfig.text_color, set: (value) => { config.text_color = value; window.elementSdk.setConfig({ text_color: value }); } },
-            { get: () => config.primary_action_color || defaultConfig.primary_action_color, set: (value) => { config.primary_action_color = value; window.elementSdk.setConfig({ primary_action_color: value }); } },
-            { get: () => config.secondary_action_color || defaultConfig.secondary_action_color, set: (value) => { config.secondary_action_color = value; window.elementSdk.setConfig({ secondary_action_color: value }); } }
-          ],
-          borderables: [],
-          fontEditable: { get: () => config.font_family || defaultConfig.font_family, set: (value) => { config.font_family = value; window.elementSdk.setConfig({ font_family: value }); } },
-          fontSizeable: { get: () => config.font_size || defaultConfig.font_size, set: (value) => { config.font_size = value; window.elementSdk.setConfig({ font_size: value }); } }
-        }),
-        mapToEditPanelValues: (config) => new Map([
-          ["site_title", config.site_title || defaultConfig.site_title],
-          ["site_subtitle", config.site_subtitle || defaultConfig.site_subtitle],
-          ["contact_title", config.contact_title || defaultConfig.contact_title],
-          ["contact_body", config.contact_body || defaultConfig.contact_body],
-          ["connect_title", config.connect_title || defaultConfig.connect_title],
-          ["connect_body", config.connect_body || defaultConfig.connect_body],
-          ["terms_title", config.terms_title || defaultConfig.terms_title],
-          ["terms_body", config.terms_body || defaultConfig.terms_body],
-          ["privacy_title", config.privacy_title || defaultConfig.privacy_title],
-          ["privacy_body", config.privacy_body || defaultConfig.privacy_body],
-          ["footer_text", config.footer_text || defaultConfig.footer_text]
-        ])
-      });
-    } else {
-      onConfigChange(defaultConfig);
-    }
+        .submenu-item:hover .submenu-level2 {
+            display: block !important
+        }
 
-    if (window.lucide) {
-      lucide.createIcons();
-    }
-  </script>
+        .dropdown-menu a:hover,
+        .submenu-level2 a:hover {
+            background-color: #f5f5f5
+        }
 
- </body>
-</html>
+        @media (min-width:768px) {
+            .desktop-menu {
+                display: flex !important
+            }
+
+            .hamburger {
+                display: none !important
+            }
+        }
+
+        body.menu-open {
+            overflow: hidden;
+            position: fixed;
+            width: 100%;
+            height: 100%
+        }
+
+        .soft-grid {
+            background-image: radial-gradient(circle at 12% 18%, rgba(255, 117, 162, .22) 0, transparent 28%), radial-gradient(circle at 82% 14%, rgba(255, 214, 229, .92) 0, transparent 30%), radial-gradient(circle at 54% 88%, rgba(255, 143, 184, .22) 0, transparent 34%), linear-gradient(135deg, #fff7fa 0, #ffeef5 48%, #fffafc 100%)
+        }
+
+        .orb {
+            position: absolute;
+            border-radius: 999px;
+            filter: blur(1px);
+            opacity: .85;
+            animation: floaty 8s ease-in-out infinite;
+            pointer-events: none
+        }
+
+        .orb-one {
+            width: 118px;
+            height: 118px;
+            background: rgba(255, 143, 184, .24);
+            top: 8%;
+            right: 8%;
+            animation-delay: 0s
+        }
+
+        .orb-two {
+            width: 78px;
+            height: 78px;
+            background: rgba(255, 196, 217, .48);
+            bottom: 12%;
+            left: 12%;
+            animation-delay: 1.3s
+        }
+
+        .orb-three {
+            width: 42px;
+            height: 42px;
+            background: rgba(211, 77, 123, .16);
+            top: 58%;
+            right: 18%;
+            animation-delay: 2.1s
+        }
+
+        @keyframes floaty {
+
+            0%,
+            100% {
+                transform: translateY(0) scale(1)
+            }
+
+            50% {
+                transform: translateY(-16%) scale(1.04)
+            }
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, .68);
+            border: 1px solid rgba(255, 174, 203, .42);
+            box-shadow: 0 28px 80px rgba(193, 74, 118, .16);
+            backdrop-filter: blur(22px)
+        }
+
+        .nav-button {
+            transition: transform 180ms ease, background 180ms ease, color 180ms ease, box-shadow 180ms ease
+        }
+
+        .nav-button:hover {
+            transform: translateY(-2px)
+        }
+
+        .nav-button.active {
+            background: #d94f86;
+            color: #fff;
+            box-shadow: 0 14px 32px rgba(217, 79, 134, .28)
+        }
+
+        .page-panel {
+            display: none;
+            animation: riseIn 420ms ease both
+        }
+
+        .page-panel.active {
+            display: block
+        }
+
+        @keyframes riseIn {
+            from {
+                opacity: 0;
+                transform: translateY(4%)
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0)
+            }
+        }
+
+        .mini-line {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(217, 79, 134, .42), transparent)
+        }
+
+        .focus-ring:focus-visible {
+            outline: 3px solid rgba(217, 79, 134, .45);
+            outline-offset: 3px
+        }
+
+        .tab-content {
+            display: none
+        }
+
+        .tab-content.active {
+            display: block
+        }
+
+        .form-step {
+            display: none
+        }
+
+        .form-step.active {
+            display: block
+        }
+
+        .otp-input {
+            width: 3rem;
+            height: 3.5rem;
+            font-size: 1.5rem;
+            text-align: center;
+            border: 1px solid #d1d5db;
+            border-radius: .5rem
+        }
+
+        .modal-content {
+            animation: modalFadeIn .3s ease-out
+        }
+
+        @keyframes modalFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px)
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0)
+            }
+        }
+
+        @media (max-width:768px) {
+            .flex.items-center.space-x-4 {
+                gap: 12px
+            }
+        }
+
+        .cart-count {
+            top: -8px;
+            left: -8px
+        }
+    </style>
+
+    <body class="w-full h-full overflow-hidden">
+        <div class="w-full h-full overflow-auto relative soft-grid text-[#4c2335]" id=app>
+            <div class="orb orb-one"></div>
+            <div class="orb orb-two"></div>
+            <div class="orb orb-three"></div><%- include('./partials/navbar') %>
+                <div class="flex justify-center bg-black bg-opacity-50 fixed hidden inset-0 items-center z-50"
+                    id=auth-popup>
+                    <div class="w-full bg-white max-w-md modal-content mx-4 rounded-xl shadow-lg">
+                        <div class="flex border-b"><button
+                                class="text-center flex-1 font-medium py-4 tab-btn border-b-2 border-pink-500 text-pink-500"
+                                id=login-tab>ورود</button> <button
+                                class="text-center flex-1 font-medium py-4 tab-btn text-gray-500" id=register-tab>ثبت
+                                نام</button> <button class="text-center flex-1 font-medium py-4 tab-btn text-gray-500"
+                                id=forgot-tab>بازیابی رمز</button></div>
+                        <div class="p-6 tab-content active" id=login-content>
+                            <h2 class="text-center text-xl font-bold text-gray-800 mb-5">ورود به حساب کاربری</h2>
+                            <form class=space-y-5 id=login-form action=/api/authentication/signIn method=post>
+                                <div><label class="block text-gray-700 mb-2" for=login-phone>شماره موبایل</label> <input
+                                        class="rounded-lg border py-3 w-full px-4" required id=login-phone
+                                        placeholder=09xxxxxxxxx type=tel name=mobile></div>
+                                <div><label class="block text-gray-700 mb-2" for=login-password>رمز عبور</label> <input
+                                        class="rounded-lg border py-3 w-full px-4" required id=login-password
+                                        placeholder="رمز عبور خود را وارد کنید" type=password name=password></div>
+                                <button
+                                    class="rounded-lg py-3 w-full font-medium transition-colors bg-pink-500 hover:bg-pink-600 text-white"
+                                    type=submit>ورود</button>
+                            </form>
+                        </div>
+                        <div class="p-6 tab-content" id=register-content>
+                            <div class="form-step active" id=register-step-1>
+                                <h2 class="text-center text-xl font-bold text-gray-800 mb-5">ایجاد حساب کاربری</h2>
+                                <form class=space-y-4 id=register-form>
+                                    <div><label class="block text-gray-700 mb-2" for=register-name>نام و نام
+                                            خانوادگی</label> <input class="rounded-lg border py-3 w-full px-4" required
+                                            id=register-name placeholder="نام کامل خود را وارد کنید" name=fullName>
+                                    </div>
+                                    <div><label class="block text-gray-700 mb-2" for=register-phone>شماره موبایل</label>
+                                        <input class="rounded-lg border py-3 w-full px-4" required id=register-phone
+                                            placeholder=09xxxxxxxxx type=tel name=mobile></div>
+                                    <div><label class="block text-gray-700 mb-2" for=register-email>ایمیل</label> <input
+                                            class="rounded-lg border py-3 w-full px-4" id=register-email
+                                            placeholder=email@example.com type=email name=email></div>
+                                    <div><label class="block text-gray-700 mb-2" for=register-password>رمز عبور</label>
+                                        <input class="rounded-lg border py-3 w-full px-4" required id=register-password
+                                            placeholder="حداقل 8 کاراکتر" type=password name=password></div>
+                                    <div><label class="block text-gray-700 mb-2" for=register-confirm-password>تکرار رمز
+                                            عبور</label> <input class="rounded-lg border py-3 w-full px-4" required
+                                            id=register-confirm-password placeholder="تکرار رمز عبور" type=password
+                                            name=confirmPassword></div><button
+                                        class="rounded-lg py-3 w-full font-medium transition-colors bg-pink-500 hover:bg-pink-600 text-white mt-2"
+                                        type=submit>ثبت نام</button>
+                                </form>
+                            </div>
+                            <div class=form-step id=register-step-2>
+                                <h2 class="text-center text-xl font-bold text-gray-800 mb-2">تایید شماره موبایل</h2>
+                                <p class="text-center text-gray-600 mb-5">کد تایید به شماره <span class=font-bold
+                                        id=register-phone-display></span> ارسال شد
+                                <form class=space-y-5 id=register-verification-form>
+                                    <div class=text-center><label class="text-center block mb-4 text-gray-700">کد تایید
+                                            را وارد کنید</label>
+                                        <div class="flex justify-center gap-2 mb-3"><input
+                                                class="text-center text-xl border h-14 otp-input rounded-lg w-12"
+                                                required dir=ltr maxlength=1> <input
+                                                class="text-center text-xl border h-14 otp-input rounded-lg w-12"
+                                                required dir=ltr maxlength=1> <input
+                                                class="text-center text-xl border h-14 otp-input rounded-lg w-12"
+                                                required dir=ltr maxlength=1> <input
+                                                class="text-center text-xl border h-14 otp-input rounded-lg w-12"
+                                                required dir=ltr maxlength=1> <input
+                                                class="text-center text-xl border h-14 otp-input rounded-lg w-12"
+                                                required dir=ltr maxlength=1></div>
+                                        <div class="mb-3 text-gray-500 text-sm" id=register-resend-timer>ارسال مجدد کد
+                                            تا <span>۰۲:۰۰</span></div>
+                                    </div><button
+                                        class="rounded-lg py-3 w-full font-medium transition-colors bg-pink-500 hover:bg-pink-600 text-white"
+                                        type=submit>تایید و ورود</button> <button
+                                        class="rounded-lg border py-3 w-full bg-white border-pink-500 font-medium hover:bg-pink-50 text-pink-500 transition-colors"
+                                        type=button id=register-back-btn>بازگشت</button>
+                                </form>
+                            </div>
+                        </div>
+                        <div class="p-6 tab-content" id=forgot-content>
+                            <div class="form-step active" id=forgot-step-1>
+                                <h2 class="text-center text-xl font-bold text-gray-800 mb-5">بازیابی رمز عبور</h2>
+                                <form class=space-y-5 id=forgot-form>
+                                    <div><label class="block text-gray-700 mb-2" for=forgot-phone>شماره موبایل</label>
+                                        <input class="rounded-lg border py-3 w-full px-4" required id=forgot-phone
+                                            placeholder=09xxxxxxxxx type=tel></div><button
+                                        class="rounded-lg py-3 w-full font-medium transition-colors bg-pink-500 hover:bg-pink-600 text-white"
+                                        type=submit>ارسال کد تایید</button>
+                                </form>
+                            </div>
+                            <div class=form-step id=forgot-step-2>
+                                <h2 class="text-center text-xl font-bold text-gray-800 mb-2">تایید کد</h2>
+                                <p class="text-center text-gray-600 mb-5">کد تایید به شماره <span class=font-bold
+                                        id=forgot-phone-display></span> ارسال شد
+                                <form class=space-y-5 id=forgot-verification-form>
+                                    <div class=text-center><label class="text-center block mb-4 text-gray-700">کد تایید
+                                            را وارد کنید</label>
+                                        <div class="flex justify-center gap-2 mb-3"><input
+                                                class="text-center text-xl border h-14 otp-input rounded-lg w-12"
+                                                required dir=ltr maxlength=1> <input
+                                                class="text-center text-xl border h-14 otp-input rounded-lg w-12"
+                                                required dir=ltr maxlength=1> <input
+                                                class="text-center text-xl border h-14 otp-input rounded-lg w-12"
+                                                required dir=ltr maxlength=1> <input
+                                                class="text-center text-xl border h-14 otp-input rounded-lg w-12"
+                                                required dir=ltr maxlength=1> <input
+                                                class="text-center text-xl border h-14 otp-input rounded-lg w-12"
+                                                required dir=ltr maxlength=1></div>
+                                        <div class="mb-3 text-gray-500 text-sm" id=forgot-resend-timer>ارسال مجدد کد تا
+                                            <span>۰۲:۰۰</span></div>
+                                    </div><button
+                                        class="rounded-lg py-3 w-full font-medium transition-colors bg-pink-500 hover:bg-pink-600 text-white"
+                                        type=submit>تایید</button> <button
+                                        class="rounded-lg border py-3 w-full bg-white border-pink-500 font-medium hover:bg-pink-50 text-pink-500 transition-colors"
+                                        type=button id=forgot-back-btn>بازگشت</button>
+                                </form>
+                            </div>
+                            <div class=form-step id=forgot-step-3>
+                                <h2 class="text-center text-xl font-bold text-gray-800 mb-5">تعیین رمز عبور جدید</h2>
+                                <form class=space-y-5 id=new-password-form>
+                                    <div><label class="block text-gray-700 mb-2" for=new-password>رمز عبور جدید</label>
+                                        <input class="rounded-lg border py-3 w-full px-4" required id=new-password
+                                            placeholder="حداقل 6 کاراکتر" type=password></div>
+                                    <div><label class="block text-gray-700 mb-2" for=confirm-new-password>تکرار رمز عبور
+                                            جدید</label> <input class="rounded-lg border py-3 w-full px-4" required
+                                            id=confirm-new-password placeholder="تکرار رمز عبور جدید" type=password>
+                                    </div><button
+                                        class="rounded-lg py-3 w-full font-medium transition-colors bg-pink-500 hover:bg-pink-600 text-white"
+                                        type=submit>ذخیره و ورود</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div style=height:80px></div>
+                <!-- <header class="w-full relative md:px-10 px-5 z-10 md:pt-10 pt-7">
+                    <div
+                        class="w-full max-w-6xl mx-auto flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
+                        <div>
+                            <h2 class="font-extrabold md:text-5xl text-3xl tracking-tight" id=siteTitle>اطلاعات و
+                                پشتیبانی</h2>
+                        </div>
+                        <div class="glass-card p-3 rounded-[2rem]">
+                            <div class="grid gap-2 grid-cols-2 lg:grid-cols-4 md:grid-cols-2 sm:grid-cols-4"><a
+                                    class="text-center font-bold block focus-ring nav-button px-4 py-3 rounded-2xl text-[#7a4058] text-sm active"
+                                    href=/contact-us style=text-decoration:none>تماس با ما </a><a
+                                    class="text-center font-bold block focus-ring nav-button px-4 py-3 rounded-2xl text-[#7a4058] text-sm"
+                                    href=/connect-us style=text-decoration:none>ارتباط با ما </a><a
+                                    class="text-center font-bold block focus-ring nav-button px-4 py-3 rounded-2xl text-[#7a4058] text-sm"
+                                    href=/terms-and-conditions style=text-decoration:none>قوانین </a><a
+                                    class="text-center font-bold block focus-ring nav-button px-4 py-3 rounded-2xl text-[#7a4058] text-sm"
+                                    href=/privacy-policy style=text-decoration:none>حریم خصوصی</a></div>
+                        </div>
+                    </div>
+                </header> -->
+                <main class="w-full relative md:px-10 px-5 z-10 md:py-10 py-7">
+<section aria-live="polite" class="p-6 glass-card rounded-[2.2rem] md:p-10 min-h-[420px]">
+    <div class="flex flex-col h-full justify-between">
+        <div>
+            <span class="text-xs font-bold uppercase tracking-wider text-[#7a4058] bg-[#7a4058]/10 px-4 py-1.5 rounded-full inline-block mb-4">داستان ما</span>
+            <h3 class="text-3xl md:text-4xl font-black leading-tight">کیدل؛<br>آغازی نرم برای کودکیِ آرام</h3>
+            <div class="w-16 h-1 bg-[#7a4058] my-6 rounded-full"></div>
+            <p class="text-gray-700 leading-relaxed mb-4">
+                «کیدل» فقط یه فروشگاه اینترنتی نیست؛ خونه‌ی امن خرید مامان‌هایی‌ست که آرامش و سلامت کودکشون براشون اولویته.
+            </p>
+            <p class="text-gray-700 leading-relaxed mb-4">
+                ما می‌دونیم لباس بچه فقط یه پوشاک نیست؛ اولین تجربه‌ی حسیِ بچه با دنیای بیرونه. به همین خاطر توی کیدل، از نخ تا دوخت، فقط چیزایی رو کنار هم می‌ذاریم که خودمون برای بچه‌هامون می‌خریم: <strong class="text-[#7a4058]">الیاف طبیعی، رنگ‌های ثابت و بدون ضرر، دوخت ایمن و حس لطیف</strong> در کنار طرح‌های شاد و بچگانه.
+            </p>
+            <p class="text-gray-700 leading-relaxed">
+                توی کیدل، لباس بچه یعنی لبخند مادر، بازی راحت کودک و خیالی آسوده برای فرداش.
+            </p>
+        </div>
+        
+        <!-- یه خط تزیینی ساده برای هماهنگی با آساید چپ -->
+        <div class="flex items-center gap-3 mt-10 text-sm text-gray-400">
+            <span class="h-px w-10 bg-gray-300"></span>
+            <span>با عشق برای فردای کودک شما</span>
+            <span class="h-px w-10 bg-gray-300"></span>
+        </div>
+    </div>
+</section>
+                </main>
+                <%- include('./partials/footer') %>
+        </div>
+        <script>function toPersianDigits(e) { return null == e ? "۰" : e.toString().replace(/\d/g, e => "۰۱۲۳۴۵۶۷۸۹"[e]) } function showNotification(e, t = "info") { const n = document.createElement("div"); n.className = `fixed z-50 px-4 py-3 rounded-lg shadow-lg text-white text-sm sm:text-base ${"success" === t ? "bg-green-500" : "error" === t ? "bg-red-500" : "bg-blue-500"} top-4 left-1/2 -translate-x-1/2 sm:left-auto sm:translate-x-0 sm:top-6 sm:right-6 w-[calc(100%-2rem)] max-w-xs sm:max-w-sm`, n.textContent = e, document.body.appendChild(n), n.classList.add("transform", "transition-all", "duration-300", "translate-y-2", "opacity-0"), setTimeout(() => n.classList.remove("translate-y-2", "opacity-0"), 10), setTimeout(() => { n.classList.add("opacity-0", "translate-y-2"), setTimeout(() => n.remove(), 300) }, 800) } document.addEventListener("DOMContentLoaded", function () { var e = document.getElementById("menu-btn"), t = document.getElementById("mobile-menu"); e && t && (e.onclick = function (e) { e.stopPropagation(), "none" === t.style.display || "" === t.style.display ? t.style.display = "flex" : t.style.display = "none" }), document.querySelectorAll(".mobile-dropdown-trigger").forEach(function (e) { e.onclick = function (e) { e.stopPropagation(); var t = this.nextElementSibling, e = this.querySelector("i"); "none" === t.style.display || "" === t.style.display ? (t.style.display = "block", e.style.transform = "rotate(180deg)") : (t.style.display = "none", e.style.transform = "rotate(0deg)") } }), document.querySelectorAll(".mobile-submenu-trigger").forEach(function (e) { e.onclick = function (e) { e.stopPropagation(); var t = this.nextElementSibling, e = this.querySelector("i"); "none" === t.style.display || "" === t.style.display ? (t.style.display = "block", e.style.transform = "rotate(180deg)") : (t.style.display = "none", e.style.transform = "rotate(0deg)") } }); var e = document.getElementById("user-auth-button"), n = document.getElementById("auth-popup"); function o(e) { const n = Array.from(document.querySelectorAll(`${e} .otp-input`)); 0 !== n.length && n.forEach((e, t) => { e.addEventListener("input", function () { 1 === this.value.length && 0 < t && n[t - 1].focus() }), e.addEventListener("keydown", function (e) { "Backspace" === e.key && 0 === this.value.length && t < n.length - 1 && n[t + 1].focus() }) }) } e && n && (e.addEventListener("click", function (e) { e.preventDefault(), e.stopPropagation(), n.classList.remove("hidden"), function (e) { const t = { login: document.getElementById("login-tab"), register: document.getElementById("register-tab"), forgot: document.getElementById("forgot-tab") }, n = { login: document.getElementById("login-content"), register: document.getElementById("register-content"), forgot: document.getElementById("forgot-content") }; Object.values(t).forEach(e => { e && (e.classList.remove("border-pink-500", "text-pink-500"), e.classList.add("text-gray-500")) }), Object.values(n).forEach(e => { e && e.classList.remove("active") }), t[e] && (t[e].classList.add("border-pink-500", "text-pink-500"), t[e].classList.remove("text-gray-500")), n[e] && n[e].classList.add("active") }("login") }), n.addEventListener("click", function (e) { e.target === n && n.classList.add("hidden") })), o("#register-step-2"), o("#forgot-step-2"); const s = document.getElementById("register-form"), i = document.getElementById("register-step-1"), a = document.getElementById("register-step-2"), r = document.getElementById("register-phone-display"); s && s.addEventListener("submit", function (e) { e.preventDefault(); e = document.getElementById("register-phone").value; r && (r.textContent = e), i && i.classList.remove("active"), a && a.classList.add("active"), fetch("/api/mobile/sendOtp", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ mobile: e }) }).catch(e => console.log("OTP send error:", e)) }); const l = document.getElementById("register-back-btn"); l && l.addEventListener("click", function () { a && a.classList.remove("active"), i && i.classList.add("active") }); const c = document.getElementById("login-form"); c && c.addEventListener("submit", function (e) { e.preventDefault(); e = new FormData(c); fetch("/api/authentication/signIn", { method: "POST", body: e }).then(e => e.json()).then(e => { e.success ? (showNotification(e.message, "success"), setTimeout(() => location.reload(), 800), n && n.classList.add("hidden")) : showNotification(e.message, "error") }).catch(e => showNotification("خطا در ارتباط با سرور", "error")) }) })</script>
+        <script>const defaultConfig = { background_color: "#fff7fa", surface_color: "#ffffff", text_color: "#4c2335", primary_action_color: "#d94f86", secondary_action_color: "#7a4058", font_family: "Vazirmatn", font_size: 16, site_title: "مرکز اطلاعات و پشتیبانی", site_subtitle: "همه چیز درباره تماس، ارتباط، قوانین و حریم خصوصی در یک فضای ساده و آرام.", contact_title: "تماس با ما", contact_body: "برای دریافت راهنمایی، ثبت درخواست یا پرسیدن سوال، از طریق ایمیل، شماره تماس یا فرم‌های ارتباطی برند با ما در تماس باشید. ما تلاش می‌کنیم پاسخ‌ها دقیق، محترمانه و سریع باشند.", connect_title: "ارتباط با ما", connect_body: "ما به گفت‌وگوهای واقعی و سازنده اهمیت می‌دهیم. پیشنهادها، همکاری‌ها، بازخوردها و ایده‌های خود را با ما به اشتراک بگذارید تا تجربه بهتری برای شما بسازیم.", terms_title: "قوانین و مقررات", terms_body: "استفاده از خدمات به معنای پذیرش قوانین، احترام به حقوق کاربران و رعایت چارچوب‌های اخلاقی و قانونی است. لطفاً پیش از استفاده، شرایط را با دقت مطالعه کنید.", privacy_title: "سیاست حریم خصوصی", privacy_body: "حفظ حریم خصوصی کاربران برای ما مهم است. اطلاعاتی که با ما به اشتراک می‌گذارید فقط برای ارائه خدمات بهتر، پاسخ‌گویی و بهبود تجربه شما استفاده می‌شود.", footer_text: "ساخته شده با ظاهری لطیف، ساده و قابل اعتماد." }; function getConfigValue(t, e) { return t[e] || defaultConfig[e] } function applyText(t, e) { const o = document.getElementById(t); o && (o.textContent = e) } async function onConfigChange(t) { var e = getConfigValue(t, "background_color"); const o = getConfigValue(t, "surface_color"); var n = getConfigValue(t, "text_color"); const a = getConfigValue(t, "primary_action_color"), i = getConfigValue(t, "secondary_action_color"); var l = getConfigValue(t, "font_family"); Number(t.font_size || defaultConfig.font_size); const c = document.getElementById("app"); c.style.color = n, c.style.background = `radial-gradient(circle at 12% 18%, ${a}22 0, transparent 28%), radial-gradient(circle at 82% 14%, #ffd6e5 0, transparent 30%), linear-gradient(135deg, ${e} 0%, #ffeef5 48%, ${o} 100%)`, c.style.fontFamily = `${l}, Vazirmatn, Tahoma, sans-serif`, document.querySelectorAll(".glass-card").forEach(t => { t.style.backgroundColor = `${o}ad`, t.style.borderColor = `${a}4d` }), document.querySelectorAll(".nav-button").forEach(t => { t.classList.contains("active") ? (t.style.backgroundColor = a, t.style.color = o) : (t.style.backgroundColor = "transparent", t.style.color = i) }), applyText("siteTitle", getConfigValue(t, "site_title")), applyText("siteSubtitle", getConfigValue(t, "site_subtitle")), applyText("contactTitle", getConfigValue(t, "contact_title")), applyText("contactBody", getConfigValue(t, "contact_body")), applyText("connectTitle", getConfigValue(t, "connect_title")), applyText("connectBody", getConfigValue(t, "connect_body")), applyText("termsTitle", getConfigValue(t, "terms_title")), applyText("termsBody", getConfigValue(t, "terms_body")), applyText("privacyTitle", getConfigValue(t, "privacy_title")), applyText("privacyBody", getConfigValue(t, "privacy_body")), applyText("footerText", getConfigValue(t, "footer_text")) } function setActivePage(o) { document.querySelectorAll(".page-panel").forEach(t => { t.classList.remove("active") }); const t = document.getElementById(`page-${o}`); t && t.classList.add("active"), document.querySelectorAll(".nav-button").forEach(t => { var e = t.dataset.page === o; t.classList.toggle("active", e), t.setAttribute("aria-selected", e ? "true" : "false") }), onConfigChange(window.elementSdk ? window.elementSdk.config : defaultConfig) } document.querySelectorAll(".nav-button").forEach(t => { t.addEventListener("click", () => { setActivePage(t.dataset.page) }) }), window.elementSdk ? window.elementSdk.init({ defaultConfig: defaultConfig, onConfigChange: onConfigChange, mapToCapabilities: e => ({ recolorables: [{ get: () => e.background_color || defaultConfig.background_color, set: t => { e.background_color = t, window.elementSdk.setConfig({ background_color: t }) } }, { get: () => e.surface_color || defaultConfig.surface_color, set: t => { e.surface_color = t, window.elementSdk.setConfig({ surface_color: t }) } }, { get: () => e.text_color || defaultConfig.text_color, set: t => { e.text_color = t, window.elementSdk.setConfig({ text_color: t }) } }, { get: () => e.primary_action_color || defaultConfig.primary_action_color, set: t => { e.primary_action_color = t, window.elementSdk.setConfig({ primary_action_color: t }) } }, { get: () => e.secondary_action_color || defaultConfig.secondary_action_color, set: t => { e.secondary_action_color = t, window.elementSdk.setConfig({ secondary_action_color: t }) } }], borderables: [], fontEditable: { get: () => e.font_family || defaultConfig.font_family, set: t => { e.font_family = t, window.elementSdk.setConfig({ font_family: t }) } }, fontSizeable: { get: () => e.font_size || defaultConfig.font_size, set: t => { e.font_size = t, window.elementSdk.setConfig({ font_size: t }) } } }), mapToEditPanelValues: t => new Map([["site_title", t.site_title || defaultConfig.site_title], ["site_subtitle", t.site_subtitle || defaultConfig.site_subtitle], ["contact_title", t.contact_title || defaultConfig.contact_title], ["contact_body", t.contact_body || defaultConfig.contact_body], ["connect_title", t.connect_title || defaultConfig.connect_title], ["connect_body", t.connect_body || defaultConfig.connect_body], ["terms_title", t.terms_title || defaultConfig.terms_title], ["terms_body", t.terms_body || defaultConfig.terms_body], ["privacy_title", t.privacy_title || defaultConfig.privacy_title], ["privacy_body", t.privacy_body || defaultConfig.privacy_body], ["footer_text", t.footer_text || defaultConfig.footer_text]]) }) : onConfigChange(defaultConfig), window.lucide && lucide.createIcons()</script>

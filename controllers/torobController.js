@@ -75,7 +75,8 @@ const formatProductForTorob = (product) => {
     page_url: `https://kidle.ir/productDetails/${product.slug || product._id}`,
     product_group_id: product.product_group_id || product._id.toString(),
     title: product.name,
-    subtitle: product.lilDescription || "",
+    subtitle: product.englishName,
+    short_desc: product.lilDescription,
     current_price: currentPrice,
     old_price: oldPrice,
     availability: !product.isOutOfStock && product.countInStock > 0,
@@ -83,7 +84,6 @@ const formatProductForTorob = (product) => {
     image_links: imageLinks,
     spec: buildSpec(),
     guarantee: product.guarantee || "",
-    short_desc: product.lilDescription || "",
     date_added: getDateAdded(),
     date_updated: getDateUpdated(),
   };

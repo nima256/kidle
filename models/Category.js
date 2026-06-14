@@ -17,6 +17,11 @@ const categorySchema = mongoose.Schema(
       maxlength: [50, "نام نمی‌تواند بیشتر از ۵۰ کاراکتر باشد"],
       minlength: [2, "نام نمی‌تواند کمتر از ۲ کاراکتر باشد"],
     },
+    metaDescription: {
+       type: String,
+       maxlength: [160, "توضیحات متا نمی‌تواند بیشتر از ۱۶۰ کاراکتر باشد"],
+       trim: true
+    },
     slug: {
       type: String,
       immutable: true,
