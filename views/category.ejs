@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="robots" content="noindex, nofollow">
      <title>محصولات <%= currentCategory.name %></title>
+     <meta property="og:title" content="محصولات <%= currentCategory.name %>">
      <% if(currentCategory.metaDescription) { %>
     <meta name="description" content="<%= currentCategory.metaDescription %>">
     <% } else { %>
@@ -30,7 +31,7 @@
       "@context": "https://schema.org",
       "@type": "CollectionPage",
       "name": "<%= currentCategory.name %>",
-      "description": "خرید <%= currentCategory.name %> از فروشگاه لباس کیدل. قیمت <%= currentCategory.name %> با کیفیت عالی و تنوع بالا. بهترین مدل‌های <%= currentCategory.name %> را اینجا ببینید و بخرید.",
+      "description": "<%= currentCategory.metaDescription %>",
       "url": "https://kidle.ir/category/<%= currentCategory.slug %>",
       "numberOfItems": "<%= products.length %>",
       "itemListElement": [

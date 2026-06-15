@@ -82,12 +82,7 @@
 </script>
 
 
-<% if (product && product.slug) { %>
   <link rel="canonical" href="https://kidle.ir/productDetails/<%= product.slug %>" />
-<% } else { %>
-  <link rel="canonical" href="https://kidle.ir<%= req.originalUrl.split('?')[0] %>" />
-<% } %>
-
     <!-- <link
       href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700&display=swap"
       rel="stylesheet"

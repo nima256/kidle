@@ -3,24 +3,70 @@
  <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>صفحات اطلاعاتی صورتی</title>
+  <title>درباره ما</title>
+  <meta property="og:title" content="درباره ما">
   <!-- <link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet"> -->
    <link rel="stylesheet" href="/tailwind.min.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="canonical" href="https://kidle.ir/about-us" />
   <!-- <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script> -->
-   <script type="application/ld+json">
+<script type="application/ld+json">
 {
   "@context": "https://schema.org",
-  "@type": "AboutPage",
-  "name": "درباره ما | کیدل",
-  "description": "معرفی فروشگاه کیدل، تخصص در زمینه لباس بچگانه با کیفیت و قیمت مناسب",
-  "url": "https://kidle.ir/about-us",
+  "@type": "ContactPage",
+  "name": "ارتباط با ما",
+  "description": "راه‌های ارتباطی فروشگاه کیدل - ایمیل، تلگرام، اینستاگرام، واتساپ. ما به گفتگوهای واقعی و سازنده اهمیت می‌دهیم",
+  "url": "https://kidle.ir/connect-us",
   "mainEntity": {
     "@type": "Organization",
     "name": "کیدل",
-    "foundingDate": "2026",
-    "description": "فروشگاه آنلاین تخصصی لباس بچگانه"
+    "url": "https://kidle.ir",
+    "logo": "https://kidle.ir/uploads/logo.png",
+    "sameAs": [
+      "https://t.me/kidle",
+      "https://instagram.com/kidle",
+      "https://wa.me/989054243464"
+    ],
+    "contactPoint": [
+      {
+        "@type": "ContactPoint",
+        "contactType": "customer service",
+        "email": "info@kidle.ir",
+        "url": "https://kidle.ir/connect-us",
+        "availableLanguage": ["Persian"],
+        "contactOption": "TollFree"
+      },
+      {
+        "@type": "ContactPoint",
+        "contactType": "sales",
+        "telephone": "+989054243464",
+        "contactOption": "WhatsApp",
+        "availableLanguage": ["Persian"]
+      },
+      {
+        "@type": "ContactPoint",
+        "contactType": "technical support",
+        "email": "info@kidle.ir",
+        "availableLanguage": ["Persian"]
+      }
+    ]
+  },
+  "breadcrumb": {
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "خانه",
+        "item": "https://kidle.ir"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "ارتباط با ما",
+        "item": "https://kidle.ir/connect-us"
+      }
+    ]
   }
 }
 </script>
