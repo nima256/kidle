@@ -55,11 +55,6 @@ app.use(express.json({ limit: "50mb" }));
 app.use(express.urlencoded({ limit: "50mb", extended: true }));
 app.use(express.raw({ limit: "50mb" }));
 
-app.use((req, res, next) => {
-  res.setHeader('X-Robots-Tag', 'noindex, nofollow');
-  next();
-});
-
 process.env.BSON_BUFFER_SIZE = 1024 * 1024 * 50; // 50MB
 
 // Models
