@@ -147,7 +147,7 @@ app.use(
           "https://www.zarinpal.com",
           "https://sandbox.zarinpal.com",
           "https://payment.zarinpal.com",
-          "https://api.odour.ir", // آدرس دامنه خودت رو بذار
+          "https://api.kidle.ir", // آدرس دامنه خودت رو بذار
           "https://trustseal.enamad.ir/logo.aspx?id=731837&Code=jSMW53UKTzbJlysi5bIKHLWgBO1HddCW",
           process.env.SITE_URL, // آدرس سایت
         ],
@@ -1281,12 +1281,6 @@ app.get('/weblog/:slug', async (req, res) => {
     res.status(500).render('error', { message: 'خطا در بارگذاری مقاله' });
   }
 });
-
-
-// اول این رو بالای فایل با بقیه import ها اضافه کن
-const { SitemapStream, streamToPromise } = require('sitemap');
-
-// بعدش جایگزین سایتمپ فعلی کن با این:
 
 app.get("/sitemap.xml", async (req, res) => {
   try {
