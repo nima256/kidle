@@ -16,7 +16,7 @@
     if (it.selectedColor) opts.push('<span class="badge badge-neutral"><span class="size-2.5 rounded-full border border-ink-300" style="background:' + K.esc(it.colorHex || "#eee") + '"></span>' + K.esc(it.selectedColor) + "</span>");
     var max = Math.min(20, Math.max(it.available, 1));
     return '<li class="flex gap-3 py-3.5" data-key="' + K.esc(it.key) + '">' +
-      '<a href="/productDetails/' + encodeURIComponent(it.slug) + '" class="w-20 shrink-0 overflow-hidden rounded-md bg-ink-100 sm:w-24">' +
+      '<a href="/productDetails/' + encodeURIComponent(it.slug) + '" tabindex="-1" aria-hidden="true" class="w-20 shrink-0 overflow-hidden rounded-md bg-ink-100 sm:w-24">' +
       (it.image ? '<img src="' + K.esc(it.image) + '" alt="" class="aspect-[4/5] w-full object-cover" loading="lazy">' : '<span class="block aspect-[4/5]"></span>') + "</a>" +
       '<div class="flex min-w-0 flex-1 flex-col gap-1.5">' +
       '<div class="flex items-start justify-between gap-2"><a href="/productDetails/' + encodeURIComponent(it.slug) + '" class="line-clamp-2 text-sm font-semibold leading-6 hover:text-brand-700">' + K.esc(it.name) + "</a>" +

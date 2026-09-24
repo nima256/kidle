@@ -40,7 +40,7 @@
   --color-ink-800: #3d333a;
   --color-ink-700: #52474e;
   --color-ink-600: #685d64;
-  --color-ink-500: #7b6f77;
+  --color-ink-500: #6f636b;
   --color-ink-400: #a3979e;
   --color-ink-300: #d6ccd1;
   --color-ink-200: #e9e2e6;
@@ -230,7 +230,7 @@
   .btn-lg { height: 3rem; @apply px-5 text-base rounded-lg; }
   .btn-block { @apply w-full; }
   .btn-primary {
-    @apply bg-brand-500 text-white shadow-pink hover:bg-brand-600 active:bg-brand-700;
+    @apply bg-brand-600 text-white shadow-pink hover:bg-brand-700 active:bg-brand-800;
   }
   .btn-secondary {
     @apply bg-white text-brand-700 border-brand-200 hover:bg-brand-50 hover:border-brand-300;
@@ -311,7 +311,7 @@
   .badge {
     @apply inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-2xs font-bold leading-5;
   }
-  .badge-sale { @apply bg-brand-500 text-white; }
+  .badge-sale { @apply bg-brand-600 text-white; }
   .badge-new { @apply bg-butter-400 text-ink-950; }
   .badge-soldout { @apply bg-ink-800 text-white; }
   .badge-low { @apply bg-warn-50 text-warn-700; }
@@ -355,7 +355,7 @@
 
   /* Prices */
   .price { @apply font-bold text-ink-950 tabular-nums; }
-  .price-old { @apply text-xs text-ink-400 line-through tabular-nums; }
+  .price-old { @apply text-xs text-ink-500 line-through tabular-nums; }
   .currency { @apply text-2xs font-medium text-ink-500 ms-0.5; }
 
   /* Product card */
@@ -495,7 +495,7 @@
   }
   .nav-link.is-active { @apply text-brand-700; }
   .count-badge {
-    @apply absolute -top-0.5 -end-0.5 inline-flex h-4.5 min-w-4.5 items-center justify-center rounded-full bg-brand-500 px-1 text-[0.625rem] font-bold leading-none text-white ring-2 ring-white;
+    @apply absolute -top-0.5 -end-0.5 inline-flex h-4.5 min-w-4.5 items-center justify-center rounded-full bg-brand-600 px-1 text-[0.625rem] font-bold leading-none text-white ring-2 ring-white;
   }
 
   /* Mobile bottom navigation */

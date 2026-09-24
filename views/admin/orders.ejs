@@ -2,7 +2,7 @@
 <%- include('_top') %>
 <div class="scroller mb-3">
   <% [['todo', 'برای ارسال'], ['shipping', 'ارسال‌شده'], ['done', 'تحویل‌شده'], ['awaiting', 'در انتظار پرداخت'], ['cancelled', 'لغو/ناموفق'], ['review', 'نیاز به بررسی'], ['all', 'همه']].forEach(function (t) { %>
-  <a class="chip <%= tab === t[0] ? 'is-active' : '' %>" href="/admin/orders?tab=<%= t[0] %>"><%= t[1] %><% if (t[0] === 'todo' && counts.toShip) { %> <span class="rounded-full bg-brand-500 px-1.5 text-2xs text-white"><%= fa(counts.toShip) %></span><% } %><% if (t[0] === 'review' && counts.needsReview) { %> <span class="rounded-full bg-warn-700 px-1.5 text-2xs text-white"><%= fa(counts.needsReview) %></span><% } %></a>
+  <a class="chip <%= tab === t[0] ? 'is-active' : '' %>" href="/admin/orders?tab=<%= t[0] %>"><%= t[1] %><% if (t[0] === 'todo' && counts.toShip) { %> <span class="rounded-full bg-brand-600 px-1.5 text-2xs text-white"><%= fa(counts.toShip) %></span><% } %><% if (t[0] === 'review' && counts.needsReview) { %> <span class="rounded-full bg-warn-700 px-1.5 text-2xs text-white"><%= fa(counts.needsReview) %></span><% } %></a>
   <% }) %>
 </div>
 <form class="mb-3 flex gap-2" method="get"><input type="hidden" name="tab" value="<%= tab %>"><label class="sr-only" for="oq">جستجو</label><input id="oq" class="input !min-h-10 max-w-sm" name="q" value="<%= q %>" placeholder="شماره سفارش، نام یا موبایل گیرنده، کد رهگیری"><button class="btn btn-secondary !h-10">جستجو</button></form>

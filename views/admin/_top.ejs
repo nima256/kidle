@@ -22,7 +22,7 @@
       <% navItems.forEach(function (i) { var active = i.exact ? path === i.href || path === i.href + '/' : path.indexOf(i.href) === 0; %>
       <a href="<%= i.href %>" class="flex h-10 items-center gap-2.5 rounded-md px-3 text-sm font-medium <%= active ? 'bg-brand-50 text-brand-700' : 'text-ink-700 hover:bg-ink-100' %>" <%- active ? 'aria-current="page"' : '' %>>
         <%- icon(i.icon,'icon-sm') %> <%= i.label %>
-        <% if (i.badge && counts[i.badge]) { %><span class="ms-auto rounded-full bg-brand-500 px-1.5 text-2xs font-bold text-white"><%= fa(counts[i.badge]) %></span><% } %>
+        <% if (i.badge && counts[i.badge]) { %><span class="ms-auto rounded-full bg-brand-600 px-1.5 text-2xs font-bold text-white"><%= fa(counts[i.badge]) %></span><% } %>
       </a>
       <% }) %>
     </nav>

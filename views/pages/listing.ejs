@@ -49,11 +49,11 @@
 <div class="sticky z-40 mt-3 border-b border-ink-200/70 bg-paper/95 backdrop-blur lg:static lg:border-0 lg:bg-transparent" style="top: var(--header-h)">
   <div class="container-app flex items-center gap-2 py-2">
     <button type="button" class="btn btn-secondary btn-sm lg:hidden" data-open-filters aria-controls="filters">
-      <%- icon('sliders','icon-sm') %> فیلترها<% if (active.length) { %> <span class="inline-flex size-5 items-center justify-center rounded-full bg-brand-500 text-2xs text-white"><%= fa(active.length) %></span><% } %>
+      <%- icon('sliders','icon-sm') %> فیلترها<% if (active.length) { %> <span class="inline-flex size-5 items-center justify-center rounded-full bg-brand-600 text-2xs text-white"><%= fa(active.length) %></span><% } %>
     </button>
     <div class="ms-auto flex items-center gap-1.5">
       <label for="sort" class="flex items-center gap-1 text-xs text-ink-500"><%- icon('sort','icon-sm') %><span class="hidden sm:inline">مرتب‌سازی:</span></label>
-      <select id="sort" class="select !h-8 !min-h-8 w-auto rounded-full !py-0 !text-sm" data-sort>
+      <select id="sort" aria-label="مرتب‌سازی محصولات" class="select !h-8 !min-h-8 w-auto rounded-full !py-0 !text-sm" data-sort>
         <% Object.keys(sorts).forEach(function (k) { %>
         <option value="<%= k %>" data-url="<%= urlWith({ sort: k === 'newest' ? '' : k, page: '', _count: '' }) %>" <%= fl.sort === k ? 'selected' : '' %>><%= sorts[k] %></option>
         <% }) %>
@@ -93,7 +93,7 @@
           <summary>دسته‌بندی <%- icon('chevron-down','icon-sm text-ink-400 transition') %></summary>
           <div class="mt-2">
             <% facets.categories.forEach(function (c) { %>
-            <label class="f-check"><input class="check" type="checkbox" name="cat" value="<%= c.slug %>" <%= sel(fl.cats, c.slug) ? 'checked' : '' %>> <span class="flex-1"><%= c.name %></span><span class="text-2xs text-ink-400"><%= fa(c.count) %></span></label>
+            <label class="f-check"><input class="check" type="checkbox" name="cat" value="<%= c.slug %>" <%= sel(fl.cats, c.slug) ? 'checked' : '' %>> <span class="flex-1"><%= c.name %></span><span class="text-2xs text-ink-500"><%= fa(c.count) %></span></label>
             <% }) %>
           </div>
         </details>
@@ -137,7 +137,7 @@
           <summary>برند <%- icon('chevron-down','icon-sm text-ink-400 transition') %></summary>
           <div class="mt-2">
             <% facets.brands.forEach(function (b) { %>
-            <label class="f-check"><input class="check" type="checkbox" name="brand" value="<%= b.key %>" <%= sel(fl.brands, b.key) ? 'checked' : '' %>> <span class="flex-1"><%= b.name %></span><span class="text-2xs text-ink-400"><%= fa(b.count) %></span></label>
+            <label class="f-check"><input class="check" type="checkbox" name="brand" value="<%= b.key %>" <%= sel(fl.brands, b.key) ? 'checked' : '' %>> <span class="flex-1"><%= b.name %></span><span class="text-2xs text-ink-500"><%= fa(b.count) %></span></label>
             <% }) %>
           </div>
         </details>

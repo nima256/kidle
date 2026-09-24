@@ -165,7 +165,7 @@
     var h = items.map(function (r) {
       return '<article class="card p-3.5"><div class="flex items-center justify-between gap-2"><p class="text-sm font-bold">' + K.esc(r.authorName || "مشتری کیدل") +
         (r.verifiedBuyer ? ' <span class="badge badge-success ms-1">' + K.icon("check", "icon-sm") + "خریدار</span>" : "") + "</p>" + stars(r.rating) + "</div>" +
-        '<p class="mt-2 text-sm leading-7 whitespace-pre-line text-ink-800">' + K.esc(r.text) + '</p><p class="mt-1 text-2xs text-ink-400">' + new Date(r.createdAt).toLocaleDateString("fa-IR") + "</p></article>";
+        '<p class="mt-2 text-sm leading-7 whitespace-pre-line text-ink-800">' + K.esc(r.text) + '</p><p class="mt-1 text-2xs text-ink-500">' + new Date(r.createdAt).toLocaleDateString("fa-IR") + "</p></article>";
     }).join("");
     if (append) list.insertAdjacentHTML("beforeend", h); else list.innerHTML = h;
   }

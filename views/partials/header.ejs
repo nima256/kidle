@@ -40,7 +40,7 @@
       <label for="header-search" class="sr-only">جستجوی محصولات</label>
       <input id="header-search" name="q" type="search" autocomplete="off" placeholder="جستجوی لباس، سایز، دسته…" class="input h-10 !min-h-10 rounded-full !border-ink-200 bg-ink-50 ps-10 !text-sm" data-search-input value="<%= locals.query && query.q ? query.q : '' %>">
       <span class="pointer-events-none absolute inset-y-0 start-3 flex items-center text-ink-400"><%- icon('search','icon-sm') %></span>
-      <div class="absolute inset-x-0 top-full z-50 mt-1 hidden overflow-hidden rounded-lg border border-ink-200 bg-white shadow-lg" data-search-results role="listbox"></div>
+      <div class="absolute inset-x-0 top-full z-50 mt-1 hidden overflow-hidden rounded-lg border border-ink-200 bg-white shadow-lg" data-search-results aria-live="polite"></div>
     </form>
 
     <div class="ms-auto flex items-center gap-0.5 md:ms-0">

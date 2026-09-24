@@ -30,7 +30,7 @@
       </div>
       <% }) %>
     </div>
-    <div class="mt-1 flex justify-between text-2xs text-ink-400"><span><%= chart[0].label %></span><span><%= chart[chart.length - 1].label %></span></div>
+    <div class="mt-1 flex justify-between text-2xs text-ink-500"><span><%= chart[0].label %></span><span><%= chart[chart.length - 1].label %></span></div>
   </section>
   <section class="card card-pad" aria-labelledby="ls-t">
     <div class="mb-2 flex items-center justify-between"><h2 id="ls-t" class="text-sm font-bold">رو به اتمام</h2><a class="link text-xs" href="/admin/inventory?f=low">همه</a></div>
@@ -53,7 +53,7 @@
   <section class="card card-pad" aria-labelledby="ac-t">
     <h2 id="ac-t" class="mb-2 text-sm font-bold">فعالیت‌های اخیر مدیران</h2>
     <ul class="space-y-2 text-xs">
-      <% actions.forEach(function (a) { %><li class="flex gap-2"><span class="mt-1.5 size-1.5 shrink-0 rounded-full bg-brand-400"></span><span><b><%= a.adminName %></b> — <%= actionLabels[a.action] || a.action %>: <%= a.targetName %><span class="block text-2xs text-ink-400"><%= faDate(a._id.getTimestamp(), { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }) %></span></span></li><% }) %>
+      <% actions.forEach(function (a) { %><li class="flex gap-2"><span class="mt-1.5 size-1.5 shrink-0 rounded-full bg-brand-400"></span><span><b><%= a.adminName %></b> — <%= actionLabels[a.action] || a.action %>: <%= a.targetName %><span class="block text-2xs text-ink-500"><%= faDate(a._id.getTimestamp(), { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }) %></span></span></li><% }) %>
     </ul>
   </section>
 </div>

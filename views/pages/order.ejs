@@ -17,7 +17,7 @@
     <% steps.forEach(function (s, i) { var done = i <= idx; %>
     <li class="relative flex flex-col items-center gap-1.5 text-center text-2xs <%= done ? 'font-bold text-brand-700' : 'text-ink-500' %>" <%- i === idx ? 'aria-current="step"' : '' %>>
       <% if (i > 0) { %><span class="absolute top-3.5 end-1/2 h-0.5 w-full -z-0 <%= done ? 'bg-brand-400' : 'bg-ink-200' %>" aria-hidden="true"></span><% } %>
-      <span class="relative z-10 flex size-7 items-center justify-center rounded-full <%= done ? 'bg-brand-500 text-white' : 'bg-ink-100 text-ink-400' %>"><%- icon(done ? 'check' : 'clock', 'icon-sm') %></span><%= s[1] %>
+      <span class="relative z-10 flex size-7 items-center justify-center rounded-full <%= done ? 'bg-brand-600 text-white' : 'bg-ink-100 text-ink-400' %>"><%- icon(done ? 'check' : 'clock', 'icon-sm') %></span><%= s[1] %>
     </li>
     <% }) %>
   </ol>
@@ -36,7 +36,7 @@
     <ul class="divide-y divide-ink-100 px-4">
       <% order.products.forEach(function (it) { var pr = it.product; %>
       <li class="flex gap-3 py-3">
-        <% if (pr && pr.images && pr.images[0]) { %><a href="/productDetails/<%= pr.slug %>" class="w-14 shrink-0"><img src="<%= pr.images[0].url %>" alt="" class="aspect-[4/5] w-full rounded-md object-cover" loading="lazy"></a><% } %>
+        <% if (pr && pr.images && pr.images[0]) { %><a href="/productDetails/<%= pr.slug %>" class="w-14 shrink-0" tabindex="-1" aria-hidden="true"><img src="<%= pr.images[0].url %>" alt="" class="aspect-[4/5] w-full rounded-md object-cover" loading="lazy"></a><% } %>
         <div class="min-w-0 flex-1 text-sm">
           <% if (pr && pr.slug) { %><a class="font-semibold hover:text-brand-700" href="/productDetails/<%= pr.slug %>"><%= it.nameAtPurchase %></a><% } else { %><span class="font-semibold"><%= it.nameAtPurchase %></span><% } %>
           <p class="text-xs text-ink-500"><%= [it.selectedSize ? 'سایز ' + it.selectedSize : '', it.selectedColor, fa(it.quantity) + ' عدد'].filter(Boolean).join(' · ') %></p>

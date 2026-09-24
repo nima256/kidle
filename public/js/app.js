@@ -223,7 +223,7 @@
         h += "</div>";
       }
       data.products.forEach(function (p) {
-        h += '<a role="option" class="flex items-center gap-3 px-3 py-2 hover:bg-brand-50 focus:bg-brand-50 focus:outline-none" href="' + K.esc(p.url) + '">' +
+        h += '<a class="flex items-center gap-3 px-3 py-2 hover:bg-brand-50 focus:bg-brand-50 focus:outline-none" href="' + K.esc(p.url) + '">' +
           (p.image ? '<img src="' + K.esc(p.image) + '" alt="" width="44" height="55" class="h-[3.4rem] w-11 shrink-0 rounded-md bg-ink-100 object-cover" loading="lazy">' : '<span class="h-[3.4rem] w-11 shrink-0 rounded-md bg-ink-100"></span>') +
           '<span class="min-w-0 flex-1"><span class="block truncate text-sm font-medium">' + K.esc(p.name) + '</span><span class="text-xs ' + (p.inStock ? "text-ink-600" : "text-ink-400") + '">' + (p.inStock ? K.price(p.price) + " تومان" : "ناموجود") + "</span></span></a>";
       });
