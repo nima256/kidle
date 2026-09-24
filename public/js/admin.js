@@ -49,9 +49,9 @@
     var first = null;
     Object.keys(errors || {}).forEach(function (k) {
       var p = $('[data-err="' + k + '"]', form);
-      if (p) { p.hidden = false; p.textContent = errors[k]; }
+      if (p) { p.hidden = false; p.textContent = errors[k]; p.id = p.id || "err-" + k; p.setAttribute("role", "alert"); }
       var input = form.querySelector('[name="' + k + '"], [name="' + k + '[]"]');
-      if (input) { input.setAttribute("aria-invalid", "true"); if (!first) first = input; }
+      if (input) { input.setAttribute("aria-invalid", "true"); if (p) input.setAttribute("aria-describedby", p.id); if (!first) first = input; }
     });
     if (first) first.scrollIntoView({ behavior: "smooth", block: "center" });
   }
@@ -66,6 +66,8 @@
     K.api(form.getAttribute("data-api"), { method: form.getAttribute("data-method") || "POST", body: body })
       .then(function (d) {
         showErrors(form, {});
+        K.markClean(form);
+        form.dataset.saved = "1";
         K.toast(d.message || "ذخیره شد", "success");
         form.dispatchEvent(new CustomEvent("saved", { detail: d }));
         if (d.redirect && form.hasAttribute("data-follow")) location.href = d.redirect;
@@ -173,11 +175,11 @@
     if (hidden) { var t = $("[data-image]", up); hidden.value = t ? t.getAttribute("data-url") : ""; }
   }
   function thumb(url, filename, alt, single) {
-    return '<div class="relative w-28 shrink-0 overflow-hidden rounded-md border border-ink-200 bg-white" data-image data-url="' + K.esc(url) + '" data-filename="' + K.esc(filename) + '">' +
+    return '<div class="relative w-28 shrink-0 overflow-hidden rounded-md border border-ink-200 bg-surface" data-image data-url="' + K.esc(url) + '" data-filename="' + K.esc(filename) + '">' +
       '<img src="' + K.esc(url) + '" alt="" class="aspect-[4/5] w-full object-cover">' +
       (single ? "" : '<input class="w-full border-t border-ink-100 px-1.5 py-1 text-2xs outline-none" placeholder="متن جایگزین (alt)" value="' + K.esc(alt) + '">') +
-      '<div class="absolute top-1 start-1 flex gap-1">' + (single ? "" : '<button type="button" class="rounded bg-white/90 px-1.5 text-2xs font-bold shadow-xs" data-img-first title="تصویر اصلی">اصلی</button>') +
-      '<button type="button" class="rounded bg-white/90 px-1 text-danger-600 shadow-xs" data-img-remove aria-label="حذف تصویر">' + K.icon("x", "icon-sm") + "</button></div></div>";
+      '<div class="absolute top-1 start-1 flex gap-1">' + (single ? "" : '<button type="button" class="rounded bg-surface/90 px-1.5 text-2xs font-bold shadow-xs" data-img-first title="تصویر اصلی">اصلی</button>') +
+      '<button type="button" class="rounded bg-surface/90 px-1 text-danger-600 shadow-xs" data-img-remove aria-label="حذف تصویر">' + K.icon("x", "icon-sm") + "</button></div></div>";
   }
   K.thumb = thumb;
 
@@ -200,6 +202,15 @@
 
   document.addEventListener("change", function (e) {
     if (e.target.matches("[data-autosubmit]")) e.target.form.submit();
+  });
+
+  // Long editor forms: warn before leaving with unsaved changes (UI/UX Pro Max: form data loss).
+  $$("form[data-unsaved-warning]").forEach(function (f) {
+    var dirty = false;
+    f.addEventListener("input", function () { dirty = true; delete f.dataset.saved; });
+    f.addEventListener("change", function () { dirty = true; delete f.dataset.saved; });
+    f.addEventListener("saved", function () { dirty = false; });
+    window.addEventListener("beforeunload", function (e) { if (dirty && !f.dataset.saved) { e.preventDefault(); e.returnValue = ""; } });
   });
 
   /* ── Inline stock adjust (inventory page) ── */

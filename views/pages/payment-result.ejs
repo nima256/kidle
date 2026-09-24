@@ -2,11 +2,11 @@
 <div class="container-app max-w-xl py-6 sm:py-10">
   <% if (state === 'success') { %>
   <div class="card overflow-hidden">
-    <div class="bg-gradient-to-b from-mint-50 to-white px-5 pt-7 pb-4 text-center">
+    <div class="bg-gradient-to-b from-mint-50 to-surface px-5 pt-7 pb-4 text-center">
       <span class="mx-auto flex size-16 items-center justify-center rounded-full bg-mint-100 text-mint-700"><%- icon('check','size-8') %></span>
       <h1 class="mt-3 text-xl font-extrabold">سفارش شما ثبت شد!</h1>
       <p class="mt-1 text-sm text-ink-600">پرداخت با موفقیت انجام شد. از خرید شما ممنونیم 💗</p>
-      <p class="mt-3 inline-flex items-center gap-2 rounded-full bg-white px-3.5 py-1.5 text-sm shadow-xs">شماره سفارش: <b class="ltr tracking-wide"><%= order.OrderNum %></b></p>
+      <p class="mt-3 inline-flex items-center gap-2 rounded-full bg-surface px-3.5 py-1.5 text-sm shadow-xs">شماره سفارش: <b class="ltr tracking-wide"><%= order.OrderNum %></b></p>
     </div>
     <div class="space-y-4 p-5">
       <dl class="grid grid-cols-2 gap-3 text-sm">

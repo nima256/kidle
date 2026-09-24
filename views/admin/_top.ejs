@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="fa" dir="rtl">
+<html lang="fa" dir="rtl" class="theme-light">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -10,12 +10,13 @@
 <% if (locals.richEditor) { %><link rel="stylesheet" href="/vendor/quill/quill.snow.css"><% } %>
 </head>
 <body class="bg-ink-50">
+<a href="#main" class="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:right-2 focus:z-[100] btn btn-dark">رفتن به محتوای اصلی</a>
 <div class="lg:grid lg:min-h-dvh lg:grid-cols-[15rem_1fr]">
   <div class="drawer-overlay" data-drawer-overlay hidden></div>
   <aside class="drawer admin-drawer !w-64 lg:border-e lg:border-ink-200" id="menu-drawer" aria-label="منوی مدیریت" data-persistent>
     <div class="flex h-14 items-center gap-2 border-b border-ink-100 px-4">
       <svg viewBox="0 0 64 64" class="size-8" aria-hidden="true"><rect width="64" height="64" rx="18" fill="#e84a82"/><path d="M23 15h18l3 8 9 4.5-5 9-4-2V50H20V34.5l-4 2-5-9 9-4.5 3-8Z" fill="#fff"/></svg>
-      <span class="font-black text-brand-600">کیدل</span><span class="text-xs text-ink-500">پنل مدیریت</span>
+      <span class="font-black text-brand-700">کیدل</span><span class="text-xs text-ink-500">پنل مدیریت</span>
       <button type="button" class="btn-icon ms-auto lg:hidden" data-close-drawer aria-label="بستن منو"><%- icon('x') %></button>
     </div>
     <nav class="flex-1 overflow-y-auto p-2" aria-label="بخش‌ها">
@@ -32,7 +33,7 @@
     </div>
   </aside>
   <div class="min-w-0">
-    <header class="sticky top-0 z-40 flex h-14 items-center gap-2 border-b border-ink-200 bg-white/95 px-3 backdrop-blur lg:px-6">
+    <header class="sticky top-0 z-40 flex h-14 items-center gap-2 border-b border-ink-200 bg-surface/95 px-3 backdrop-blur lg:px-6">
       <button type="button" class="btn-icon lg:hidden" data-open-drawer aria-label="منو"><%- icon('menu') %></button>
       <h1 class="truncate text-base font-bold"><%= title %></h1>
       <div class="ms-auto flex items-center gap-2"><%- locals.headerActions || '' %></div>

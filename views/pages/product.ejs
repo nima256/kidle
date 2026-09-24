@@ -19,7 +19,7 @@
   if (reviewCount > 0 && p.rating > 0) ld.aggregateRating = { '@type': 'AggregateRating', ratingValue: p.rating, reviewCount: reviewCount };
   locals.jsonld = ld;
   locals.scripts = ['product'];
-  locals.preloadImage = images[0] && images[0].url;
+  locals.preloadImage = images[0] && thumb(images[0].url, 800);
   var hasColors = p.colors && p.colors.some(function (c) { return c.name; });
   var hasSizes = p.sizes && p.sizes.some(function (s) { return s.size; });
 %>
@@ -37,7 +37,7 @@
       <div class="hidden flex-col gap-2 lg:flex" role="tablist" aria-label="انتخاب تصویر">
         <% images.forEach(function (im, i) { %>
         <button type="button" role="tab" class="w-16 overflow-hidden rounded-md border-2 <%= i === 0 ? 'border-brand-500' : 'border-transparent' %> bg-ink-100" data-thumb="<%= i %>" aria-label="تصویر <%= fa(i + 1) %>" aria-selected="<%= i === 0 %>">
-          <img src="<%= im.url %>" alt="" class="aspect-[4/5] w-full object-cover" loading="lazy">
+          <img src="<%= thumb(im.url, 400) %>" alt="" class="aspect-[4/5] w-full object-cover" loading="lazy">
         </button>
         <% }) %>
       </div>
@@ -46,7 +46,7 @@
         <div class="scroller !gap-0 -mx-4 rounded-none sm:mx-0 sm:rounded-xl bg-ink-100 !pb-0" data-gallery tabindex="0" aria-roledescription="اسلایدر">
           <% if (images.length) { images.forEach(function (im, i) { %>
           <button type="button" class="relative w-full shrink-0 cursor-zoom-in" data-zoom="<%= i %>" aria-label="بزرگ‌نمایی تصویر <%= fa(i + 1) %>">
-            <img src="<%= im.url %>" alt="<%= im.alt || (p.name + (i ? ' — تصویر ' + (i + 1) : '')) %>" class="aspect-[4/5] w-full object-cover" width="800" height="1000" <%- i === 0 ? 'fetchpriority="high"' : 'loading="lazy"' %> decoding="async">
+            <img src="<%= thumb(im.url, 800) %>" <% if (srcset(im.url)) { %>srcset="<%= srcset(im.url) %>" sizes="(min-width: 1024px) 45vw, (min-width: 768px) 50vw, 100vw"<% } %> alt="<%= im.alt || (p.name + (i ? ' — تصویر ' + (i + 1) : '')) %>" class="aspect-[4/5] w-full object-cover" width="800" height="1000" <%- i === 0 ? 'fetchpriority="high"' : 'loading="lazy"' %> decoding="async">
           </button>
           <% }) } else { %>
           <div class="flex aspect-[4/5] w-full items-center justify-center text-brand-200"><%- icon('hanger','size-20') %></div>
@@ -58,10 +58,10 @@
         </div>
         <% if (images.length > 1) { %>
         <div class="absolute inset-x-0 bottom-3 flex justify-center gap-1.5" aria-hidden="true">
-          <% images.forEach(function (im, i) { %><span class="h-1.5 rounded-full bg-white/70 shadow-xs transition-all <%= i === 0 ? 'w-4 !bg-brand-500' : 'w-1.5' %>" data-dot="<%= i %>"></span><% }) %>
+          <% images.forEach(function (im, i) { %><span class="h-1.5 rounded-full bg-surface/70 shadow-xs transition-all <%= i === 0 ? 'w-4 !bg-brand-500' : 'w-1.5' %>" data-dot="<%= i %>"></span><% }) %>
         </div>
-        <button type="button" class="btn-icon absolute top-1/2 start-2 hidden -translate-y-1/2 bg-white/90 shadow-sm md:inline-flex" data-gallery-prev aria-label="تصویر قبلی"><%- icon('chevron-right') %></button>
-        <button type="button" class="btn-icon absolute top-1/2 end-2 hidden -translate-y-1/2 bg-white/90 shadow-sm md:inline-flex" data-gallery-next aria-label="تصویر بعدی"><%- icon('chevron-left') %></button>
+        <button type="button" class="btn-icon absolute top-1/2 start-2 hidden -translate-y-1/2 bg-surface/90 shadow-sm md:inline-flex" data-gallery-prev aria-label="تصویر قبلی"><%- icon('chevron-right') %></button>
+        <button type="button" class="btn-icon absolute top-1/2 end-2 hidden -translate-y-1/2 bg-surface/90 shadow-sm md:inline-flex" data-gallery-next aria-label="تصویر بعدی"><%- icon('chevron-left') %></button>
         <% } %>
       </div>
     </div>
@@ -69,7 +69,7 @@
 
   <!-- Buy box -->
   <section aria-labelledby="p-title">
-    <% if (p.brand && p.brand.name) { %><p class="text-xs font-semibold text-brand-600"><%= p.brand.name %></p><% } %>
+    <% if (p.brand && p.brand.name) { %><p class="text-xs font-semibold text-brand-700"><%= p.brand.name %></p><% } %>
     <h1 id="p-title" class="mt-0.5 text-xl leading-9 font-extrabold sm:text-2xl"><%= p.name %></h1>
     <% if (p.englishName) { %><p class="ltr text-end text-xs text-ink-500"><%= p.englishName %></p><% } %>
     <div class="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-ink-600">
@@ -151,7 +151,7 @@
       <% } %>
     </form>
 
-    <ul class="mt-5 divide-y divide-ink-100 rounded-lg border border-ink-200 bg-white text-sm">
+    <ul class="mt-5 divide-y divide-ink-100 rounded-lg border border-ink-200 bg-surface text-sm">
       <li class="flex items-start gap-3 p-3"><%- icon('truck','mt-0.5 text-brand-500') %><div><b class="block text-ink-900">ارسال پس‌کرایه به سراسر ایران</b><span class="text-xs text-ink-600"><%= settings.dispatchTime %>. هزینه ارسال هنگام تحویل پرداخت می‌شود.</span></div></li>
       <li class="flex items-start gap-3 p-3"><%- icon('refresh','mt-0.5 text-brand-500') %><div><b class="block text-ink-900">۷ روز ضمانت بازگشت</b><span class="text-xs text-ink-600">برای کالای معیوب یا مغایر با توضیحات.</span></div></li>
       <li class="flex items-start gap-3 p-3"><%- icon('lock','mt-0.5 text-brand-500') %><div><b class="block text-ink-900">پرداخت امن</b><span class="text-xs text-ink-600">از طریق درگاه رسمی زرین‌پال.</span></div></li>
@@ -175,7 +175,7 @@
     <% if ((p.specifications && p.specifications.length) || hasSizes) { %>
     <section aria-labelledby="spec-title">
       <h2 id="spec-title" class="section-title mb-3">مشخصات</h2>
-      <dl class="overflow-hidden rounded-lg border border-ink-200 bg-white text-sm">
+      <dl class="overflow-hidden rounded-lg border border-ink-200 bg-surface text-sm">
         <% (p.specifications || []).forEach(function (s) { %>
         <div class="grid grid-cols-[8rem_1fr] border-b border-ink-100 last:border-0"><dt class="bg-ink-50 px-3 py-2.5 text-ink-600"><%= s.key %></dt><dd class="px-3 py-2.5 text-ink-900"><%= s.value %></dd></div>
         <% }) %>
@@ -217,7 +217,6 @@
     <button type="button" class="btn btn-primary btn-lg flex-1" data-add-mobile><span class="spinner"></span><span class="btn-label-idle flex items-center gap-1.5"><%- icon('bag','icon-sm') %> افزودن به سبد</span></button>
   </div>
 </div>
-<div class="h-20 md:hidden" aria-hidden="true"></div>
 <% } %>
 
 <!-- Size guide -->
@@ -247,8 +246,8 @@
 </div>
 
 <!-- Image zoom -->
-<div class="overlay !items-center !bg-ink-950/90 !p-0" id="zoom" role="dialog" aria-modal="true" aria-label="نمایش بزرگ تصویر" hidden data-overlay>
-  <button type="button" class="btn-icon absolute top-3 end-3 z-10 bg-white/90" data-close-overlay aria-label="بستن"><%- icon('x') %></button>
+<div class="overlay !items-center !bg-night-950/90 !p-0" id="zoom" role="dialog" aria-modal="true" aria-label="نمایش بزرگ تصویر" hidden data-overlay>
+  <button type="button" class="btn-icon absolute top-3 end-3 z-10 bg-surface/90" data-close-overlay aria-label="بستن"><%- icon('x') %></button>
   <div class="scroller !gap-0 h-full w-full !pb-0" data-zoom-track>
     <% images.forEach(function (im) { %>
     <div class="flex h-full w-full shrink-0 items-center justify-center overflow-auto" style="touch-action: pinch-zoom pan-x pan-y">
@@ -260,7 +259,7 @@
 
 <!-- Review form -->
 <div class="overlay" id="review-sheet" role="dialog" aria-modal="true" aria-labelledby="rv-title" hidden data-overlay>
-  <form class="sheet" data-review-form novalidate>
+  <form class="sheet" data-review-form data-dirty-guard novalidate>
     <div class="sheet-grip"></div>
     <div class="sheet-head"><h2 id="rv-title" class="sheet-title">نظر شما درباره این محصول</h2><button type="button" class="btn-icon" data-close-overlay aria-label="بستن"><%- icon('x') %></button></div>
     <div class="sheet-body space-y-4">

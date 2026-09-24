@@ -33,13 +33,13 @@
         <div class="grid gap-3 sm:grid-cols-2">
           <div class="field">
             <label class="label" for="recipientName">نام و نام خانوادگی <span class="req">*</span></label>
-            <input class="input" id="recipientName" name="recipientName" autocomplete="name" value="<%= P.recipientName %>" required maxlength="60" enterkeyhint="next">
-            <p class="field-error" data-err="recipientName" hidden></p>
+            <input class="input" id="recipientName" name="recipientName" aria-describedby="err-recipientName" autocomplete="name" value="<%= P.recipientName %>" required maxlength="60" enterkeyhint="next">
+            <p class="field-error" id="err-recipientName" data-err="recipientName" role="alert" hidden></p>
           </div>
           <div class="field">
             <label class="label" for="recipientPhone">موبایل گیرنده <span class="req">*</span></label>
-            <input class="input ltr text-end" id="recipientPhone" name="recipientPhone" type="tel" inputmode="numeric" autocomplete="tel" value="<%= P.recipientPhone %>" required maxlength="14" enterkeyhint="next">
-            <p class="field-error" data-err="recipientPhone" hidden></p>
+            <input class="input ltr text-end" id="recipientPhone" name="recipientPhone" aria-describedby="err-recipientPhone" type="tel" inputmode="numeric" autocomplete="tel" value="<%= P.recipientPhone %>" required maxlength="14" enterkeyhint="next">
+            <p class="field-error" id="err-recipientPhone" data-err="recipientPhone" role="alert" hidden></p>
           </div>
         </div>
       </section>
@@ -48,7 +48,7 @@
         <h2 id="sec-address" class="mb-3 flex items-center gap-2 text-base font-bold"><span class="flex size-6 items-center justify-center rounded-full bg-brand-50 text-xs text-brand-700">۲</span> آدرس</h2>
         <% if (hasSaved) { %>
         <div class="mb-3 flex items-start gap-3 rounded-lg border-2 border-brand-400 bg-brand-50/50 p-3" data-saved-address>
-          <%- icon('pin','mt-0.5 text-brand-600') %>
+          <%- icon('pin','mt-0.5 text-brand-700') %>
           <div class="min-w-0 flex-1 text-sm leading-7">
             <b><%= P.province %>، <%= P.city %></b>
             <p class="text-ink-700"><%= P.address %><%= P.postcode ? ' — کد پستی ' + P.postcode : '' %></p>
@@ -59,27 +59,27 @@
         <div class="grid gap-3 sm:grid-cols-2" data-address-fields <%= hasSaved ? 'hidden' : '' %>>
           <div class="field">
             <label class="label" for="province">استان <span class="req">*</span></label>
-            <select class="select" id="province" name="province" required autocomplete="address-level1">
+            <select class="select" id="province" name="province" aria-describedby="err-province" required autocomplete="address-level1">
               <option value="">انتخاب استان</option>
               <% Object.keys(provinces).forEach(function (pv) { %><option value="<%= pv %>" <%= P.province === pv ? 'selected' : '' %>><%= pv %></option><% }) %>
             </select>
-            <p class="field-error" data-err="province" hidden></p>
+            <p class="field-error" id="err-province" data-err="province" role="alert" hidden></p>
           </div>
           <div class="field">
             <label class="label" for="city">شهر <span class="req">*</span></label>
-            <input class="input" id="city" name="city" list="city-list" value="<%= P.city %>" required maxlength="40" autocomplete="address-level2" placeholder="نام شهر">
+            <input class="input" id="city" name="city" aria-describedby="err-city" list="city-list" value="<%= P.city %>" required maxlength="40" autocomplete="address-level2" placeholder="نام شهر">
             <datalist id="city-list"></datalist>
-            <p class="field-error" data-err="city" hidden></p>
+            <p class="field-error" id="err-city" data-err="city" role="alert" hidden></p>
           </div>
           <div class="field sm:col-span-2">
             <label class="label" for="address">آدرس دقیق <span class="req">*</span></label>
-            <textarea class="textarea !min-h-20" id="address" name="address" rows="2" required maxlength="500" autocomplete="street-address" placeholder="خیابان، کوچه، پلاک، واحد"><%= P.address %></textarea>
-            <p class="field-error" data-err="address" hidden></p>
+            <textarea class="textarea !min-h-20" id="address" name="address" aria-describedby="err-address" rows="2" required maxlength="500" autocomplete="street-address" placeholder="خیابان، کوچه، پلاک، واحد"><%= P.address %></textarea>
+            <p class="field-error" id="err-address" data-err="address" role="alert" hidden></p>
           </div>
           <div class="field">
             <label class="label" for="postcode">کد پستی <span class="text-xs font-normal text-ink-500">(اختیاری)</span></label>
-            <input class="input ltr text-end" id="postcode" name="postcode" inputmode="numeric" maxlength="10" autocomplete="postal-code" value="<%= P.postcode %>" placeholder="۱۰ رقم">
-            <p class="field-error" data-err="postcode" hidden></p>
+            <input class="input ltr text-end" id="postcode" name="postcode" aria-describedby="err-postcode" inputmode="numeric" maxlength="10" autocomplete="postal-code" value="<%= P.postcode %>" placeholder="۱۰ رقم">
+            <p class="field-error" id="err-postcode" data-err="postcode" role="alert" hidden></p>
           </div>
         </div>
       </section>
@@ -92,9 +92,9 @@
             <div class="text-sm leading-6"><b>ارسال پس‌کرایه</b><p class="text-xs text-ink-600"><%= settings.shippingNote %> <%= settings.dispatchTime %>.</p></div>
           </div>
           <div class="flex items-start gap-3 rounded-lg border-2 border-brand-400 bg-brand-50/40 p-3">
-            <span class="flex size-10 shrink-0 items-center justify-center rounded-lg bg-white text-brand-600"><%- icon('card') %></span>
+            <span class="flex size-10 shrink-0 items-center justify-center rounded-lg bg-surface text-brand-700"><%- icon('card') %></span>
             <div class="text-sm leading-6"><b>پرداخت آنلاین مبلغ کالاها</b><p class="text-xs text-ink-600">با همه کارت‌های عضو شتاب، از طریق درگاه امن زرین‌پال.</p></div>
-            <%- icon('check-circle','ms-auto text-brand-600') %>
+            <%- icon('check-circle','ms-auto text-brand-700') %>
           </div>
         </div>
       </section>

@@ -38,7 +38,7 @@ router.get(
       products: products.map((p) => ({
         name: p.name,
         url: `/productDetails/${p.slug}`,
-        image: p.images?.[0]?.url || "",
+        image: require("../../lib/images").thumb(p.images?.[0]?.url || "", 400),
         price: p.offerPrice && p.offerPrice < p.price ? p.offerPrice : p.price,
         inStock: p.countInStock > 0,
       })),

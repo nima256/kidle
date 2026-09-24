@@ -16,7 +16,7 @@
       <% items.forEach(function (p) { %>
       <tr>
         <td><a href="/admin/products/<%= p._id %>/edit" class="flex items-center gap-2.5 font-medium hover:text-brand-700">
-          <span class="w-10 shrink-0 overflow-hidden rounded bg-ink-100"><% if (img(p)) { %><img src="<%= img(p) %>" alt="" class="aspect-[4/5] w-full object-cover" loading="lazy"><% } %></span>
+          <span class="w-10 shrink-0 overflow-hidden rounded bg-ink-100"><% if (img(p)) { %><img src="<%= thumb(img(p), 400) %>" alt="" class="aspect-[4/5] w-full object-cover" loading="lazy"><% } %></span>
           <span><%= p.name %><span class="block text-2xs text-ink-500"><%= (p.category || []).map(function (c) { return c.name; }).join('، ') %></span></span></a></td>
         <td class="whitespace-nowrap"><% if (discountPercent(p)) { %><span class="price-old block"><%= price(p.price) %></span><% } %><%= price(finalPrice(p)) %></td>
         <td><span class="badge <%= p.countInStock <= 0 ? 'badge-danger' : p.countInStock <= settings.lowStockThreshold ? 'badge-low' : 'badge-neutral' %>"><%= fa(p.countInStock) %></span></td>

@@ -115,3 +115,11 @@ information* → keyboard-focusable, labelled admin chart bars; pointer cursor o
 the database has no pink-led palette, so the existing pink system is a stated fallback) and the
 Cormorant/Montserrat pairing (no Persian glyphs — Vazirmatn kept). The style's "48 px gaps / 32 px+
 type" was not applied because the brief asks for denser layouts.
+
+## 7. Whole-project UI/UX Pro Max pass
+Design system persisted to `design-system/kidle/MASTER.md` (skill format, brand-adapted). Added: system-driven
+dark theme (same tokens, tonal dark values; admin opts out), Claymorphism depth tokens and press feedback, shared
+motion tokens (exit faster than enter), 16px body / 12px floor type scale, responsive image variants, consistent
+bottom navigation on every storefront page (buy bar sits above it), separated logout, cart Undo, live cart
+announcements, recent searches, unsaved-changes guards, password visibility toggle, request timeouts, chart
+table alternative, linked field errors (`aria-describedby`), long-token wrapping, focus-not-obscured padding.

@@ -16,7 +16,7 @@
   </tbody></table>
 </div>
 <div class="overlay" id="dc-sheet" role="dialog" aria-modal="true" aria-labelledby="dc-t" hidden data-overlay>
-  <form class="sheet sheet-lg" data-api="" data-reload novalidate>
+  <form class="sheet sheet-lg" data-api="" data-reload data-dirty-guard novalidate>
     <div class="sheet-head"><h2 id="dc-t" class="sheet-title" data-sheet-title>کد تخفیف</h2><button type="button" class="btn-icon" data-close-overlay aria-label="بستن"><%- icon('x') %></button></div>
     <div class="sheet-body grid gap-3 sm:grid-cols-2">
       <div class="field"><label class="label" for="d-code">کد <span class="req">*</span></label><input class="input ltr uppercase" id="d-code" name="code" maxlength="20"><p class="field-error" data-err="code" hidden></p></div>

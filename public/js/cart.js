@@ -73,9 +73,6 @@
       bar.className = "action-bar lg:hidden";
       bar.setAttribute("data-cart-bar", "");
       document.body.appendChild(bar);
-      document.body.style.paddingBottom = "calc(var(--bottom-nav-h) + 5rem + var(--safe-bottom))";
-      bar.style.bottom = "calc(var(--bottom-nav-h) + var(--safe-bottom))";
-      bar.style.paddingBottom = "0.625rem";
     }
     bar.innerHTML = '<div class="flex items-center gap-3"><div><span class="block text-2xs text-ink-500">مبلغ قابل پرداخت</span><span class="price text-lg leading-6">' + T(cart.payable) + '</span></div><button type="button" class="btn btn-primary btn-lg flex-1" data-checkout ' + (cart.canCheckout ? "" : "disabled") + ">ادامه خرید " + K.icon("arrow-left", "icon-sm") + "</button></div>";
   }
@@ -101,8 +98,21 @@
     }
     if (li && e.target.closest("[data-remove]")) {
       var key = li.getAttribute("data-key");
-      var name = (cart.items.find(function (x) { return x.key === key; }) || {}).name;
-      mutate("DELETE", { key: key }).then(function () { K.toast("«" + name + "» از سبد حذف شد", "info"); });
+      var removed = cart.items.find(function (x) { return x.key === key; }) || {};
+      mutate("DELETE", { key: key }).then(function () {
+        K.toast("«" + removed.name + "» از سبد حذف شد", "info", {
+          duration: 6000,
+          action: {
+            label: "بازگرداندن",
+            onClick: function () {
+              K.api("/api/cart/items", { method: "POST", body: { productId: removed.productId, quantity: removed.quantity, color: removed.selectedColor, size: removed.selectedSize } })
+                .then(function () { return K.api("/api/cart"); })
+                .then(function (d) { cart = d.cart; render(); K.toast("به سبد برگشت", "success"); })
+                .catch(function (err) { K.toast(err.message, "error"); });
+            },
+          },
+        });
+      });
       return;
     }
     if (e.target.closest("[data-remove-discount]")) {

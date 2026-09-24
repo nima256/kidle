@@ -9,7 +9,7 @@
 <%- include('../partials/layout-top') %>
 <style>
   @keyframes swing { 0%,100% { transform: rotate(-2.5deg) } 50% { transform: rotate(2.5deg) } }
-  .hero-swing { animation: swing 5s ease-in-out infinite; transform-box: view-box; }
+  .hero-swing { animation: swing 5s ease-in-out 2; transform-box: view-box; }
 </style>
 
 <section class="container-app pt-3 sm:pt-5" aria-labelledby="hero-title">
@@ -19,8 +19,8 @@
         <%- include('../partials/hero-art', { cls: 'block w-full h-auto max-h-40 xs:max-h-44 md:max-h-none px-2 pt-2 md:p-6' }) %>
       </div>
       <div class="order-2 px-5 pt-1 pb-5 text-center md:order-1 md:py-10 md:ps-10 md:pe-4 md:text-start lg:ps-14">
-        <p class="mb-2 inline-flex items-center gap-1.5 rounded-full bg-white/80 px-3 py-1 text-xs font-bold text-brand-700 shadow-xs"><%- icon('sparkle','icon-sm') %> کالکشن جدید رسید</p>
-        <h1 id="hero-title" class="text-[1.625rem] leading-tight font-black text-ink-950 sm:text-3xl lg:text-4xl">لباس‌هایی به نرمیِ <span class="text-brand-600">کودکی</span></h1>
+        <p class="mb-2 inline-flex items-center gap-1.5 rounded-full bg-surface/80 px-3 py-1 text-xs font-bold text-brand-700 shadow-xs"><%- icon('sparkle','icon-sm') %> کالکشن جدید رسید</p>
+        <h1 id="hero-title" class="text-[1.625rem] leading-tight font-black text-ink-950 sm:text-3xl lg:text-4xl">لباس‌هایی به نرمیِ <span class="text-brand-700">کودکی</span></h1>
         <p class="mx-auto mt-2 max-w-md text-sm leading-7 text-ink-700 md:mx-0 sm:text-base">از نوزادی تا نوجوانی؛ پارچه‌های نرم، رنگ‌های شاد و سایزبندی دقیق — با پرداخت امن و ارسال به سراسر ایران.</p>
         <div class="mt-4 flex justify-center gap-2 md:justify-start">
           <a href="/shop" class="btn btn-primary btn-lg">خرید لباس‌ها <%- icon('arrow-left','icon-sm') %></a>
@@ -49,9 +49,9 @@
     %>
     <li class="w-[5.75rem] shrink-0 sm:w-auto">
       <a href="/category/<%= c.slug %>" class="group flex flex-col items-center gap-1.5 text-center">
-        <span class="relative flex aspect-square w-full items-center justify-center overflow-hidden rounded-2xl transition group-hover:-translate-y-0.5 group-hover:shadow-md" style="background: <%= bg %>">
+        <span class="tile relative flex aspect-square w-full items-center justify-center overflow-hidden rounded-2xl transition group-hover:-translate-y-0.5" style="--tile: <%= bg %>">
           <% if (image) { %><img src="<%= image %>" alt="" loading="lazy" width="200" height="200" class="size-full object-cover">
-          <% } else { %><span class="flex size-[58%] items-center justify-center rounded-full bg-white/70 text-brand-700 shadow-xs"><%- icon(catIcon(c),'size-[55%] !stroke-[1.6]') %></span><% } %>
+          <% } else { %><span class="flex size-[58%] items-center justify-center rounded-full bg-surface/70 text-brand-700 shadow-xs"><%- icon(catIcon(c),'size-[55%] !stroke-[1.6]') %></span><% } %>
         </span>
         <span class="line-clamp-1 text-[0.8125rem] font-bold text-ink-900 group-hover:text-brand-700"><%= c.name %></span>
         <span class="-mt-1.5 text-2xs text-ink-500"><%= fa(c.productCount) %> محصول</span>
@@ -80,23 +80,23 @@
 
 <% rail('new-title', 'تازه‌ها', 'جدیدترین لباس‌های رسیده', newest, '/shop?sort=newest', false) %>
 <section class="container-app mt-8 grid gap-3 sm:grid-cols-2" aria-label="پیشنهادهای ویژه">
-  <a href="/shop?sale=1&sort=discount" class="group relative flex min-h-36 items-center overflow-hidden rounded-2xl bg-brand-600 p-5 text-white transition hover:bg-brand-700 sm:min-h-44 sm:p-7">
+  <a href="/shop?sale=1&sort=discount" class="group relative flex min-h-36 items-center overflow-hidden rounded-2xl bg-brand-600 p-5 text-white transition hover:bg-brand-press sm:min-h-44 sm:p-7">
     <span class="relative z-10 max-w-[65%]">
-      <span class="text-xs font-bold text-brand-100">تا موجودی هست</span>
+      <span class="text-xs font-bold text-white/85">تا موجودی هست</span>
       <span class="mt-1 block text-xl font-black leading-8 sm:text-2xl">تخفیف‌های این هفته</span>
-      <span class="mt-3 inline-flex items-center gap-1 rounded-full bg-white px-3 py-1.5 text-sm font-bold text-brand-700 transition group-hover:gap-2">دیدن تخفیف‌ها <%- icon('arrow-left','icon-sm') %></span>
+      <span class="mt-3 inline-flex items-center gap-1 rounded-full bg-surface px-3 py-1.5 text-sm font-bold text-brand-700 transition group-hover:gap-2">دیدن تخفیف‌ها <%- icon('arrow-left','icon-sm') %></span>
     </span>
     <span class="absolute -bottom-6 -end-4 size-40 rounded-full bg-brand-500 sm:size-52" aria-hidden="true"></span>
     <span class="absolute end-5 top-1/2 -translate-y-1/2 text-white/90 sm:end-8" aria-hidden="true"><%- icon('tag','size-20 sm:size-24 !stroke-[1.4]') %></span>
   </a>
-  <a href="/shop?sort=newest" class="group relative flex min-h-36 items-center overflow-hidden rounded-2xl bg-butter-400 p-5 text-ink-950 transition hover:bg-[#ffbe3d] sm:min-h-44 sm:p-7">
+  <a href="/shop?sort=newest" class="group relative flex min-h-36 items-center overflow-hidden rounded-2xl bg-butter-400 p-5 text-night-950 transition hover:bg-butter-500 sm:min-h-44 sm:p-7">
     <span class="relative z-10 max-w-[65%]">
-      <span class="text-xs font-bold text-butter-700">تازه رسیده</span>
+      <span class="text-xs font-bold text-night-800">تازه رسیده</span>
       <span class="mt-1 block text-xl font-black leading-8 sm:text-2xl">کالکشن جدید فصل</span>
-      <span class="mt-3 inline-flex items-center gap-1 rounded-full bg-ink-950 px-3 py-1.5 text-sm font-bold text-white transition group-hover:gap-2">دیدن تازه‌ها <%- icon('arrow-left','icon-sm') %></span>
+      <span class="mt-3 inline-flex items-center gap-1 rounded-full bg-night-950 px-3 py-1.5 text-sm font-bold text-white transition group-hover:gap-2">دیدن تازه‌ها <%- icon('arrow-left','icon-sm') %></span>
     </span>
-    <span class="absolute -bottom-6 -end-4 size-40 rounded-full bg-butter-100/60 sm:size-52" aria-hidden="true"></span>
-    <span class="absolute end-5 top-1/2 -translate-y-1/2 text-ink-900/85 sm:end-8" aria-hidden="true"><%- icon('c-dress','size-20 sm:size-24 !stroke-[1.4]') %></span>
+    <span class="absolute -bottom-6 -end-4 size-40 rounded-full bg-white/35 sm:size-52" aria-hidden="true"></span>
+    <span class="absolute end-5 top-1/2 -translate-y-1/2 text-night-900/85 sm:end-8" aria-hidden="true"><%- icon('c-dress','size-20 sm:size-24 !stroke-[1.4]') %></span>
   </a>
 </section>
 
@@ -105,8 +105,8 @@
 <% rail('pop-title', 'پرفروش‌ها', '', popular, '/shop?sort=popular', false) %>
 
 <section class="container-app mt-10">
-  <div class="grid gap-3 rounded-2xl border border-ink-200 bg-white p-4 sm:grid-cols-3 sm:p-6">
-    <div class="flex items-start gap-3"><span class="flex size-11 shrink-0 items-center justify-center rounded-xl bg-brand-50 text-brand-600"><%- icon('ruler') %></span><div><h3 class="text-sm font-bold">سایز مناسب را پیدا کنید</h3><p class="text-xs leading-6 text-ink-600">در صفحه هر محصول، راهنمای سایز بر اساس سن و قد کودک را ببینید.</p></div></div>
+  <div class="grid gap-3 rounded-2xl border border-ink-200 bg-surface p-4 sm:grid-cols-3 sm:p-6">
+    <div class="flex items-start gap-3"><span class="flex size-11 shrink-0 items-center justify-center rounded-xl bg-brand-50 text-brand-700"><%- icon('ruler') %></span><div><h3 class="text-sm font-bold">سایز مناسب را پیدا کنید</h3><p class="text-xs leading-6 text-ink-600">در صفحه هر محصول، راهنمای سایز بر اساس سن و قد کودک را ببینید.</p></div></div>
     <div class="flex items-start gap-3"><span class="flex size-11 shrink-0 items-center justify-center rounded-xl bg-butter-100 text-butter-700"><%- icon('truck') %></span><div><h3 class="text-sm font-bold">ارسال پس‌کرایه</h3><p class="text-xs leading-6 text-ink-600">فقط مبلغ کالا را آنلاین می‌پردازید؛ هزینه ارسال هنگام تحویل.</p></div></div>
     <div class="flex items-start gap-3"><span class="flex size-11 shrink-0 items-center justify-center rounded-xl bg-mint-50 text-mint-700"><%- icon('shield') %></span><div><h3 class="text-sm font-bold">خرید بدون نگرانی</h3><p class="text-xs leading-6 text-ink-600">پرداخت امن زرین‌پال و ۷ روز ضمانت بازگشت کالای معیوب.</p></div></div>
   </div>

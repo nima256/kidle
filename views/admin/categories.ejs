@@ -23,7 +23,7 @@
 </div>
 
 <div class="overlay" id="cat-sheet" role="dialog" aria-modal="true" aria-labelledby="cat-t" hidden data-overlay>
-  <form class="sheet sheet-lg" data-api="" data-reload novalidate>
+  <form class="sheet sheet-lg" data-api="" data-reload data-dirty-guard novalidate>
     <div class="sheet-head"><h2 id="cat-t" class="sheet-title" data-sheet-title>دسته‌بندی</h2><button type="button" class="btn-icon" data-close-overlay aria-label="بستن"><%- icon('x') %></button></div>
     <div class="sheet-body grid gap-3 sm:grid-cols-2">
       <input type="hidden" name="categoryType">

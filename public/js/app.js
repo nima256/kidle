@@ -25,6 +25,15 @@
     return '<svg class="icon ' + (cls || "") + '" aria-hidden="true"><use href="/icons.svg#' + name + '"/></svg>';
   };
 
+  /* ───────── Recent searches (per browser; storage may be unavailable) ───────── */
+  K.recentSearches = function (set) {
+    try {
+      if (set) { localStorage.setItem("kidle:recent", JSON.stringify(set)); return set; }
+      var v = JSON.parse(localStorage.getItem("kidle:recent") || "[]");
+      return Array.isArray(v) ? v.filter(function (x) { return typeof x === "string"; }).slice(0, 6) : [];
+    } catch (e) { return []; }
+  };
+
   /* ───────── Toasts ───────── */
   K.toast = function (message, type, opts) {
     opts = opts || {};
@@ -36,9 +45,13 @@
     var ic = type === "error" ? "x-circle" : type === "success" ? "check-circle" : "info";
     el.innerHTML = '<span class="toast-icon">' + K.icon(ic) + "</span><span>" + K.esc(message) + "</span>";
     if (opts.action) {
-      var a = document.createElement("a");
+      var a = document.createElement(opts.action.href ? "a" : "button");
       a.className = "toast-action";
-      a.href = opts.action.href;
+      if (opts.action.href) a.href = opts.action.href;
+      else {
+        a.type = "button";
+        a.addEventListener("click", function () { el.remove(); opts.action.onClick(); });
+      }
       a.textContent = opts.action.label;
       el.appendChild(a);
     }
@@ -58,9 +71,15 @@
       init.headers["Content-Type"] = "application/json";
       init.body = JSON.stringify(options.body);
     }
+    // Requests that hang get a clear timeout message instead of an endless spinner.
+    var ctrl = "AbortController" in window ? new AbortController() : null;
+    var timer = ctrl ? setTimeout(function () { ctrl.abort(); }, options.timeout || 20000) : null;
+    if (ctrl) init.signal = ctrl.signal;
     return fetch(url, init)
-      .catch(function () {
-        var e = new Error("اتصال اینترنت برقرار نیست. دوباره تلاش کنید");
+      .finally(function () { clearTimeout(timer); })
+      .catch(function (err) {
+        var timedOut = err && err.name === "AbortError";
+        var e = new Error(timedOut ? "پاسخی از سرور دریافت نشد. چند لحظه دیگر دوباره تلاش کنید" : "اتصال اینترنت برقرار نیست. دوباره تلاش کنید");
         e.network = true;
         throw e;
       })
@@ -96,6 +115,15 @@
       el.classList.add("animate-pop");
     });
     $$("[data-cart-link]").forEach(function (a) { a.setAttribute("aria-label", "سبد خرید، " + n + " کالا"); });
+    K.announce(n ? "سبد خرید شما اکنون " + n + " کالا دارد" : "سبد خرید شما خالی است");
+  };
+
+  // One polite status region for complete, contextual announcements (no focus change).
+  K.announce = function (text) {
+    var r = document.getElementById("sr-status");
+    if (!r) return;
+    r.textContent = "";
+    setTimeout(function () { r.textContent = text; }, 60);
   };
 
   /* ───────── Overlays (modals / sheets / drawer) ───────── */
@@ -123,9 +151,23 @@
     try { history.pushState({ kidleLayer: stack.length }, ""); } catch (e) {}
   }
 
+  // Sheets containing a form marked data-dirty-guard ask before discarding typed input.
+  document.addEventListener("input", function (e) {
+    var f = e.target.closest && e.target.closest("form[data-dirty-guard]");
+    if (f) f.dataset.dirty = "1";
+  });
+  K.markClean = function (form) { if (form) delete form.dataset.dirty; };
+
   function closeTop(fromHistory) {
+    var top = stack[stack.length - 1];
+    if (!top) return;
+    var dirty = top.el.querySelector("form[data-dirty-guard][data-dirty]");
+    if (dirty && !confirm("متنی که نوشته‌اید ذخیره نشده است. بسته شود؟")) {
+      if (fromHistory) { try { history.pushState({ kidleLayer: stack.length }, ""); } catch (e) {} }
+      return;
+    }
+    K.markClean(dirty);
     var layer = stack.pop();
-    if (!layer) return;
     layer.el.classList.remove("is-open");
     if (layer.backdrop) layer.backdrop.classList.remove("is-open");
     setTimeout(function () {
@@ -206,6 +248,20 @@
     if (!input || !box) return;
     var empty = $("[data-search-empty]", box);
     var emptyHTML = empty ? empty.outerHTML : "";
+    if (empty) {
+      var recent = K.recentSearches();
+      if (recent.length) {
+        emptyHTML = '<div class="border-b border-ink-100 p-4"><div class="mb-2 flex items-center justify-between"><p class="text-xs font-bold text-ink-500">جستجوهای اخیر</p><button type="button" class="link text-xs" data-clear-recent>پاک کردن</button></div><div class="flex flex-wrap gap-2">' +
+          recent.map(function (q) { return '<a class="chip" href="/search?q=' + encodeURIComponent(q) + '">' + K.icon("clock", "icon-sm text-ink-400") + K.esc(q) + "</a>"; }).join("") + "</div></div>" + emptyHTML;
+        box.innerHTML = emptyHTML;
+      }
+      box.addEventListener("click", function (e) {
+        if (!e.target.closest("[data-clear-recent]")) return;
+        K.recentSearches([]);
+        emptyHTML = empty.outerHTML;
+        box.innerHTML = emptyHTML;
+      });
+    }
     var seq = 0, timer, isDropdown = box.parentElement === form;
 
     function show(html) {
@@ -253,7 +309,11 @@
       if (e.key === "ArrowDown" && i < links.length - 1) { e.preventDefault(); links[i + 1].focus(); }
       if (e.key === "ArrowUp") { e.preventDefault(); (i > 0 ? links[i - 1] : input).focus(); }
     });
-    form.addEventListener("submit", function (e) { if (!input.value.trim()) e.preventDefault(); });
+    form.addEventListener("submit", function (e) {
+      var q = input.value.trim();
+      if (!q) { e.preventDefault(); return; }
+      K.recentSearches([q].concat(K.recentSearches().filter(function (x) { return x !== q; })).slice(0, 6));
+    });
     if (isDropdown) {
       document.addEventListener("click", function (e) { if (!form.contains(e.target)) box.classList.add("hidden"); });
       input.addEventListener("focus", function () { if (box.innerHTML) box.classList.remove("hidden"); });
@@ -422,6 +482,28 @@
     K.api("/api/auth/logout", { method: "POST" })
       .then(function () { location.href = "/"; })
       .catch(function (err) { K.setLoading(b, false); K.toast(err.message, "error"); });
+  });
+
+  /* ───────── Password show/hide ───────── */
+  $$('input[type="password"]').forEach(function (input) {
+    var wrap = document.createElement("div");
+    wrap.className = "relative";
+    input.parentNode.insertBefore(wrap, input);
+    wrap.appendChild(input);
+    input.classList.add("pe-12");
+    var b = document.createElement("button");
+    b.type = "button";
+    b.className = "btn-icon absolute inset-y-0 end-0.5 my-auto size-10 text-ink-500";
+    b.setAttribute("aria-label", "نمایش رمز عبور");
+    b.setAttribute("aria-pressed", "false");
+    b.innerHTML = K.icon("eye", "icon-sm");
+    b.addEventListener("click", function () {
+      var show = input.type === "password";
+      input.type = show ? "text" : "password";
+      b.setAttribute("aria-pressed", show ? "true" : "false");
+      b.setAttribute("aria-label", show ? "پنهان کردن رمز عبور" : "نمایش رمز عبور");
+    });
+    wrap.appendChild(b);
   });
 
   /* ───────── Boot ───────── */

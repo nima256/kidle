@@ -215,8 +215,6 @@ router.get(
       ogImage: product.images?.[0]?.url,
       ogType: "product",
       canonical: `${config.siteUrl}/productDetails/${product.slug}`,
-      // In-stock products replace the bottom nav with a sticky "add to cart" bar.
-      hideBottomNav: product.countInStock > 0,
     });
   })
 );

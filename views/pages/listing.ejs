@@ -17,6 +17,7 @@
   var itemList = { '@context': 'https://schema.org', '@type': 'ItemList', itemListElement: products.slice(0, 24).map(function (p, i) { return { '@type': 'ListItem', position: i + 1, url: siteUrl + '/productDetails/' + p.slug }; }) };
 %>
 <% locals.scripts = ['listing']; locals.jsonld = itemList; %>
+<style>html { scroll-padding-top: calc(var(--header-h) + 6rem); }</style>
 <%- include('../partials/layout-top') %>
 
 <div class="container-app">
@@ -152,7 +153,8 @@
   </aside>
 
   <!-- Results -->
-  <section aria-label="محصولات" class="pt-3 lg:pt-0">
+  <section aria-labelledby="results-title" class="pt-3 lg:pt-0">
+    <h2 id="results-title" class="sr-only">نتایج (<%= fa(total) %> محصول)</h2>
     <% if (products.length) { %>
     <div class="grid grid-cols-2 gap-2.5 sm:grid-cols-3 sm:gap-3 xl:grid-cols-4">
       <% products.forEach(function (p, i) { %><%- include('../partials/product-card', { p: p, eager: i < 4 }) %><% }) %>

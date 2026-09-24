@@ -75,6 +75,8 @@ function viewHelpers(app) {
     img: (p, i = 0) => p?.images?.[i]?.url || "",
     faDate: (d, opts) => (d ? new Date(d).toLocaleDateString("fa-IR", opts || { year: "numeric", month: "long", day: "numeric" }) : ""),
     catIcon,
+    srcset: require("../lib/images").srcset,
+    thumb: require("../lib/images").thumb,
     json: (v) => JSON.stringify(v).replace(/</g, "\\u003c").replace(/-->/g, "--\\u003e"),
   });
 }

@@ -1,8 +1,8 @@
 <%- include('../partials/layout-top') %>
 <div class="container-app max-w-3xl py-4">
   <%- include('../partials/breadcrumbs', { crumbs: [{ name: page.title }], crumbClass: 'pb-2' }) %>
-  <header class="rounded-2xl bg-gradient-to-bl from-brand-100 via-brand-50 to-white px-5 py-6 sm:px-8 sm:py-8">
-    <p class="text-xs font-bold text-brand-600"><%= page.kicker %></p>
+  <header class="rounded-2xl bg-gradient-to-bl from-brand-100 via-brand-50 to-surface px-5 py-6 sm:px-8 sm:py-8">
+    <p class="text-xs font-bold text-brand-700"><%= page.kicker %></p>
     <h1 class="mt-1 text-2xl font-black sm:text-3xl"><%= page.title %></h1>
     <p class="mt-2 text-sm leading-7 text-ink-700"><%= page.lead %></p>
   </header>
@@ -17,7 +17,7 @@
   <% if (page.features) { %>
   <ul class="mt-6 grid gap-3 sm:grid-cols-2">
     <% page.features.forEach(function (f) { %>
-    <li class="card flex items-start gap-3 p-4"><span class="flex size-10 shrink-0 items-center justify-center rounded-lg bg-brand-50 text-brand-600"><%- icon(f.icon) %></span><div><h3 class="text-sm font-bold"><%= f.title %></h3><p class="text-xs leading-6 text-ink-600"><%= f.text %></p></div></li>
+    <li class="card flex items-start gap-3 p-4"><span class="flex size-10 shrink-0 items-center justify-center rounded-lg bg-brand-50 text-brand-700"><%- icon(f.icon) %></span><div><h3 class="text-sm font-bold"><%= f.title %></h3><p class="text-xs leading-6 text-ink-600"><%= f.text %></p></div></li>
     <% }) %>
   </ul>
   <% } %>
@@ -25,11 +25,11 @@
 
   <% if (page.contact) { %>
   <ul class="mt-6 grid gap-3 sm:grid-cols-2">
-    <li><a class="card flex items-center gap-3 p-4 hover:border-brand-200" href="tel:<%= settings.phone %>"><span class="flex size-10 items-center justify-center rounded-lg bg-brand-50 text-brand-600"><%- icon('phone') %></span><span class="text-sm"><b class="block">تلفن و پشتیبانی</b><span class="ltr inline-block text-ink-600"><%= settings.phone %></span><span class="block text-2xs text-ink-500"><%= settings.workingHours %></span></span></a></li>
-    <li><a class="card flex items-center gap-3 p-4 hover:border-brand-200" href="mailto:<%= settings.email %>"><span class="flex size-10 items-center justify-center rounded-lg bg-brand-50 text-brand-600"><%- icon('mail') %></span><span class="text-sm"><b class="block">ایمیل</b><span class="text-ink-600"><%= settings.email %></span></span></a></li>
-    <% if (settings.instagram) { %><li><a class="card flex items-center gap-3 p-4 hover:border-brand-200" href="https://instagram.com/<%= settings.instagram %>" target="_blank" rel="noopener"><span class="flex size-10 items-center justify-center rounded-lg bg-brand-50 text-brand-600"><%- icon('instagram') %></span><span class="text-sm"><b class="block">اینستاگرام</b><span class="ltr inline-block text-ink-600">@<%= settings.instagram %></span></span></a></li><% } %>
-    <% if (settings.telegram) { %><li><a class="card flex items-center gap-3 p-4 hover:border-brand-200" href="https://t.me/<%= settings.telegram %>" target="_blank" rel="noopener"><span class="flex size-10 items-center justify-center rounded-lg bg-brand-50 text-brand-600"><%- icon('send') %></span><span class="text-sm"><b class="block">تلگرام</b><span class="ltr inline-block text-ink-600">@<%= settings.telegram %></span></span></a></li><% } %>
-    <li class="sm:col-span-2"><div class="card flex items-center gap-3 p-4"><span class="flex size-10 items-center justify-center rounded-lg bg-brand-50 text-brand-600"><%- icon('pin') %></span><span class="text-sm"><b class="block">آدرس فروشگاه</b><span class="text-ink-600"><%= settings.address %></span></span></div></li>
+    <li><a class="card flex items-center gap-3 p-4 hover:border-brand-200" href="tel:<%= settings.phone %>"><span class="flex size-10 items-center justify-center rounded-lg bg-brand-50 text-brand-700"><%- icon('phone') %></span><span class="text-sm"><b class="block">تلفن و پشتیبانی</b><span class="ltr inline-block text-ink-600"><%= settings.phone %></span><span class="block text-2xs text-ink-500"><%= settings.workingHours %></span></span></a></li>
+    <li><a class="card flex items-center gap-3 p-4 hover:border-brand-200" href="mailto:<%= settings.email %>"><span class="flex size-10 items-center justify-center rounded-lg bg-brand-50 text-brand-700"><%- icon('mail') %></span><span class="text-sm"><b class="block">ایمیل</b><span class="text-ink-600"><%= settings.email %></span></span></a></li>
+    <% if (settings.instagram) { %><li><a class="card flex items-center gap-3 p-4 hover:border-brand-200" href="https://instagram.com/<%= settings.instagram %>" target="_blank" rel="noopener"><span class="flex size-10 items-center justify-center rounded-lg bg-brand-50 text-brand-700"><%- icon('instagram') %></span><span class="text-sm"><b class="block">اینستاگرام</b><span class="ltr inline-block text-ink-600">@<%= settings.instagram %></span></span></a></li><% } %>
+    <% if (settings.telegram) { %><li><a class="card flex items-center gap-3 p-4 hover:border-brand-200" href="https://t.me/<%= settings.telegram %>" target="_blank" rel="noopener"><span class="flex size-10 items-center justify-center rounded-lg bg-brand-50 text-brand-700"><%- icon('send') %></span><span class="text-sm"><b class="block">تلگرام</b><span class="ltr inline-block text-ink-600">@<%= settings.telegram %></span></span></a></li><% } %>
+    <li class="sm:col-span-2"><div class="card flex items-center gap-3 p-4"><span class="flex size-10 items-center justify-center rounded-lg bg-brand-50 text-brand-700"><%- icon('pin') %></span><span class="text-sm"><b class="block">آدرس فروشگاه</b><span class="text-ink-600"><%= settings.address %></span></span></div></li>
   </ul>
   <% } %>
   <% if (page.updated) { %><p class="mt-6 text-xs text-ink-500">آخرین به‌روزرسانی: <%= page.updated %></p><% } %>
