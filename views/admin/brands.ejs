@@ -1,0 +1,22 @@
+<% locals.headerActions = '<button class="btn btn-primary btn-sm" data-edit="#br-sheet" data-title="برند جدید" data-api-url="/admin/api/brands" data-api-method="POST">' + icon('plus','icon-sm') + ' برند جدید</button>'; %>
+<%- include('_top') %>
+<div class="card overflow-x-auto">
+  <table class="table"><thead><tr><th>نام</th><th>محصولات</th><th><span class="sr-only">عملیات</span></th></tr></thead><tbody>
+    <% brands.forEach(function (b) { %>
+    <tr><td class="font-medium"><%= b.name %></td><td><%= fa(b.count) %></td><td class="text-end whitespace-nowrap">
+      <button class="btn-icon size-8" data-edit="#br-sheet" data-title="ویرایش برند" data-api-url="/admin/api/brands/<%= b._id %>" data-api-method="PUT" data-fill="<%= JSON.stringify({ name: b.name, description: b.description || '' }) %>" aria-label="ویرایش"><%- icon('edit','icon-sm') %></button>
+      <button class="btn-icon size-8 text-danger-600" data-action="/admin/api/brands/<%= b._id %>" data-method="DELETE" data-confirm="برند «<%= b.name %>» حذف شود؟" aria-label="حذف"><%- icon('trash','icon-sm') %></button></td></tr>
+    <% }) %>
+  </tbody></table>
+</div>
+<div class="overlay" id="br-sheet" role="dialog" aria-modal="true" aria-labelledby="br-t" hidden data-overlay>
+  <form class="sheet" data-api="" data-reload novalidate>
+    <div class="sheet-head"><h2 id="br-t" class="sheet-title" data-sheet-title>برند</h2><button type="button" class="btn-icon" data-close-overlay aria-label="بستن"><%- icon('x') %></button></div>
+    <div class="sheet-body space-y-3">
+      <div class="field"><label class="label" for="b-name">نام <span class="req">*</span></label><input class="input" id="b-name" name="name" maxlength="50"><p class="field-error" data-err="name" hidden></p></div>
+      <div class="field"><label class="label" for="b-desc">توضیحات</label><textarea class="textarea" id="b-desc" name="description" maxlength="500"></textarea></div>
+    </div>
+    <div class="sheet-foot"><button class="btn btn-primary btn-block"><span class="spinner"></span><span class="btn-label-idle">ذخیره</span></button></div>
+  </form>
+</div>
+<%- include('_bottom') %>

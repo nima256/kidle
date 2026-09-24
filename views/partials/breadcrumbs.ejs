@@ -1,0 +1,13 @@
+<% const _items = [{ name: 'خانه', url: '/' }].concat(crumbs || []); %>
+<nav aria-label="مسیر صفحه" class="<%= locals.crumbClass || 'py-3' %>">
+  <ol class="flex items-center gap-1 overflow-x-auto whitespace-nowrap text-xs text-ink-500" style="scrollbar-width:none">
+    <% _items.forEach(function (c, i) { %>
+    <li class="flex items-center gap-1">
+      <% if (i > 0) { %><%- icon('chevron-left','icon-sm text-ink-300') %><% } %>
+      <% if (c.url && i < _items.length - 1) { %><a class="hover:text-brand-600" href="<%= c.url %>"><%= c.name %></a>
+      <% } else { %><span aria-current="page" class="font-medium text-ink-700"><%= c.name %></span><% } %>
+    </li>
+    <% }) %>
+  </ol>
+  <script type="application/ld+json"><%- json({ '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: _items.map(function (c, i) { return { '@type': 'ListItem', position: i + 1, name: c.name, item: c.url ? siteUrl + c.url : undefined }; }) }) %></script>
+</nav>

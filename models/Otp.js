@@ -1,57 +1,23 @@
 const mongoose = require("mongoose");
 
+// One document per mobile number. The code itself is never stored — only an HMAC of it.
 const otpSchema = new mongoose.Schema(
   {
-    mobile: {
-      type: String,
-      required: true,
-      unique: true,
-      validate: {
-        validator: function (v) {
-          return /^09\d{9}$/.test(v); // Iranian mobile format (09xxxxxxxxx)
-        },
-        message: (props) => `${props.value} شماره موبایل معتبر نیست`,
-      },
-    },
-    code: {
-      type: String,
-      required: true,
-      minlength: 5,
-      maxlength: 5,
-    },
-    expiresAt: {
-      type: Date,
-      required: true,
-      index: { expires: "2m" }, // Auto-delete after 2 minutes
-    },
-    attempts: {
-      type: Number,
-      default: 0,
-      max: 3, // Maximum allowed attempts
-    },
-    createdAt: {
-      type: Date,
-      default: Date.now,
-    },
-    ipAddress: {
-      type: String,
-      required: true,
-    },
-    lastSentAt: {
-      type: Date,
-      default: Date.now,
-    },
-    purpose: {
-      type: String,
-      enum: ["registration", "password_reset"],
-      default: "registration",
-    },
+    mobile: { type: String, required: true, unique: true },
+    codeHash: { type: String, default: "" },
+    expiresAt: { type: Date, required: true },
+    attempts: { type: Number, default: 0 },
+    lastSentAt: { type: Date, default: Date.now },
+    // Rolling one-hour window used to cap how many codes a number can receive.
+    windowStartedAt: { type: Date, default: Date.now },
+    sendCount: { type: Number, default: 0 },
+    ipAddress: { type: String, default: "" },
+    // Document is removed an hour after the last send (keeps the hourly counter meaningful).
+    purgeAt: { type: Date, required: true },
   },
-  {
-    timestamps: true, // Adds createdAt and updatedAt automatically
-  }
+  { timestamps: true }
 );
 
-otpSchema.index({ mobile: 1, code: 1 });
+otpSchema.index({ purgeAt: 1 }, { expireAfterSeconds: 0 });
 
 module.exports = mongoose.model("Otp", otpSchema);

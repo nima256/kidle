@@ -1,0 +1,35 @@
+<% locals.headerActions = '<button class="btn btn-primary btn-sm" data-edit="#dc-sheet" data-title="کد تخفیف جدید" data-api-url="/admin/api/discounts" data-api-method="POST" data-fill=\'{"type":"percent","isActive":true}\'>' + icon('plus','icon-sm') + ' کد جدید</button>'; %>
+<%- include('_top') %>
+<div class="card overflow-x-auto">
+  <table class="table"><thead><tr><th>کد</th><th>مقدار</th><th>استفاده</th><th>انقضا</th><th>وضعیت</th><th><span class="sr-only">عملیات</span></th></tr></thead><tbody>
+    <% items.forEach(function (d) { var expired = d.expireDate && new Date(d.expireDate) < new Date(); var fill = { code: d.code, type: d.type, amount: d.amount, maxDiscountAmount: d.maxDiscountAmount || '', minOrderAmount: d.minOrderAmount || '', usageLimit: d.usageLimit || '', expireDate: d.expireDate ? new Date(d.expireDate).toISOString().slice(0, 10) : '', description: d.description || '', isActive: d.isActive }; %>
+    <tr><td class="ltr font-bold"><%= d.code %></td>
+      <td class="whitespace-nowrap"><%= d.type === 'percent' ? fa(d.amount) + '٪ (سقف ' + price(d.maxDiscountAmount) + ')' : price(d.amount) + ' تومان' %><% if (d.minOrderAmount) { %><span class="block text-2xs text-ink-500">حداقل خرید <%= price(d.minOrderAmount) %></span><% } %></td>
+      <td><%= fa(d.usedCount || 0) %><%= d.usageLimit ? ' / ' + fa(d.usageLimit) : '' %></td>
+      <td class="text-xs"><%= d.expireDate ? faDate(d.expireDate) : 'بدون انقضا' %></td>
+      <td><span class="badge <%= d.isActive && !expired ? 'badge-success' : 'badge-neutral' %>"><%= expired ? 'منقضی' : d.isActive ? 'فعال' : 'غیرفعال' %></span></td>
+      <td class="whitespace-nowrap text-end">
+        <button class="btn-icon size-8" data-edit="#dc-sheet" data-title="ویرایش کد" data-api-url="/admin/api/discounts/<%= d.id %>" data-api-method="PUT" data-fill="<%= JSON.stringify(fill) %>" aria-label="ویرایش"><%- icon('edit','icon-sm') %></button>
+        <button class="btn-icon size-8 text-danger-600" data-action="/admin/api/discounts/<%= d.id %>" data-method="DELETE" data-confirm="کد <%= d.code %> حذف شود؟" aria-label="حذف"><%- icon('trash','icon-sm') %></button></td></tr>
+    <% }) %>
+    <% if (!items.length) { %><tr><td colspan="6" class="py-8 text-center text-ink-500">هنوز کدی ساخته نشده است</td></tr><% } %>
+  </tbody></table>
+</div>
+<div class="overlay" id="dc-sheet" role="dialog" aria-modal="true" aria-labelledby="dc-t" hidden data-overlay>
+  <form class="sheet sheet-lg" data-api="" data-reload novalidate>
+    <div class="sheet-head"><h2 id="dc-t" class="sheet-title" data-sheet-title>کد تخفیف</h2><button type="button" class="btn-icon" data-close-overlay aria-label="بستن"><%- icon('x') %></button></div>
+    <div class="sheet-body grid gap-3 sm:grid-cols-2">
+      <div class="field"><label class="label" for="d-code">کد <span class="req">*</span></label><input class="input ltr uppercase" id="d-code" name="code" maxlength="20"><p class="field-error" data-err="code" hidden></p></div>
+      <div class="field"><label class="label" for="d-type">نوع</label><select class="select" id="d-type" name="type"><option value="percent">درصدی</option><option value="amount">مبلغ ثابت (تومان)</option></select></div>
+      <div class="field"><label class="label" for="d-amount">مقدار <span class="req">*</span></label><input class="input ltr" id="d-amount" name="amount" inputmode="numeric"><p class="field-error" data-err="amount" hidden></p></div>
+      <div class="field"><label class="label" for="d-max">سقف تخفیف (تومان)</label><input class="input ltr" id="d-max" name="maxDiscountAmount" inputmode="numeric"><p class="field-error" data-err="maxDiscountAmount" hidden></p></div>
+      <div class="field"><label class="label" for="d-min">حداقل مبلغ خرید</label><input class="input ltr" id="d-min" name="minOrderAmount" inputmode="numeric"></div>
+      <div class="field"><label class="label" for="d-lim">سقف تعداد استفاده</label><input class="input ltr" id="d-lim" name="usageLimit" inputmode="numeric" placeholder="خالی = نامحدود"></div>
+      <div class="field"><label class="label" for="d-exp">تاریخ انقضا</label><input class="input ltr" id="d-exp" name="expireDate" type="date"><p class="field-error" data-err="expireDate" hidden></p></div>
+      <div class="field"><label class="label" for="d-desc">توضیح داخلی</label><input class="input" id="d-desc" name="description" maxlength="200"></div>
+      <label class="f-check"><input class="check" type="checkbox" name="isActive"> فعال</label>
+    </div>
+    <div class="sheet-foot"><button class="btn btn-primary btn-block"><span class="spinner"></span><span class="btn-label-idle">ذخیره</span></button></div>
+  </form>
+</div>
+<%- include('_bottom') %>

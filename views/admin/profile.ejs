@@ -1,0 +1,9 @@
+<%- include('_top') %>
+<form class="card card-pad max-w-md space-y-3" data-api="/admin/api/profile/password" data-method="PUT" novalidate>
+  <h2 class="text-sm font-bold">تغییر رمز عبور</h2>
+  <p class="text-xs text-ink-500"><%= admin.fullName %> — <span class="ltr"><%= admin.email %></span></p>
+  <div class="field"><label class="label" for="cur">رمز فعلی</label><input class="input ltr" id="cur" name="current" type="password" autocomplete="current-password"><p class="field-error" data-err="current" hidden></p></div>
+  <div class="field"><label class="label" for="np">رمز جدید</label><input class="input ltr" id="np" name="password" type="password" autocomplete="new-password"><p class="field-error" data-err="password" hidden></p><p class="hint">حداقل ۱۰ کاراکتر شامل حرف و عدد</p></div>
+  <button class="btn btn-primary"><span class="spinner"></span><span class="btn-label-idle">تغییر رمز</span></button>
+</form>
+<%- include('_bottom') %>

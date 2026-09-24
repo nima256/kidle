@@ -1,0 +1,69 @@
+<% var o = order; var paid = o.paymentStatus === 'پرداخت شده'; %>
+<%- include('_top') %>
+<a href="/admin/orders" class="btn btn-ghost btn-sm -ms-2 mb-2"><%- icon('arrow-right','icon-sm') %> سفارش‌ها</a>
+<% if (o.needsReview) { %><div class="alert alert-danger mb-3"><%- icon('alert','icon-sm mt-0.5') %><div><b>نیاز به بررسی:</b> <%= o.reviewReason %> <button class="link ms-2" data-action="/admin/api/orders/<%= o._id %>" data-method="PATCH" data-body='{"needsReview":false}'>بررسی شد</button></div></div><% } %>
+<div class="grid gap-4 xl:grid-cols-[1fr_22rem]">
+  <div class="space-y-4">
+    <section class="card">
+      <div class="flex flex-wrap items-center justify-between gap-2 border-b border-ink-100 p-4">
+        <div><h2 class="text-base font-bold ltr text-end"><%= o.OrderNum %></h2><p class="text-xs text-ink-500"><%= faDate(o.createdAt, { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' }) %></p></div>
+        <div class="flex gap-1.5"><%- include('../partials/order-status', { o: o }) %><span class="badge <%= paid ? 'badge-success' : 'badge-neutral' %>"><%= o.paymentStatus %></span></div>
+      </div>
+      <ul class="divide-y divide-ink-100 px-4">
+        <% o.products.forEach(function (it) { var pr = it.product; %>
+        <li class="flex items-center gap-3 py-3">
+          <span class="w-12 shrink-0 overflow-hidden rounded bg-ink-100"><% if (pr && pr.images && pr.images[0]) { %><img src="<%= pr.images[0].url %>" alt="" class="aspect-[4/5] w-full object-cover"><% } %></span>
+          <div class="min-w-0 flex-1 text-sm"><b><%= it.nameAtPurchase %></b><p class="text-xs text-ink-600"><%= [it.selectedSize ? 'سایز ' + it.selectedSize : '', it.selectedColor].filter(Boolean).join(' · ') %></p></div>
+          <span class="text-sm whitespace-nowrap"><%= fa(it.quantity) %> × <%= price(it.priceAtPurchase) %></span>
+        </li>
+        <% }) %>
+      </ul>
+      <dl class="space-y-1 border-t border-ink-100 p-4 text-sm">
+        <div class="flex justify-between"><dt class="text-ink-600">جمع کالاها</dt><dd><%= price(o.originalPrice) %></dd></div>
+        <% if (o.discountAmount) { %><div class="flex justify-between text-mint-700"><dt>تخفیف (<span class="ltr"><%= o.discount && o.discount.code %></span>)</dt><dd>−<%= price(o.discountAmount) %></dd></div><% } %>
+        <div class="flex justify-between"><dt class="text-ink-600">ارسال</dt><dd>پس‌کرایه</dd></div>
+        <div class="flex justify-between font-bold"><dt>مبلغ آنلاین</dt><dd><%= price(o.totalPrice) %> تومان</dd></div>
+      </dl>
+    </section>
+
+    <section class="card card-pad text-sm">
+      <h2 class="mb-2 font-bold">تاریخچه وضعیت</h2>
+      <ol class="space-y-2">
+        <% (o.statusHistory || []).slice().reverse().forEach(function (h) { %><li class="flex gap-2"><span class="mt-1.5 size-2 shrink-0 rounded-full bg-brand-400"></span><span><b><%= h.status %></b> — <%= h.note || '' %><span class="block text-2xs text-ink-500"><%= faDate(h.changedAt, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }) %></span></span></li><% }) %>
+      </ol>
+    </section>
+  </div>
+
+  <div class="space-y-4">
+    <form class="card card-pad space-y-3" data-api="/admin/api/orders/<%= o._id %>" data-method="PATCH" data-reload novalidate>
+      <h2 class="text-sm font-bold">پردازش سفارش</h2>
+      <div class="field"><label class="label" for="st">وضعیت</label>
+        <select class="select" id="st" name="status"><option value="">— بدون تغییر (<%= o.status %>) —</option><% next.forEach(function (s) { %><option value="<%= s %>"><%= s %></option><% }) %></select>
+        <% if (!next.length) { %><p class="hint">این سفارش در وضعیت نهایی است.</p><% } %>
+      </div>
+      <div class="field"><label class="label" for="dl">شرکت ارسال</label><select class="select" id="dl" name="delivery"><% carriers.forEach(function (c) { %><option <%= o.delivery === c ? 'selected' : '' %>><%= c %></option><% }) %></select></div>
+      <div class="field"><label class="label" for="tr">کد رهگیری مرسوله</label><input class="input ltr" id="tr" name="trackingNumber" value="<%= o.trackingNumber || '' %>"><p class="field-error" data-err="trackingNumber" hidden></p></div>
+      <div class="field"><label class="label" for="nt">یادداشت داخلی</label><textarea class="textarea !min-h-16" id="nt" name="adminNote" maxlength="1000"><%= o.adminNote || '' %></textarea></div>
+      <p class="hint">لغو سفارش، کالاها را به انبار برمی‌گرداند. برای سفارش پرداخت‌شده، استرداد وجه را در پنل زرین‌پال انجام دهید.</p>
+      <button class="btn btn-primary btn-block"><span class="spinner"></span><span class="btn-label-idle">ذخیره تغییرات</span></button>
+    </form>
+
+    <section class="card card-pad text-sm">
+      <h2 class="mb-2 font-bold">گیرنده</h2>
+      <p class="leading-7"><b><%= o.recipientName || '—' %></b> <a class="ltr link" href="tel:<%= o.recipientPhone %>"><%= o.recipientPhone %></a><br><%= o.province %>، <%= o.city %><br><%= o.address %><% if (o.postcode) { %><br>کد پستی: <span class="ltr"><%= o.postcode %></span><% } %></p>
+      <% if (o.user) { %><p class="mt-2 border-t border-ink-100 pt-2 text-xs text-ink-600">حساب مشتری: <a class="link ltr" href="/admin/customers/<%= o.user._id %>"><%= o.user.mobile %></a></p><% } %>
+    </section>
+
+    <section class="card card-pad text-sm">
+      <h2 class="mb-2 font-bold">پرداخت</h2>
+      <dl class="space-y-1 text-xs">
+        <div class="flex justify-between"><dt class="text-ink-500">درگاه</dt><dd>زرین‌پال (<%= o.paymentMethod || 'آنلاین' %>)</dd></div>
+        <div class="flex justify-between gap-2"><dt class="text-ink-500">Authority</dt><dd class="ltr truncate"><%= (o.paymentInfo && o.paymentInfo.authority) || '—' %></dd></div>
+        <div class="flex justify-between"><dt class="text-ink-500">کد پیگیری</dt><dd class="ltr"><%= (o.paymentInfo && o.paymentInfo.refId) || '—' %></dd></div>
+        <div class="flex justify-between"><dt class="text-ink-500">کارت</dt><dd class="ltr"><%= (o.paymentInfo && o.paymentInfo.cardPan) || '—' %></dd></div>
+        <% if (o.reservation && o.reservation.expiresAt) { %><div class="flex justify-between"><dt class="text-ink-500">رزرو موجودی</dt><dd><%= o.reservation.released ? 'آزاد شده' + (o.reservation.releaseReason ? ' (' + o.reservation.releaseReason + ')' : '') : paid ? 'فروخته‌شده' : 'فعال تا ' + faDate(o.reservation.expiresAt, { hour: '2-digit', minute: '2-digit' }) %></dd></div><% } %>
+      </dl>
+    </section>
+  </div>
+</div>
+<%- include('_bottom') %>

@@ -1,0 +1,79 @@
+<%- include('../partials/layout-top') %>
+<div class="container-app max-w-xl py-6 sm:py-10">
+  <% if (state === 'success') { %>
+  <div class="card overflow-hidden">
+    <div class="bg-gradient-to-b from-mint-50 to-white px-5 pt-7 pb-4 text-center">
+      <span class="mx-auto flex size-16 items-center justify-center rounded-full bg-mint-100 text-mint-700"><%- icon('check','size-8') %></span>
+      <h1 class="mt-3 text-xl font-extrabold">سفارش شما ثبت شد!</h1>
+      <p class="mt-1 text-sm text-ink-600">پرداخت با موفقیت انجام شد. از خرید شما ممنونیم 💗</p>
+      <p class="mt-3 inline-flex items-center gap-2 rounded-full bg-white px-3.5 py-1.5 text-sm shadow-xs">شماره سفارش: <b class="ltr tracking-wide"><%= order.OrderNum %></b></p>
+    </div>
+    <div class="space-y-4 p-5">
+      <dl class="grid grid-cols-2 gap-3 text-sm">
+        <div class="rounded-md bg-ink-50 p-2.5"><dt class="text-2xs text-ink-500">مبلغ پرداخت‌شده</dt><dd class="price"><%= price(order.totalPrice) %> <span class="currency">تومان</span></dd></div>
+        <div class="rounded-md bg-ink-50 p-2.5"><dt class="text-2xs text-ink-500">کد پیگیری پرداخت</dt><dd class="ltr text-end font-bold"><%= order.paymentInfo && order.paymentInfo.refId || '—' %></dd></div>
+      </dl>
+      <div>
+        <h2 class="mb-1 text-sm font-bold">خلاصه خرید</h2>
+        <ul class="divide-y divide-ink-100 text-sm">
+          <% order.products.forEach(function (it) { %>
+          <li class="flex justify-between gap-3 py-2"><span><%= it.nameAtPurchase %> <span class="text-xs text-ink-500"><%= [it.selectedSize ? 'سایز ' + it.selectedSize : '', it.selectedColor].filter(Boolean).join(' · ') %> × <%= fa(it.quantity) %></span></span><span class="shrink-0"><%= price(it.priceAtPurchase * it.quantity) %></span></li>
+          <% }) %>
+        </ul>
+      </div>
+      <div class="rounded-lg bg-brand-50/60 p-3.5 text-sm">
+        <h2 class="mb-2 font-bold">مراحل بعدی</h2>
+        <ol class="space-y-2 text-xs leading-6 text-ink-700">
+          <li class="flex gap-2"><span class="flex size-5 shrink-0 items-center justify-center rounded-full bg-brand-600 text-2xs text-white">۱</span>سفارش شما آماده و بسته‌بندی می‌شود (<%= settings.dispatchTime %>).</li>
+          <li class="flex gap-2"><span class="flex size-5 shrink-0 items-center justify-center rounded-full bg-brand-600 text-2xs text-white">۲</span>کد رهگیری مرسوله در «سفارش‌های من» نمایش داده می‌شود.</li>
+          <li class="flex gap-2"><span class="flex size-5 shrink-0 items-center justify-center rounded-full bg-brand-600 text-2xs text-white">۳</span>هزینه ارسال را هنگام تحویل (پس‌کرایه) به مأمور ارسال پرداخت کنید.</li>
+        </ol>
+        <p class="mt-2 text-xs text-ink-600">ارسال به: <%= order.recipientName %> — <%= order.province %>، <%= order.city %></p>
+      </div>
+      <div class="flex flex-col gap-2 sm:flex-row">
+        <a class="btn btn-primary flex-1" href="/account/orders/<%= order.OrderNum %>">پیگیری سفارش</a>
+        <a class="btn btn-secondary flex-1" href="/shop">بازگشت به فروشگاه</a>
+      </div>
+    </div>
+  </div>
+  <% if (order.needsReview) { %><div class="alert alert-warn mt-3"><%- icon('info','icon-sm mt-0.5') %>پرداخت شما پس از پایان مهلت رزرو انجام شد. همکاران ما برای هماهنگی موجودی با شما تماس می‌گیرند.</div><% } %>
+
+  <% } else if (state === 'pending') { %>
+  <div class="card card-pad text-center">
+    <span class="mx-auto flex size-16 items-center justify-center rounded-full bg-butter-100 text-butter-700"><%- icon('clock','size-8') %></span>
+    <h1 class="mt-3 text-xl font-extrabold">در انتظار تأیید پرداخت</h1>
+    <p class="mt-2 text-sm leading-7 text-ink-600">نتیجه پرداخت سفارش <b class="ltr"><%= order.OrderNum %></b> هنوز مشخص نیست. اگر مبلغ از حساب شما کم شده، نگران نباشید؛ وضعیت را دوباره بررسی کنید.</p>
+    <div class="mt-4 flex flex-col gap-2 sm:flex-row sm:justify-center">
+      <% if (order.paymentInfo && order.paymentInfo.authority) { %>
+      <a class="btn btn-primary" href="/api/order/verify?Authority=<%= encodeURIComponent(order.paymentInfo.authority) %>&Status=OK"><%- icon('refresh','icon-sm') %> بررسی دوباره</a>
+      <% } %>
+      <a class="btn btn-secondary" href="/contact-us">تماس با پشتیبانی</a>
+    </div>
+    <p class="mt-3 text-xs text-ink-500">کالاهای این سفارش تا <%= faDate(order.reservation.expiresAt, { hour: '2-digit', minute: '2-digit' }) %> برای شما رزرو هستند.</p>
+  </div>
+
+  <% } else if (state === 'failed') { %>
+  <div class="card card-pad text-center">
+    <span class="mx-auto flex size-16 items-center justify-center rounded-full bg-danger-50 text-danger-600"><%- icon('x','size-8') %></span>
+    <h1 class="mt-3 text-xl font-extrabold">پرداخت انجام نشد</h1>
+    <p class="mt-2 text-sm leading-7 text-ink-600">پرداخت سفارش <b class="ltr"><%= order.OrderNum %></b> لغو شد یا ناموفق بود. کالاها هنوز در سبد خرید شما هستند و می‌توانید دوباره تلاش کنید.</p>
+    <p class="mt-2 rounded-md bg-ink-50 p-2.5 text-xs leading-6 text-ink-600">اگر مبلغی از حساب شما کسر شده، طبق قوانین بانکی حداکثر ظرف ۷۲ ساعت به حسابتان برمی‌گردد.</p>
+    <div class="mt-4 flex flex-col gap-2 sm:flex-row sm:justify-center">
+      <a class="btn btn-primary" href="/checkout">تلاش دوباره برای پرداخت</a>
+      <a class="btn btn-secondary" href="/cart">مشاهده سبد خرید</a>
+    </div>
+  </div>
+
+  <% } else { %>
+  <div class="card card-pad text-center">
+    <span class="mx-auto flex size-16 items-center justify-center rounded-full bg-ink-100 text-ink-600"><%- icon('info','size-8') %></span>
+    <h1 class="mt-3 text-xl font-extrabold">سفارشی پیدا نشد</h1>
+    <p class="mt-2 text-sm leading-7 text-ink-600"><%= user ? 'این سفارش متعلق به حساب شما نیست یا وجود ندارد.' : 'برای دیدن وضعیت سفارش، وارد حساب کاربری شوید.' %></p>
+    <div class="mt-4 flex justify-center gap-2">
+      <% if (user) { %><a class="btn btn-primary" href="/account/orders">سفارش‌های من</a><% } else { %><button type="button" class="btn btn-primary" data-open-auth>ورود به حساب</button><% } %>
+      <a class="btn btn-secondary" href="/">صفحه اصلی</a>
+    </div>
+  </div>
+  <% } %>
+</div>
+<%- include('../partials/layout-bottom') %>

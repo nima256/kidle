@@ -1,0 +1,25 @@
+<%- include('_top') %>
+<form class="grid max-w-4xl gap-4 lg:grid-cols-2" data-api="/admin/api/settings" data-method="PUT" novalidate>
+  <section class="card card-pad space-y-3">
+    <h2 class="text-sm font-bold">ارسال و سفارش</h2>
+    <div class="field"><label class="label" for="car">شرکت ارسال پیش‌فرض</label><select class="select" id="car" name="defaultCarrier"><% ['تیپاکس', 'چاپار', 'ایران-پیام'].forEach(function (c) { %><option <%= s.defaultCarrier === c ? 'selected' : '' %>><%= c %></option><% }) %></select><p class="hint">برای هر سفارش در صفحه سفارش قابل تغییر است.</p></div>
+    <div class="field"><label class="label" for="sn">متن ارسال پس‌کرایه</label><textarea class="textarea !min-h-16" id="sn" name="shippingNote"><%= s.shippingNote %></textarea></div>
+    <div class="field"><label class="label" for="dt">زمان آماده‌سازی و ارسال</label><input class="input" id="dt" name="dispatchTime" value="<%= s.dispatchTime %>"></div>
+    <div class="field"><label class="label" for="lt">آستانه «رو به اتمام»</label><input class="input ltr" id="lt" name="lowStockThreshold" inputmode="numeric" value="<%= s.lowStockThreshold %>"><p class="hint">محصولات با موجودی کمتر یا مساوی این عدد، «فقط N عدد» نشان داده می‌شوند.</p></div>
+    <div class="field"><label class="label" for="an">نوار اطلاع‌رسانی بالای سایت</label><input class="input" id="an" name="announcement" value="<%= s.announcement %>" placeholder="خالی = نمایش داده نمی‌شود"></div>
+  </section>
+  <section class="card card-pad space-y-3">
+    <h2 class="text-sm font-bold">اطلاعات تماس (فوتر و صفحه تماس)</h2>
+    <div class="field"><label class="label" for="ph">تلفن</label><input class="input ltr" id="ph" name="phone" value="<%= s.phone %>"></div>
+    <div class="field"><label class="label" for="em">ایمیل</label><input class="input ltr" id="em" name="email" value="<%= s.email %>"></div>
+    <div class="field"><label class="label" for="ad">آدرس</label><textarea class="textarea !min-h-16" id="ad" name="address"><%= s.address %></textarea></div>
+    <div class="field"><label class="label" for="wh">ساعات پاسخگویی</label><input class="input" id="wh" name="workingHours" value="<%= s.workingHours %>"></div>
+    <div class="grid grid-cols-3 gap-2">
+      <div class="field"><label class="label" for="ig">اینستاگرام</label><input class="input ltr" id="ig" name="instagram" value="<%= s.instagram %>"></div>
+      <div class="field"><label class="label" for="tl">تلگرام</label><input class="input ltr" id="tl" name="telegram" value="<%= s.telegram %>"></div>
+      <div class="field"><label class="label" for="wa">واتساپ</label><input class="input ltr" id="wa" name="whatsapp" value="<%= s.whatsapp %>"></div>
+    </div>
+  </section>
+  <div class="lg:col-span-2"><button class="btn btn-primary"><span class="spinner"></span><span class="btn-label-idle">ذخیره تنظیمات</span></button></div>
+</form>
+<%- include('_bottom') %>

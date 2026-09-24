@@ -1,0 +1,20 @@
+<%- include('../partials/layout-top') %>
+<div class="container-app py-4">
+  <%- include('../partials/breadcrumbs', { crumbs: [{ name: 'مجله کیدل' }], crumbClass: 'pb-2' }) %>
+  <h1 class="text-xl font-extrabold sm:text-2xl">مجله کیدل</h1>
+  <p class="mt-1 text-sm text-ink-600">راهنمای انتخاب سایز، خرید و نگهداری لباس بچه‌ها</p>
+  <% if (cats.length) { %>
+  <nav class="scroller mt-3" aria-label="دسته‌های مجله">
+    <a class="chip <%= !active ? 'is-active' : '' %>" href="/weblog">همه</a>
+    <% cats.forEach(function (c) { %><a class="chip <%= active && active.slug === c.slug ? 'is-active' : '' %>" href="/weblog?cat=<%= encodeURIComponent(c.slug) %>"><%= c.name %></a><% }) %>
+  </nav>
+  <% } %>
+  <% if (posts.length) { %>
+  <div class="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+    <% posts.forEach(function (w) { %><%- include('../partials/post-card', { w: w, cls: '' }) %><% }) %>
+  </div>
+  <% } else { %>
+  <div class="empty-state card mt-4"><span class="empty-art"><%- icon('file','size-9') %></span><h2 class="text-base font-bold">هنوز مقاله‌ای منتشر نشده است</h2><a class="btn btn-secondary" href="/shop">دیدن محصولات</a></div>
+  <% } %>
+</div>
+<%- include('../partials/layout-bottom') %>

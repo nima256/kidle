@@ -1,0 +1,30 @@
+<%
+  const _title = locals.title || 'کیدل | فروشگاه لباس بچگانه';
+  const _desc = locals.description || 'خرید آنلاین لباس بچگانه، نوزادی و نوجوان با کیفیت بالا از کیدل.';
+  const _img = locals.ogImage ? (ogImage.startsWith('http') ? ogImage : siteUrl + ogImage) : siteUrl + '/og-default.png';
+%><!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title><%= _title %></title>
+<meta name="description" content="<%= _desc %>">
+<% if (locals.noindex) { %><meta name="robots" content="noindex, follow"><% } else { %><link rel="canonical" href="<%= canonical %>"><% } %>
+<meta name="theme-color" content="#ffffff">
+<meta property="og:site_name" content="کیدل">
+<meta property="og:locale" content="fa_IR">
+<meta property="og:type" content="<%= locals.ogType || 'website' %>">
+<meta property="og:title" content="<%= _title %>">
+<meta property="og:description" content="<%= _desc %>">
+<meta property="og:url" content="<%= canonical %>">
+<meta property="og:image" content="<%= _img %>">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="preload" href="/fonts/Vazirmatn-FD-Regular.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/fonts/Vazirmatn-FD-Bold.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="<%= asset('/css/app.css') %>">
+<% if (locals.preloadImage) { %><link rel="preload" as="image" href="<%= preloadImage %>" fetchpriority="high"><% } %>
+<% if (locals.jsonld) { [].concat(jsonld).forEach(function (j) { %><script type="application/ld+json"><%- json(j) %></script>
+<% }) } %>
+</head>

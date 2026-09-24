@@ -1,0 +1,13 @@
+<%
+  var st = o.status, ps = o.paymentStatus;
+  var map = {
+    'در انتظار پرداخت': ['badge-info', 'در انتظار پرداخت'],
+    'در حال پردازش': ['badge-info', 'در حال آماده‌سازی'],
+    'بسته بندی شده': ['badge-info', 'بسته‌بندی شده'],
+    'در حال ارسال': ['badge-new', 'ارسال شده'],
+    'تحویل داده شد': ['badge-success', 'تحویل داده شد'],
+    'لغو شده': ['badge-neutral', ps === 'پرداخت شده' ? 'لغو شده' : 'پرداخت نشده'],
+    'پرداخت شده': ['badge-info', 'پرداخت شده']
+  };
+  var m = map[st] || ['badge-neutral', st];
+%><span class="badge <%= m[0] %>"><%= m[1] %></span>

@@ -260,6 +260,8 @@ productSchema.pre("validate", async function (next) {
 
 productSchema.pre("save", function (next) {
   this.updateTarikh = getPersianDate();
+  // countInStock is the single source of truth; isOutOfStock is always derived from it.
+  this.isOutOfStock = !(this.countInStock > 0);
   if (this.isModified("isPublished") && this.isPublished && !this.publishedAt) {
     this.publishedAt = new Date();
   }
@@ -296,7 +298,7 @@ productSchema.index({ isFeatured: 1 });
 productSchema.index({ isPopular: 1 });
 productSchema.index({ isNewProduct: 1 });
 productSchema.index({ rating: -1 });
-productSchema.index({ "colors.hex": 1 });
+productSchema.index({ isPublished: 1, createdAt: -1 });
 
 productSchema.set("toJSON", {
   virtual: true,

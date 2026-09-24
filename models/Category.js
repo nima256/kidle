@@ -40,6 +40,7 @@ const categorySchema = mongoose.Schema(
         type: String,
         validate: {
           validator: function (v) {
+            if (typeof v === "string" && v.startsWith("/uploads/")) return true;
             return validator.isURL(v, {
               protocols: ["http", "https"],
               require_protocol: true,

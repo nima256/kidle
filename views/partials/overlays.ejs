@@ -1,0 +1,119 @@
+<%# Global overlays: category drawer, search, login sheet, toasts. Present on every storefront page. %>
+<div class="drawer-overlay" data-drawer-overlay hidden></div>
+<aside class="drawer" id="menu-drawer" role="dialog" aria-modal="true" aria-label="منو" hidden>
+  <div class="flex items-center justify-between border-b border-ink-100 px-4 py-3">
+    <%- include('logo') %>
+    <button type="button" class="btn-icon" data-close-drawer aria-label="بستن منو"><%- icon('x') %></button>
+  </div>
+  <div class="flex-1 overflow-y-auto overscroll-contain">
+    <% if (!user) { %>
+    <div class="m-4 rounded-lg bg-brand-50 p-3">
+      <p class="text-sm font-semibold text-brand-800">با شماره موبایل وارد شوید</p>
+      <p class="mb-2 text-xs text-brand-700">بدون رمز عبور، فقط با یک کد پیامکی.</p>
+      <button type="button" class="btn btn-primary btn-sm" data-open-auth>ورود یا ثبت‌نام</button>
+    </div>
+    <% } %>
+    <p class="px-4 pt-4 pb-1 text-xs font-bold text-ink-500">دسته‌بندی‌ها</p>
+    <ul class="px-2">
+      <% menu.forEach(function (c, i) { %>
+      <li>
+        <% if (c.children.length) { %>
+        <details class="group">
+          <summary class="flex h-12 cursor-pointer list-none items-center justify-between rounded-md px-2 text-[0.9375rem] font-semibold hover:bg-ink-50 [&::-webkit-details-marker]:hidden">
+            <%= c.name %> <%- icon('chevron-down','icon-sm text-ink-400 transition group-open:rotate-180') %>
+          </summary>
+          <ul class="mb-2 ms-2 border-s-2 border-brand-100 ps-2">
+            <li><a class="flex h-10 items-center rounded-md px-2 text-sm font-semibold text-brand-700" href="/category/<%= c.slug %>">همه <%= c.name %></a></li>
+            <% c.children.forEach(function (ch) { %><li><a class="flex h-10 items-center rounded-md px-2 text-sm text-ink-700 hover:bg-ink-50" href="/category/<%= ch.slug %>"><%= ch.name %></a></li><% }) %>
+          </ul>
+        </details>
+        <% } else { %>
+        <a class="flex h-12 items-center rounded-md px-2 text-[0.9375rem] font-semibold hover:bg-ink-50" href="/category/<%= c.slug %>"><%= c.name %></a>
+        <% } %>
+      </li>
+      <% }) %>
+      <li><a class="flex h-12 items-center gap-2 rounded-md px-2 text-[0.9375rem] font-semibold text-brand-700" href="/shop">همه محصولات <%- icon('arrow-left','icon-sm') %></a></li>
+    </ul>
+    <p class="px-4 pt-4 pb-1 text-xs font-bold text-ink-500">بیشتر</p>
+    <ul class="px-2 pb-6 text-sm">
+      <li><a class="flex h-11 items-center gap-2.5 rounded-md px-2 hover:bg-ink-50" href="/shop?sale=1"><%- icon('tag','icon-sm text-brand-500') %> تخفیف‌ها</a></li>
+      <li><a class="flex h-11 items-center gap-2.5 rounded-md px-2 hover:bg-ink-50" href="/weblog"><%- icon('file','icon-sm text-brand-500') %> مجله کیدل</a></li>
+      <% if (user) { %><li><a class="flex h-11 items-center gap-2.5 rounded-md px-2 hover:bg-ink-50" href="/account/orders"><%- icon('package','icon-sm text-brand-500') %> سفارش‌های من</a></li><% } %>
+      <li><a class="flex h-11 items-center gap-2.5 rounded-md px-2 hover:bg-ink-50" href="/contact-us"><%- icon('phone','icon-sm text-brand-500') %> تماس با ما</a></li>
+      <li><a class="flex h-11 items-center gap-2.5 rounded-md px-2 hover:bg-ink-50" href="/about-us"><%- icon('heart','icon-sm text-brand-500') %> درباره کیدل</a></li>
+    </ul>
+  </div>
+</aside>
+
+<div class="overlay !items-start" id="search-overlay" role="dialog" aria-modal="true" aria-label="جستجو" hidden data-overlay>
+  <div class="sheet !max-w-2xl !rounded-none !rounded-b-xl sm:!rounded-xl !translate-y-0 sm:mt-16" style="max-height: 100dvh">
+    <form action="/search" method="get" role="search" class="flex items-center gap-2 border-b border-ink-100 p-3" data-search-form>
+      <%- icon('search','text-ink-400') %>
+      <label for="overlay-search" class="sr-only">جستجوی محصولات</label>
+      <input id="overlay-search" name="q" type="search" enterkeyhint="search" autocomplete="off" placeholder="دنبال چه می‌گردید؟" class="h-11 flex-1 bg-transparent text-base outline-none" data-search-input>
+      <button type="button" class="btn btn-ghost btn-sm" data-close-overlay>بستن</button>
+    </form>
+    <div class="max-h-[70dvh] overflow-y-auto" data-search-results aria-live="polite">
+      <div class="p-4" data-search-empty>
+        <p class="mb-2 text-xs font-bold text-ink-500">دسته‌های پرطرفدار</p>
+        <div class="flex flex-wrap gap-2">
+          <% menu.slice(0, 8).forEach(function (c) { %><a class="chip" href="/category/<%= c.slug %>"><%= c.name %></a><% }) %>
+          <a class="chip" href="/shop?sale=1"><%- icon('tag','icon-sm text-brand-500') %> تخفیف‌دارها</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<% if (!user) { %>
+<div class="overlay" id="auth-overlay" role="dialog" aria-modal="true" aria-labelledby="auth-title" hidden data-overlay>
+  <div class="sheet">
+    <div class="sheet-grip"></div>
+    <div class="flex items-center justify-between px-4 pt-3">
+      <button type="button" class="btn-icon -ms-2 invisible" data-auth-back aria-label="تغییر شماره"><%- icon('arrow-right') %></button>
+      <button type="button" class="btn-icon -me-2" data-close-overlay aria-label="بستن"><%- icon('x') %></button>
+    </div>
+    <div class="px-5 pb-6 sm:px-6">
+      <form data-auth-step="phone" novalidate>
+        <div class="mb-5 text-center">
+          <span class="mx-auto mb-3 flex size-14 items-center justify-center rounded-full bg-brand-50 text-brand-600"><%- icon('smartphone','icon-lg') %></span>
+          <h2 id="auth-title" class="text-lg font-extrabold">ورود یا ثبت‌نام</h2>
+          <p class="mt-1 text-sm text-ink-600">شماره موبایلتان را وارد کنید تا کد تأیید پیامک شود.</p>
+        </div>
+        <div class="field">
+          <label class="label" for="auth-mobile">شماره موبایل</label>
+          <input id="auth-mobile" name="mobile" class="input ltr text-center text-lg tracking-wider" type="tel" inputmode="numeric" autocomplete="tel" placeholder="۰۹۱۲ ۳۴۵ ۶۷۸۹" maxlength="14" required aria-describedby="auth-mobile-error">
+          <p class="field-error" id="auth-mobile-error" hidden></p>
+        </div>
+        <button type="submit" class="btn btn-primary btn-lg btn-block mt-4">
+          <span class="spinner"></span><span class="btn-label-idle">دریافت کد تأیید</span>
+        </button>
+        <p class="mt-3 text-center text-xs leading-5 text-ink-500">ورود شما به معنای پذیرش <a class="link" href="/terms-and-conditions" target="_blank">قوانین کیدل</a> است.</p>
+      </form>
+
+      <form data-auth-step="code" novalidate hidden>
+        <div class="mb-5 text-center">
+          <span class="mx-auto mb-3 flex size-14 items-center justify-center rounded-full bg-mint-50 text-mint-600"><%- icon('message','icon-lg') %></span>
+          <h2 class="text-lg font-extrabold">کد تأیید را وارد کنید</h2>
+          <p class="mt-1 text-sm text-ink-600">کد ۵ رقمی به <b class="ltr inline-block" data-auth-mobile></b> پیامک شد.
+            <button type="button" class="link text-sm" data-auth-back>ویرایش شماره</button></p>
+        </div>
+        <div class="field">
+          <label class="label sr-only" for="auth-code">کد تأیید</label>
+          <input id="auth-code" name="code" class="input ltr text-center text-2xl font-bold tracking-[0.6em]" type="text" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9۰-۹]*" maxlength="5" placeholder="•••••" required aria-describedby="auth-code-error">
+          <p class="field-error justify-center" id="auth-code-error" role="alert" hidden></p>
+        </div>
+        <button type="submit" class="btn btn-primary btn-lg btn-block mt-4">
+          <span class="spinner"></span><span class="btn-label-idle">تأیید و ورود</span>
+        </button>
+        <div class="mt-4 flex items-center justify-center gap-2 text-sm text-ink-600" aria-live="polite">
+          <span data-auth-timer>ارسال دوباره کد تا <b class="tabular-nums" data-auth-seconds>۶۰</b> ثانیه دیگر</span>
+          <button type="button" class="btn btn-soft btn-sm" data-auth-resend hidden>ارسال دوباره کد</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+<% } %>
+
+<div class="toast-region" id="toasts" aria-live="polite" aria-atomic="false"></div>

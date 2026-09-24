@@ -1,0 +1,24 @@
+<%- include('../partials/layout-top') %>
+<section class="container-app py-10 sm:py-16">
+  <div class="mx-auto flex max-w-md flex-col items-center text-center">
+    <% if (status === 404) { %>
+    <svg viewBox="0 0 200 140" class="w-56" aria-hidden="true"><circle cx="100" cy="75" r="62" fill="#ffe4ee"/><path d="M40 40 Q100 70 160 40" fill="none" stroke="#a3979e" stroke-width="2.5"/><path d="M78 50h12q8 7 16 0h12l16 18-10 9-7-7v38H79V70l-7 7-10-9z" fill="#f7729f" transform="rotate(-8 100 60)"/><text x="100" y="130" text-anchor="middle" font-size="22" font-weight="800" fill="#cc2f69">۴۰۴</text></svg>
+    <h1 class="mt-4 text-2xl font-black">این صفحه پیدا نشد</h1>
+    <p class="mt-2 text-sm leading-7 text-ink-600"><%= locals.message && message !== 'پیدا نشد' ? message : 'ممکن است آدرس اشتباه باشد یا این صفحه جابه‌جا شده باشد.' %></p>
+    <% } else { %>
+    <span class="empty-art"><%- icon('alert','size-9') %></span>
+    <h1 class="mt-4 text-2xl font-black"><%= status >= 500 ? 'مشکلی پیش آمد' : 'درخواست انجام نشد' %></h1>
+    <p class="mt-2 text-sm leading-7 text-ink-600"><%= locals.message || 'لطفاً چند لحظه دیگر دوباره تلاش کنید. اگر مشکل ادامه داشت با پشتیبانی تماس بگیرید.' %></p>
+    <% } %>
+    <form action="/search" method="get" class="mt-6 flex w-full gap-2" role="search">
+      <label for="err-q" class="sr-only">جستجو</label>
+      <input id="err-q" name="q" class="input" placeholder="جستجوی محصول…">
+      <button class="btn btn-primary !h-11">جستجو</button>
+    </form>
+    <div class="mt-4 flex gap-2">
+      <a href="/" class="btn btn-secondary">صفحه اصلی</a>
+      <a href="/shop" class="btn btn-ghost">همه محصولات</a>
+    </div>
+  </div>
+</section>
+<%- include('../partials/layout-bottom') %>

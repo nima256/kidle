@@ -1,0 +1,12 @@
+<% locals.scripts = ['cart']; %>
+<%- include('../partials/layout-top') %>
+<div class="container-app pb-6">
+  <div class="flex items-center justify-between pt-4 pb-3">
+    <h1 class="text-xl font-extrabold sm:text-2xl">سبد خرید <span class="text-base font-bold text-ink-500" data-cart-title-count><%= cart.count ? '(' + fa(cart.count) + ' کالا)' : '' %></span></h1>
+    <a href="/shop" class="btn btn-ghost btn-sm hidden sm:inline-flex">ادامه خرید <%- icon('arrow-left','icon-sm') %></a>
+  </div>
+  <div id="cart-root" data-logged-in="<%= user ? '1' : '' %>"></div>
+  <noscript><div class="alert alert-warn">برای استفاده از سبد خرید، جاوااسکریپت مرورگر را فعال کنید.</div></noscript>
+</div>
+<script type="application/json" id="cart-data"><%- json(cart) %></script>
+<%- include('../partials/layout-bottom') %>

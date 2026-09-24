@@ -1,4 +1,9 @@
 .vscode
 node_modules
+.env
+.env.*
+!.env.example
 /public/uploads
-robots.txt
+/logs
+/tmp
+*.log

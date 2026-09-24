@@ -1,0 +1,37 @@
+<% locals.headerActions = '<a class="btn btn-primary btn-sm" href="/admin/products/new">' + icon('plus','icon-sm') + ' محصول جدید</a>'; locals.pagerQuery = { q: q, status: status }; %>
+<%- include('_top') %>
+<form class="mb-3 flex flex-wrap gap-2" method="get">
+  <label class="sr-only" for="pq">جستجو</label>
+  <input id="pq" class="input !min-h-10 max-w-xs" name="q" value="<%= q %>" placeholder="جستجوی نام محصول">
+  <select class="select !min-h-10 w-auto" name="status" data-autosubmit aria-label="فیلتر وضعیت">
+    <% [['', 'همه'], ['published', 'منتشرشده'], ['draft', 'پیش‌نویس'], ['out', 'ناموجود'], ['sale', 'تخفیف‌دار']].forEach(function (o) { %><option value="<%= o[0] %>" <%= status === o[0] ? 'selected' : '' %>><%= o[1] %></option><% }) %>
+  </select>
+  <button class="btn btn-secondary !h-10">جستجو</button>
+  <span class="ms-auto self-center text-xs text-ink-500"><%= fa(total) %> محصول</span>
+</form>
+<div class="card overflow-x-auto">
+  <table class="table">
+    <thead><tr><th>محصول</th><th>قیمت</th><th>موجودی</th><th>وضعیت</th><th><span class="sr-only">عملیات</span></th></tr></thead>
+    <tbody>
+      <% items.forEach(function (p) { %>
+      <tr>
+        <td><a href="/admin/products/<%= p._id %>/edit" class="flex items-center gap-2.5 font-medium hover:text-brand-700">
+          <span class="w-10 shrink-0 overflow-hidden rounded bg-ink-100"><% if (img(p)) { %><img src="<%= img(p) %>" alt="" class="aspect-[4/5] w-full object-cover" loading="lazy"><% } %></span>
+          <span><%= p.name %><span class="block text-2xs text-ink-500"><%= (p.category || []).map(function (c) { return c.name; }).join('، ') %></span></span></a></td>
+        <td class="whitespace-nowrap"><% if (discountPercent(p)) { %><span class="price-old block"><%= price(p.price) %></span><% } %><%= price(finalPrice(p)) %></td>
+        <td><span class="badge <%= p.countInStock <= 0 ? 'badge-danger' : p.countInStock <= settings.lowStockThreshold ? 'badge-low' : 'badge-neutral' %>"><%= fa(p.countInStock) %></span></td>
+        <td><span class="badge <%= p.isPublished ? 'badge-success' : 'badge-neutral' %>"><%= p.isPublished ? 'منتشرشده' : 'پیش‌نویس' %></span></td>
+        <td class="whitespace-nowrap text-end">
+          <% if (p.isPublished) { %><a class="btn-icon size-8" href="/productDetails/<%= p.slug %>" target="_blank" aria-label="دیدن در سایت"><%- icon('eye','icon-sm') %></a><% } %>
+          <a class="btn-icon size-8" href="/admin/products/<%= p._id %>/edit" aria-label="ویرایش"><%- icon('edit','icon-sm') %></a>
+          <button class="btn-icon size-8" data-action="/admin/api/products/<%= p._id %>/duplicate" aria-label="کپی"><%- icon('copy','icon-sm') %></button>
+          <button class="btn-icon size-8 text-danger-600" data-action="/admin/api/products/<%= p._id %>" data-method="DELETE" data-confirm="«<%= p.name %>» برای همیشه حذف شود؟" data-remove-row aria-label="حذف"><%- icon('trash','icon-sm') %></button>
+        </td>
+      </tr>
+      <% }) %>
+      <% if (!items.length) { %><tr><td colspan="5" class="py-10 text-center text-ink-500">محصولی پیدا نشد. <a class="link" href="/admin/products/new">افزودن محصول</a></td></tr><% } %>
+    </tbody>
+  </table>
+</div>
+<%- include('_pager') %>
+<%- include('_bottom') %>

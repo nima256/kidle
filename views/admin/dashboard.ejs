@@ -1,0 +1,60 @@
+<%- include('_top') %>
+<%
+  var growth = stats.prev30.revenue ? Math.round(((stats.last30.revenue - stats.prev30.revenue) / stats.prev30.revenue) * 100) : null;
+  var maxRev = Math.max.apply(null, chart.map(function (c) { return c.revenue; }).concat([1]));
+%>
+<div class="grid grid-cols-2 gap-3 lg:grid-cols-4">
+  <div class="stat"><span class="stat-label">فروش امروز</span><span class="stat-value"><%= price(stats.today.revenue) %></span><span class="text-xs text-ink-500"><%= fa(stats.today.count) %> سفارش پرداخت‌شده</span></div>
+  <div class="stat"><span class="stat-label">فروش ۳۰ روز</span><span class="stat-value"><%= price(stats.last30.revenue) %></span><span class="text-xs <%= growth === null ? 'text-ink-500' : growth >= 0 ? 'text-mint-700' : 'text-danger-600' %>"><%= growth === null ? fa(stats.last30.count) + ' سفارش' : (growth >= 0 ? '▲ ' : '▼ ') + fa(Math.abs(growth)) + '٪ نسبت به ۳۰ روز قبل' %></span></div>
+  <a href="/admin/orders" class="stat hover:border-brand-300"><span class="stat-label">آماده ارسال</span><span class="stat-value text-brand-600"><%= fa(counts.toShip) %></span><span class="text-xs text-ink-500">سفارش در انتظار بسته‌بندی/ارسال</span></a>
+  <a href="/admin/customers" class="stat hover:border-brand-300"><span class="stat-label">مشتریان</span><span class="stat-value"><%= fa(stats.customers) %></span><span class="text-xs text-ink-500"><%= fa(stats.newCustomers) %> مشتری جدید این هفته</span></a>
+</div>
+
+<div class="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
+  <a href="/admin/orders?tab=awaiting" class="card flex flex-col p-3 hover:border-brand-300"><span class="text-2xs text-ink-500">در انتظار پرداخت</span><b class="text-lg"><%= fa(stats.awaiting) %></b></a>
+  <a href="/admin/payments?f=failed" class="card flex flex-col p-3 hover:border-brand-300"><span class="text-2xs text-ink-500">پرداخت ناموفق (۷ روز)</span><b class="text-lg <%= stats.failed7 ? 'text-danger-600' : '' %>"><%= fa(stats.failed7) %></b></a>
+  <a href="/admin/inventory?f=out" class="card flex flex-col p-3 hover:border-brand-300"><span class="text-2xs text-ink-500">ناموجود (منتشرشده)</span><b class="text-lg <%= stats.outOfStock ? 'text-danger-600' : '' %>"><%= fa(stats.outOfStock) %></b></a>
+  <a href="/admin/products" class="card flex flex-col p-3 hover:border-brand-300"><span class="text-2xs text-ink-500">محصولات فعال / پیش‌نویس</span><b class="text-lg"><%= fa(stats.published) %> <span class="text-sm font-normal text-ink-500">/ <%= fa(stats.drafts) %></span></b></a>
+  <a href="/admin/reviews" class="card flex flex-col p-3 hover:border-brand-300"><span class="text-2xs text-ink-500">نظرات در انتظار</span><b class="text-lg"><%= fa(counts.reviews) %></b></a>
+  <div class="card flex flex-col p-3"><span class="text-2xs text-ink-500">بازدید امروز</span><b class="text-lg"><%= fa(stats.visitsToday) %></b></div>
+</div>
+
+<div class="mt-3 grid gap-3 lg:grid-cols-3">
+  <section class="card card-pad lg:col-span-2" aria-labelledby="ch-t">
+    <h2 id="ch-t" class="mb-3 text-sm font-bold">فروش ۱۴ روز اخیر (تومان)</h2>
+    <div class="flex h-44 items-end gap-1" role="img" aria-label="نمودار فروش روزانه">
+      <% chart.forEach(function (c) { var h = Math.max(2, Math.round((c.revenue / maxRev) * 100)); %>
+      <div class="group relative flex h-full flex-1 flex-col justify-end">
+        <div class="rounded-t-sm <%= c.revenue ? 'bg-brand-400 group-hover:bg-brand-600' : 'bg-ink-100' %>" style="height: <%= h %>%"></div>
+        <span class="pointer-events-none absolute bottom-full start-1/2 z-10 mb-1 hidden -translate-x-1/2 whitespace-nowrap rounded bg-ink-900 px-2 py-1 text-2xs text-white group-hover:block"><%= c.label %>: <%= price(c.revenue) %> (<%= fa(c.count) %>)</span>
+      </div>
+      <% }) %>
+    </div>
+    <div class="mt-1 flex justify-between text-2xs text-ink-500"><span><%= chart[0].label %></span><span><%= chart[chart.length - 1].label %></span></div>
+  </section>
+  <section class="card card-pad" aria-labelledby="ls-t">
+    <div class="mb-2 flex items-center justify-between"><h2 id="ls-t" class="text-sm font-bold">رو به اتمام</h2><a class="link text-xs" href="/admin/inventory?f=low">همه</a></div>
+    <% if (lowStock.length) { %>
+    <ul class="divide-y divide-ink-100 text-sm">
+      <% lowStock.forEach(function (p) { %><li class="flex items-center justify-between gap-2 py-2"><span class="truncate"><%= p.name %></span><span class="badge badge-low shrink-0"><%= fa(p.countInStock) %> عدد</span></li><% }) %>
+    </ul>
+    <% } else { %><p class="text-sm text-ink-500">موجودی همه محصولات کافی است.</p><% } %>
+  </section>
+</div>
+
+<div class="mt-3 grid gap-3 lg:grid-cols-3">
+  <section class="card overflow-hidden lg:col-span-2" aria-labelledby="ro-t">
+    <div class="flex items-center justify-between p-4 pb-2"><h2 id="ro-t" class="text-sm font-bold">آخرین سفارش‌ها</h2><a class="link text-xs" href="/admin/orders?tab=all">همه سفارش‌ها</a></div>
+    <div class="overflow-x-auto"><table class="table"><thead><tr><th>شماره</th><th>گیرنده</th><th>مبلغ</th><th>وضعیت</th><th>زمان</th></tr></thead><tbody>
+      <% recentOrders.forEach(function (o) { %><tr><td><a class="link ltr" href="/admin/orders/<%= o._id %>"><%= o.OrderNum %></a></td><td><%= o.recipientName || '—' %></td><td class="whitespace-nowrap"><%= price(o.totalPrice) %></td><td><%- include('../partials/order-status', { o: o }) %></td><td class="whitespace-nowrap text-xs text-ink-500"><%= faDate(o.createdAt, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }) %></td></tr><% }) %>
+      <% if (!recentOrders.length) { %><tr><td colspan="5" class="py-6 text-center text-ink-500">هنوز سفارشی ثبت نشده است</td></tr><% } %>
+    </tbody></table></div>
+  </section>
+  <section class="card card-pad" aria-labelledby="ac-t">
+    <h2 id="ac-t" class="mb-2 text-sm font-bold">فعالیت‌های اخیر مدیران</h2>
+    <ul class="space-y-2 text-xs">
+      <% actions.forEach(function (a) { %><li class="flex gap-2"><span class="mt-1.5 size-1.5 shrink-0 rounded-full bg-brand-400"></span><span><b><%= a.adminName %></b> — <%= actionLabels[a.action] || a.action %>: <%= a.targetName %><span class="block text-2xs text-ink-500"><%= faDate(a._id.getTimestamp(), { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }) %></span></span></li><% }) %>
+    </ul>
+  </section>
+</div>
+<%- include('_bottom') %>

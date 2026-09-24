@@ -18,10 +18,10 @@ const orderSchema = new Schema(
     },
     postcode: {
       type: String,
-      required: [true, "کد پستی الزامی است"],
+      default: "",
       validate: {
         validator: function (v) {
-          return /^\d{10}$/.test(v);
+          return !v || /^\d{10}$/.test(v);
         },
         message: "کد پستی باید ۱۰ رقم باشد",
       },
@@ -71,14 +71,8 @@ const orderSchema = new Schema(
           type: String,
           required: [true, "نام محصول در زمان خرید الزامی است"],
         },
-        selectedColor: {
-          type: String,
-          required: true,
-        },
-        selectedSize: {
-          type: String,
-          required: true,
-        },
+        selectedColor: { type: String, default: "" },
+        selectedSize: { type: String, default: "" },
       },
     ],
     delivery: {
@@ -89,6 +83,28 @@ const orderSchema = new Schema(
       },
       default: "تیپاکس",
     },
+    // Shipping is paid by the customer to the courier on delivery (پس‌کرایه).
+    // It is never part of the online payable amount.
+    shippingPayment: {
+      type: String,
+      enum: ["پس‌کرایه"],
+      default: "پس‌کرایه",
+    },
+    recipientName: { type: String, trim: true, default: "" },
+    recipientPhone: { type: String, trim: true, default: "" },
+    // Idempotency key sent by the checkout page; prevents duplicate orders on double submit.
+    checkoutKey: { type: String },
+    // Stock reserved for this order while the customer is at the gateway.
+    reservation: {
+      expiresAt: Date,
+      released: { type: Boolean, default: false },
+      releasedAt: Date,
+      releaseReason: String,
+    },
+    // Set when something needs a human (e.g. paid after reservation expired and stock ran out).
+    needsReview: { type: Boolean, default: false },
+    reviewReason: { type: String, default: "" },
+    adminNote: { type: String, default: "" },
     trackingNumber: {
       type: String,
       index: true,
@@ -156,7 +172,6 @@ const orderSchema = new Schema(
         },
         changedBy: {
           type: mongoose.Schema.Types.ObjectId,
-          ref: "User",
         },
         note: String,
       },
@@ -172,6 +187,7 @@ const orderSchema = new Schema(
     },
     paymentInfo: {
       authority: String,
+      paymentUrl: String,
       refId: String,
       cardPan: String,
       paymentDate: Date,
@@ -223,6 +239,9 @@ orderSchema.virtual("productDetails", {
 });
 
 orderSchema.index({ user: 1, status: 1 });
+orderSchema.index({ user: 1, checkoutKey: 1 }, { unique: true, partialFilterExpression: { checkoutKey: { $type: "string" } } });
+orderSchema.index({ "reservation.released": 1, "reservation.expiresAt": 1 });
+orderSchema.index({ "paymentInfo.authority": 1 });
 orderSchema.index({ createTarikh: -1 });
 orderSchema.index({ totalPrice: 1 });
 

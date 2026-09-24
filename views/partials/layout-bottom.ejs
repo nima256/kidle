@@ -1,0 +1,10 @@
+</main>
+<% if (!locals.minimalHeader) { %><%- include('footer') %><% } %>
+<% if (!locals.hideBottomNav) { %><%- include('bottom-nav') %><% } %>
+<%- include('overlays') %>
+<script>window.KIDLE = <%- json({ user: user ? { mobile: user.mobile, fullName: user.fullName } : null, cartCount: cartCount, openLogin: false }) %>;</script>
+<script src="<%= asset('/js/app.js') %>" defer></script>
+<% (locals.scripts || []).forEach(function (s) { %><script src="<%= asset('/js/' + s + '.js') %>" defer></script>
+<% }) %>
+</body>
+</html>

@@ -1,5 +1,6 @@
 const Product = require("../models/Product");
 const mongoose = require("mongoose");
+const SITE = require("../config").siteUrl;
 
 const formatProductForTorob = (product) => {
   // تاریخ انتشار به فرمت ISO 8601 با timezone
@@ -58,7 +59,7 @@ const formatProductForTorob = (product) => {
     if (imagePath.url.startsWith("http")) return imagePath.url;
     if (imagePath.url.startsWith("/uploads")) {
       // آدرس دامنه خود را جایگزین کنید
-      return `https://kidle.ir${imagePath.url}`;
+      return `${SITE}${imagePath.url}`;
     }
     return imagePath.url;
   };
@@ -72,7 +73,7 @@ const formatProductForTorob = (product) => {
 
   return {
     page_unique: pageUnique,
-    page_url: `https://kidle.ir/productDetails/${product.slug || product._id}`,
+    page_url: `${SITE}/productDetails/${product.slug || product._id}`,
     product_group_id: product.product_group_id || product._id.toString(),
     title: product.name,
     subtitle: product.englishName,
@@ -237,7 +238,7 @@ exports.torobSitemap = async (req, res) => {
       .select("slug name updatedAt")
       .lean();
 
-    const baseUrl = "https://kidle.ir";
+    const baseUrl = SITE;
 
     let html = `<!DOCTYPE html>
 <html lang="fa" dir="rtl">

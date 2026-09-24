@@ -1,0 +1,6 @@
+<%- include('_top') %>
+<div class="empty-state card"><span class="empty-art"><%- icon(locals.notFound ? 'search' : 'lock','size-9') %></span>
+  <h2 class="text-lg font-bold"><%= locals.notFound ? 'این صفحه پیدا نشد' : 'شما به این بخش دسترسی ندارید' %></h2>
+  <p class="text-sm text-ink-600"><%= locals.notFound ? '' : 'اگر فکر می‌کنید باید دسترسی داشته باشید، با مدیر ارشد تماس بگیرید.' %></p>
+  <a class="btn btn-secondary" href="/admin">بازگشت</a></div>
+<%- include('_bottom') %>

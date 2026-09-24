@@ -1,0 +1,15 @@
+<% locals.pagerQuery = { q: q }; %>
+<%- include('_top') %>
+<form class="mb-3 flex gap-2" method="get"><label class="sr-only" for="cq">جستجو</label><input id="cq" class="input !min-h-10 max-w-sm" name="q" value="<%= q %>" placeholder="موبایل، نام یا ایمیل"><button class="btn btn-secondary !h-10">جستجو</button><span class="ms-auto self-center text-xs text-ink-500"><%= fa(total) %> مشتری</span></form>
+<div class="card overflow-x-auto">
+  <table class="table"><thead><tr><th>مشتری</th><th>سفارش موفق</th><th>مجموع خرید</th><th>عضویت</th><th>آخرین ورود</th></tr></thead><tbody>
+    <% users.forEach(function (u) { %>
+    <tr><td><a class="font-medium hover:text-brand-700" href="/admin/customers/<%= u._id %>"><%= u.fullName || 'بدون نام' %><span class="ltr block text-xs text-ink-500"><%= u.mobile %></span></a></td>
+      <td><%= fa(u.paidOrders) %></td><td class="whitespace-nowrap"><%= price(u.spent) %></td>
+      <td class="text-xs text-ink-500"><%= faDate(u.createdAt) %></td><td class="text-xs text-ink-500"><%= u.lastLoginAt ? faDate(u.lastLoginAt) : '—' %></td></tr>
+    <% }) %>
+    <% if (!users.length) { %><tr><td colspan="5" class="py-8 text-center text-ink-500">مشتری‌ای پیدا نشد</td></tr><% } %>
+  </tbody></table>
+</div>
+<%- include('_pager') %>
+<%- include('_bottom') %>

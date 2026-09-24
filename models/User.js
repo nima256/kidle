@@ -2,22 +2,15 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 const { getPersianDate } = require("../helper/getPersianDate");
 const validator = require("validator");
-const bcrypt = require("bcryptjs");
 
 const userSchema = new mongoose.Schema(
   {
+    // Passwordless (phone + OTP) accounts: only `mobile` is required.
     fullName: {
       type: String,
-      required: [true, "نام کامل الزامی است"],
       trim: true,
-      minlength: [3, "نام کامل نمی‌تواند کمتر از ۳ کاراکتر باشد"],
-      maxlength: [50, "نام کامل نمی‌تواند بیشتر از ۵۰ کاراکتر باشد"],
-      validate: {
-        validator: function (v) {
-          return /^[\u0600-\u06FF\s]+$/.test(v); // Persian characters and spaces
-        },
-        message: "نام کامل باید شامل حروف فارسی باشد",
-      },
+      maxlength: [60, "نام نمی‌تواند بیشتر از ۶۰ کاراکتر باشد"],
+      default: "",
     },
     mobile: {
       type: String,
@@ -32,20 +25,29 @@ const userSchema = new mongoose.Schema(
     },
     email: {
       type: String,
-      required: [true, "ایمیل الزامی است"],
-      unique: true,
       lowercase: true,
-      validate: [validator.isEmail, "ایمیل معتبر نیست"],
+      trim: true,
+      validate: {
+        validator: (v) => !v || validator.isEmail(v),
+        message: "ایمیل معتبر نیست",
+      },
     },
+    // Legacy field from the old password login. Kept so old documents stay valid; never used.
     password: {
       type: String,
-      required: [true, "رمز عبور الزامی است"],
-      minlength: [8, "رمز عبور باید حداقل ۸ کاراکتر باشد"],
-      select: false, // Never return password in queries
+      select: false,
     },
-    passwordChangedAt: Date,
-    passwordResetToken: String,
-    passwordResetExpires: Date,
+    savedAddress: {
+      recipientName: { type: String, trim: true, default: "" },
+      recipientPhone: { type: String, trim: true, default: "" },
+      province: { type: String, trim: true, default: "" },
+      city: { type: String, trim: true, default: "" },
+      address: { type: String, trim: true, default: "" },
+      postcode: { type: String, trim: true, default: "" },
+    },
+    lastLoginAt: Date,
+    // Short-lived mutex so parallel checkout requests from one customer run one at a time.
+    checkoutLockUntil: Date,
     cart: [
       {
         productId: {
@@ -62,14 +64,8 @@ const userSchema = new mongoose.Schema(
           type: Date,
           default: Date.now,
         },
-        selectedColor: {
-          type: String,
-          required: true,
-        },
-        selectedSize: {
-          type: String,
-          required: true,
-        },
+        selectedColor: { type: String, default: "" },
+        selectedSize: { type: String, default: "" },
       },
     ],
     orders: [
@@ -124,40 +120,12 @@ userSchema.virtual("orderCount").get(function () {
   return this.orders?.length || 0;
 });
 
-userSchema.methods.correctPassword = async function (
-  candidatePassword,
-  userPassword
-) {
-  return await bcrypt.compare(candidatePassword, userPassword);
-};
-
-userSchema.methods.changedPasswordAfter = function (JWTTimestamp) {
-  if (this.passwordChangedAt) {
-    const changedTimestamp = parseInt(
-      this.passwordChangedAt.getTime() / 1000,
-      10
-    );
-    return JWTTimestamp < changedTimestamp;
-  }
-  return false;
-};
-
-userSchema.methods.createPasswordResetToken = function () {
-  const resetToken = crypto.randomBytes(32).toString("hex");
-
-  this.passwordResetToken = crypto
-    .createHash("sha256")
-    .update(resetToken)
-    .digest("hex");
-
-  this.passwordResetExpires = Date.now() + 10 * 60 * 1000; // 10 minutes
-
-  return resetToken;
-};
-
 userSchema.index({ role: 1 });
-userSchema.index({ "addresses.city": 1 });
-userSchema.index({ "addresses.province": 1 });
+// Email is optional, so the unique index must ignore documents without one.
+userSchema.index(
+  { email: 1 },
+  { unique: true, partialFilterExpression: { email: { $type: "string" } } }
+);
 
 const User = mongoose.model("User", userSchema);
 

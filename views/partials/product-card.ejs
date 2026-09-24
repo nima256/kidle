@@ -1,0 +1,36 @@
+<%
+  const _p = p;
+  const _final = finalPrice(_p);
+  const _off = discountPercent(_p);
+  const _soldout = !(_p.countInStock > 0);
+  const _low = !_soldout && _p.countInStock <= (settings.lowStockThreshold || 3);
+  const _img = img(_p);
+  const _sizes = (_p.sizes || []).map(function (s) { return s.size; }).filter(Boolean);
+%>
+<article class="p-card <%= _soldout ? 'is-soldout' : '' %>">
+  <a href="/productDetails/<%= _p.slug %>" class="p-card-img" tabindex="-1" aria-hidden="true">
+    <% if (_img) { %>
+    <img src="<%= _img %>" alt="" loading="<%= locals.eager ? 'eager' : 'lazy' %>" decoding="async" width="400" height="500">
+    <% } else { %>
+    <span class="flex size-full items-center justify-center text-brand-200"><%- icon('hanger','size-12') %></span>
+    <% } %>
+    <span class="p-card-badges">
+      <% if (_soldout) { %><span class="badge badge-soldout">ناموجود</span>
+      <% } else if (_off) { %><span class="badge badge-sale"><%= fa(_off) %>٪ تخفیف</span><% } %>
+      <% if (_p.isNewProduct && !_soldout) { %><span class="badge badge-new">جدید</span><% } %>
+    </span>
+  </a>
+  <div class="p-card-body">
+    <h3 class="p-card-title"><a href="/productDetails/<%= _p.slug %>" class="after:absolute after:inset-0"><%= _p.name %></a></h3>
+    <% if (_sizes.length) { %>
+    <p class="truncate text-2xs text-ink-500">سایز: <%= _sizes.slice(0, 5).join('، ') %><%= _sizes.length > 5 ? '…' : '' %></p>
+    <% } %>
+    <div class="mt-auto flex items-end justify-between gap-1 pt-1">
+      <div class="flex flex-col">
+        <% if (_off) { %><span class="price-old"><%= price(_p.price) %></span><% } %>
+        <span class="price text-[0.9375rem] <%= _soldout ? '!text-ink-500' : '' %>"><%= price(_final) %><span class="currency">تومان</span></span>
+      </div>
+      <% if (_low) { %><span class="badge badge-low shrink-0">فقط <%= fa(_p.countInStock) %> عدد</span><% } %>
+    </div>
+  </div>
+</article>
