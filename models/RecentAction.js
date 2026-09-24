@@ -6,30 +6,9 @@ const recentActionSchema = new mongoose.Schema(
     action: {
       type: String,
       required: true,
-      enum: [
-        'create_product',
-        'update_product', 
-        'delete_product',
-        'create_category',
-        'update_category',
-        'delete_category',
-        'create_brand',
-        'update_brand',
-        'delete_brand',
-        'create_discount',
-        'update_discount',
-        'delete_discount',
-        'update_order_status',
-        'create_weblog',
-        'update_weblog',
-        'delete_weblog',
-        'admin_login',
-        'admin_logout'
-      ]
     },
     targetType: {
       type: String,
-      enum: ['product', 'category', 'brand', 'discount', 'order', 'weblog', 'admin'],
       required: true
     },
     targetId: {

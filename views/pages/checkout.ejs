@@ -1,0 +1,124 @@
+<% locals.scripts = ['checkout']; var P = prefill; %>
+<%- include('../partials/layout-top') %>
+
+<div class="container-app max-w-5xl pb-6">
+  <ol class="flex items-center justify-center gap-2 py-3 text-xs" aria-label="مراحل خرید">
+    <li><a href="/cart" class="flex items-center gap-1 text-mint-700"><span class="flex size-5 items-center justify-center rounded-full bg-mint-100"><%- icon('check','size-3') %></span>سبد خرید</a></li>
+    <li class="h-px w-6 bg-ink-300" aria-hidden="true"></li>
+    <li aria-current="step" class="flex items-center gap-1 font-bold text-brand-700"><span class="flex size-5 items-center justify-center rounded-full bg-brand-500 text-2xs text-white">۲</span>ارسال</li>
+    <li class="h-px w-6 bg-ink-300" aria-hidden="true"></li>
+    <li class="flex items-center gap-1 text-ink-500"><span class="flex size-5 items-center justify-center rounded-full bg-ink-200 text-2xs">۳</span>پرداخت</li>
+  </ol>
+
+  <form class="grid gap-4 lg:grid-cols-[1fr_21rem] lg:items-start lg:gap-6" data-checkout-form novalidate>
+    <input type="hidden" name="checkoutKey" value="<%= checkoutKey %>">
+    <div class="space-y-4">
+      <!-- Summary (collapsed on phones) -->
+      <details class="card lg:hidden">
+        <summary class="flex cursor-pointer list-none items-center justify-between p-3.5 text-sm [&::-webkit-details-marker]:hidden">
+          <span class="flex items-center gap-2 font-semibold"><%- icon('bag','icon-sm text-brand-500') %> <%= fa(cart.count) %> کالا در سفارش شما</span>
+          <span class="flex items-center gap-1 text-brand-700"><span class="price text-sm"><%= price(cart.payable) %></span> <%- icon('chevron-down','icon-sm') %></span>
+        </summary>
+        <div class="border-t border-ink-100 px-3.5 pb-3"><%- include('../partials/checkout-items') %></div>
+      </details>
+
+      <% if (cart.issues.length) { %><div class="alert alert-warn"><%- icon('alert','icon-sm mt-0.5') %><span><%= cart.issues[0] %> — <a class="link" href="/cart">اصلاح سبد</a></span></div><% } %>
+
+      <section class="card card-pad" aria-labelledby="sec-recipient">
+        <h2 id="sec-recipient" class="mb-3 flex items-center gap-2 text-base font-bold"><span class="flex size-6 items-center justify-center rounded-full bg-brand-50 text-xs text-brand-700">۱</span> تحویل‌گیرنده</h2>
+        <div class="grid gap-3 sm:grid-cols-2">
+          <div class="field">
+            <label class="label" for="recipientName">نام و نام خانوادگی <span class="req">*</span></label>
+            <input class="input" id="recipientName" name="recipientName" autocomplete="name" value="<%= P.recipientName %>" required maxlength="60" enterkeyhint="next">
+            <p class="field-error" data-err="recipientName" hidden></p>
+          </div>
+          <div class="field">
+            <label class="label" for="recipientPhone">موبایل گیرنده <span class="req">*</span></label>
+            <input class="input ltr text-end" id="recipientPhone" name="recipientPhone" type="tel" inputmode="numeric" autocomplete="tel" value="<%= P.recipientPhone %>" required maxlength="14" enterkeyhint="next">
+            <p class="field-error" data-err="recipientPhone" hidden></p>
+          </div>
+        </div>
+      </section>
+
+      <section class="card card-pad" aria-labelledby="sec-address">
+        <h2 id="sec-address" class="mb-3 flex items-center gap-2 text-base font-bold"><span class="flex size-6 items-center justify-center rounded-full bg-brand-50 text-xs text-brand-700">۲</span> آدرس</h2>
+        <% if (hasSaved) { %>
+        <div class="mb-3 flex items-start gap-3 rounded-lg border-2 border-brand-400 bg-brand-50/50 p-3" data-saved-address>
+          <%- icon('pin','mt-0.5 text-brand-600') %>
+          <div class="min-w-0 flex-1 text-sm leading-7">
+            <b><%= P.province %>، <%= P.city %></b>
+            <p class="text-ink-700"><%= P.address %><%= P.postcode ? ' — کد پستی ' + P.postcode : '' %></p>
+          </div>
+          <button type="button" class="btn btn-ghost btn-sm text-brand-700" data-edit-address>ویرایش</button>
+        </div>
+        <% } %>
+        <div class="grid gap-3 sm:grid-cols-2" data-address-fields <%= hasSaved ? 'hidden' : '' %>>
+          <div class="field">
+            <label class="label" for="province">استان <span class="req">*</span></label>
+            <select class="select" id="province" name="province" required autocomplete="address-level1">
+              <option value="">انتخاب استان</option>
+              <% Object.keys(provinces).forEach(function (pv) { %><option value="<%= pv %>" <%= P.province === pv ? 'selected' : '' %>><%= pv %></option><% }) %>
+            </select>
+            <p class="field-error" data-err="province" hidden></p>
+          </div>
+          <div class="field">
+            <label class="label" for="city">شهر <span class="req">*</span></label>
+            <input class="input" id="city" name="city" list="city-list" value="<%= P.city %>" required maxlength="40" autocomplete="address-level2" placeholder="نام شهر">
+            <datalist id="city-list"></datalist>
+            <p class="field-error" data-err="city" hidden></p>
+          </div>
+          <div class="field sm:col-span-2">
+            <label class="label" for="address">آدرس دقیق <span class="req">*</span></label>
+            <textarea class="textarea !min-h-20" id="address" name="address" rows="2" required maxlength="500" autocomplete="street-address" placeholder="خیابان، کوچه، پلاک، واحد"><%= P.address %></textarea>
+            <p class="field-error" data-err="address" hidden></p>
+          </div>
+          <div class="field">
+            <label class="label" for="postcode">کد پستی <span class="text-xs font-normal text-ink-500">(اختیاری)</span></label>
+            <input class="input ltr text-end" id="postcode" name="postcode" inputmode="numeric" maxlength="10" autocomplete="postal-code" value="<%= P.postcode %>" placeholder="۱۰ رقم">
+            <p class="field-error" data-err="postcode" hidden></p>
+          </div>
+        </div>
+      </section>
+
+      <section class="card card-pad" aria-labelledby="sec-ship">
+        <h2 id="sec-ship" class="mb-3 flex items-center gap-2 text-base font-bold"><span class="flex size-6 items-center justify-center rounded-full bg-brand-50 text-xs text-brand-700">۳</span> ارسال و پرداخت</h2>
+        <div class="space-y-2">
+          <div class="flex items-start gap-3 rounded-lg border border-ink-200 p-3">
+            <span class="flex size-10 shrink-0 items-center justify-center rounded-lg bg-butter-100 text-butter-700"><%- icon('truck') %></span>
+            <div class="text-sm leading-6"><b>ارسال پس‌کرایه</b><p class="text-xs text-ink-600"><%= settings.shippingNote %> <%= settings.dispatchTime %>.</p></div>
+          </div>
+          <div class="flex items-start gap-3 rounded-lg border-2 border-brand-400 bg-brand-50/40 p-3">
+            <span class="flex size-10 shrink-0 items-center justify-center rounded-lg bg-white text-brand-600"><%- icon('card') %></span>
+            <div class="text-sm leading-6"><b>پرداخت آنلاین مبلغ کالاها</b><p class="text-xs text-ink-600">با همه کارت‌های عضو شتاب، از طریق درگاه امن زرین‌پال.</p></div>
+            <%- icon('check-circle','ms-auto text-brand-600') %>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <aside class="space-y-3 lg:sticky lg:top-[calc(var(--header-h)+1rem)]">
+      <div class="card card-pad">
+        <h2 class="mb-2 hidden text-base font-bold lg:block">سفارش شما</h2>
+        <div class="hidden lg:block"><%- include('../partials/checkout-items') %></div>
+        <dl class="space-y-2 text-sm lg:mt-3 lg:border-t lg:border-ink-100 lg:pt-3">
+          <div class="flex justify-between"><dt class="text-ink-600">جمع کالاها</dt><dd><%= price(cart.subtotal + cart.productSavings) %> <span class="currency">تومان</span></dd></div>
+          <% if (cart.productSavings) { %><div class="flex justify-between text-mint-700"><dt>تخفیف محصولات</dt><dd>−<%= price(cart.productSavings) %></dd></div><% } %>
+          <% if (cart.discount) { %><div class="flex justify-between text-mint-700"><dt>کد <span class="ltr"><%= cart.discount.code %></span></dt><dd>−<%= price(cart.discountAmount) %></dd></div><% } %>
+          <div class="flex justify-between"><dt class="text-ink-600">هزینه ارسال</dt><dd>پس‌کرایه (هنگام تحویل)</dd></div>
+          <div class="flex justify-between border-t border-dashed border-ink-200 pt-2 text-base"><dt class="font-bold">پرداخت آنلاین</dt><dd class="price"><%= price(cart.payable) %> <span class="currency">تومان</span></dd></div>
+        </dl>
+        <button type="submit" class="btn btn-primary btn-lg btn-block mt-4 hidden lg:inline-flex" data-pay <%= cart.canCheckout ? '' : 'disabled' %>><span class="spinner"></span><span class="btn-label-idle flex items-center gap-1.5"><%- icon('lock','icon-sm') %> پرداخت <%= price(cart.payable) %> تومان</span></button>
+        <p class="mt-2 hidden text-center text-2xs leading-5 text-ink-500 lg:block">پس از کلیک به درگاه زرین‌پال منتقل می‌شوید. با پرداخت، <a class="link" href="/terms-and-conditions" target="_blank">قوانین</a> را می‌پذیرید.</p>
+      </div>
+      <p class="flex items-center justify-center gap-1.5 text-xs text-ink-500"><%- icon('shield','icon-sm text-mint-600') %> اطلاعات کارت شما نزد کیدل ذخیره نمی‌شود</p>
+    </aside>
+
+    <div class="action-bar lg:hidden">
+      <button type="submit" class="btn btn-primary btn-lg btn-block" data-pay <%= cart.canCheckout ? '' : 'disabled' %>><span class="spinner"></span><span class="btn-label-idle flex items-center gap-1.5"><%- icon('lock','icon-sm') %> پرداخت <%= price(cart.payable) %> تومان</span></button>
+      <p class="mt-1 text-center text-2xs text-ink-500">انتقال به درگاه امن زرین‌پال · ارسال پس‌کرایه</p>
+    </div>
+  </form>
+  <div class="h-24 lg:hidden" aria-hidden="true"></div>
+</div>
+<script type="application/json" id="cities-data"><%- json(provinces) %></script>
+<%- include('../partials/layout-bottom') %>

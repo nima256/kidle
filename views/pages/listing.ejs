@@ -1,0 +1,184 @@
+<%
+  var fl = filters;
+  var sel = function (list, v) { return list.indexOf(v) !== -1; };
+  var removeUrl = function (a) {
+    var q = Object.assign({}, query);
+    delete q.page; delete q._count;
+    if (a.key === 'price') { delete q.min; delete q.max; }
+    else if (a.key === 'stock' || a.key === 'sale') { delete q[a.key]; }
+    else {
+      var cur = [].concat(q[a.key] || []).join(',').split(',').filter(Boolean);
+      q[a.key] = cur.filter(function (x) { return x !== a.value; });
+    }
+    return urlWith(Object.assign(q, {}));
+  };
+  var clearUrl = basePath + (fl.q ? '?q=' + encodeURIComponent(fl.q) : '');
+  var pageUrl = function (n) { var q = Object.assign({}, query); delete q._count; return urlWith(Object.assign(q, { page: n })); };
+  var itemList = { '@context': 'https://schema.org', '@type': 'ItemList', itemListElement: products.slice(0, 24).map(function (p, i) { return { '@type': 'ListItem', position: i + 1, url: siteUrl + '/productDetails/' + p.slug }; }) };
+%>
+<% locals.scripts = ['listing']; locals.jsonld = itemList; %>
+<%- include('../partials/layout-top') %>
+
+<div class="container-app">
+  <%- include('../partials/breadcrumbs', { crumbs: crumbs, crumbClass: 'pt-3 pb-2' }) %>
+
+  <div class="flex flex-wrap items-end justify-between gap-x-4 gap-y-1">
+    <h1 class="text-xl font-extrabold sm:text-2xl"><%= heading %></h1>
+    <p class="text-xs text-ink-500" aria-live="polite"><b class="text-ink-800"><%= fa(total) %></b> محصول</p>
+  </div>
+  <% if (category && category.description && page === 1 && !active.length) { %>
+  <p class="mt-1 line-clamp-2 max-w-3xl text-sm leading-7 text-ink-600"><%= category.description.replace(/<[^>]+>/g, '') %></p>
+  <% } %>
+
+  <% if (locals.subcategories && subcategories.length) { %>
+  <nav class="scroller bleed mt-3" aria-label="زیردسته‌ها">
+    <% subcategories.forEach(function (c) { %><a class="chip" href="/category/<%= c.slug %>"><%= c.name %></a><% }) %>
+  </nav>
+  <% } %>
+
+  <% if (searchPage) { %>
+  <form action="/search" method="get" role="search" class="mt-3 flex gap-2 md:hidden">
+    <label for="s-q" class="sr-only">عبارت جستجو</label>
+    <input id="s-q" name="q" type="search" class="input" value="<%= fl.q %>" placeholder="جستجو…">
+    <button class="btn btn-primary !h-11">جستجو</button>
+  </form>
+  <% } %>
+</div>
+
+<!-- Toolbar: sticky on phones so filters and sort stay in reach -->
+<div class="sticky z-40 mt-3 border-b border-ink-200/70 bg-paper/95 backdrop-blur lg:static lg:border-0 lg:bg-transparent" style="top: var(--header-h)">
+  <div class="container-app flex items-center gap-2 py-2">
+    <button type="button" class="btn btn-secondary btn-sm lg:hidden" data-open-filters aria-controls="filters">
+      <%- icon('sliders','icon-sm') %> فیلترها<% if (active.length) { %> <span class="inline-flex size-5 items-center justify-center rounded-full bg-brand-500 text-2xs text-white"><%= fa(active.length) %></span><% } %>
+    </button>
+    <div class="ms-auto flex items-center gap-1.5">
+      <label for="sort" class="flex items-center gap-1 text-xs text-ink-500"><%- icon('sort','icon-sm') %><span class="hidden sm:inline">مرتب‌سازی:</span></label>
+      <select id="sort" class="select !h-8 !min-h-8 w-auto rounded-full !py-0 !text-sm" data-sort>
+        <% Object.keys(sorts).forEach(function (k) { %>
+        <option value="<%= k %>" data-url="<%= urlWith({ sort: k === 'newest' ? '' : k, page: '', _count: '' }) %>" <%= fl.sort === k ? 'selected' : '' %>><%= sorts[k] %></option>
+        <% }) %>
+      </select>
+    </div>
+  </div>
+  <% if (active.length) { %>
+  <div class="container-app scroller pb-2">
+    <% active.forEach(function (a) { %>
+    <a class="chip chip-remove" href="<%= removeUrl(a) %>" aria-label="حذف فیلتر <%= a.label %>"><%= a.label %> <%- icon('x','icon-sm') %></a>
+    <% }) %>
+    <a class="chip h-8 border-transparent text-ink-600 underline" href="<%= clearUrl %>">حذف همه</a>
+  </div>
+  <% } %>
+</div>
+
+<div class="container-app lg:grid lg:grid-cols-[15rem_1fr] lg:gap-8 lg:pt-2">
+  <!-- Filters -->
+  <aside class="filter-panel" id="filters" data-persistent aria-label="فیلترها" role="dialog" aria-modal="true">
+    <form class="sheet" action="<%= basePath %>" method="get" data-filter-form>
+      <div class="sheet-grip"></div>
+      <div class="sheet-head">
+        <h2 class="sheet-title">فیلترها</h2>
+        <button type="button" class="btn-icon" data-close-overlay aria-label="بستن فیلترها"><%- icon('x') %></button>
+      </div>
+      <div class="sheet-body">
+        <% if (fl.q) { %><input type="hidden" name="q" value="<%= fl.q %>"><% } %>
+        <% if (fl.sort !== 'newest') { %><input type="hidden" name="sort" value="<%= fl.sort %>"><% } %>
+
+        <div class="f-group pt-0">
+          <label class="f-check"><input class="check" type="checkbox" name="stock" value="1" <%= fl.inStock ? 'checked' : '' %>> فقط کالاهای موجود</label>
+          <label class="f-check"><input class="check" type="checkbox" name="sale" value="1" <%= fl.onSale ? 'checked' : '' %>> فقط تخفیف‌دار</label>
+        </div>
+
+        <% if (!category && facets.categories.length) { %>
+        <details class="f-group" open>
+          <summary>دسته‌بندی <%- icon('chevron-down','icon-sm text-ink-400 transition') %></summary>
+          <div class="mt-2">
+            <% facets.categories.forEach(function (c) { %>
+            <label class="f-check"><input class="check" type="checkbox" name="cat" value="<%= c.slug %>" <%= sel(fl.cats, c.slug) ? 'checked' : '' %>> <span class="flex-1"><%= c.name %></span><span class="text-2xs text-ink-400"><%= fa(c.count) %></span></label>
+            <% }) %>
+          </div>
+        </details>
+        <% } %>
+
+        <% if (facets.sizes.length) { %>
+        <details class="f-group" open>
+          <summary>سایز <%- icon('chevron-down','icon-sm text-ink-400 transition') %></summary>
+          <div class="mt-2 flex flex-wrap gap-1.5">
+            <% facets.sizes.forEach(function (s) { %>
+            <label class="opt !min-h-9 !min-w-11 !px-2.5 !text-xs"><input type="checkbox" name="size" value="<%= s.value %>" <%= fl.sizes.some(function (x) { return x.trim() === s.value; }) ? 'checked' : '' %>><%= s.value %></label>
+            <% }) %>
+          </div>
+        </details>
+        <% } %>
+
+        <% if (facets.colors.length) { %>
+        <details class="f-group" open>
+          <summary>رنگ <%- icon('chevron-down','icon-sm text-ink-400 transition') %></summary>
+          <div class="mt-2 grid grid-cols-2 gap-1">
+            <% facets.colors.forEach(function (c) { %>
+            <label class="f-check"><input class="check" type="checkbox" name="color" value="<%= c.value %>" <%= sel(fl.colors, c.value) ? 'checked' : '' %>><span class="size-4 shrink-0 rounded-full border border-ink-200" style="background: <%= /^#[0-9a-f]{3,8}$/i.test(c.hex || '') ? c.hex : '#eee' %>"></span><span class="truncate"><%= c.value %></span></label>
+            <% }) %>
+          </div>
+        </details>
+        <% } %>
+
+        <% if (facets.priceRange.max > 0) { %>
+        <details class="f-group" <%= fl.min !== null || fl.max !== null ? 'open' : '' %>>
+          <summary>قیمت (تومان) <%- icon('chevron-down','icon-sm text-ink-400 transition') %></summary>
+          <div class="mt-2 grid grid-cols-2 gap-2">
+            <div class="field"><label class="hint" for="f-min">از</label><input id="f-min" class="input !min-h-10 !text-sm" type="text" inputmode="numeric" name="min" value="<%= fl.min !== null ? fl.min : '' %>" placeholder="<%= price(facets.priceRange.min) %>"></div>
+            <div class="field"><label class="hint" for="f-max">تا</label><input id="f-max" class="input !min-h-10 !text-sm" type="text" inputmode="numeric" name="max" value="<%= fl.max !== null ? fl.max : '' %>" placeholder="<%= price(facets.priceRange.max) %>"></div>
+          </div>
+          <button type="submit" class="btn btn-soft btn-sm btn-block mt-2 hidden lg:inline-flex">اعمال قیمت</button>
+        </details>
+        <% } %>
+
+        <% if (facets.brands.length > 1) { %>
+        <details class="f-group">
+          <summary>برند <%- icon('chevron-down','icon-sm text-ink-400 transition') %></summary>
+          <div class="mt-2">
+            <% facets.brands.forEach(function (b) { %>
+            <label class="f-check"><input class="check" type="checkbox" name="brand" value="<%= b.key %>" <%= sel(fl.brands, b.key) ? 'checked' : '' %>> <span class="flex-1"><%= b.name %></span><span class="text-2xs text-ink-400"><%= fa(b.count) %></span></label>
+            <% }) %>
+          </div>
+        </details>
+        <% } %>
+        <noscript><button class="btn btn-primary btn-block mt-3">اعمال فیلترها</button></noscript>
+      </div>
+      <div class="sheet-foot">
+        <a class="btn btn-ghost" href="<%= clearUrl %>">حذف همه</a>
+        <button type="submit" class="btn btn-primary flex-1" data-apply>نمایش <span data-count><%= fa(total) %></span> محصول</button>
+      </div>
+    </form>
+  </aside>
+
+  <!-- Results -->
+  <section aria-label="محصولات" class="pt-3 lg:pt-0">
+    <% if (products.length) { %>
+    <div class="grid grid-cols-2 gap-2.5 sm:grid-cols-3 sm:gap-3 xl:grid-cols-4">
+      <% products.forEach(function (p, i) { %><%- include('../partials/product-card', { p: p, eager: i < 4 }) %><% }) %>
+    </div>
+
+    <% if (pages > 1) { %>
+    <nav class="mt-8 flex items-center justify-center gap-1" aria-label="صفحه‌بندی">
+      <% if (page > 1) { %><a class="btn btn-secondary btn-sm" rel="prev" href="<%= pageUrl(page - 1) %>"><%- icon('chevron-right','icon-sm') %> قبلی</a><% } %>
+      <% for (var n = 1; n <= pages; n++) { if (n === 1 || n === pages || Math.abs(n - page) <= 1) { %>
+        <a class="btn btn-sm <%= n === page ? 'btn-primary' : 'btn-ghost' %> min-w-8" href="<%= pageUrl(n) %>" <%- n === page ? 'aria-current="page"' : '' %>><%= fa(n) %></a>
+      <% } else if (Math.abs(n - page) === 2) { %><span class="px-1 text-ink-400">…</span><% } } %>
+      <% if (page < pages) { %><a class="btn btn-secondary btn-sm" rel="next" href="<%= pageUrl(page + 1) %>">بعدی <%- icon('chevron-left','icon-sm') %></a><% } %>
+    </nav>
+    <% } %>
+    <% } else { %>
+    <div class="empty-state card mt-2">
+      <span class="empty-art"><%- icon(searchPage ? 'search' : 'hanger', 'size-9') %></span>
+      <h2 class="text-lg font-bold"><%= searchPage && fl.q ? 'نتیجه‌ای برای «' + fl.q + '» پیدا نشد' : 'محصولی با این فیلترها پیدا نشد' %></h2>
+      <p class="max-w-sm text-sm leading-7 text-ink-600"><%= searchPage ? 'املای دیگری را امتحان کنید یا از کلمه کلی‌تری مثل «تیشرت» یا «سرهمی» استفاده کنید.' : 'چند فیلتر را بردارید تا محصولات بیشتری ببینید.' %></p>
+      <div class="flex flex-wrap justify-center gap-2">
+        <% if (active.length) { %><a class="btn btn-primary" href="<%= clearUrl %>">حذف همه فیلترها</a><% } %>
+        <a class="btn btn-secondary" href="/shop">دیدن همه محصولات</a>
+      </div>
+    </div>
+    <% } %>
+  </section>
+</div>
+
+<%- include('../partials/layout-bottom') %>

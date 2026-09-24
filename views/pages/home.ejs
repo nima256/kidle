@@ -1,0 +1,109 @@
+<%
+  var jsonld = [
+    { '@context': 'https://schema.org', '@type': 'OnlineStore', name: 'کیدل', url: siteUrl, logo: siteUrl + '/favicon.svg', telephone: settings.phone, email: settings.email, address: { '@type': 'PostalAddress', streetAddress: settings.address, addressCountry: 'IR' } },
+    { '@context': 'https://schema.org', '@type': 'WebSite', name: 'کیدل', url: siteUrl, potentialAction: { '@type': 'SearchAction', target: { '@type': 'EntryPoint', urlTemplate: siteUrl + '/search?q={q}' }, 'query-input': 'required name=q' } }
+  ];
+  var palette = ['#ffe4ee', '#fff5d9', '#d9f3e8', '#e3f1ff', '#efe8ff', '#ffeede'];
+%>
+<% locals.jsonld = jsonld; %>
+<%- include('../partials/layout-top') %>
+<style>
+  @keyframes swing { 0%,100% { transform: rotate(-2.5deg) } 50% { transform: rotate(2.5deg) } }
+  .hero-swing { animation: swing 5s ease-in-out infinite; transform-box: view-box; }
+</style>
+
+<section class="container-app pt-3 sm:pt-5" aria-labelledby="hero-title">
+  <div class="relative overflow-hidden rounded-2xl bg-gradient-to-bl from-brand-100 via-brand-50 to-butter-100/60">
+    <div class="grid items-center md:grid-cols-2">
+      <div class="order-1 md:order-2">
+        <%- include('../partials/hero-art', { cls: 'block w-full h-auto max-h-40 xs:max-h-44 md:max-h-none px-2 pt-2 md:p-6' }) %>
+      </div>
+      <div class="order-2 px-5 pt-1 pb-5 text-center md:order-1 md:py-10 md:ps-10 md:pe-4 md:text-start lg:ps-14">
+        <p class="mb-2 inline-flex items-center gap-1.5 rounded-full bg-white/80 px-3 py-1 text-xs font-bold text-brand-700 shadow-xs"><%- icon('sparkle','icon-sm') %> کالکشن جدید رسید</p>
+        <h1 id="hero-title" class="text-[1.625rem] leading-tight font-black text-ink-950 sm:text-3xl lg:text-4xl">لباس‌هایی به نرمیِ <span class="text-brand-600">کودکی</span></h1>
+        <p class="mx-auto mt-2 max-w-md text-sm leading-7 text-ink-700 md:mx-0 sm:text-base">از نوزادی تا نوجوانی؛ پارچه‌های نرم، رنگ‌های شاد و سایزبندی دقیق — با پرداخت امن و ارسال به سراسر ایران.</p>
+        <div class="mt-4 flex justify-center gap-2 md:justify-start">
+          <a href="/shop" class="btn btn-primary btn-lg">خرید لباس‌ها <%- icon('arrow-left','icon-sm') %></a>
+          <a href="/shop?sale=1" class="btn btn-secondary btn-lg">تخفیف‌ها</a>
+        </div>
+        <ul class="mt-4 flex flex-wrap justify-center gap-x-4 gap-y-1 text-xs text-ink-600 md:justify-start">
+          <li class="flex items-center gap-1"><%- icon('check','icon-sm text-mint-600') %> پارچه نخی و نرم</li>
+          <li class="flex items-center gap-1"><%- icon('check','icon-sm text-mint-600') %> راهنمای سایز</li>
+          <li class="flex items-center gap-1"><%- icon('check','icon-sm text-mint-600') %> ۷ روز ضمانت بازگشت</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<% if (categories.length) { %>
+<section class="container-app mt-7 sm:mt-10" aria-labelledby="cats-title">
+  <div class="section-head">
+    <div><h2 id="cats-title" class="section-title">خرید بر اساس دسته‌بندی</h2><p class="section-sub">هر چیزی که فرزندتان لازم دارد</p></div>
+    <a href="/shop" class="btn btn-ghost btn-sm text-brand-700">همه <%- icon('chevron-left','icon-sm') %></a>
+  </div>
+  <ul class="scroller bleed sm:grid sm:grid-cols-4 sm:gap-3 sm:overflow-visible md:grid-cols-6 lg:grid-cols-8">
+    <% categories.forEach(function (c, i) {
+         var bg = c.color && c.color.toLowerCase() !== '#ffffff' && c.color.toLowerCase() !== '#fff' ? c.color : palette[i % palette.length];
+         var image = (c.images && c.images[0]) || '';
+    %>
+    <li class="w-[5.75rem] shrink-0 sm:w-auto">
+      <a href="/category/<%= c.slug %>" class="group flex flex-col items-center gap-1.5 text-center">
+        <span class="relative flex aspect-square w-full items-center justify-center overflow-hidden rounded-2xl transition group-hover:-translate-y-0.5 group-hover:shadow-md" style="background: <%= bg %>">
+          <% if (image) { %><img src="<%= image %>" alt="" loading="lazy" class="size-full object-cover">
+          <% } else if (c.emoji) { %><span class="text-4xl sm:text-5xl" aria-hidden="true"><%= c.emoji %></span>
+          <% } else { %><span class="text-brand-600/80"><%- icon('hanger','size-9') %></span><% } %>
+        </span>
+        <span class="line-clamp-1 text-[0.8125rem] font-bold text-ink-900 group-hover:text-brand-700"><%= c.name %></span>
+        <span class="-mt-1.5 text-2xs text-ink-500"><%= fa(c.productCount) %> محصول</span>
+      </a>
+    </li>
+    <% }) %>
+  </ul>
+</section>
+<% } %>
+
+<% function rail(id, title, sub, items, href, tone) { if (!items || !items.length) return; %>
+<section class="<%= tone ? 'mt-8 bg-brand-50/70 py-6 sm:py-8' : 'mt-8 sm:mt-10' %>" aria-labelledby="<%= id %>">
+  <div class="container-app">
+    <div class="section-head">
+      <div><h2 id="<%= id %>" class="section-title"><%= title %></h2><% if (sub) { %><p class="section-sub"><%= sub %></p><% } %></div>
+      <a href="<%= href %>" class="btn btn-ghost btn-sm text-brand-700">مشاهده همه <%- icon('chevron-left','icon-sm') %></a>
+    </div>
+    <div class="scroller bleed sm:grid sm:grid-cols-3 sm:overflow-visible lg:grid-cols-5">
+      <% items.slice(0, 10).forEach(function (p, i) { %>
+      <div class="w-[44%] shrink-0 xs:w-[40%] sm:w-auto <%= i >= 6 ? 'sm:hidden lg:block' : '' %>"><%- include('../partials/product-card', { p: p, eager: false }) %></div>
+      <% }) %>
+    </div>
+  </div>
+</section>
+<% } %>
+
+<% rail('new-title', 'تازه‌ها', 'جدیدترین لباس‌های رسیده', newest, '/shop?sort=newest', false) %>
+<% rail('sale-title', 'تخفیف‌های ویژه', 'قیمت‌های به‌صرفه، تا موجودی هست', onSale, '/shop?sale=1&sort=discount', true) %>
+<% rail('feat-title', 'پیشنهاد کیدل', 'انتخاب‌های محبوب مامان‌ها', featured, '/shop?sort=popular', false) %>
+<% rail('pop-title', 'پرفروش‌ها', '', popular, '/shop?sort=popular', false) %>
+
+<section class="container-app mt-10">
+  <div class="grid gap-3 rounded-2xl border border-ink-200 bg-white p-4 sm:grid-cols-3 sm:p-6">
+    <div class="flex items-start gap-3"><span class="flex size-11 shrink-0 items-center justify-center rounded-xl bg-brand-50 text-brand-600"><%- icon('ruler') %></span><div><h3 class="text-sm font-bold">سایز مناسب را پیدا کنید</h3><p class="text-xs leading-6 text-ink-600">در صفحه هر محصول، راهنمای سایز بر اساس سن و قد کودک را ببینید.</p></div></div>
+    <div class="flex items-start gap-3"><span class="flex size-11 shrink-0 items-center justify-center rounded-xl bg-butter-100 text-butter-700"><%- icon('truck') %></span><div><h3 class="text-sm font-bold">ارسال پس‌کرایه</h3><p class="text-xs leading-6 text-ink-600">فقط مبلغ کالا را آنلاین می‌پردازید؛ هزینه ارسال هنگام تحویل.</p></div></div>
+    <div class="flex items-start gap-3"><span class="flex size-11 shrink-0 items-center justify-center rounded-xl bg-mint-50 text-mint-700"><%- icon('shield') %></span><div><h3 class="text-sm font-bold">خرید بدون نگرانی</h3><p class="text-xs leading-6 text-ink-600">پرداخت امن زرین‌پال و ۷ روز ضمانت بازگشت کالای معیوب.</p></div></div>
+  </div>
+</section>
+
+<% if (posts.length) { %>
+<section class="container-app mt-10" aria-labelledby="blog-title">
+  <div class="section-head">
+    <div><h2 id="blog-title" class="section-title">مجله کیدل</h2><p class="section-sub">راهنمای خرید و نگهداری لباس کودک</p></div>
+    <a href="/weblog" class="btn btn-ghost btn-sm text-brand-700">همه مقاله‌ها <%- icon('chevron-left','icon-sm') %></a>
+  </div>
+  <div class="scroller bleed md:grid md:grid-cols-3 md:overflow-visible">
+    <% posts.forEach(function (w) { %>
+    <%- include('../partials/post-card', { w: w, cls: 'w-[78%] shrink-0 md:w-auto' }) %>
+    <% }) %>
+  </div>
+</section>
+<% } %>
+
+<%- include('../partials/layout-bottom') %>

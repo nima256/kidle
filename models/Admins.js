@@ -33,18 +33,10 @@ const adminSchema = new mongoose.Schema(
     permissions: {
       type: [String],
       default: [],
-      enum: [
-        'manage_products',
-        'manage_orders', 
-        'manage_users',
-        'manage_categories',
-        'manage_brands',
-        'manage_discounts',
-        'manage_weblogs',
-        'view_analytics',
-        'manage_admins'  // دسترسی مدیریت ادمین‌ها
-      ]
+      enum: require("../lib/permissions").ALL_PERMISSIONS,
     },
+    failedLoginCount: { type: Number, default: 0 },
+    lockUntil: { type: Date },
     lastLoginAt: {
       type: Date
     },

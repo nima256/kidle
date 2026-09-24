@@ -1,0 +1,5 @@
+<nav class="tabs mb-4" aria-label="بخش‌های حساب">
+  <a class="tab <%= tab === 'overview' ? 'is-active' : '' %>" href="/account" <%- tab === 'overview' ? 'aria-current="page"' : '' %>><%- icon('user','icon-sm') %> حساب من</a>
+  <a class="tab <%= tab === 'orders' ? 'is-active' : '' %>" href="/account/orders" <%- tab === 'orders' ? 'aria-current="page"' : '' %>><%- icon('package','icon-sm') %> سفارش‌ها</a>
+  <button type="button" class="tab ms-auto text-danger-600" data-logout><span class="spinner"></span><span class="btn-label-idle flex items-center gap-1.5"><%- icon('logout','icon-sm') %> خروج</span></button>
+</nav>
