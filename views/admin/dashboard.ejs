@@ -24,9 +24,9 @@
     <h2 id="ch-t" class="mb-3 text-sm font-bold">فروش ۱۴ روز اخیر (تومان)</h2>
     <div class="flex h-44 items-end gap-1" role="img" aria-label="نمودار فروش روزانه">
       <% chart.forEach(function (c) { var h = Math.max(2, Math.round((c.revenue / maxRev) * 100)); %>
-      <div class="group relative flex h-full flex-1 flex-col justify-end">
+      <div class="group relative flex h-full flex-1 flex-col justify-end rounded-sm focus-visible:outline-2" tabindex="0" role="img" aria-label="<%= c.label %>: <%= price(c.revenue) %> تومان، <%= fa(c.count) %> سفارش">
         <div class="rounded-t-sm <%= c.revenue ? 'bg-brand-400 group-hover:bg-brand-600' : 'bg-ink-100' %>" style="height: <%= h %>%"></div>
-        <span class="pointer-events-none absolute bottom-full start-1/2 z-10 mb-1 hidden -translate-x-1/2 whitespace-nowrap rounded bg-ink-900 px-2 py-1 text-2xs text-white group-hover:block"><%= c.label %>: <%= price(c.revenue) %> (<%= fa(c.count) %>)</span>
+        <span class="pointer-events-none absolute bottom-full start-1/2 z-10 mb-1 hidden -translate-x-1/2 whitespace-nowrap rounded bg-ink-900 px-2 py-1 text-2xs text-white group-hover:block group-focus:block" aria-hidden="true"><%= c.label %>: <%= price(c.revenue) %> (<%= fa(c.count) %>)</span>
       </div>
       <% }) %>
     </div>

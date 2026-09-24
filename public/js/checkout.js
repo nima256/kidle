@@ -43,6 +43,27 @@
     if (e.target.getAttribute("aria-invalid") === "true" && rules[e.target.name]) setErr(e.target.name, rules[e.target.name](e.target.value));
   });
 
+  // Error summary (focusable, links to each invalid field) complements the inline errors.
+  var summary = $("#error-summary"), summaryList = $("[data-error-list]");
+  var LABELS = { recipientName: "نام گیرنده", recipientPhone: "موبایل گیرنده", province: "استان", city: "شهر", address: "آدرس", postcode: "کد پستی" };
+  function showSummary() {
+    var items = Object.keys(rules).map(function (k) {
+      var msg = rules[k](form.elements[k].value || "");
+      return msg ? '<li><a class="link" href="#' + form.elements[k].id + '" data-jump="' + k + '">' + LABELS[k] + ": " + K.esc(msg) + "</a></li>" : "";
+    }).join("");
+    summaryList.innerHTML = items;
+    summary.hidden = !items;
+    if (items) { summary.scrollIntoView({ behavior: "smooth", block: "start" }); summary.focus({ preventScroll: true }); }
+  }
+  summary.addEventListener("click", function (e) {
+    var a = e.target.closest("[data-jump]");
+    if (!a) return;
+    e.preventDefault();
+    var el = form.elements[a.getAttribute("data-jump")];
+    el.scrollIntoView({ behavior: "smooth", block: "center" });
+    el.focus({ preventScroll: true });
+  });
+
   var submitting = false;
   form.addEventListener("submit", function (e) {
     e.preventDefault();
@@ -55,11 +76,10 @@
     });
     if (first) {
       if (first.closest("[data-address-fields]") && first.closest("[data-address-fields]").hidden) edit.click();
-      first.scrollIntoView({ behavior: "smooth", block: "center" });
-      setTimeout(function () { first.focus({ preventScroll: true }); }, 250);
-      K.toast("لطفاً موارد مشخص‌شده را کامل کنید", "error");
+      showSummary();
       return;
     }
+    summary.hidden = true;
     submitting = true;
     var buttons = $$("[data-pay]");
     buttons.forEach(function (b) { K.setLoading(b, true); });
@@ -74,7 +94,7 @@
         submitting = false;
         buttons.forEach(function (b) { K.setLoading(b, false); });
         var errors = err.data && err.data.errors;
-        if (errors) Object.keys(errors).forEach(function (k) { setErr(k, errors[k]); });
+        if (errors) { Object.keys(errors).forEach(function (k) { setErr(k, errors[k]); }); showSummary(); }
         K.toast(err.message, "error", { duration: 7000 });
         if (err.data && err.data.refresh) setTimeout(function () { location.href = "/cart"; }, 2500);
       });

@@ -100,3 +100,18 @@ evidence, not reproduced. **Needs testing** = depends on production data or thir
 2. Set new env vars (see `.env.example`), notably `SMS_API_KEY`, `SMS_BODY_ID`, `ZARINPAL_MERCHANT_ID`.
 3. Create the first admin: `node scripts/create-admin.js` (prompts for a strong password).
 4. Consider purging `.env` from git history (`git filter-repo`) — rotation is still required.
+
+## 6. UI/UX Pro Max review
+The redesign was audited with the UI/UX Pro Max skill (v2.13) — `--design-system` for
+"kids fashion ecommerce", plus targeted `ux`, `style`, `color`, `product` and `html-tailwind` searches.
+
+**Adopted:** e-commerce pattern (Vibrant & Block-based / Feature-Rich Showcase) → colour-block promo
+tiles on the home page; *no emoji as icons* → SVG garment icon set for categories with an admin icon
+picker; *44 px touch targets / 8 px spacing* → enlarged hit areas on touch screens without enlarging
+the visual controls; *focusable error summary* → linked, focused summary on checkout; *no hover-only
+information* → keyboard-focusable, labelled admin chart bars; pointer cursor on option labels.
+
+**Not adopted (deliberate):** the generated green/orange palette (the brief requires the pink identity;
+the database has no pink-led palette, so the existing pink system is a stated fallback) and the
+Cormorant/Montserrat pairing (no Persian glyphs — Vazirmatn kept). The style's "48 px gaps / 32 px+
+type" was not applied because the brief asks for denser layouts.

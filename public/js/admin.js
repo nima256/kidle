@@ -112,6 +112,7 @@
       Array.prototype.forEach.call(els, function (el) {
         if (el.type === "checkbox" && el.name.slice(-2) === "[]") el.checked = (data[k] || []).indexOf(el.value) !== -1;
         else if (el.type === "checkbox") el.checked = !!data[k];
+        else if (el.type === "radio") el.checked = el.value === String(data[k]);
         else el.value = data[k] == null ? "" : data[k];
         el.dispatchEvent(new Event("change", { bubbles: true }));
       });
