@@ -50,7 +50,7 @@
 
     <section class="card card-pad text-sm">
       <h2 class="mb-2 font-bold">گیرنده</h2>
-      <p class="leading-7"><b><%= o.recipientName || '—' %></b> <a class="ltr link" href="tel:<%= o.recipientPhone %>"><%= o.recipientPhone %></a><br><%= o.province %>، <%= o.city %><br><%= o.address %><% if (o.postcode) { %><br>کد پستی: <span class="ltr"><%= o.postcode %></span><% } %></p>
+      <p class="break-anywhere leading-7"><b><%= o.recipientName || '—' %></b> <a class="ltr link" href="tel:<%= o.recipientPhone %>"><%= o.recipientPhone %></a><br><%= o.province %>، <%= o.city %><br><%= o.address %><% if (o.postcode) { %><br>کد پستی: <span class="ltr"><%= o.postcode %></span><% } %></p>
       <% if (o.user) { %><p class="mt-2 border-t border-ink-100 pt-2 text-xs text-ink-600">حساب مشتری: <a class="link ltr" href="/admin/customers/<%= o.user._id %>"><%= o.user.mobile %></a></p><% } %>
     </section>
 

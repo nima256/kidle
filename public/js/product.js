@@ -226,7 +226,7 @@
       if (bad) return;
       K.setLoading(btn, true);
       K.api("/api/products/" + productId + "/reviews", { method: "POST", body: { rating: rating, text: text, authorName: fd.get("authorName") } })
-        .then(function (d) { K.close(); K.toast(d.message, "success"); rf.reset(); load(1); })
+        .then(function (d) { K.markClean(rf); K.close(); K.toast(d.message, "success"); rf.reset(); load(1); })
         .catch(function (e2) { ferr(e2.data && e2.data.field === "rating" ? "rating" : "text", e2.message); })
         .finally(function () { K.setLoading(btn, false); });
     });

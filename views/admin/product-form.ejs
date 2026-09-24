@@ -5,7 +5,7 @@
   var sel = (p.category || []).map(String);
 %>
 <%- include('_top') %>
-<form id="pf" data-api="<%= isNew ? '/admin/api/products' : '/admin/api/products/' + p._id %>" data-method="<%= isNew ? 'POST' : 'PUT' %>" <%= isNew ? 'data-follow' : '' %> novalidate class="grid gap-4 xl:grid-cols-[1fr_20rem]">
+<form data-unsaved-warning id="pf" data-api="<%= isNew ? '/admin/api/products' : '/admin/api/products/' + p._id %>" data-method="<%= isNew ? 'POST' : 'PUT' %>" <%= isNew ? 'data-follow' : '' %> novalidate class="grid gap-4 xl:grid-cols-[1fr_20rem]">
   <% if (!isNew) { %><input type="hidden" name="expectedStock" value="<%= p.countInStock %>"><% } %>
   <div class="space-y-4">
     <section class="card card-pad space-y-3">
@@ -15,7 +15,7 @@
         <div class="field"><label class="label" for="brand">برند <span class="req">*</span></label><select class="select" id="brand" name="brand"><option value="">انتخاب برند</option><% brands.forEach(function (b) { %><option value="<%= b._id %>" <%= String(p.brand) === String(b._id) ? 'selected' : '' %>><%= b.name %></option><% }) %></select><p class="field-error" data-err="brand" hidden></p></div>
       </div>
       <div class="field"><label class="label" for="lil">توضیح کوتاه</label><textarea class="textarea !min-h-16" id="lil" name="lilDescription" maxlength="400" rows="2" placeholder="یک یا دو جمله؛ زیر عنوان و در نتایج جستجو نمایش داده می‌شود"><%= p.lilDescription || '' %></textarea></div>
-      <div class="field"><span class="label">توضیحات کامل</span><div data-rich="description" class="rounded-md bg-white"><template><%- p.description || '' %></template></div></div>
+      <div class="field"><span class="label">توضیحات کامل</span><div data-rich="description" class="rounded-md bg-surface"><template><%- p.description || '' %></template></div></div>
     </section>
 
     <section class="card card-pad">
@@ -23,10 +23,10 @@
       <div data-uploader data-folder="product">
         <div class="flex flex-wrap gap-2" data-images="images">
           <% (p.images || []).forEach(function (im) { %>
-          <div class="relative w-28 shrink-0 overflow-hidden rounded-md border border-ink-200 bg-white" data-image data-url="<%= im.url %>" data-filename="<%= im.filename %>">
+          <div class="relative w-28 shrink-0 overflow-hidden rounded-md border border-ink-200 bg-surface" data-image data-url="<%= im.url %>" data-filename="<%= im.filename %>">
             <img src="<%= im.url %>" alt="" class="aspect-[4/5] w-full object-cover">
             <input class="w-full border-t border-ink-100 px-1.5 py-1 text-2xs outline-none" placeholder="متن جایگزین (alt)" value="<%= im.alt || im.caption || '' %>">
-            <div class="absolute top-1 start-1 flex gap-1"><button type="button" class="rounded bg-white/90 px-1.5 text-2xs font-bold shadow-xs" data-img-first title="تصویر اصلی">اصلی</button><button type="button" class="rounded bg-white/90 px-1 text-danger-600 shadow-xs" data-img-remove aria-label="حذف تصویر"><%- icon('x','icon-sm') %></button></div>
+            <div class="absolute top-1 start-1 flex gap-1"><button type="button" class="rounded bg-surface/90 px-1.5 text-2xs font-bold shadow-xs" data-img-first title="تصویر اصلی">اصلی</button><button type="button" class="rounded bg-surface/90 px-1 text-danger-600 shadow-xs" data-img-remove aria-label="حذف تصویر"><%- icon('x','icon-sm') %></button></div>
           </div>
           <% }) %>
         </div>
@@ -79,7 +79,7 @@
       <div class="field"><label class="label" for="stock">موجودی انبار <span class="req">*</span></label><input class="input ltr" id="stock" name="countInStock" inputmode="numeric" value="<%= p.countInStock != null ? p.countInStock : 0 %>"><p class="field-error" data-err="countInStock" hidden></p><p class="hint">موجودی رزروشده برای پرداخت‌های در جریان از این عدد کم شده است.</p></div>
     </section>
     <section class="card card-pad">
-      <h2 class="mb-2 text-sm font-bold">دسته‌بندی <span class="req text-brand-600">*</span></h2>
+      <h2 class="mb-2 text-sm font-bold">دسته‌بندی <span class="req text-brand-700">*</span></h2>
       <div class="max-h-60 overflow-y-auto">
         <% categories.forEach(function (c) { %><label class="f-check" style="padding-inline-start: <%= 0.25 + c.depth * 1.1 %>rem"><input class="check" type="checkbox" name="category[]" value="<%= c._id %>" <%= sel.indexOf(String(c._id)) !== -1 ? 'checked' : '' %>> <%= c.name %></label><% }) %>
       </div>

@@ -6,7 +6,7 @@
 <div class="grid grid-cols-2 gap-3 lg:grid-cols-4">
   <div class="stat"><span class="stat-label">فروش امروز</span><span class="stat-value"><%= price(stats.today.revenue) %></span><span class="text-xs text-ink-500"><%= fa(stats.today.count) %> سفارش پرداخت‌شده</span></div>
   <div class="stat"><span class="stat-label">فروش ۳۰ روز</span><span class="stat-value"><%= price(stats.last30.revenue) %></span><span class="text-xs <%= growth === null ? 'text-ink-500' : growth >= 0 ? 'text-mint-700' : 'text-danger-600' %>"><%= growth === null ? fa(stats.last30.count) + ' سفارش' : (growth >= 0 ? '▲ ' : '▼ ') + fa(Math.abs(growth)) + '٪ نسبت به ۳۰ روز قبل' %></span></div>
-  <a href="/admin/orders" class="stat hover:border-brand-300"><span class="stat-label">آماده ارسال</span><span class="stat-value text-brand-600"><%= fa(counts.toShip) %></span><span class="text-xs text-ink-500">سفارش در انتظار بسته‌بندی/ارسال</span></a>
+  <a href="/admin/orders" class="stat hover:border-brand-300"><span class="stat-label">آماده ارسال</span><span class="stat-value text-brand-700"><%= fa(counts.toShip) %></span><span class="text-xs text-ink-500">سفارش در انتظار بسته‌بندی/ارسال</span></a>
   <a href="/admin/customers" class="stat hover:border-brand-300"><span class="stat-label">مشتریان</span><span class="stat-value"><%= fa(stats.customers) %></span><span class="text-xs text-ink-500"><%= fa(stats.newCustomers) %> مشتری جدید این هفته</span></a>
 </div>
 
@@ -22,15 +22,22 @@
 <div class="mt-3 grid gap-3 lg:grid-cols-3">
   <section class="card card-pad lg:col-span-2" aria-labelledby="ch-t">
     <h2 id="ch-t" class="mb-3 text-sm font-bold">فروش ۱۴ روز اخیر (تومان)</h2>
-    <div class="flex h-44 items-end gap-1" role="img" aria-label="نمودار فروش روزانه">
+    <div class="flex h-44 items-end gap-1" role="group" aria-label="نمودار فروش روزانه، مجموع <%= price(chart.reduce(function (t, c) { return t + c.revenue; }, 0)) %> تومان در ۱۴ روز">
       <% chart.forEach(function (c) { var h = Math.max(2, Math.round((c.revenue / maxRev) * 100)); %>
       <div class="group relative flex h-full flex-1 flex-col justify-end rounded-sm focus-visible:outline-2" tabindex="0" role="img" aria-label="<%= c.label %>: <%= price(c.revenue) %> تومان، <%= fa(c.count) %> سفارش">
         <div class="rounded-t-sm <%= c.revenue ? 'bg-brand-400 group-hover:bg-brand-600' : 'bg-ink-100' %>" style="height: <%= h %>%"></div>
-        <span class="pointer-events-none absolute bottom-full start-1/2 z-10 mb-1 hidden -translate-x-1/2 whitespace-nowrap rounded bg-ink-900 px-2 py-1 text-2xs text-white group-hover:block group-focus:block" aria-hidden="true"><%= c.label %>: <%= price(c.revenue) %> (<%= fa(c.count) %>)</span>
+        <span class="pointer-events-none absolute bottom-full start-1/2 z-10 mb-1 hidden -translate-x-1/2 whitespace-nowrap rounded bg-night-900 px-2 py-1 text-2xs text-white group-hover:block group-focus:block" aria-hidden="true"><%= c.label %>: <%= price(c.revenue) %> (<%= fa(c.count) %>)</span>
       </div>
       <% }) %>
     </div>
     <div class="mt-1 flex justify-between text-2xs text-ink-500"><span><%= chart[0].label %></span><span><%= chart[chart.length - 1].label %></span></div>
+    <% var total14 = chart.reduce(function (t, c) { return t + c.revenue; }, 0); %>
+    <% if (!total14) { %><p class="mt-2 text-center text-xs text-ink-500">هنوز در ۱۴ روز اخیر فروشی ثبت نشده است.</p><% } %>
+    <details class="mt-2 text-xs"><summary class="cursor-pointer text-ink-600">نمایش جدول داده‌ها</summary>
+      <table class="table mt-2"><caption class="sr-only">فروش روزانه ۱۴ روز اخیر</caption><thead><tr><th scope="col">روز</th><th scope="col">فروش (تومان)</th><th scope="col">سفارش</th></tr></thead><tbody>
+        <% chart.forEach(function (c) { %><tr><td><%= c.label %></td><td><%= price(c.revenue) %></td><td><%= fa(c.count) %></td></tr><% }) %>
+      </tbody></table>
+    </details>
   </section>
   <section class="card card-pad" aria-labelledby="ls-t">
     <div class="mb-2 flex items-center justify-between"><h2 id="ls-t" class="text-sm font-bold">رو به اتمام</h2><a class="link text-xs" href="/admin/inventory?f=low">همه</a></div>

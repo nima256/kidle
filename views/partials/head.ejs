@@ -10,7 +10,9 @@
 <title><%= _title %></title>
 <meta name="description" content="<%= _desc %>">
 <% if (locals.noindex) { %><meta name="robots" content="noindex, follow"><% } else { %><link rel="canonical" href="<%= canonical %>"><% } %>
-<meta name="theme-color" content="#ffffff">
+<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#151014" media="(prefers-color-scheme: dark)">
+<meta name="color-scheme" content="light dark">
 <meta property="og:site_name" content="کیدل">
 <meta property="og:locale" content="fa_IR">
 <meta property="og:type" content="<%= locals.ogType || 'website' %>">

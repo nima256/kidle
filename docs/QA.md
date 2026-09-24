@@ -45,3 +45,16 @@ index, stray `stock` field, plaintext OTPs, old orders) and converted it correct
 | Real SMS delivery / WebOTP autofill | needs `SMS_API_KEY` |
 | Safari / iOS Safari, Firefox, Edge, Android Chrome on devices | only headless Chromium available here. Pay attention to: sticky bars with the iOS keyboard open, `100dvh`, bottom sheets, safe-area insets |
 | Enamad trust seal | external host blocked here |
+
+## UI/UX Pro Max redesign pass (dark theme, clay style, audit fixes)
+Run against the skill's full rule set (`references/quick-reference.md`) and Pre-Delivery Checklist.
+- **Both themes** (system light / dark): 18 pages × 6 widths — no overflow, no JS errors; axe WCAG 2 A/AA
+  **0 violations** in light and in dark on storefront pages, overlays, logged-in pages and admin (admin stays light).
+- **Landscape phone** (844×390): no overflow; fixed chrome 118px.
+- **Reduced motion:** hero animation disabled; decorative motion is finite otherwise.
+- **200% text size:** no horizontal overflow; only intentional clamps (2-line product names, now with full-name tooltip).
+- **New behaviours verified in browser:** cart Undo restores the removed line; cart count announced in a polite
+  status region; recent searches; unsaved-changes guard keeps the sheet open on cancel; password show/hide;
+  checkout error summary focus + links; checkout draft kept across reloads.
+- Purchase flow, admin flow and `npm test` (13/13) re-run after the change.
+- Product-card images now load 400/800px variants via `srcset` (e.g. 66 KB → 14 KB per card image).

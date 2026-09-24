@@ -64,6 +64,24 @@
     el.focus({ preventScroll: true });
   });
 
+  // Draft autosave: an accidental reload or back-navigation doesn't lose a half-typed address.
+  var DRAFT = "kidle:checkout-draft";
+  var FIELDS = ["recipientName", "recipientPhone", "province", "city", "address", "postcode"];
+  try {
+    var draft = JSON.parse(sessionStorage.getItem(DRAFT) || "{}");
+    FIELDS.forEach(function (k) {
+      var el = form.elements[k];
+      if (draft[k] && el && !el.value) { el.value = draft[k]; if (k === "province") fillCities(); }
+    });
+  } catch (e) {}
+  form.addEventListener("input", function () {
+    try {
+      var d = {};
+      FIELDS.forEach(function (k) { d[k] = form.elements[k].value; });
+      sessionStorage.setItem(DRAFT, JSON.stringify(d));
+    } catch (e) {}
+  });
+
   var submitting = false;
   form.addEventListener("submit", function (e) {
     e.preventDefault();
@@ -88,6 +106,7 @@
     K.api("/api/order/checkout", { method: "POST", body: body })
       .then(function (d) {
         buttons.forEach(function (b) { var l = b.querySelector(".btn-label-idle"); if (l) l.textContent = "در حال انتقال به درگاه…"; });
+        try { sessionStorage.removeItem(DRAFT); } catch (e) {}
         location.href = d.redirectUrl;
       })
       .catch(function (err) {

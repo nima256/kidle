@@ -10,7 +10,7 @@
 <article class="p-card <%= _soldout ? 'is-soldout' : '' %>">
   <a href="/productDetails/<%= _p.slug %>" class="p-card-img" tabindex="-1" aria-hidden="true">
     <% if (_img) { %>
-    <img src="<%= _img %>" alt="" loading="<%= locals.eager ? 'eager' : 'lazy' %>" decoding="async" width="400" height="500">
+    <img src="<%= thumb(_img, 400) %>" <% if (srcset(_img)) { %>srcset="<%= srcset(_img) %>" sizes="(min-width: 1280px) 19vw, (min-width: 640px) 31vw, 46vw"<% } %> alt="" loading="<%= locals.eager ? 'eager' : 'lazy' %>" decoding="async" width="400" height="500">
     <% } else { %>
     <span class="flex size-full items-center justify-center text-brand-200"><%- icon('hanger','size-12') %></span>
     <% } %>
@@ -21,9 +21,9 @@
     </span>
   </a>
   <div class="p-card-body">
-    <h3 class="p-card-title"><a href="/productDetails/<%= _p.slug %>" class="after:absolute after:inset-0"><%= _p.name %></a></h3>
+    <h3 class="p-card-title"><a href="/productDetails/<%= _p.slug %>" title="<%= _p.name %>" class="after:absolute after:inset-0"><%= _p.name %></a></h3>
     <% if (_sizes.length) { %>
-    <p class="truncate text-2xs text-ink-500">سایز: <%= _sizes.slice(0, 5).join('، ') %><%= _sizes.length > 5 ? '…' : '' %></p>
+    <p class="truncate text-2xs text-ink-500" title="سایزها: <%= _sizes.join('، ') %>">سایز: <%= _sizes.slice(0, 5).join('، ') %><%= _sizes.length > 5 ? '…' : '' %></p>
     <% } %>
     <div class="mt-auto flex items-end justify-between gap-1 pt-1">
       <div class="flex flex-col">

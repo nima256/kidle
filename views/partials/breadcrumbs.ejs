@@ -4,7 +4,7 @@
     <% _items.forEach(function (c, i) { %>
     <li class="flex items-center gap-1">
       <% if (i > 0) { %><%- icon('chevron-left','icon-sm text-ink-300') %><% } %>
-      <% if (c.url && i < _items.length - 1) { %><a class="hover:text-brand-600" href="<%= c.url %>"><%= c.name %></a>
+      <% if (c.url && i < _items.length - 1) { %><a class="hover:text-brand-700" href="<%= c.url %>"><%= c.name %></a>
       <% } else { %><span aria-current="page" class="font-medium text-ink-700"><%= c.name %></span><% } %>
     </li>
     <% }) %>

@@ -36,7 +36,7 @@
     <ul class="divide-y divide-ink-100 px-4">
       <% order.products.forEach(function (it) { var pr = it.product; %>
       <li class="flex gap-3 py-3">
-        <% if (pr && pr.images && pr.images[0]) { %><a href="/productDetails/<%= pr.slug %>" class="w-14 shrink-0" tabindex="-1" aria-hidden="true"><img src="<%= pr.images[0].url %>" alt="" class="aspect-[4/5] w-full rounded-md object-cover" loading="lazy"></a><% } %>
+        <% if (pr && pr.images && pr.images[0]) { %><a href="/productDetails/<%= pr.slug %>" class="w-14 shrink-0" tabindex="-1" aria-hidden="true"><img src="<%= thumb(pr.images[0].url, 400) %>" alt="" class="aspect-[4/5] w-full rounded-md object-cover" loading="lazy"></a><% } %>
         <div class="min-w-0 flex-1 text-sm">
           <% if (pr && pr.slug) { %><a class="font-semibold hover:text-brand-700" href="/productDetails/<%= pr.slug %>"><%= it.nameAtPurchase %></a><% } else { %><span class="font-semibold"><%= it.nameAtPurchase %></span><% } %>
           <p class="text-xs text-ink-500"><%= [it.selectedSize ? 'سایز ' + it.selectedSize : '', it.selectedColor, fa(it.quantity) + ' عدد'].filter(Boolean).join(' · ') %></p>
@@ -50,7 +50,7 @@
   <div class="mt-4 grid gap-4 sm:grid-cols-2">
     <section class="card card-pad text-sm" aria-labelledby="sh-title">
       <h2 id="sh-title" class="mb-2 font-bold">ارسال</h2>
-      <p class="leading-7 text-ink-700"><b><%= order.recipientName || '' %></b> <span class="ltr"><%= order.recipientPhone || '' %></span><br><%= order.province %>، <%= order.city %>، <%= order.address %><%= order.postcode ? '، کد پستی ' + order.postcode : '' %></p>
+      <p class="break-anywhere leading-7 text-ink-700"><b><%= order.recipientName || '' %></b> <span class="ltr"><%= order.recipientPhone || '' %></span><br><%= order.province %>، <%= order.city %>، <%= order.address %><%= order.postcode ? '، کد پستی ' + order.postcode : '' %></p>
       <p class="mt-2 text-xs text-ink-500">روش ارسال: <%= order.delivery %> — هزینه ارسال پس‌کرایه</p>
     </section>
     <section class="card card-pad text-sm" aria-labelledby="pay-title">

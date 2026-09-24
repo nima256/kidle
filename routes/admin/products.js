@@ -51,6 +51,7 @@ router.post(
       } catch {
         throw new HttpError(400, `فایل «${f.originalname}» تصویر معتبری نیست`);
       }
+      await require("../../lib/images").makeVariants(path.join(UPLOAD_ROOT, rel, name));
       images.push({ url: `/uploads/${rel.split(path.sep).join("/")}/${name}`, filename: name });
     }
     res.json({ success: true, images });
@@ -64,7 +65,9 @@ async function removeOrphanImages(urls) {
     const used = (await Product.exists({ "images.url": url })) || (await Weblog.exists({ "images.url": url }));
     if (used) continue;
     const file = path.join(UPLOAD_ROOT, url.replace(/^\/uploads\//, ""));
-    if (file.startsWith(UPLOAD_ROOT)) fs.promises.unlink(file).catch(() => {});
+    if (file.startsWith(UPLOAD_ROOT)) {
+      for (const f of [file, ...require("../../lib/images").variantFiles(file)]) fs.promises.unlink(f).catch(() => {});
+    }
   }
 }
 

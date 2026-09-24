@@ -10,7 +10,7 @@
 <article class="container-app max-w-3xl py-4">
   <%- include('../partials/breadcrumbs', { crumbs: [{ name: 'مجله کیدل', url: '/weblog' }, { name: post.title }], crumbClass: 'pb-2' }) %>
   <header>
-    <% if (post.categories && post.categories.length) { %><p class="text-xs font-bold text-brand-600"><%= post.categories.map(function (c) { return c.name; }).join('، ') %></p><% } %>
+    <% if (post.categories && post.categories.length) { %><p class="text-xs font-bold text-brand-700"><%= post.categories.map(function (c) { return c.name; }).join('، ') %></p><% } %>
     <h1 class="mt-1 text-2xl leading-10 font-extrabold sm:text-3xl"><%= post.title %></h1>
     <p class="mt-2 flex flex-wrap items-center gap-3 text-xs text-ink-500">
       <span><%= faDate(post.publishedAt || post.createdAt) %></span>
@@ -24,7 +24,7 @@
   <div class="prose-kid mt-5"><%- post.content %></div>
 
   <aside class="mt-8 flex flex-col items-center gap-3 rounded-xl bg-gradient-to-l from-brand-50 to-butter-100/60 p-5 text-center sm:flex-row sm:text-start">
-    <span class="flex size-12 shrink-0 items-center justify-center rounded-full bg-white text-brand-600"><%- icon('bag') %></span>
+    <span class="flex size-12 shrink-0 items-center justify-center rounded-full bg-surface text-brand-700"><%- icon('bag') %></span>
     <p class="flex-1 text-sm font-semibold">لباس‌های نرم و باکیفیت برای فرزندتان را در فروشگاه کیدل ببینید.</p>
     <a class="btn btn-primary" href="/shop">رفتن به فروشگاه</a>
   </aside>

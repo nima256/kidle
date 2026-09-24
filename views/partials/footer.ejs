@@ -1,7 +1,7 @@
-<footer class="mt-12 border-t border-ink-200 bg-white">
+<footer class="mt-12 border-t border-ink-200 bg-surface">
   <div class="container-app">
     <ul class="grid grid-cols-2 gap-3 border-b border-ink-100 py-6 sm:grid-cols-4">
-      <li class="flex items-center gap-2.5"><span class="flex size-10 shrink-0 items-center justify-center rounded-full bg-brand-50 text-brand-600"><%- icon('lock') %></span><span class="text-xs leading-5"><b class="block text-sm text-ink-900">پرداخت امن</b>درگاه رسمی زرین‌پال</span></li>
+      <li class="flex items-center gap-2.5"><span class="flex size-10 shrink-0 items-center justify-center rounded-full bg-brand-50 text-brand-700"><%- icon('lock') %></span><span class="text-xs leading-5"><b class="block text-sm text-ink-900">پرداخت امن</b>درگاه رسمی زرین‌پال</span></li>
       <li class="flex items-center gap-2.5"><span class="flex size-10 shrink-0 items-center justify-center rounded-full bg-butter-100 text-butter-700"><%- icon('truck') %></span><span class="text-xs leading-5"><b class="block text-sm text-ink-900">ارسال به سراسر ایران</b>هزینه ارسال پس‌کرایه</span></li>
       <li class="flex items-center gap-2.5"><span class="flex size-10 shrink-0 items-center justify-center rounded-full bg-mint-50 text-mint-700"><%- icon('refresh') %></span><span class="text-xs leading-5"><b class="block text-sm text-ink-900">۷ روز ضمانت بازگشت</b>برای کالای معیوب</span></li>
       <li class="flex items-center gap-2.5"><span class="flex size-10 shrink-0 items-center justify-center rounded-full bg-sky-100 text-info-700"><%- icon('message') %></span><span class="text-xs leading-5"><b class="block text-sm text-ink-900">پشتیبانی واقعی</b><%= settings.workingHours %></span></li>
@@ -21,30 +21,30 @@
         <div>
           <h2 class="mb-3 text-sm font-bold">دسته‌بندی‌ها</h2>
           <ul class="space-y-2 text-sm text-ink-600">
-            <% menu.slice(0, 6).forEach(function (c) { %><li><a class="hover:text-brand-600" href="/category/<%= c.slug %>"><%= c.name %></a></li><% }) %>
-            <li><a class="hover:text-brand-600" href="/shop">همه محصولات</a></li>
+            <% menu.slice(0, 6).forEach(function (c) { %><li><a class="hover:text-brand-700" href="/category/<%= c.slug %>"><%= c.name %></a></li><% }) %>
+            <li><a class="hover:text-brand-700" href="/shop">همه محصولات</a></li>
           </ul>
         </div>
         <div>
           <h2 class="mb-3 text-sm font-bold">راهنما</h2>
           <ul class="space-y-2 text-sm text-ink-600">
-            <li><a class="hover:text-brand-600" href="/about-us">درباره ما</a></li>
-            <li><a class="hover:text-brand-600" href="/contact-us">تماس با ما</a></li>
-            <li><a class="hover:text-brand-600" href="/connect-us">همکاری و پیشنهاد</a></li>
-            <li><a class="hover:text-brand-600" href="/terms-and-conditions">قوانین و بازگشت کالا</a></li>
-            <li><a class="hover:text-brand-600" href="/privacy-policy">حریم خصوصی</a></li>
-            <li><a class="hover:text-brand-600" href="/weblog">مجله کیدل</a></li>
+            <li><a class="hover:text-brand-700" href="/about-us">درباره ما</a></li>
+            <li><a class="hover:text-brand-700" href="/contact-us">تماس با ما</a></li>
+            <li><a class="hover:text-brand-700" href="/connect-us">همکاری و پیشنهاد</a></li>
+            <li><a class="hover:text-brand-700" href="/terms-and-conditions">قوانین و بازگشت کالا</a></li>
+            <li><a class="hover:text-brand-700" href="/privacy-policy">حریم خصوصی</a></li>
+            <li><a class="hover:text-brand-700" href="/weblog">مجله کیدل</a></li>
           </ul>
         </div>
       </div>
       <div class="md:col-span-3">
         <h2 class="mb-3 text-sm font-bold">ارتباط با ما</h2>
         <ul class="space-y-2.5 text-sm text-ink-600">
-          <li class="flex items-center gap-2"><%- icon('phone','icon-sm text-brand-500') %><a class="ltr hover:text-brand-600" href="tel:<%= settings.phone %>"><%= settings.phone %></a></li>
-          <li class="flex items-center gap-2"><%- icon('mail','icon-sm text-brand-500') %><a class="hover:text-brand-600" href="mailto:<%= settings.email %>"><%= settings.email %></a></li>
+          <li class="flex items-center gap-2"><%- icon('phone','icon-sm text-brand-500') %><a class="ltr hover:text-brand-700" href="tel:<%= settings.phone %>"><%= settings.phone %></a></li>
+          <li class="flex items-center gap-2"><%- icon('mail','icon-sm text-brand-500') %><a class="hover:text-brand-700" href="mailto:<%= settings.email %>"><%= settings.email %></a></li>
           <li class="flex items-start gap-2"><%- icon('pin','icon-sm mt-1 text-brand-500') %><span><%= settings.address %></span></li>
         </ul>
-        <a referrerpolicy="origin" target="_blank" rel="noopener" href="https://trustseal.enamad.ir/?id=731837&Code=jSMW53UKTzbJlysi5bIKHLWgBO1HddCW" class="mt-4 inline-block rounded-lg border border-ink-200 bg-white p-1.5">
+        <a referrerpolicy="origin" target="_blank" rel="noopener" href="https://trustseal.enamad.ir/?id=731837&Code=jSMW53UKTzbJlysi5bIKHLWgBO1HddCW" class="mt-4 inline-block rounded-lg border border-ink-200 bg-surface p-1.5">
           <img referrerpolicy="origin" loading="lazy" width="84" height="84" src="https://trustseal.enamad.ir/logo.aspx?id=731837&Code=jSMW53UKTzbJlysi5bIKHLWgBO1HddCW" alt="نماد اعتماد الکترونیکی" code="jSMW53UKTzbJlysi5bIKHLWgBO1HddCW">
         </a>
       </div>
