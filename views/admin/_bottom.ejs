@@ -1,0 +1,10 @@
+    </main>
+  </div>
+</div>
+<div class="toast-region" id="toasts" aria-live="polite"></div>
+<script>window.KIDLE = { admin: true };</script>
+<script src="<%= asset('/js/app.js') %>" defer></script>
+<% if (locals.richEditor) { %><script src="/vendor/quill/quill.js" defer></script><% } %>
+<script src="<%= asset('/js/admin.js') %>" defer></script>
+</body>
+</html>

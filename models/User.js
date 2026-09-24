@@ -46,6 +46,8 @@ const userSchema = new mongoose.Schema(
       postcode: { type: String, trim: true, default: "" },
     },
     lastLoginAt: Date,
+    // Short-lived mutex so parallel checkout requests from one customer run one at a time.
+    checkoutLockUntil: Date,
     cart: [
       {
         productId: {

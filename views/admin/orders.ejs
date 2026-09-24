@@ -1,0 +1,28 @@
+<% locals.pagerQuery = { tab: tab, q: q }; %>
+<%- include('_top') %>
+<div class="scroller mb-3">
+  <% [['todo', 'برای ارسال'], ['shipping', 'ارسال‌شده'], ['done', 'تحویل‌شده'], ['awaiting', 'در انتظار پرداخت'], ['cancelled', 'لغو/ناموفق'], ['review', 'نیاز به بررسی'], ['all', 'همه']].forEach(function (t) { %>
+  <a class="chip <%= tab === t[0] ? 'is-active' : '' %>" href="/admin/orders?tab=<%= t[0] %>"><%= t[1] %><% if (t[0] === 'todo' && counts.toShip) { %> <span class="rounded-full bg-brand-500 px-1.5 text-2xs text-white"><%= fa(counts.toShip) %></span><% } %><% if (t[0] === 'review' && counts.needsReview) { %> <span class="rounded-full bg-warn-700 px-1.5 text-2xs text-white"><%= fa(counts.needsReview) %></span><% } %></a>
+  <% }) %>
+</div>
+<form class="mb-3 flex gap-2" method="get"><input type="hidden" name="tab" value="<%= tab %>"><label class="sr-only" for="oq">جستجو</label><input id="oq" class="input !min-h-10 max-w-sm" name="q" value="<%= q %>" placeholder="شماره سفارش، نام یا موبایل گیرنده، کد رهگیری"><button class="btn btn-secondary !h-10">جستجو</button></form>
+<div class="card overflow-x-auto">
+  <table class="table">
+    <thead><tr><th>سفارش</th><th>گیرنده</th><th>شهر</th><th>مبلغ</th><th>وضعیت</th><th>تاریخ</th></tr></thead>
+    <tbody>
+      <% orders.forEach(function (o) { %>
+      <tr>
+        <td><a class="link ltr font-bold" href="/admin/orders/<%= o._id %>"><%= o.OrderNum %></a><% if (o.needsReview) { %> <span class="badge badge-danger">بررسی</span><% } %></td>
+        <td><%= o.recipientName || (o.user && o.user.fullName) || '—' %><span class="ltr block text-2xs text-ink-500"><%= o.recipientPhone || (o.user && o.user.mobile) %></span></td>
+        <td class="text-xs"><%= o.province %>، <%= o.city %></td>
+        <td class="whitespace-nowrap"><%= price(o.totalPrice) %></td>
+        <td><%- include('../partials/order-status', { o: o }) %></td>
+        <td class="whitespace-nowrap text-xs text-ink-500"><%= faDate(o.createdAt, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }) %></td>
+      </tr>
+      <% }) %>
+      <% if (!orders.length) { %><tr><td colspan="6" class="py-10 text-center text-ink-500">سفارشی در این بخش نیست</td></tr><% } %>
+    </tbody>
+  </table>
+</div>
+<%- include('_pager') %>
+<%- include('_bottom') %>

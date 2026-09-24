@@ -8,7 +8,7 @@
     "build:css": "tailwindcss -i src/styles/app.css -o public/css/app.css --minify",
     "watch:css": "tailwindcss -i src/styles/app.css -o public/css/app.css --watch",
     "create-admin": "node scripts/create-admin.js",
-    "test": "node --test test/"
+    "test": "node --test --test-concurrency=1 test/*.test.js"
   },
   "keywords": [],
   "author": "",
@@ -38,6 +38,7 @@
     "@tailwindcss/cli": "^4.3.3",
     "nodemon": "^3.1.14",
     "playwright-core": "^1.63.0",
+    "quill": "^2.0.3",
     "tailwindcss": "^4.3.3",
     "vazirmatn": "^33.0.3"
   },

@@ -1,0 +1,16 @@
+<% locals.pagerQuery = { f: f }; %>
+<%- include('_top') %>
+<div class="scroller mb-3"><% [['', 'همه'], ['paid', 'موفق'], ['failed', 'ناموفق/لغو'], ['pending', 'در جریان']].forEach(function (t) { %><a class="chip <%= f === t[0] ? 'is-active' : '' %>" href="/admin/payments<%= t[0] ? '?f=' + t[0] : '' %>"><%= t[1] %></a><% }) %></div>
+<div class="card overflow-x-auto">
+  <table class="table"><thead><tr><th>سفارش</th><th>مبلغ</th><th>وضعیت پرداخت</th><th>کد پیگیری</th><th>کارت</th><th>تاریخ</th></tr></thead><tbody>
+    <% orders.forEach(function (o) { var p = o.paymentInfo || {}; %>
+    <tr><td><a class="link ltr" href="/admin/orders/<%= o._id %>"><%= o.OrderNum %></a></td><td class="whitespace-nowrap"><%= price(o.totalPrice) %></td>
+      <td><span class="badge <%= o.paymentStatus === 'پرداخت شده' ? 'badge-success' : o.paymentStatus === 'لغو شده' ? 'badge-danger' : 'badge-info' %>"><%= o.paymentStatus %></span></td>
+      <td class="ltr text-xs"><%= p.refId || '—' %></td><td class="ltr text-xs"><%= p.cardPan || '—' %></td>
+      <td class="whitespace-nowrap text-xs text-ink-500"><%= faDate(p.paymentDate || o.createdAt, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }) %></td></tr>
+    <% }) %>
+    <% if (!orders.length) { %><tr><td colspan="6" class="py-8 text-center text-ink-500">پرداختی ثبت نشده است</td></tr><% } %>
+  </tbody></table>
+</div>
+<%- include('_pager') %>
+<%- include('_bottom') %>

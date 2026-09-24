@@ -593,3 +593,12 @@
   .stars label:has(input:checked), .stars label:has(input:checked) ~ label { color: var(--color-butter-400); }
   .stars label:has(input:focus-visible) { outline: 2px solid var(--color-brand-500); border-radius: 6px; }
 }
+
+@layer components {
+  @media (max-width: 63.99rem) {
+    .admin-drawer:not(.is-open) { visibility: hidden; transition: transform 0.28s, visibility 0s 0.28s; }
+  }
+  @media (min-width: 64rem) {
+    .admin-drawer { position: sticky; top: 0; height: 100dvh; transform: none; box-shadow: none; z-index: 1; }
+  }
+}

@@ -1,0 +1,16 @@
+<% locals.headerActions = '<a class="btn btn-primary btn-sm" href="/admin/weblogs/new">' + icon('plus','icon-sm') + ' مقاله جدید</a>'; %>
+<%- include('_top') %>
+<div class="card overflow-x-auto">
+  <table class="table"><thead><tr><th>عنوان</th><th>دسته</th><th>بازدید</th><th>وضعیت</th><th><span class="sr-only">عملیات</span></th></tr></thead><tbody>
+    <% items.forEach(function (w) { %>
+    <tr><td><a class="font-medium hover:text-brand-700" href="/admin/weblogs/<%= w._id %>/edit"><%= w.title %></a><span class="block text-2xs text-ink-500"><%= faDate(w.publishedAt || w.createdAt) %></span></td>
+      <td class="text-xs"><%= (w.categories || []).map(function (c) { return c.name; }).join('، ') %></td><td><%= fa(w.viewCount || 0) %></td>
+      <td><span class="badge <%= w.isPublished ? 'badge-success' : 'badge-neutral' %>"><%= w.isPublished ? 'منتشرشده' : 'پیش‌نویس' %></span></td>
+      <td class="whitespace-nowrap text-end"><% if (w.isPublished) { %><a class="btn-icon size-8" href="/weblog/<%= w.slug %>" target="_blank" aria-label="مشاهده"><%- icon('eye','icon-sm') %></a><% } %>
+        <a class="btn-icon size-8" href="/admin/weblogs/<%= w._id %>/edit" aria-label="ویرایش"><%- icon('edit','icon-sm') %></a>
+        <button class="btn-icon size-8 text-danger-600" data-action="/admin/api/weblogs/<%= w._id %>" data-method="DELETE" data-confirm="این مقاله حذف شود؟" data-remove-row aria-label="حذف"><%- icon('trash','icon-sm') %></button></td></tr>
+    <% }) %>
+    <% if (!items.length) { %><tr><td colspan="5" class="py-8 text-center text-ink-500">هنوز مقاله‌ای نوشته نشده است</td></tr><% } %>
+  </tbody></table>
+</div>
+<%- include('_bottom') %>

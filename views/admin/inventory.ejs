@@ -1,0 +1,22 @@
+<%- include('_top') %>
+<div class="mb-3 flex flex-wrap items-center gap-2">
+  <% [['', 'همه'], ['low', 'رو به اتمام (≤ ' + fa(threshold) + ')'], ['out', 'ناموجود']].forEach(function (o) { %><a class="chip <%= f === o[0] ? 'is-active' : '' %>" href="/admin/inventory<%= o[0] ? '?f=' + o[0] : '' %>"><%= o[1] %></a><% }) %>
+  <form class="ms-auto" method="get"><input type="hidden" name="f" value="<%= f %>"><label class="sr-only" for="iq">جستجو</label><input id="iq" class="input !min-h-9 !text-sm" name="q" value="<%= q %>" placeholder="جستجوی محصول"></form>
+</div>
+<div class="alert alert-info mb-3"><%- icon('info','icon-sm mt-0.5') %><span>برای ورود کالا عدد مثبت (مثلاً ۱۰) و برای خروج/خرابی عدد منفی (مثلاً ‎-۲) وارد کنید. تغییرات به‌صورت اتمی اعمال می‌شود و با سفارش‌های هم‌زمان تداخل ندارد.</span></div>
+<div class="card overflow-x-auto">
+  <table class="table">
+    <thead><tr><th>محصول</th><th>موجودی</th><th>تغییر موجودی</th></tr></thead>
+    <tbody>
+      <% items.forEach(function (p) { %>
+      <tr>
+        <td><a class="font-medium hover:text-brand-700" href="/admin/products/<%= p._id %>/edit"><%= p.name %></a><% if (!p.isPublished) { %> <span class="badge badge-neutral">پیش‌نویس</span><% } %></td>
+        <td><b data-stock-value class="<%= p.countInStock <= 0 ? 'text-danger-600' : p.countInStock <= threshold ? 'text-warn-700' : '' %>"><%= fa(p.countInStock) %></b></td>
+        <td><form class="flex gap-1.5" data-stock="/admin/api/inventory/<%= p._id %>"><label class="sr-only" for="d-<%= p._id %>">تغییر</label><input id="d-<%= p._id %>" name="delta" class="input ltr !min-h-9 w-24 !text-sm" inputmode="numeric" placeholder="+۱۰ / -۲"><button class="btn btn-secondary btn-sm"><span class="spinner"></span><span class="btn-label-idle">اعمال</span></button></form></td>
+      </tr>
+      <% }) %>
+      <% if (!items.length) { %><tr><td colspan="3" class="py-8 text-center text-ink-500">موردی نیست 🎉</td></tr><% } %>
+    </tbody>
+  </table>
+</div>
+<%- include('_bottom') %>

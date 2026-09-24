@@ -1,0 +1,21 @@
+<% var c = customer, a = c.savedAddress || {}; %>
+<%- include('_top') %>
+<a href="/admin/customers" class="btn btn-ghost btn-sm -ms-2 mb-2"><%- icon('arrow-right','icon-sm') %> مشتریان</a>
+<div class="grid gap-4 lg:grid-cols-[20rem_1fr]">
+  <section class="card card-pad text-sm">
+    <h2 class="text-base font-bold"><%= c.fullName || 'بدون نام' %></h2>
+    <p class="ltr text-end text-ink-600"><a class="link" href="tel:<%= c.mobile %>"><%= c.mobile %></a></p>
+    <% if (c.email) { %><p class="text-ink-600"><%= c.email %></p><% } %>
+    <p class="mt-2 text-xs text-ink-500">عضویت: <%= faDate(c.createdAt) %></p>
+    <% if (a.address) { %><div class="mt-3 border-t border-ink-100 pt-3"><b class="text-xs text-ink-500">آدرس ذخیره‌شده</b><p class="leading-7"><%= a.province %>، <%= a.city %>، <%= a.address %></p></div><% } %>
+    <p class="mt-3 text-xs text-ink-500"><%= fa((c.cart || []).length) %> قلم در سبد خرید</p>
+  </section>
+  <section class="card overflow-x-auto">
+    <h2 class="p-4 pb-2 text-sm font-bold">سفارش‌ها</h2>
+    <table class="table"><thead><tr><th>شماره</th><th>مبلغ</th><th>وضعیت</th><th>تاریخ</th></tr></thead><tbody>
+      <% orders.forEach(function (o) { %><tr><td><a class="link ltr" href="/admin/orders/<%= o._id %>"><%= o.OrderNum %></a></td><td><%= price(o.totalPrice) %></td><td><%- include('../partials/order-status', { o: o }) %></td><td class="text-xs text-ink-500"><%= faDate(o.createdAt) %></td></tr><% }) %>
+      <% if (!orders.length) { %><tr><td colspan="4" class="py-6 text-center text-ink-500">بدون سفارش</td></tr><% } %>
+    </tbody></table>
+  </section>
+</div>
+<%- include('_bottom') %>

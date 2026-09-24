@@ -1,0 +1,7 @@
+<% if (pages > 1) { var qs = function (n) { var u = new URLSearchParams(locals.pagerQuery || {}); u.set('page', n); return '?' + u.toString(); }; %>
+<nav class="mt-4 flex items-center justify-center gap-1" aria-label="صفحه‌بندی">
+  <% if (page > 1) { %><a class="btn btn-secondary btn-sm" href="<%= qs(page - 1) %>">قبلی</a><% } %>
+  <span class="px-2 text-sm text-ink-600">صفحه <%= fa(page) %> از <%= fa(pages) %></span>
+  <% if (page < pages) { %><a class="btn btn-secondary btn-sm" href="<%= qs(page + 1) %>">بعدی</a><% } %>
+</nav>
+<% } %>

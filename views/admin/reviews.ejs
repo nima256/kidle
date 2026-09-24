@@ -1,0 +1,21 @@
+<%- include('_top') %>
+<div class="scroller mb-3"><% [['pending', 'در انتظار تأیید'], ['approved', 'منتشرشده'], ['rejected', 'ردشده']].forEach(function (t) { %><a class="chip <%= status === t[0] ? 'is-active' : '' %>" href="/admin/reviews?status=<%= t[0] %>"><%= t[1] %></a><% }) %></div>
+<ul class="space-y-3">
+  <% items.forEach(function (r) { %>
+  <li class="card card-pad" data-item>
+    <div class="flex flex-wrap items-center justify-between gap-2 text-sm">
+      <span><b><%= r.authorName || 'مشتری' %></b> <span class="ltr text-xs text-ink-500"><%= r.user && r.user.mobile %></span> <% if (r.verifiedBuyer) { %><span class="badge badge-success">خریدار</span><% } %></span>
+      <span class="text-butter-700"><%= '★'.repeat(r.rating) %><span class="text-ink-200"><%= '★'.repeat(5 - r.rating) %></span></span>
+    </div>
+    <p class="mt-1 text-xs text-ink-500">برای <% if (r.product) { %><a class="link" target="_blank" href="/productDetails/<%= r.product.slug %>"><%= r.product.name %></a><% } else { %>محصول حذف‌شده<% } %> · <%= faDate(r.createdAt) %></p>
+    <p class="mt-2 text-sm leading-7 whitespace-pre-line"><%= r.text %></p>
+    <div class="mt-3 flex gap-2">
+      <% if (r.status !== 'approved') { %><button class="btn btn-primary btn-sm" data-action="/admin/api/reviews/<%= r._id %>" data-method="PATCH" data-body='{"status":"approved"}' data-remove-row><span class="spinner"></span><span class="btn-label-idle">تأیید و انتشار</span></button><% } %>
+      <% if (r.status !== 'rejected') { %><button class="btn btn-secondary btn-sm" data-action="/admin/api/reviews/<%= r._id %>" data-method="PATCH" data-body='{"status":"rejected"}' data-remove-row>رد</button><% } %>
+      <button class="btn btn-danger btn-sm" data-action="/admin/api/reviews/<%= r._id %>" data-method="DELETE" data-confirm="این نظر حذف شود؟" data-remove-row>حذف</button>
+    </div>
+  </li>
+  <% }) %>
+</ul>
+<% if (!items.length) { %><div class="empty-state card"><span class="empty-art"><%- icon('message','size-9') %></span><p class="text-sm text-ink-600">نظری در این بخش نیست.</p></div><% } %>
+<%- include('_bottom') %>

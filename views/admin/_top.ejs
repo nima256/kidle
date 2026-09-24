@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title><%= title %> | پنل مدیریت کیدل</title>
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="<%= asset('/css/app.css') %>">
+<% if (locals.richEditor) { %><link rel="stylesheet" href="/vendor/quill/quill.snow.css"><% } %>
+</head>
+<body class="bg-ink-50">
+<div class="lg:grid lg:min-h-dvh lg:grid-cols-[15rem_1fr]">
+  <div class="drawer-overlay" data-drawer-overlay hidden></div>
+  <aside class="drawer admin-drawer !w-64 lg:border-e lg:border-ink-200" id="menu-drawer" aria-label="منوی مدیریت" data-persistent>
+    <div class="flex h-14 items-center gap-2 border-b border-ink-100 px-4">
+      <svg viewBox="0 0 64 64" class="size-8" aria-hidden="true"><rect width="64" height="64" rx="18" fill="#e84a82"/><path d="M23 15h18l3 8 9 4.5-5 9-4-2V50H20V34.5l-4 2-5-9 9-4.5 3-8Z" fill="#fff"/></svg>
+      <span class="font-black text-brand-600">کیدل</span><span class="text-xs text-ink-500">پنل مدیریت</span>
+      <button type="button" class="btn-icon ms-auto lg:hidden" data-close-drawer aria-label="بستن منو"><%- icon('x') %></button>
+    </div>
+    <nav class="flex-1 overflow-y-auto p-2" aria-label="بخش‌ها">
+      <% navItems.forEach(function (i) { var active = i.exact ? path === i.href || path === i.href + '/' : path.indexOf(i.href) === 0; %>
+      <a href="<%= i.href %>" class="flex h-10 items-center gap-2.5 rounded-md px-3 text-sm font-medium <%= active ? 'bg-brand-50 text-brand-700' : 'text-ink-700 hover:bg-ink-100' %>" <%- active ? 'aria-current="page"' : '' %>>
+        <%- icon(i.icon,'icon-sm') %> <%= i.label %>
+        <% if (i.badge && counts[i.badge]) { %><span class="ms-auto rounded-full bg-brand-500 px-1.5 text-2xs font-bold text-white"><%= fa(counts[i.badge]) %></span><% } %>
+      </a>
+      <% }) %>
+    </nav>
+    <div class="border-t border-ink-100 p-3 text-xs">
+      <a href="/admin/profile" class="flex items-center gap-2 rounded-md p-1.5 hover:bg-ink-100"><span class="flex size-8 items-center justify-center rounded-full bg-brand-100 font-bold text-brand-700"><%= admin.fullName.charAt(0) %></span><span class="min-w-0"><b class="block truncate text-sm"><%= admin.fullName %></b><span class="text-ink-500"><%= admin.role === 'super_admin' ? 'مدیر ارشد' : 'مدیر' %></span></span></a>
+      <div class="mt-2 flex gap-2"><a class="btn btn-ghost btn-sm flex-1" href="/" target="_blank"><%- icon('external','icon-sm') %> سایت</a><a class="btn btn-ghost btn-sm flex-1 text-danger-600" href="/admin/logout"><%- icon('logout','icon-sm') %> خروج</a></div>
+    </div>
+  </aside>
+  <div class="min-w-0">
+    <header class="sticky top-0 z-40 flex h-14 items-center gap-2 border-b border-ink-200 bg-white/95 px-3 backdrop-blur lg:px-6">
+      <button type="button" class="btn-icon lg:hidden" data-open-drawer aria-label="منو"><%- icon('menu') %></button>
+      <h1 class="truncate text-base font-bold"><%= title %></h1>
+      <div class="ms-auto flex items-center gap-2"><%- locals.headerActions || '' %></div>
+    </header>
+    <main id="main" class="p-3 sm:p-4 lg:p-6">
+      <% if (counts.needsReview && path !== '/admin/orders') { %><a href="/admin/orders?tab=review" class="alert alert-warn mb-4"><%- icon('alert','icon-sm mt-0.5') %><span><b><%= fa(counts.needsReview) %> سفارش</b> نیاز به بررسی دارد (پرداخت پس از پایان رزرو). مشاهده</span></a><% } %>
