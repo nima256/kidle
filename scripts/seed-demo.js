@@ -87,7 +87,10 @@ async function image(name, shape, color, bg) {
   }
   await Product.create({ name: "محصول پیش‌نویس منتشرنشده", category: [girls._id], brand: brand._id, price: 100000, countInStock: 5, isPublished: false });
 
-  const admin = await Admin.findOne() || (await Admin.create({ fullName: "مدیر آزمایشی", email: "admin@local.test", password: "LocalDev#2026!", role: "super_admin", permissions: [] }));
+  const devPassword = "Dev" + require("crypto").randomBytes(9).toString("base64url") + "1";
+  let admin = await Admin.findOne();
+  const createdAdmin = !admin;
+  if (!admin) admin = await Admin.create({ fullName: "مدیر آزمایشی", email: "admin@local.test", password: devPassword, role: "super_admin", permissions: [] });
   await Weblog.create({
     title: "چطور سایز مناسب لباس کودک را انتخاب کنیم؟",
     description: "راهنمای سریع انتخاب سایز لباس بچه بر اساس سن، قد و وزن.",
@@ -95,6 +98,6 @@ async function image(name, shape, color, bg) {
     categories: [blogCat._id], isPublished: true, publishedAt: new Date(), author: admin._id, readingTime: 4,
   });
   await DiscountCode.create({ code: "WELCOME10", type: "percent", amount: 10, maxDiscountAmount: 100000, isActive: true });
-  console.log("Seeded demo data. Admin: admin@local.test / LocalDev#2026!");
+  console.log("Seeded demo data." + (createdAdmin ? ` Dev admin: admin@local.test / ${devPassword}` : ""));
   process.exit(0);
 })().catch((e) => { console.error(e); process.exit(1); });
