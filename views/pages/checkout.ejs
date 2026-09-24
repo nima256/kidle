@@ -3,7 +3,7 @@
 
 <div class="container-app max-w-5xl pb-6">
   <ol class="flex items-center justify-center gap-2 py-3 text-xs" aria-label="مراحل خرید">
-    <li><a href="/cart" class="flex items-center gap-1 text-mint-700"><span class="flex size-5 items-center justify-center rounded-full bg-mint-100"><%- icon('check','size-3') %></span>سبد خرید</a></li>
+    <li><a href="/cart" class="-my-2 flex items-center gap-1 py-3 text-mint-700"><span class="flex size-5 items-center justify-center rounded-full bg-mint-100"><%- icon('check','size-3') %></span>سبد خرید</a></li>
     <li class="h-px w-6 bg-ink-300" aria-hidden="true"></li>
     <li aria-current="step" class="flex items-center gap-1 font-bold text-brand-700"><span class="flex size-5 items-center justify-center rounded-full bg-brand-600 text-2xs text-white">۲</span>ارسال</li>
     <li class="h-px w-6 bg-ink-300" aria-hidden="true"></li>
@@ -22,6 +22,10 @@
         <div class="border-t border-ink-100 px-3.5 pb-3"><%- include('../partials/checkout-items') %></div>
       </details>
 
+      <div class="alert alert-danger" id="error-summary" tabindex="-1" role="alert" hidden>
+        <%- icon('alert','icon-sm mt-0.5 shrink-0') %>
+        <div><h2 class="text-sm font-bold">لطفاً این موارد را اصلاح کنید:</h2><ul class="mt-1 list-disc space-y-0.5 ps-4 text-sm" data-error-list></ul></div>
+      </div>
       <% if (cart.issues.length) { %><div class="alert alert-warn"><%- icon('alert','icon-sm mt-0.5') %><span><%= cart.issues[0] %> — <a class="link" href="/cart">اصلاح سبد</a></span></div><% } %>
 
       <section class="card card-pad" aria-labelledby="sec-recipient">

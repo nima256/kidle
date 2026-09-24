@@ -91,6 +91,8 @@ const categorySchema = mongoose.Schema(
         message: "فقط ایموجی معتبر قابل قبول است",
       },
     },
+    // Name of an SVG icon from public/icons.svg (see middlewares/locals.js CAT_ICONS).
+    icon: { type: String, default: "" },
     imgSvgForHome: {
       type: String,
     },

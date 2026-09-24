@@ -602,3 +602,30 @@
     .admin-drawer { position: sticky; top: 0; height: 100dvh; transform: none; box-shadow: none; z-index: 1; }
   }
 }
+
+/* Touch targets (UI/UX Pro Max: Touch & Interaction, critical) — on touch screens every control gets
+   at least a 44×44px hit area. Compact controls keep their visual size; an invisible ::after extends
+   the hit area so the design stays dense without making buttons look bigger. */
+@layer components {
+  .opt, .swatch, .f-check, .chip, label:has(> input[type="checkbox"]), label:has(> input[type="radio"]) { cursor: pointer; }
+  @media (pointer: coarse) {
+    .btn-icon, .btn { min-width: 2.75rem; }
+    .btn-icon, .btn:not(.btn-sm), .chip { min-height: 2.75rem; }
+    .btn-sm, .qty button, .chip-remove, .tab {
+      position: relative;
+    }
+    .btn-sm::after, .qty button::after, .chip-remove::after {
+      content: "";
+      position: absolute;
+      inset: 50% auto auto 50%;
+      width: max(100%, 2.75rem);
+      height: max(100%, 2.75rem);
+      transform: translate(-50%, -50%);
+    }
+    .qty { height: 2.75rem; }
+    .qty button { width: 2.75rem; }
+    .opt { min-height: 2.75rem !important; min-width: 2.75rem !important; }
+    .f-check { min-height: 2.75rem; }
+    .swatch { width: 2.75rem; height: 2.75rem; }
+  }
+}

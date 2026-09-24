@@ -50,9 +50,8 @@
     <li class="w-[5.75rem] shrink-0 sm:w-auto">
       <a href="/category/<%= c.slug %>" class="group flex flex-col items-center gap-1.5 text-center">
         <span class="relative flex aspect-square w-full items-center justify-center overflow-hidden rounded-2xl transition group-hover:-translate-y-0.5 group-hover:shadow-md" style="background: <%= bg %>">
-          <% if (image) { %><img src="<%= image %>" alt="" loading="lazy" class="size-full object-cover">
-          <% } else if (c.emoji) { %><span class="text-4xl sm:text-5xl" aria-hidden="true"><%= c.emoji %></span>
-          <% } else { %><span class="text-brand-600/80"><%- icon('hanger','size-9') %></span><% } %>
+          <% if (image) { %><img src="<%= image %>" alt="" loading="lazy" width="200" height="200" class="size-full object-cover">
+          <% } else { %><span class="flex size-[58%] items-center justify-center rounded-full bg-white/70 text-brand-700 shadow-xs"><%- icon(catIcon(c),'size-[55%] !stroke-[1.6]') %></span><% } %>
         </span>
         <span class="line-clamp-1 text-[0.8125rem] font-bold text-ink-900 group-hover:text-brand-700"><%= c.name %></span>
         <span class="-mt-1.5 text-2xs text-ink-500"><%= fa(c.productCount) %> محصول</span>
@@ -80,6 +79,27 @@
 <% } %>
 
 <% rail('new-title', 'تازه‌ها', 'جدیدترین لباس‌های رسیده', newest, '/shop?sort=newest', false) %>
+<section class="container-app mt-8 grid gap-3 sm:grid-cols-2" aria-label="پیشنهادهای ویژه">
+  <a href="/shop?sale=1&sort=discount" class="group relative flex min-h-36 items-center overflow-hidden rounded-2xl bg-brand-600 p-5 text-white transition hover:bg-brand-700 sm:min-h-44 sm:p-7">
+    <span class="relative z-10 max-w-[65%]">
+      <span class="text-xs font-bold text-brand-100">تا موجودی هست</span>
+      <span class="mt-1 block text-xl font-black leading-8 sm:text-2xl">تخفیف‌های این هفته</span>
+      <span class="mt-3 inline-flex items-center gap-1 rounded-full bg-white px-3 py-1.5 text-sm font-bold text-brand-700 transition group-hover:gap-2">دیدن تخفیف‌ها <%- icon('arrow-left','icon-sm') %></span>
+    </span>
+    <span class="absolute -bottom-6 -end-4 size-40 rounded-full bg-brand-500 sm:size-52" aria-hidden="true"></span>
+    <span class="absolute end-5 top-1/2 -translate-y-1/2 text-white/90 sm:end-8" aria-hidden="true"><%- icon('tag','size-20 sm:size-24 !stroke-[1.4]') %></span>
+  </a>
+  <a href="/shop?sort=newest" class="group relative flex min-h-36 items-center overflow-hidden rounded-2xl bg-butter-400 p-5 text-ink-950 transition hover:bg-[#ffbe3d] sm:min-h-44 sm:p-7">
+    <span class="relative z-10 max-w-[65%]">
+      <span class="text-xs font-bold text-butter-700">تازه رسیده</span>
+      <span class="mt-1 block text-xl font-black leading-8 sm:text-2xl">کالکشن جدید فصل</span>
+      <span class="mt-3 inline-flex items-center gap-1 rounded-full bg-ink-950 px-3 py-1.5 text-sm font-bold text-white transition group-hover:gap-2">دیدن تازه‌ها <%- icon('arrow-left','icon-sm') %></span>
+    </span>
+    <span class="absolute -bottom-6 -end-4 size-40 rounded-full bg-butter-100/60 sm:size-52" aria-hidden="true"></span>
+    <span class="absolute end-5 top-1/2 -translate-y-1/2 text-ink-900/85 sm:end-8" aria-hidden="true"><%- icon('c-dress','size-20 sm:size-24 !stroke-[1.4]') %></span>
+  </a>
+</section>
+
 <% rail('sale-title', 'تخفیف‌های ویژه', 'قیمت‌های به‌صرفه، تا موجودی هست', onSale, '/shop?sale=1&sort=discount', true) %>
 <% rail('feat-title', 'پیشنهاد کیدل', 'انتخاب‌های محبوب مامان‌ها', featured, '/shop?sort=popular', false) %>
 <% rail('pop-title', 'پرفروش‌ها', '', popular, '/shop?sort=popular', false) %>
