@@ -123,3 +123,19 @@ motion tokens (exit faster than enter), 16px body / 12px floor type scale, respo
 bottom navigation on every storefront page (buy bar sits above it), separated logout, cart Undo, live cart
 announcements, recent searches, unsaved-changes guards, password visibility toggle, request timeouts, chart
 table alternative, linked field errors (`aria-describedby`), long-token wrapping, focus-not-obscured padding.
+
+## 8. "Atelier" visual redesign (frontend only)
+A complete new visual identity and frontend rebuild; business logic, routes, APIs and data models are unchanged.
+Design system: `design-system/kidle/MASTER.md` (UI/UX Pro Max `--design-system` + `style`/`color`/`landing`/`typography`/`ux` searches).
+
+- **Identity:** warm cream canvas, plum ink, Kidle Rose as accent only; sage/apricot supporting colours; El Messiri display
+  type (digits fall back to Vazirmatn); the *arch* as the single playful signature shape; hairlines instead of clay shadows.
+- **Rebuilt templates:** every storefront page and partial (home, listing/search, product, cart, checkout, OTP login, account,
+  orders, order, payment result, blog, post, content pages, errors) plus header, mega menu, menu drawer, search overlay,
+  floating mobile dock, footer and product card.
+- **New UX:** quick add from product cards (sheet when size/colour is needed), tabbed product discovery on the home page,
+  sticky listing toolbar with active-filter chips, switch toggles and swatch colour filters, gallery grid on desktop /
+  swipe carousel with counter on phones, size picker that shows the fitting age, accordions on the product page,
+  five-cell OTP input (single real input, SMS autofill kept), navigation progress bar, designed empty/error/payment states.
+- **Removed:** dark theme (see MASTER.md deviations) and the clothesline hero illustration.
+- **Admin:** inherits the new tokens/components automatically; login screen and sidebar mark updated to the new brand.

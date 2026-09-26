@@ -1,32 +1,37 @@
 <%- include('../partials/layout-top') %>
-<div class="container-app max-w-4xl py-4">
-  <h1 class="mb-3 text-xl font-extrabold">سفارش‌های من</h1>
-  <%- include('../partials/account-nav') %>
-  <div class="scroller mb-3">
+<div class="bg-linen-100">
+  <div class="wrap max-w-5xl py-6 lg:py-10">
+    <p class="eyebrow">حساب کاربری</p>
+    <h1 class="t-page mt-1">سفارش‌های من</h1>
+    <div class="mt-5"><%- include('../partials/account-nav') %></div>
+  </div>
+</div>
+<div class="wrap max-w-5xl py-6 lg:py-10">
+  <nav class="scroller mb-5 !gap-2" aria-label="فیلتر سفارش‌ها">
     <% [['', 'همه'], ['active', 'جاری'], ['done', 'تحویل شده'], ['cancelled', 'لغو / پرداخت نشده']].forEach(function (f) { %>
     <a class="chip <%= filter === f[0] ? 'is-active' : '' %>" href="/account/orders<%= f[0] ? '?f=' + f[0] : '' %>" <%- filter === f[0] ? 'aria-current="page"' : '' %>><%= f[1] %></a>
     <% }) %>
-  </div>
+  </nav>
   <% if (orders.length) { %>
-  <ul class="space-y-2.5">
+  <ul class="grid gap-3 md:grid-cols-2">
     <% orders.forEach(function (o) { %>
     <li>
-      <a href="/account/orders/<%= o.OrderNum %>" class="card flex flex-col gap-2 p-3.5 transition hover:border-brand-200 hover:shadow-sm">
+      <a href="/account/orders/<%= o.OrderNum %>" class="panel group flex h-full flex-col gap-3 p-4 transition hover:border-ink-950 sm:p-5">
         <div class="flex items-center justify-between gap-2">
-          <span class="text-sm font-bold ltr"><%= o.OrderNum %></span>
+          <span><span class="block text-xs text-ink-500">شماره سفارش</span><b class="ltr inline-block text-ink-950"><%= o.OrderNum %></b></span>
           <%- include('../partials/order-status', { o: o }) %>
         </div>
-        <div class="flex items-center justify-between text-xs text-ink-600">
-          <span><%= faDate(o.createdAt) %> · <%= fa(o.products.reduce(function (s, p) { return s + p.quantity; }, 0)) %> کالا</span>
-          <span class="price text-sm"><%= price(o.totalPrice) %> <span class="currency">تومان</span></span>
+        <div class="flex items-end justify-between border-t border-ink-100 pt-3 text-sm text-ink-600">
+          <span><%= faDate(o.createdAt) %><span class="block text-xs"><%= fa(o.products.reduce(function (s, p) { return s + p.quantity; }, 0)) %> کالا</span></span>
+          <span class="flex items-center gap-2"><span class="price"><%= price(o.totalPrice) %> <span class="currency">تومان</span></span><%- icon('chevron-left','icon-sm text-ink-400 transition group-hover:-translate-x-0.5') %></span>
         </div>
-        <% if (o.trackingNumber) { %><p class="text-xs text-mint-700"><%- icon('truck','icon-sm inline') %> کد رهگیری: <b class="ltr"><%= o.trackingNumber %></b></p><% } %>
+        <% if (o.trackingNumber) { %><p class="flex items-center gap-1.5 rounded-sm bg-sage-50 px-2.5 py-1.5 text-xs text-sage-700"><%- icon('truck','icon-sm') %> کد رهگیری: <b class="ltr"><%= o.trackingNumber %></b></p><% } %>
       </a>
     </li>
     <% }) %>
   </ul>
   <% } else { %>
-  <div class="empty-state card"><span class="empty-art"><%- icon('package','size-9') %></span><h2 class="text-base font-bold">سفارشی در این بخش نیست</h2><a class="btn btn-primary" href="/shop">شروع خرید</a></div>
+  <div class="state panel-soft"><span class="state-art"><%- icon('package','size-10 !stroke-[1.4]') %></span><h2 class="state-title">سفارشی در این بخش نیست</h2><p class="state-text">وقتی خریدی انجام دهید، وضعیت ارسال و کد رهگیری آن اینجا نمایش داده می‌شود.</p><a class="btn btn-dark mt-2" href="/shop">شروع خرید</a></div>
   <% } %>
 </div>
 <%- include('../partials/layout-bottom') %>

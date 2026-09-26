@@ -1,14 +1,14 @@
-<nav class="bottom-nav" aria-label="ناوبری پایین">
-  <div class="mx-auto flex max-w-lg">
+<nav class="dock" aria-label="ناوبری اصلی موبایل">
+  <div class="dock-row">
     <a href="/" <%- path === '/' ? 'aria-current="page"' : '' %>><%- icon('home') %><span>خانه</span></a>
-    <button type="button" data-open-drawer data-drawer-tab="categories" aria-controls="menu-drawer" <%- path.startsWith('/category') || path === '/shop' ? 'aria-current="page"' : '' %>><%- icon('grid') %><span>دسته‌ها</span></button>
+    <button type="button" data-open-drawer aria-controls="menu-drawer" aria-expanded="false" <%- path.startsWith('/category') || path === '/shop' ? 'aria-current="page"' : '' %>><%- icon('grid') %><span>دسته‌ها</span></button>
     <button type="button" data-open-search <%- path === '/search' ? 'aria-current="page"' : '' %>><%- icon('search') %><span>جستجو</span></button>
-    <a href="/cart" <%- path === '/cart' ? 'aria-current="page"' : '' %> data-cart-link>
-      <span class="relative"><%- icon('bag') %><span class="count-badge" data-cart-count <%= cartCount ? '' : 'hidden' %>><%= cartCount %></span></span>
-      <span>سبد خرید</span>
+    <a href="/cart" <%- path === '/cart' ? 'aria-current="page"' : '' %> data-cart-link aria-label="سبد خرید، <%= cartCount %> کالا">
+      <span class="relative"><%- icon('bag') %><span class="count-badge" data-cart-count <%= cartCount ? '' : 'hidden' %>><%= fa(cartCount) %></span></span>
+      <span>سبد</span>
     </a>
     <% if (user) { %>
-    <a href="/account" <%- path.startsWith('/account') ? 'aria-current="page"' : '' %>><%- icon('user') %><span>حساب من</span></a>
+    <a href="/account" <%- path.startsWith('/account') ? 'aria-current="page"' : '' %>><%- icon('user') %><span>حساب</span></a>
     <% } else { %>
     <button type="button" data-open-auth><%- icon('user') %><span>ورود</span></button>
     <% } %>

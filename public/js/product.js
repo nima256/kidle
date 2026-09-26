@@ -7,7 +7,7 @@
   var productId = root.getAttribute("data-product");
 
   /* ── Gallery ── */
-  var gallery = $("[data-gallery]"), dots = $$("[data-dot]"), thumbs = $$("[data-thumb]");
+  var gallery = $("[data-gallery]"), counter = $("[data-counter]");
   function current() { return gallery ? Math.round(Math.abs(gallery.scrollLeft) / gallery.clientWidth) : 0; }
   function goTo(i) {
     if (!gallery) return;
@@ -18,13 +18,11 @@
   }
   function sync() {
     var i = current();
-    dots.forEach(function (d, j) { d.classList.toggle("w-4", i === j); d.classList.toggle("!bg-brand-500", i === j); d.classList.toggle("w-1.5", i !== j); });
-    thumbs.forEach(function (t, j) { t.classList.toggle("border-brand-500", i === j); t.classList.toggle("border-transparent", i !== j); t.setAttribute("aria-selected", i === j); });
+    if (counter) counter.textContent = K.fa(i + 1);
   }
   if (gallery) {
     var st;
     gallery.addEventListener("scroll", function () { clearTimeout(st); st = setTimeout(sync, 60); }, { passive: true });
-    thumbs.forEach(function (t) { t.addEventListener("click", function () { goTo(+t.getAttribute("data-thumb")); }); });
     var prev = $("[data-gallery-prev]"), next = $("[data-gallery-next]");
     if (prev) prev.addEventListener("click", function () { goTo(current() - 1); });
     if (next) next.addEventListener("click", function () { goTo(current() + 1); });
@@ -55,6 +53,8 @@
       if (e.target.name === "size") {
         var u = e.target.getAttribute("data-usage");
         $("[data-size-label]").textContent = e.target.value + (u ? " — " + u : "");
+        var bc = $("[data-bar-choice]");
+        if (bc) bc.textContent = "سایز " + e.target.value + (u ? " · " + u : "");
         err("size", "");
       }
       if (e.target.name === "color") { $("[data-color-label]").textContent = e.target.value; err("color", ""); }
@@ -130,7 +130,7 @@
   if (coll && exp) {
     if (coll.scrollHeight > coll.clientHeight + 24) {
       exp.hidden = false;
-      coll.classList.add("after:absolute", "after:inset-x-0", "after:bottom-0", "after:h-16", "after:bg-gradient-to-t", "after:from-paper");
+      coll.classList.add("after:absolute", "after:inset-x-0", "after:bottom-0", "after:h-16", "after:bg-gradient-to-t", "after:from-cream");
       exp.addEventListener("click", function () {
         coll.classList.remove("max-h-72", "after:absolute");
         exp.hidden = true;
@@ -143,29 +143,30 @@
   var summary = $("[data-review-summary]"), list = $("[data-review-list]"), more = $("[data-review-more]");
   function stars(n, cls) {
     var h = "";
-    for (var i = 1; i <= 5; i++) h += K.icon("star", "icon-fill " + (cls || "icon-sm") + (i <= Math.round(n) ? " text-butter-400" : " text-ink-200"));
+    for (var i = 1; i <= 5; i++) h += K.icon("star", "icon-fill " + (cls || "icon-sm") + (i <= Math.round(n) ? " text-star" : " text-ink-200"));
     return '<span class="flex" aria-label="' + n + ' از ۵">' + h + "</span>";
   }
   function renderSummary(d) {
     if (!d.total) {
-      summary.innerHTML = '<div class="flex flex-col items-center gap-2 py-3 text-center"><span class="empty-art !size-14">' + K.icon("message", "icon-lg") + '</span><p class="text-sm font-semibold">هنوز نظری ثبت نشده است</p><p class="text-xs text-ink-500">اگر این محصول را خریده‌اید، تجربه‌تان را با بقیه والدین به اشتراک بگذارید.</p></div>';
+      summary.innerHTML = '<div class="rounded-lg bg-linen-100 p-5"><span class="flex size-11 items-center justify-center rounded-full bg-cream text-ink-800">' + K.icon("message") + '</span><p class="mt-3 font-bold text-ink-950">هنوز نظری ثبت نشده است</p><p class="mt-1 text-sm leading-7 text-ink-600">اگر این محصول را خریده‌اید، اولین نفری باشید که تجربه‌اش را با بقیه والدین به اشتراک می‌گذارد.</p></div>';
     } else {
       var bars = d.distribution.map(function (r) {
         var pct = d.total ? Math.round((r.count / d.total) * 100) : 0;
-        return '<div class="flex items-center gap-2 text-xs"><span class="w-3">' + K.fa(r.rating) + '</span><span class="h-1.5 flex-1 overflow-hidden rounded-full bg-ink-100"><span class="block h-full rounded-full bg-butter-400" style="width:' + pct + '%"></span></span><span class="w-6 text-ink-500">' + K.fa(r.count) + "</span></div>";
+        return '<div class="flex items-center gap-2 text-xs"><span class="w-3 text-ink-600">' + K.fa(r.rating) + '</span><span class="h-1.5 flex-1 overflow-hidden rounded-full bg-linen-200"><span class="block h-full rounded-full bg-ink-950" style="width:' + pct + '%"></span></span><span class="w-6 text-end text-ink-500">' + K.fa(r.count) + "</span></div>";
       }).join("");
-      summary.innerHTML = '<div class="flex items-center gap-5"><div class="text-center"><p class="text-3xl font-black">' + K.fa(d.average) + '</p>' + stars(d.average) + '<p class="mt-1 text-2xs text-ink-500">' + K.fa(d.total) + ' نظر</p></div><div class="flex-1 space-y-1">' + bars + "</div></div>";
+      summary.innerHTML = '<div class="rounded-lg bg-linen-100 p-5"><div class="flex items-end gap-3"><p class="text-5xl leading-none font-extrabold text-ink-950">' + K.fa(d.average) + '</p><div class="pb-1">' + stars(d.average) + '<p class="mt-1 text-xs text-ink-500">از ' + K.fa(d.total) + ' نظر</p></div></div><div class="mt-4 space-y-1.5">' + bars + "</div></div>";
     }
     if (d.mine) {
       var s = { pending: ["badge-info", "در انتظار تأیید"], approved: ["badge-success", "منتشر شده"], rejected: ["badge-danger", "تأیید نشد"] }[d.mine.status];
-      summary.insertAdjacentHTML("beforeend", '<div class="mt-3 flex items-center justify-between gap-2 rounded-md bg-ink-50 p-2.5 text-xs"><span>نظر شما: <span class="badge ' + s[0] + '">' + s[1] + '</span></span><span class="flex gap-1"><button type="button" class="btn btn-ghost btn-sm" data-write-review>ویرایش</button><button type="button" class="btn btn-ghost btn-sm text-danger-600" data-delete-review>حذف</button></span></div>');
+      summary.insertAdjacentHTML("beforeend", '<div class="mt-3 flex items-center justify-between gap-2 rounded-md border border-ink-200 p-2.5 text-xs"><span>نظر شما: <span class="badge ' + s[0] + '">' + s[1] + '</span></span><span class="flex gap-1"><button type="button" class="btn btn-ghost btn-sm" data-write-review>ویرایش</button><button type="button" class="btn btn-ghost btn-sm !text-danger-600" data-delete-review>حذف</button></span></div>');
     }
   }
   function renderItems(items, append) {
     var h = items.map(function (r) {
-      return '<article class="card p-3.5"><div class="flex items-center justify-between gap-2"><p class="text-sm font-bold">' + K.esc(r.authorName || "مشتری کیدل") +
+      var name = r.authorName || "مشتری کیدل";
+      return '<article class="flex gap-3 py-5"><span class="flex size-10 shrink-0 items-center justify-center rounded-full bg-brand-50 font-display font-bold text-brand-700">' + K.esc(name.trim().charAt(0)) + '</span><div class="min-w-0 flex-1"><div class="flex flex-wrap items-center justify-between gap-2"><p class="text-sm font-bold text-ink-950">' + K.esc(name) +
         (r.verifiedBuyer ? ' <span class="badge badge-success ms-1">' + K.icon("check", "icon-sm") + "خریدار</span>" : "") + "</p>" + stars(r.rating) + "</div>" +
-        '<p class="mt-2 text-sm leading-7 whitespace-pre-line text-ink-800">' + K.esc(r.text) + '</p><p class="mt-1 text-2xs text-ink-500">' + new Date(r.createdAt).toLocaleDateString("fa-IR") + "</p></article>";
+        '<p class="mt-0.5 text-xs text-ink-500">' + new Date(r.createdAt).toLocaleDateString("fa-IR") + '</p><p class="mt-2 text-[0.9375rem] leading-8 whitespace-pre-line text-ink-800">' + K.esc(r.text) + "</p></div></article>";
     }).join("");
     if (append) list.insertAdjacentHTML("beforeend", h); else list.innerHTML = h;
   }
@@ -179,7 +180,7 @@
         more.hidden = page >= pages;
       })
       .catch(function () {
-        if (p === 1) summary.innerHTML = '<div class="alert alert-danger">' + K.icon("alert", "icon-sm") + ' نظرات بارگذاری نشد. <button type="button" class="link" data-retry-reviews>تلاش دوباره</button></div>';
+        if (p === 1) summary.innerHTML = '<div class="alert alert-danger">' + K.icon("alert", "icon-sm mt-1 shrink-0") + '<span>نظرات بارگذاری نشد. <button type="button" class="link" data-retry-reviews>تلاش دوباره</button></span></div>';
         else K.toast("بارگذاری نظرات انجام نشد", "error");
       })
       .finally(function () { more.classList.remove("is-loading"); });

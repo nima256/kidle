@@ -1,20 +1,22 @@
 <%- include('../partials/layout-top') %>
-<div class="container-app py-4">
-  <%- include('../partials/breadcrumbs', { crumbs: [{ name: 'مجله کیدل' }], crumbClass: 'pb-2' }) %>
-  <h1 class="text-xl font-extrabold sm:text-2xl">مجله کیدل</h1>
-  <p class="mt-1 text-sm text-ink-600">راهنمای انتخاب سایز، خرید و نگهداری لباس بچه‌ها</p>
+<div class="wrap pb-4">
+  <%- include('../partials/breadcrumbs', { crumbs: [{ name: 'مجله کیدل' }], crumbClass: 'pt-3 pb-1 lg:pt-5' }) %>
+  <div class="grid gap-3 border-b border-ink-200 pb-6 lg:grid-cols-2 lg:items-end lg:pb-8">
+    <div><p class="eyebrow">مجله کیدل</p><h1 class="t-display mt-2 !text-[clamp(2rem,1.5rem+2vw,3rem)]">راهنمای والدین</h1></div>
+    <p class="lead max-w-md lg:justify-self-end">انتخاب سایز، خرید هوشمندانه و نگهداری لباس بچه‌ها؛ کوتاه و کاربردی.</p>
+  </div>
   <% if (cats.length) { %>
-  <nav class="scroller mt-3" aria-label="دسته‌های مجله">
-    <a class="chip <%= !active ? 'is-active' : '' %>" href="/weblog">همه</a>
-    <% cats.forEach(function (c) { %><a class="chip <%= active && active.slug === c.slug ? 'is-active' : '' %>" href="/weblog?cat=<%= encodeURIComponent(c.slug) %>"><%= c.name %></a><% }) %>
+  <nav class="scroller bleed mt-5 !gap-2" aria-label="دسته‌های مجله">
+    <a class="chip <%= !active ? 'is-active' : '' %>" href="/weblog" <%- !active ? 'aria-current="page"' : '' %>>همه</a>
+    <% cats.forEach(function (c) { var on = active && active.slug === c.slug; %><a class="chip <%= on ? 'is-active' : '' %>" href="/weblog?cat=<%= encodeURIComponent(c.slug) %>" <%- on ? 'aria-current="page"' : '' %>><%= c.name %></a><% }) %>
   </nav>
   <% } %>
   <% if (posts.length) { %>
-  <div class="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+  <div class="mt-8 grid gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3">
     <% posts.forEach(function (w) { %><%- include('../partials/post-card', { w: w, cls: '' }) %><% }) %>
   </div>
   <% } else { %>
-  <div class="empty-state card mt-4"><span class="empty-art"><%- icon('file','size-9') %></span><h2 class="text-base font-bold">هنوز مقاله‌ای منتشر نشده است</h2><a class="btn btn-secondary" href="/shop">دیدن محصولات</a></div>
+  <div class="state panel-soft mt-8"><span class="state-art"><%- icon('file','size-10 !stroke-[1.4]') %></span><h2 class="state-title">هنوز مقاله‌ای منتشر نشده است</h2><p class="state-text">به‌زودی راهنماهای کاربردی خرید لباس کودک اینجا منتشر می‌شود.</p><a class="btn btn-outline mt-2" href="/shop">دیدن محصولات</a></div>
   <% } %>
 </div>
 <%- include('../partials/layout-bottom') %>

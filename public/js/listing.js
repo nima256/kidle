@@ -20,7 +20,7 @@
     });
   });
 
-  var timer, seq = 0, applyBtn = $("[data-apply]", form), countEl = $("[data-count]", form);
+  var timer, seq = 0, applyBtn = $("[data-apply]", form);
   function params() {
     var fd = new FormData(form), p = new URLSearchParams();
     fd.forEach(function (v, k) { v = K.toEn(v).trim(); if (v) p.append(k, v); });
@@ -33,9 +33,9 @@
     K.api(form.getAttribute("action") + "?" + p.toString())
       .then(function (d) {
         if (my !== seq) return;
-        countEl.textContent = K.fa(d.total);
+        var label = applyBtn.querySelector(".btn-label-idle");
         applyBtn.disabled = d.total === 0;
-        applyBtn.lastChild.textContent = d.total === 0 ? " محصول (نتیجه‌ای نیست)" : " محصول";
+        label.innerHTML = d.total === 0 ? "نتیجه‌ای با این فیلترها نیست" : 'نمایش <span data-count>' + K.fa(d.total) + "</span> محصول";
       })
       .catch(function () {})
       .finally(function () { if (my === seq) applyBtn.classList.remove("is-loading"); });

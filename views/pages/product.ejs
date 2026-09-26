@@ -20,92 +20,76 @@
   locals.jsonld = ld;
   locals.scripts = ['product'];
   locals.preloadImage = images[0] && thumb(images[0].url, 800);
-  var hasColors = p.colors && p.colors.some(function (c) { return c.name; });
-  var hasSizes = p.sizes && p.sizes.some(function (s) { return s.size; });
+  var colors = (p.colors || []).filter(function (c) { return c.name; });
+  var sizes = (p.sizes || []).filter(function (s) { return s.size; });
+  var hasColors = colors.length > 0, hasSizes = sizes.length > 0;
+  var hasDesc = p.description && p.description.replace(/<[^>]+>/g, '').trim();
+  var hasSpecs = (p.specifications && p.specifications.length) || hasSizes;
 %>
 <%- include('../partials/layout-top') %>
 
-<div class="container-app">
-  <%- include('../partials/breadcrumbs', { crumbs: crumbs, crumbClass: 'pt-2 pb-2 sm:pt-3' }) %>
+<div class="wrap">
+  <%- include('../partials/breadcrumbs', { crumbs: crumbs, crumbClass: 'pt-2 pb-2 lg:pt-4 lg:pb-4' }) %>
 </div>
 
-<div class="container-app grid gap-5 md:grid-cols-2 md:gap-8 lg:grid-cols-[1.1fr_1fr] lg:gap-10" data-product="<%= p._id %>" data-logged-in="<%= user ? '1' : '' %>">
+<div class="wrap grid gap-6 lg:grid-cols-[minmax(0,1.25fr)_minmax(0,1fr)] lg:gap-12 xl:gap-16" data-product="<%= p._id %>" data-logged-in="<%= user ? '1' : '' %>">
   <!-- Gallery -->
-  <section aria-label="تصاویر محصول" class="md:sticky md:top-[calc(var(--header-h)+1rem)] md:self-start">
-    <div class="flex gap-3">
-      <% if (images.length > 1) { %>
-      <div class="hidden flex-col gap-2 lg:flex" role="tablist" aria-label="انتخاب تصویر">
-        <% images.forEach(function (im, i) { %>
-        <button type="button" role="tab" class="w-16 overflow-hidden rounded-md border-2 <%= i === 0 ? 'border-brand-500' : 'border-transparent' %> bg-ink-100" data-thumb="<%= i %>" aria-label="تصویر <%= fa(i + 1) %>" aria-selected="<%= i === 0 %>">
-          <img src="<%= thumb(im.url, 400) %>" alt="" class="aspect-[4/5] w-full object-cover" loading="lazy">
-        </button>
-        <% }) %>
-      </div>
+  <section aria-label="تصاویر محصول" class="relative min-w-0">
+    <div class="pdp-gallery" <%= images.length > 1 && images.length % 2 ? 'data-odd' : '' %> <%= images.length === 1 ? 'data-single' : '' %> data-gallery tabindex="0" aria-roledescription="اسلایدر" aria-label="<%= fa(images.length || 1) %> تصویر؛ برای جابه‌جایی از کلیدهای جهت استفاده کنید">
+      <% if (images.length) { images.forEach(function (im, i) { %>
+      <button type="button" class="pdp-shot" data-zoom="<%= i %>" aria-label="بزرگ‌نمایی تصویر <%= fa(i + 1) %>">
+        <img src="<%= thumb(im.url, 800) %>" <% if (srcset(im.url)) { %>srcset="<%= srcset(im.url) %>" sizes="(min-width: 1024px) 30vw, 100vw"<% } %> alt="<%= im.alt || (p.name + (i ? ' — تصویر ' + (i + 1) : '')) %>" width="800" height="1000" <%- i === 0 ? 'fetchpriority="high"' : 'loading="lazy"' %> decoding="async">
+      </button>
+      <% }) } else { %>
+      <div class="pdp-shot flex items-center justify-center text-ink-300"><%- icon('hanger','size-24 !stroke-1') %></div>
       <% } %>
-      <div class="relative min-w-0 flex-1">
-        <div class="scroller !gap-0 -mx-4 rounded-none sm:mx-0 sm:rounded-xl bg-ink-100 !pb-0" data-gallery tabindex="0" aria-roledescription="اسلایدر">
-          <% if (images.length) { images.forEach(function (im, i) { %>
-          <button type="button" class="relative w-full shrink-0 cursor-zoom-in" data-zoom="<%= i %>" aria-label="بزرگ‌نمایی تصویر <%= fa(i + 1) %>">
-            <img src="<%= thumb(im.url, 800) %>" <% if (srcset(im.url)) { %>srcset="<%= srcset(im.url) %>" sizes="(min-width: 1024px) 45vw, (min-width: 768px) 50vw, 100vw"<% } %> alt="<%= im.alt || (p.name + (i ? ' — تصویر ' + (i + 1) : '')) %>" class="aspect-[4/5] w-full object-cover" width="800" height="1000" <%- i === 0 ? 'fetchpriority="high"' : 'loading="lazy"' %> decoding="async">
-          </button>
-          <% }) } else { %>
-          <div class="flex aspect-[4/5] w-full items-center justify-center text-brand-200"><%- icon('hanger','size-20') %></div>
-          <% } %>
-        </div>
-        <div class="pointer-events-none absolute top-3 start-3 flex flex-col items-start gap-1">
-          <% if (soldout) { %><span class="badge badge-soldout">ناموجود</span><% } else if (off) { %><span class="badge badge-sale"><%= fa(off) %>٪ تخفیف</span><% } %>
-          <% if (p.isNewProduct) { %><span class="badge badge-new">جدید</span><% } %>
-        </div>
-        <% if (images.length > 1) { %>
-        <div class="absolute inset-x-0 bottom-3 flex justify-center gap-1.5" aria-hidden="true">
-          <% images.forEach(function (im, i) { %><span class="h-1.5 rounded-full bg-surface/70 shadow-xs transition-all <%= i === 0 ? 'w-4 !bg-brand-500' : 'w-1.5' %>" data-dot="<%= i %>"></span><% }) %>
-        </div>
-        <button type="button" class="btn-icon absolute top-1/2 start-2 hidden -translate-y-1/2 bg-surface/90 shadow-sm md:inline-flex" data-gallery-prev aria-label="تصویر قبلی"><%- icon('chevron-right') %></button>
-        <button type="button" class="btn-icon absolute top-1/2 end-2 hidden -translate-y-1/2 bg-surface/90 shadow-sm md:inline-flex" data-gallery-next aria-label="تصویر بعدی"><%- icon('chevron-left') %></button>
-        <% } %>
-      </div>
     </div>
+    <div class="pointer-events-none absolute top-3 start-3 flex flex-col items-start gap-1 lg:top-4 lg:start-4">
+      <% if (soldout) { %><span class="badge badge-soldout">ناموجود</span><% } else if (off) { %><span class="badge badge-sale"><%= fa(off) %>٪ تخفیف</span><% } %>
+      <% if (p.isNewProduct) { %><span class="badge badge-new">جدید</span><% } %>
+    </div>
+    <% if (images.length > 1) { %>
+    <p class="pointer-events-none absolute bottom-3 start-1/2 -translate-x-1/2 rounded-full bg-ink-950/75 px-3 py-0.5 text-xs font-bold text-cream tabular-nums lg:hidden" aria-hidden="true"><span data-counter>۱</span> / <%= fa(images.length) %></p>
+    <button type="button" class="icon-btn absolute top-1/2 end-3 hidden -translate-y-1/2 bg-surface/90 shadow-sm md:inline-flex lg:hidden" data-gallery-next aria-label="تصویر بعدی"><%- icon('chevron-left') %></button>
+    <button type="button" class="icon-btn absolute top-1/2 start-3 hidden -translate-y-1/2 bg-surface/90 shadow-sm md:inline-flex lg:hidden" data-gallery-prev aria-label="تصویر قبلی"><%- icon('chevron-right') %></button>
+    <% } %>
   </section>
 
   <!-- Buy box -->
-  <section aria-labelledby="p-title">
-    <% if (p.brand && p.brand.name) { %><p class="text-xs font-semibold text-brand-700"><%= p.brand.name %></p><% } %>
-    <h1 id="p-title" class="mt-0.5 text-xl leading-9 font-extrabold sm:text-2xl"><%= p.name %></h1>
+  <section aria-labelledby="p-title" class="min-w-0 lg:sticky lg:top-[calc(var(--header-h)+1.5rem)] lg:self-start">
+    <div class="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm">
+      <% if (p.brand && p.brand.name) { %><span class="font-bold text-brand-700"><%= p.brand.name %></span><% } %>
+      <% if (p.category && p.category[0]) { %><a class="text-ink-500 hover:text-ink-950" href="/category/<%= p.category[0].slug %>"><%= p.category[0].name %></a><% } %>
+    </div>
+    <h1 id="p-title" class="mt-1 font-display text-[1.625rem] leading-snug font-bold sm:text-3xl"><%= p.name %></h1>
     <% if (p.englishName) { %><p class="ltr text-end text-xs text-ink-500"><%= p.englishName %></p><% } %>
-    <div class="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-ink-600">
-      <a href="#reviews" class="flex items-center gap-1 hover:text-brand-700">
-        <%- icon('star','icon-sm icon-fill text-butter-400') %>
-        <% if (reviewCount) { %><b class="text-ink-900"><%= fa(p.rating) %></b> (<%= fa(reviewCount) %> نظر)<% } else { %>بدون نظر — اولین نفر باشید<% } %>
-      </a>
-      <% if (p.category && p.category[0]) { %><span class="text-ink-300">|</span><a class="hover:text-brand-700" href="/category/<%= p.category[0].slug %>"><%= p.category[0].name %></a><% } %>
+    <a href="#reviews" class="mt-2 inline-flex min-h-8 items-center gap-1.5 text-sm text-ink-600 hover:text-ink-950">
+      <%- icon('star','icon-sm icon-fill text-star') %>
+      <% if (reviewCount) { %><b class="text-ink-950"><%= fa(p.rating) %></b> <span class="underline underline-offset-4">(<%= fa(reviewCount) %> نظر)</span><% } else { %><span class="underline underline-offset-4">هنوز نظری ثبت نشده</span><% } %>
+    </a>
+
+    <div class="mt-4 flex flex-wrap items-center gap-x-3 gap-y-1 border-y border-ink-200 py-4">
+      <p class="price text-[1.75rem] leading-none <%= off ? 'price-sale' : '' %>"><%= price(final) %><span class="currency !text-sm">تومان</span></p>
+      <% if (off) { %><span class="price-old !text-base"><%= price(p.price) %></span><span class="off-pill"><%= fa(off) %>٪−</span><% } %>
+      <p class="basis-full text-sm">
+        <% if (soldout) { %><span class="inline-flex items-center gap-1.5 font-semibold text-ink-600"><span class="size-2 rounded-full bg-ink-400"></span>ناموجود</span>
+        <% } else if (low) { %><span class="inline-flex items-center gap-1.5 font-semibold text-apricot-700"><span class="size-2 rounded-full bg-apricot-500"></span>فقط <%= fa(p.countInStock) %> عدد باقی مانده</span>
+        <% } else { %><span class="inline-flex items-center gap-1.5 font-semibold text-sage-700"><span class="size-2 rounded-full bg-sage-500"></span>موجود و آماده ارسال</span><% } %>
+        <% if (off && !soldout) { %><span class="ms-2 text-ink-500">· <%= price(p.price - final) %> تومان کمتر</span><% } %>
+      </p>
     </div>
 
-    <div class="mt-4 flex items-end justify-between gap-3 rounded-lg bg-brand-50/60 p-3">
-      <div>
-        <% if (off) { %>
-        <div class="flex items-center gap-2"><span class="price-old !text-sm"><%= price(p.price) %></span><span class="badge badge-sale"><%= fa(off) %>٪</span></div>
-        <% } %>
-        <p class="price text-2xl"><%= price(final) %><span class="currency !text-xs">تومان</span></p>
-        <% if (off) { %><p class="text-xs font-medium text-mint-700">سود شما از این خرید: <%= price(p.price - final) %> تومان</p><% } %>
-      </div>
-      <div class="text-end text-xs">
-        <% if (soldout) { %><span class="badge badge-soldout">ناموجود</span>
-        <% } else if (low) { %><span class="badge badge-low"><%- icon('alert','icon-sm') %> فقط <%= fa(p.countInStock) %> عدد باقی مانده</span>
-        <% } else { %><span class="badge badge-success"><%- icon('check','icon-sm') %> موجود در انبار</span><% } %>
-      </div>
-    </div>
+    <% if (p.lilDescription) { %><p class="mt-4 text-[0.9375rem] leading-8 text-ink-700"><%= p.lilDescription %></p><% } %>
 
-    <% if (p.lilDescription) { %><p class="mt-3 text-sm leading-7 text-ink-700"><%= p.lilDescription %></p><% } %>
-
-    <form class="mt-4 space-y-4" data-buy-form novalidate>
+    <form class="mt-5 space-y-6" data-buy-form novalidate>
       <input type="hidden" name="productId" value="<%= p._id %>">
       <% if (hasColors) { %>
       <fieldset>
-        <legend class="mb-2 text-sm font-bold">رنگ: <span class="font-medium text-ink-600" data-color-label><%= p.colors.length === 1 ? p.colors[0].name : 'انتخاب کنید' %></span></legend>
-        <div class="flex flex-wrap gap-3 ps-1">
-          <% p.colors.filter(function (c) { return c.name; }).forEach(function (c) { %>
+        <legend class="mb-3 text-sm font-bold text-ink-950">رنگ: <span class="font-medium text-ink-600" data-color-label><%= colors.length === 1 ? colors[0].name : 'انتخاب کنید' %></span></legend>
+        <div class="flex flex-wrap gap-3.5 ps-1">
+          <% colors.forEach(function (c) { %>
           <label class="swatch" style="background: <%= /^#[0-9a-f]{3,8}$/i.test(c.rgb || '') ? c.rgb : '#eee' %>" title="<%= c.name %>">
-            <input type="radio" name="color" value="<%= c.name %>" <%= p.colors.length === 1 ? 'checked' : '' %> <%= soldout ? 'disabled' : '' %>>
+            <input type="radio" name="color" value="<%= c.name %>" <%= colors.length === 1 ? 'checked' : '' %> <%= soldout ? 'disabled' : '' %>>
             <span class="sr-only"><%= c.name %></span>
           </label>
           <% }) %>
@@ -116,16 +100,16 @@
 
       <% if (hasSizes) { %>
       <fieldset>
-        <div class="mb-2 flex items-center justify-between">
-          <legend class="text-sm font-bold">سایز: <span class="font-medium text-ink-600" data-size-label><%= p.sizes.length === 1 ? p.sizes[0].size : 'انتخاب کنید' %></span></legend>
-          <button type="button" class="link flex items-center gap-1 text-xs" data-open-size-guide><%- icon('ruler','icon-sm') %> راهنمای سایز</button>
+        <div class="mb-3 flex items-center justify-between gap-3">
+          <legend class="text-sm font-bold text-ink-950">سایز: <span class="font-medium text-ink-600" data-size-label><%= sizes.length === 1 ? sizes[0].size + (sizes[0].usage ? ' — ' + sizes[0].usage : '') : 'انتخاب کنید' %></span></legend>
+          <button type="button" class="inline-flex min-h-9 items-center gap-1.5 text-sm font-semibold text-ink-800 underline underline-offset-4 hover:text-brand-700" data-open-size-guide><%- icon('ruler','icon-sm') %> راهنمای سایز</button>
         </div>
         <div class="grid grid-cols-3 gap-2 xs:grid-cols-4">
-          <% p.sizes.filter(function (s) { return s.size; }).forEach(function (s) { %>
-          <label class="opt flex-col !py-1.5 leading-tight">
-            <input type="radio" name="size" value="<%= s.size %>" data-usage="<%= s.usage || '' %>" <%= p.sizes.length === 1 ? 'checked' : '' %> <%= soldout ? 'disabled' : '' %>>
+          <% sizes.forEach(function (s) { %>
+          <label class="opt">
+            <input type="radio" name="size" value="<%= s.size %>" data-usage="<%= s.usage || '' %>" <%= sizes.length === 1 ? 'checked' : '' %> <%= soldout ? 'disabled' : '' %>>
             <span><%= s.size %></span>
-            <% if (s.usage) { %><span class="mt-0.5 text-2xs font-normal text-ink-500"><%= s.usage %></span><% } %>
+            <% if (s.usage) { %><span class="opt-sub"><%= s.usage %></span><% } %>
           </label>
           <% }) %>
         </div>
@@ -134,87 +118,102 @@
       <% } %>
 
       <% if (!soldout) { %>
-      <div class="flex items-center gap-3">
-        <span class="text-sm font-bold">تعداد:</span>
-        <div class="qty" data-qty data-max="<%= Math.min(p.countInStock, 20) %>">
+      <div class="flex items-stretch gap-2.5">
+        <div class="qty !h-[3.25rem] shrink-0" data-qty data-max="<%= Math.min(p.countInStock, 20) %>">
           <button type="button" data-step="1" aria-label="افزایش تعداد"><%- icon('plus','icon-sm') %></button>
           <input type="text" inputmode="numeric" name="quantity" value="1" aria-label="تعداد" readonly>
           <button type="button" data-step="-1" aria-label="کاهش تعداد" disabled><%- icon('minus','icon-sm') %></button>
         </div>
+        <button type="submit" class="btn btn-primary btn-lg flex-1 !px-4" data-add><span class="spinner"></span><span class="btn-label-idle flex items-center gap-2"><%- icon('bag','icon-sm') %> افزودن به سبد</span></button>
       </div>
-      <div class="hidden gap-2 md:flex">
-        <button type="submit" class="btn btn-primary btn-lg flex-1" data-add><span class="spinner"></span><span class="btn-label-idle flex items-center gap-1.5"><%- icon('bag','icon-sm') %> افزودن به سبد خرید</span></button>
-        <button type="button" class="btn btn-secondary btn-lg" data-buy-now>خرید فوری</button>
-      </div>
+      <button type="button" class="btn btn-outline btn-lg btn-block -mt-3.5" data-buy-now>خرید فوری</button>
       <% } else { %>
-      <div class="alert alert-warn"><%- icon('info','icon-sm mt-0.5') %><span>این محصول فعلاً ناموجود است. <a class="link" href="<%= p.category && p.category[0] ? '/category/' + p.category[0].slug : '/shop' %>">محصولات مشابه</a> را ببینید.</span></div>
+      <div class="rounded-lg bg-linen-100 p-4 text-sm leading-7">
+        <p class="font-bold text-ink-950">این محصول فعلاً ناموجود است</p>
+        <p class="text-ink-600">محصولات مشابه را در همین دسته ببینید؛ موجودی‌ها هر هفته به‌روز می‌شوند.</p>
+        <a class="btn btn-dark btn-sm mt-3" href="<%= p.category && p.category[0] ? '/category/' + p.category[0].slug : '/shop' %>">دیدن محصولات مشابه <%- icon('arrow-left','icon-sm') %></a>
+      </div>
       <% } %>
     </form>
 
-    <ul class="mt-5 divide-y divide-ink-100 rounded-lg border border-ink-200 bg-surface text-sm">
-      <li class="flex items-start gap-3 p-3"><%- icon('truck','mt-0.5 text-brand-500') %><div><b class="block text-ink-900">ارسال پس‌کرایه به سراسر ایران</b><span class="text-xs text-ink-600"><%= settings.dispatchTime %>. هزینه ارسال هنگام تحویل پرداخت می‌شود.</span></div></li>
-      <li class="flex items-start gap-3 p-3"><%- icon('refresh','mt-0.5 text-brand-500') %><div><b class="block text-ink-900">۷ روز ضمانت بازگشت</b><span class="text-xs text-ink-600">برای کالای معیوب یا مغایر با توضیحات.</span></div></li>
-      <li class="flex items-start gap-3 p-3"><%- icon('lock','mt-0.5 text-brand-500') %><div><b class="block text-ink-900">پرداخت امن</b><span class="text-xs text-ink-600">از طریق درگاه رسمی زرین‌پال.</span></div></li>
+    <ul class="mt-6 grid grid-cols-3 gap-2 text-center text-xs leading-5 text-ink-700">
+      <li class="flex flex-col items-center gap-1.5 rounded-lg bg-linen-100 px-2 py-3"><%- icon('truck','text-ink-950') %><span><b class="block text-ink-950">ارسال سراسری</b>پس‌کرایه</span></li>
+      <li class="flex flex-col items-center gap-1.5 rounded-lg bg-linen-100 px-2 py-3"><%- icon('refresh','text-ink-950') %><span><b class="block text-ink-950">۷ روز</b>ضمانت بازگشت</span></li>
+      <li class="flex flex-col items-center gap-1.5 rounded-lg bg-linen-100 px-2 py-3"><%- icon('lock','text-ink-950') %><span><b class="block text-ink-950">پرداخت امن</b>زرین‌پال</span></li>
     </ul>
-  </section>
-</div>
 
-<!-- Details -->
-<div class="container-app mt-8 grid gap-8 lg:grid-cols-[1.1fr_1fr] lg:gap-10">
-  <div class="space-y-8">
-    <% if (p.description && p.description.replace(/<[^>]+>/g, '').trim()) { %>
-    <section aria-labelledby="desc-title">
-      <h2 id="desc-title" class="section-title mb-3">توضیحات</h2>
-      <div class="prose-kid relative max-h-72 overflow-hidden" data-collapsible>
-        <%- p.description %>
-      </div>
-      <button type="button" class="btn btn-ghost btn-sm mt-1 text-brand-700" data-expand hidden>ادامه مطلب <%- icon('chevron-down','icon-sm') %></button>
-    </section>
-    <% } %>
-
-    <% if ((p.specifications && p.specifications.length) || hasSizes) { %>
-    <section aria-labelledby="spec-title">
-      <h2 id="spec-title" class="section-title mb-3">مشخصات</h2>
-      <dl class="overflow-hidden rounded-lg border border-ink-200 bg-surface text-sm">
-        <% (p.specifications || []).forEach(function (s) { %>
-        <div class="grid grid-cols-[8rem_1fr] border-b border-ink-100 last:border-0"><dt class="bg-ink-50 px-3 py-2.5 text-ink-600"><%= s.key %></dt><dd class="px-3 py-2.5 text-ink-900"><%= s.value %></dd></div>
-        <% }) %>
-        <% if (hasSizes) { %><div class="grid grid-cols-[8rem_1fr] border-b border-ink-100 last:border-0"><dt class="bg-ink-50 px-3 py-2.5 text-ink-600">سایزهای موجود</dt><dd class="px-3 py-2.5 text-ink-900"><%= p.sizes.map(function (s) { return s.size + (s.usage ? ' (' + s.usage + ')' : ''); }).join('، ') %></dd></div><% } %>
-        <% if (hasColors) { %><div class="grid grid-cols-[8rem_1fr]"><dt class="bg-ink-50 px-3 py-2.5 text-ink-600">رنگ‌ها</dt><dd class="px-3 py-2.5 text-ink-900"><%= p.colors.map(function (c) { return c.name; }).join('، ') %></dd></div><% } %>
-      </dl>
-    </section>
-    <% } %>
-  </div>
-
-  <section id="reviews" aria-labelledby="rev-title" class="scroll-mt-20" data-reviews>
-    <div class="mb-3 flex items-center justify-between">
-      <h2 id="rev-title" class="section-title">نظرات خریداران</h2>
-      <button type="button" class="btn btn-secondary btn-sm" data-write-review><%- icon('edit','icon-sm') %> ثبت نظر</button>
+    <div class="mt-4 border-t border-ink-200">
+      <% if (hasDesc) { %>
+      <details class="acc" open>
+        <summary>توضیحات محصول <span class="acc-icon" aria-hidden="true"></span></summary>
+        <div class="acc-body">
+          <div class="prose-kid relative max-h-72 overflow-hidden !text-[0.9375rem]" data-collapsible><%- p.description %></div>
+          <button type="button" class="btn btn-ghost btn-sm mt-1 -ms-3" data-expand hidden>ادامه توضیحات <%- icon('chevron-down','icon-sm') %></button>
+        </div>
+      </details>
+      <% } %>
+      <% if (hasSpecs) { %>
+      <details class="acc" <%= hasDesc ? '' : 'open' %>>
+        <summary>مشخصات <span class="acc-icon" aria-hidden="true"></span></summary>
+        <div class="acc-body">
+          <dl class="divide-y divide-ink-100 text-sm">
+            <% (p.specifications || []).forEach(function (s) { %>
+            <div class="grid grid-cols-[7.5rem_1fr] gap-3 py-2.5"><dt class="text-ink-500"><%= s.key %></dt><dd class="text-ink-900"><%= s.value %></dd></div>
+            <% }) %>
+            <% if (hasSizes) { %><div class="grid grid-cols-[7.5rem_1fr] gap-3 py-2.5"><dt class="text-ink-500">سایزهای موجود</dt><dd class="text-ink-900"><%= sizes.map(function (s) { return s.size + (s.usage ? ' (' + s.usage + ')' : ''); }).join('، ') %></dd></div><% } %>
+            <% if (hasColors) { %><div class="grid grid-cols-[7.5rem_1fr] gap-3 py-2.5"><dt class="text-ink-500">رنگ‌ها</dt><dd class="text-ink-900"><%= colors.map(function (c) { return c.name; }).join('، ') %></dd></div><% } %>
+          </dl>
+        </div>
+      </details>
+      <% } %>
+      <details class="acc">
+        <summary>ارسال و بازگشت <span class="acc-icon" aria-hidden="true"></span></summary>
+        <div class="acc-body space-y-2 text-sm leading-7 text-ink-700">
+          <p><b class="text-ink-950">ارسال:</b> <%= settings.dispatchTime %>. هزینه ارسال هنگام تحویل (پس‌کرایه) پرداخت می‌شود و در مبلغ آنلاین نیست.</p>
+          <p><b class="text-ink-950">بازگشت:</b> تا ۷ روز برای کالای معیوب یا مغایر با توضیحات. <a class="link" href="/terms-and-conditions">قوانین بازگشت</a></p>
+        </div>
+      </details>
     </div>
-    <div data-review-summary class="card card-pad"><div class="skeleton h-20"></div></div>
-    <div data-review-list class="mt-3 space-y-3"></div>
-    <button type="button" class="btn btn-ghost btn-sm mt-2 w-full" data-review-more hidden>نمایش نظرات بیشتر</button>
   </section>
 </div>
+
+<!-- Reviews -->
+<section id="reviews" aria-labelledby="rev-title" class="wrap section scroll-mt-24" data-reviews>
+  <div class="grid gap-6 lg:grid-cols-[20rem_1fr] lg:gap-12">
+    <div class="lg:sticky lg:top-[calc(var(--header-h)+1.5rem)] lg:self-start">
+      <p class="eyebrow">تجربه خریداران</p>
+      <h2 id="rev-title" class="t-section mt-1">نظرات والدین</h2>
+      <div data-review-summary class="mt-4"><div class="skeleton h-28"></div></div>
+      <button type="button" class="btn btn-outline btn-block mt-4" data-write-review><%- icon('edit','icon-sm') %> نوشتن نظر</button>
+    </div>
+    <div>
+      <div data-review-list class="divide-y divide-ink-200 border-y border-ink-200 empty:border-0"></div>
+      <button type="button" class="btn btn-ghost mt-3 w-full" data-review-more hidden><span class="spinner"></span><span class="btn-label-idle">نمایش نظرات بیشتر</span></button>
+    </div>
+  </div>
+</section>
 
 <% if (related.length) { %>
-<section class="container-app mt-10" aria-labelledby="rel-title">
-  <div class="section-head"><h2 id="rel-title" class="section-title">شاید این‌ها را هم بپسندید</h2></div>
-  <div class="scroller bleed sm:grid sm:grid-cols-3 sm:overflow-visible lg:grid-cols-5">
-    <% related.slice(0, 10).forEach(function (r, i) { %><div class="w-[44%] shrink-0 xs:w-[40%] sm:w-auto <%= i >= 6 ? 'sm:hidden lg:block' : '' %>"><%- include('../partials/product-card', { p: r }) %></div><% }) %>
+<section class="wrap !pt-0 section" aria-labelledby="rel-title">
+  <div class="sec-head">
+    <div><p class="eyebrow">از همین دسته</p><h2 id="rel-title" class="t-section mt-1">شاید این‌ها را هم بپسندید</h2></div>
+    <% if (p.category && p.category[0]) { %><a class="see-all" href="/category/<%= p.category[0].slug %>"><span>همه</span><%- icon('arrow-left','icon-sm') %></a><% } %>
+  </div>
+  <div class="scroller bleed !gap-3 sm:!gap-4 lg:grid lg:grid-cols-4 lg:overflow-visible lg:mx-0 lg:px-0">
+    <% related.slice(0, 8).forEach(function (r, i) { %><div class="w-[46%] shrink-0 sm:w-[31%] lg:w-auto <%= i >= 4 ? 'lg:hidden' : '' %>"><%- include('../partials/product-card', { p: r }) %></div><% }) %>
   </div>
 </section>
 <% } %>
 
 <!-- Sticky buy bar (phones/tablets) -->
 <% if (!soldout) { %>
-<div class="action-bar md:hidden" data-action-bar>
+<div class="action-bar lg:hidden" data-action-bar>
   <div class="flex items-center gap-3">
-    <div class="min-w-0">
-      <% if (off) { %><span class="price-old"><%= price(p.price) %></span><% } %>
-      <p class="price text-lg leading-6"><%= price(final) %><span class="currency">تومان</span></p>
+    <div class="min-w-0 leading-tight">
+      <p class="truncate text-xs text-ink-500" data-bar-choice><%= hasSizes && sizes.length > 1 ? 'سایز را انتخاب کنید' : p.name %></p>
+      <p class="price text-lg <%= off ? 'price-sale' : '' %>"><%= price(final) %><span class="currency">تومان</span></p>
     </div>
-    <button type="button" class="btn btn-primary btn-lg flex-1" data-add-mobile><span class="spinner"></span><span class="btn-label-idle flex items-center gap-1.5"><%- icon('bag','icon-sm') %> افزودن به سبد</span></button>
+    <button type="button" class="btn btn-primary btn-lg ms-auto flex-1 !px-4 xs:max-w-60" data-add-mobile><span class="spinner"></span><span class="btn-label-idle flex items-center gap-2"><%- icon('bag','icon-sm') %> افزودن به سبد</span></button>
   </div>
 </div>
 <% } %>
@@ -223,16 +222,18 @@
 <div class="overlay" id="size-guide" role="dialog" aria-modal="true" aria-labelledby="sg-title" hidden data-overlay>
   <div class="sheet sheet-lg">
     <div class="sheet-grip"></div>
-    <div class="sheet-head"><h2 id="sg-title" class="sheet-title">راهنمای سایز لباس کودک</h2><button type="button" class="btn-icon" data-close-overlay aria-label="بستن"><%- icon('x') %></button></div>
+    <div class="sheet-head"><h2 id="sg-title" class="sheet-title">راهنمای انتخاب سایز</h2><button type="button" class="icon-btn" data-close-overlay aria-label="بستن"><%- icon('x') %></button></div>
     <div class="sheet-body text-sm" tabindex="0">
-      <% if (hasSizes && p.sizes.some(function (s) { return s.usage; })) { %>
-      <h3 class="mb-2 text-sm font-bold">سایزهای همین محصول</h3>
-      <table class="table mb-5 overflow-hidden rounded-md border border-ink-200"><thead><tr><th>سایز</th><th>مناسب برای</th></tr></thead><tbody>
-        <% p.sizes.forEach(function (s) { %><tr><td class="font-bold"><%= s.size %></td><td><%= s.usage || '—' %></td></tr><% }) %>
-      </tbody></table>
+      <p class="alert alert-brand mb-5"><%- icon('ruler','icon-sm mt-1 shrink-0') %><span><b>قد کودک</b> مطمئن‌ترین معیار است. اگر بین دو سایز مردد هستید، سایز بزرگ‌تر را انتخاب کنید؛ بچه‌ها زود بزرگ می‌شوند!</span></p>
+      <% if (hasSizes && sizes.some(function (s) { return s.usage; })) { %>
+      <h3 class="mb-2 font-display text-base font-bold">سایزهای همین محصول</h3>
+      <div class="mb-6 overflow-hidden rounded-md border border-ink-200"><table class="table"><thead><tr><th>سایز</th><th>مناسب برای</th></tr></thead><tbody>
+        <% sizes.forEach(function (s) { %><tr><td class="font-bold"><%= s.size %></td><td><%= s.usage || '—' %></td></tr><% }) %>
+      </tbody></table></div>
       <% } %>
-      <h3 class="mb-2 text-sm font-bold">راهنمای عمومی (بر اساس قد)</h3>
-      <table class="table overflow-hidden rounded-md border border-ink-200">
+      <h3 class="mb-2 font-display text-base font-bold">راهنمای عمومی بر اساس سن و قد</h3>
+      <div class="overflow-x-auto rounded-md border border-ink-200">
+      <table class="table">
         <thead><tr><th>سن</th><th>قد (سانتی‌متر)</th><th>وزن تقریبی (کیلو)</th></tr></thead>
         <tbody>
           <% [['۰ تا ۳ ماه','۵۰–۶۲','۳–۶'],['۳ تا ۶ ماه','۶۲–۶۸','۶–۸'],['۶ تا ۱۲ ماه','۶۸–۸۰','۸–۱۰'],['۱ تا ۲ سال','۸۰–۹۲','۱۰–۱۳'],['۲ تا ۳ سال','۹۲–۹۸','۱۳–۱۵'],['۳ تا ۴ سال','۹۸–۱۰۴','۱۵–۱۷'],['۵ تا ۶ سال','۱۱۰–۱۱۶','۱۸–۲۱'],['۷ تا ۸ سال','۱۲۲–۱۲۸','۲۲–۲۶'],['۹ تا ۱۰ سال','۱۳۴–۱۴۰','۲۸–۳۳'],['۱۱ تا ۱۲ سال','۱۴۶–۱۵۲','۳۵–۴۱'],['۱۳ تا ۱۴ سال','۱۵۸–۱۶۴','۴۴–۵۰']].forEach(function (r) { %>
@@ -240,15 +241,15 @@
           <% }) %>
         </tbody>
       </table>
-      <p class="mt-3 text-xs leading-6 text-ink-600"><b>نکته:</b> قد کودک مطمئن‌ترین معیار است. اگر بین دو سایز مردد هستید، سایز بزرگ‌تر را انتخاب کنید؛ بچه‌ها زود بزرگ می‌شوند!</p>
+      </div>
     </div>
   </div>
 </div>
 
 <!-- Image zoom -->
-<div class="overlay !items-center !bg-night-950/90 !p-0" id="zoom" role="dialog" aria-modal="true" aria-label="نمایش بزرگ تصویر" hidden data-overlay>
-  <button type="button" class="btn-icon absolute top-3 end-3 z-10 bg-surface/90" data-close-overlay aria-label="بستن"><%- icon('x') %></button>
-  <div class="scroller !gap-0 h-full w-full !pb-0" data-zoom-track>
+<div class="overlay !items-center !bg-ink-950/95 !p-0" id="zoom" role="dialog" aria-modal="true" aria-label="نمایش بزرگ تصویر" hidden data-overlay>
+  <button type="button" class="icon-btn absolute top-3 end-3 z-10 bg-surface" data-close-overlay aria-label="بستن"><%- icon('x') %></button>
+  <div class="scroller !gap-0 h-full w-full" data-zoom-track>
     <% images.forEach(function (im) { %>
     <div class="flex h-full w-full shrink-0 items-center justify-center overflow-auto" style="touch-action: pinch-zoom pan-x pan-y">
       <img src="<%= im.url %>" alt="<%= im.alt || p.name %>" class="max-h-full max-w-full object-contain" loading="lazy">
@@ -261,22 +262,22 @@
 <div class="overlay" id="review-sheet" role="dialog" aria-modal="true" aria-labelledby="rv-title" hidden data-overlay>
   <form class="sheet" data-review-form data-dirty-guard novalidate>
     <div class="sheet-grip"></div>
-    <div class="sheet-head"><h2 id="rv-title" class="sheet-title">نظر شما درباره این محصول</h2><button type="button" class="btn-icon" data-close-overlay aria-label="بستن"><%- icon('x') %></button></div>
-    <div class="sheet-body space-y-4">
+    <div class="sheet-head"><h2 id="rv-title" class="sheet-title">نظر شما درباره این محصول</h2><button type="button" class="icon-btn" data-close-overlay aria-label="بستن"><%- icon('x') %></button></div>
+    <div class="sheet-body space-y-5">
       <fieldset>
-        <legend class="label mb-1">امتیاز شما <span class="req">*</span></legend>
+        <legend class="label mb-1.5">امتیاز شما <span class="req">*</span></legend>
         <div class="stars flex flex-row-reverse justify-end gap-1" data-stars>
           <% [5,4,3,2,1].forEach(function (n) { %>
-          <label class="cursor-pointer text-ink-200 transition">
+          <label class="cursor-pointer p-0.5 text-ink-200 transition">
             <input type="radio" name="rating" value="<%= n %>" class="peer sr-only">
-            <%- icon('star','size-8 icon-fill') %><span class="sr-only"><%= n %> ستاره</span>
+            <%- icon('star','size-9 icon-fill') %><span class="sr-only"><%= n %> ستاره</span>
           </label>
           <% }) %>
         </div>
         <p class="field-error mt-1" data-error-for="rating" hidden></p>
       </fieldset>
       <div class="field">
-        <label class="label" for="rv-name">نام نمایشی</label>
+        <label class="label" for="rv-name">نام نمایشی <span class="opt-note">(اختیاری)</span></label>
         <input id="rv-name" name="authorName" class="input" maxlength="40" value="<%= user && user.fullName ? user.fullName : '' %>" placeholder="مثلاً: مامان آرتین">
       </div>
       <div class="field">
@@ -286,7 +287,7 @@
       </div>
       <p class="hint">نظر شما پس از بررسی نمایش داده می‌شود.</p>
     </div>
-    <div class="sheet-foot"><button type="submit" class="btn btn-primary btn-block"><span class="spinner"></span><span class="btn-label-idle">ثبت نظر</span></button></div>
+    <div class="sheet-foot"><button type="submit" class="btn btn-dark btn-lg btn-block"><span class="spinner"></span><span class="btn-label-idle">ثبت نظر</span></button></div>
   </form>
 </div>
 

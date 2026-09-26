@@ -1,12 +1,12 @@
 <%- include('../partials/layout-top') %>
-<div class="container-app max-w-md py-10">
-  <div class="card card-pad text-center">
-    <p class="badge badge-danger mb-3">فقط محیط توسعه — درگاه آزمایشی</p>
-    <h1 class="text-lg font-bold">پرداخت <%= price(amount) %> تومان</h1>
-    <p class="mt-1 text-xs text-ink-500 ltr">Authority: <%= authority %></p>
-    <div class="mt-5 flex flex-col gap-2">
+<div class="wrap max-w-md py-12">
+  <div class="state panel">
+    <p class="badge badge-danger">فقط محیط توسعه — درگاه آزمایشی</p>
+    <h1 class="state-title">پرداخت <%= price(amount) %> تومان</h1>
+    <p class="ltr text-xs text-ink-500">Authority: <%= authority %></p>
+    <div class="mt-2 flex w-full flex-col gap-2">
       <a class="btn btn-primary btn-lg" id="pay-ok" href="/api/order/verify?Authority=<%= authority %>&Status=OK">پرداخت موفق</a>
-      <a class="btn btn-secondary" id="pay-nok" href="/api/order/verify?Authority=<%= authority %>&Status=NOK">انصراف از پرداخت</a>
+      <a class="btn btn-outline" id="pay-nok" href="/api/order/verify?Authority=<%= authority %>&Status=NOK">انصراف از پرداخت</a>
     </div>
   </div>
 </div>

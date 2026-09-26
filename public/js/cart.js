@@ -12,41 +12,47 @@
 
   function itemHTML(it) {
     var opts = [];
-    if (it.selectedSize) opts.push('<span class="badge badge-neutral">سایز ' + K.esc(it.selectedSize) + "</span>");
-    if (it.selectedColor) opts.push('<span class="badge badge-neutral"><span class="size-2.5 rounded-full border border-ink-300" style="background:' + K.esc(it.colorHex || "#eee") + '"></span>' + K.esc(it.selectedColor) + "</span>");
+    if (it.selectedSize) opts.push('<span class="inline-flex items-center gap-1 rounded-sm bg-linen-100 px-2 py-0.5 text-xs font-semibold text-ink-800">سایز ' + K.esc(it.selectedSize) + "</span>");
+    if (it.selectedColor) opts.push('<span class="inline-flex items-center gap-1.5 rounded-sm bg-linen-100 px-2 py-0.5 text-xs font-semibold text-ink-800"><span class="size-2.5 rounded-full ring-1 ring-ink-950/15" style="background:' + K.esc(it.colorHex || "#eee") + '"></span>' + K.esc(it.selectedColor) + "</span>");
     var max = Math.min(20, Math.max(it.available, 1));
-    return '<li class="flex gap-3 py-3.5" data-key="' + K.esc(it.key) + '">' +
-      '<a href="/productDetails/' + encodeURIComponent(it.slug) + '" tabindex="-1" aria-hidden="true" class="w-20 shrink-0 overflow-hidden rounded-md bg-ink-100 sm:w-24">' +
+    var url = "/productDetails/" + encodeURIComponent(it.slug);
+    return '<li class="flex gap-3.5 py-5 first:pt-0 sm:gap-5" data-key="' + K.esc(it.key) + '">' +
+      '<a href="' + url + '" tabindex="-1" aria-hidden="true" class="w-24 shrink-0 overflow-hidden rounded-md bg-linen-100 sm:w-28">' +
       (it.image ? '<img src="' + K.esc(it.image) + '" alt="" class="aspect-[4/5] w-full object-cover" loading="lazy">' : '<span class="block aspect-[4/5]"></span>') + "</a>" +
-      '<div class="flex min-w-0 flex-1 flex-col gap-1.5">' +
-      '<div class="flex items-start justify-between gap-2"><a href="/productDetails/' + encodeURIComponent(it.slug) + '" class="line-clamp-2 text-sm font-semibold leading-6 hover:text-brand-700">' + K.esc(it.name) + "</a>" +
-      '<button type="button" class="btn-icon -mt-1.5 -me-2 size-9 shrink-0 text-ink-400 hover:text-danger-600" data-remove aria-label="حذف ' + K.esc(it.name) + ' از سبد">' + K.icon("trash", "icon-sm") + "</button></div>" +
-      (opts.length ? '<div class="flex flex-wrap gap-1">' + opts.join("") + "</div>" : "") +
+      '<div class="flex min-w-0 flex-1 flex-col gap-2">' +
+      '<div class="flex items-start justify-between gap-2"><a href="' + url + '" class="line-clamp-2 text-[0.9375rem] font-semibold leading-7 text-ink-950 hover:text-brand-700">' + K.esc(it.name) + "</a>" +
+      '<button type="button" class="icon-btn -mt-2 -me-2.5 shrink-0 text-ink-500 hover:!text-danger-600" data-remove aria-label="حذف ' + K.esc(it.name) + ' از سبد">' + K.icon("trash", "icon-sm") + "</button></div>" +
+      (opts.length ? '<div class="flex flex-wrap gap-1.5">' + opts.join("") + "</div>" : "") +
       (it.stockProblem ? '<p class="field-error">' + K.icon("alert", "icon-sm") + (it.outOfStock ? " این کالا ناموجود شده؛ لطفاً حذفش کنید" : " فقط " + K.fa(it.available) + " عدد موجود است") + "</p>" : "") +
-      '<div class="mt-auto flex items-end justify-between gap-2">' +
-      '<div class="qty"><button type="button" data-step="1" aria-label="افزایش تعداد" ' + (it.quantity >= max ? "disabled" : "") + ">" + K.icon("plus", "icon-sm") + '</button><output aria-live="polite">' + K.fa(it.quantity) + "</output>" +
-      (it.quantity <= 1 ? '<button type="button" data-remove aria-label="حذف">' + K.icon("trash", "icon-sm") + "</button>" : '<button type="button" data-step="-1" aria-label="کاهش تعداد">' + K.icon("minus", "icon-sm") + "</button>") + "</div>" +
-      '<div class="text-end">' + (it.unitPrice < it.price ? '<span class="price-old block">' + K.price(it.price * it.quantity) + "</span>" : "") +
-      '<span class="price text-sm">' + T(it.lineTotal) + "</span>" + (it.quantity > 1 ? '<span class="block text-2xs text-ink-500">هر عدد ' + K.price(it.unitPrice) + "</span>" : "") + "</div></div></div></li>";
+      '<div class="mt-auto flex flex-wrap items-end justify-between gap-2 pt-1">' +
+      '<div class="qty qty-sm"><button type="button" data-step="1" aria-label="افزایش تعداد ' + K.esc(it.name) + '" ' + (it.quantity >= max ? "disabled" : "") + ">" + K.icon("plus", "icon-sm") + '</button><output aria-live="polite">' + K.fa(it.quantity) + "</output>" +
+      (it.quantity <= 1 ? '<button type="button" data-remove aria-label="حذف ' + K.esc(it.name) + '">' + K.icon("trash", "icon-sm") + "</button>" : '<button type="button" data-step="-1" aria-label="کاهش تعداد ' + K.esc(it.name) + '">' + K.icon("minus", "icon-sm") + "</button>") + "</div>" +
+      '<div class="text-end leading-tight">' + (it.unitPrice < it.price ? '<span class="price-old block">' + K.price(it.price * it.quantity) + "</span>" : "") +
+      '<span class="price ' + (it.unitPrice < it.price ? "price-sale" : "") + '">' + T(it.lineTotal) + "</span>" + (it.quantity > 1 ? '<span class="mt-0.5 block text-xs text-ink-500">هر عدد ' + K.price(it.unitPrice) + "</span>" : "") + "</div></div></div></li>";
   }
 
   function summaryHTML(c) {
-    var rows = '<div class="flex justify-between"><dt class="text-ink-600">جمع کالاها (' + K.fa(c.count) + ")</dt><dd>" + T(c.subtotal + c.productSavings) + "</dd></div>";
-    if (c.productSavings) rows += '<div class="flex justify-between text-mint-700"><dt>تخفیف محصولات</dt><dd>−' + T(c.productSavings) + "</dd></div>";
-    if (c.discount) rows += '<div class="flex justify-between text-mint-700"><dt>کد تخفیف <span class="ltr font-bold">' + K.esc(c.discount.code) + '</span> <button type="button" class="link text-xs text-danger-600" data-remove-discount>حذف</button></dt><dd>−' + T(c.discountAmount) + "</dd></div>";
-    rows += '<div class="flex justify-between"><dt class="text-ink-600">هزینه ارسال</dt><dd class="font-medium text-ink-700">پس‌کرایه</dd></div>';
-    return '<div class="card card-pad lg:sticky lg:top-[calc(var(--header-h)+1rem)]">' +
-      '<h2 class="mb-3 text-base font-bold">خلاصه سفارش</h2>' +
-      '<dl class="space-y-2.5 text-sm">' + rows + "</dl>" +
-      '<div class="my-3 border-t border-dashed border-ink-200"></div>' +
-      '<div class="flex items-center justify-between"><span class="text-sm font-bold">مبلغ قابل پرداخت</span><span class="price text-lg">' + T(c.payable) + "</span></div>" +
-      ((c.productSavings + c.discountAmount) > 0 ? '<p class="mt-1 text-end text-xs font-medium text-mint-700">سود شما: ' + K.price(c.productSavings + c.discountAmount) + " تومان</p>" : "") +
-      '<p class="mt-3 flex items-start gap-1.5 rounded-md bg-butter-100 p-2.5 text-xs leading-6 text-butter-700">' + K.icon("truck", "icon-sm mt-1 shrink-0") + "هزینه ارسال در این مبلغ نیست و هنگام تحویل مرسوله (پس‌کرایه) پرداخت می‌شود.</p>" +
-      (c.discount ? "" : '<details class="mt-3 group" ' + (c.discountError ? "open" : "") + '><summary class="flex cursor-pointer list-none items-center gap-1.5 text-sm font-semibold text-brand-700 [&::-webkit-details-marker]:hidden">' + K.icon("tag", "icon-sm") + ' کد تخفیف دارید؟</summary>' +
-        '<form class="mt-2 flex gap-2" data-discount-form novalidate><label class="sr-only" for="dc">کد تخفیف</label><input id="dc" name="code" class="input ltr !min-h-10 uppercase" autocomplete="off" placeholder="مثلاً KIDLE10" aria-describedby="dc-err"><button class="btn btn-dark !h-10"><span class="spinner"></span><span class="btn-label-idle">اعمال</span></button></form>' +
-        '<p class="field-error mt-1" id="dc-err" ' + (c.discountError ? "" : "hidden") + ">" + K.esc(c.discountError || "") + "</p></details>") +
-      '<button type="button" class="btn btn-primary btn-lg btn-block mt-4 hidden lg:inline-flex" data-checkout ' + (c.canCheckout ? "" : "disabled") + ">ادامه و ثبت آدرس " + K.icon("arrow-left", "icon-sm") + "</button>" +
-      "</div>";
+    var rows = '<div class="flex justify-between"><dt class="text-ink-600">قیمت کالاها (' + K.fa(c.count) + ")</dt><dd>" + T(c.subtotal + c.productSavings) + "</dd></div>";
+    if (c.productSavings) rows += '<div class="flex justify-between text-brand-700"><dt>تخفیف محصولات</dt><dd>−' + T(c.productSavings) + "</dd></div>";
+    if (c.discount) rows += '<div class="flex items-center justify-between text-brand-700"><dt class="flex items-center gap-1.5">کد <span class="ltr rounded-sm bg-brand-50 px-1.5 font-bold">' + K.esc(c.discount.code) + '</span> <button type="button" class="link !text-xs !text-ink-600" data-remove-discount>حذف</button></dt><dd>−' + T(c.discountAmount) + "</dd></div>";
+    rows += '<div class="flex justify-between"><dt class="text-ink-600">هزینه ارسال</dt><dd class="font-medium text-ink-800">پس‌کرایه، هنگام تحویل</dd></div>';
+    var saved = c.productSavings + c.discountAmount;
+    return '<div class="lg:sticky lg:top-[calc(var(--header-h)+1.5rem)]"><div class="panel p-5 sm:p-6">' +
+      '<h2 class="font-display text-xl font-bold">خلاصه سفارش</h2>' +
+      '<dl class="mt-4 space-y-3 text-sm">' + rows + "</dl>" +
+      '<div class="rule-dashed my-4"></div>' +
+      '<div class="flex items-end justify-between"><span class="text-sm font-bold">مبلغ قابل پرداخت</span><span class="price text-2xl leading-none">' + T(c.payable) + "</span></div>" +
+      (saved > 0 ? '<p class="mt-2 rounded-sm bg-brand-50 px-2.5 py-1.5 text-center text-xs font-bold text-brand-700">' + K.price(saved) + " تومان در این خرید صرفه‌جویی کردید</p>" : "") +
+      (c.discount ? "" : '<details class="mt-4 border-t border-ink-100 pt-3" ' + (c.discountError ? "open" : "") + '><summary class="flex min-h-10 cursor-pointer list-none items-center gap-2 text-sm font-semibold text-ink-900 [&::-webkit-details-marker]:hidden">' + K.icon("tag", "icon-sm text-brand-600") + ' کد تخفیف دارید؟</summary>' +
+        '<form class="mt-2 flex gap-2" data-discount-form novalidate><label class="sr-only" for="dc">کد تخفیف</label><input id="dc" name="code" class="input ltr !min-h-11 uppercase" autocomplete="off" placeholder="KIDLE10" aria-describedby="dc-err"><button class="btn btn-dark !h-11 shrink-0"><span class="spinner"></span><span class="btn-label-idle">اعمال</span></button></form>' +
+        '<p class="field-error mt-1.5" id="dc-err" ' + (c.discountError ? "" : "hidden") + ">" + K.esc(c.discountError || "") + "</p></details>") +
+      '<button type="button" class="btn btn-primary btn-lg btn-block mt-5 hidden lg:inline-flex" data-checkout ' + (c.canCheckout ? "" : "disabled") + ">ادامه و ثبت آدرس " + K.icon("arrow-left", "icon-sm") + "</button>" +
+      (loggedIn ? "" : '<p class="mt-3 hidden text-center text-xs leading-6 text-ink-500 lg:block">برای ثبت سفارش فقط به شماره موبایل نیاز دارید.</p>') +
+      "</div>" +
+      '<ul class="mt-4 space-y-2.5 px-1 text-xs leading-6 text-ink-600">' +
+      '<li class="flex items-start gap-2">' + K.icon("truck", "icon-sm mt-1 shrink-0 text-ink-950") + "<span>هزینه ارسال در این مبلغ نیست و هنگام تحویل مرسوله (پس‌کرایه) پرداخت می‌شود.</span></li>" +
+      '<li class="flex items-start gap-2">' + K.icon("refresh", "icon-sm mt-1 shrink-0 text-ink-950") + "<span>۷ روز ضمانت بازگشت برای کالای معیوب یا مغایر.</span></li>" +
+      '<li class="flex items-start gap-2">' + K.icon("lock", "icon-sm mt-1 shrink-0 text-ink-950") + "<span>پرداخت امن از درگاه رسمی زرین‌پال.</span></li></ul></div>";
   }
 
   function render() {
@@ -54,15 +60,15 @@
     if (titleCount) titleCount.textContent = cart.count ? "(" + K.fa(cart.count) + " کالا)" : "";
     K.setCartCount(cart.count);
     if (!cart.items.length) {
-      root.innerHTML = '<div class="empty-state card"><span class="empty-art">' + K.icon("bag", "size-9") + '</span><h2 class="text-lg font-bold">سبد خرید شما خالی است</h2><p class="max-w-xs text-sm leading-7 text-ink-600">لباس‌های تازه و تخفیف‌دار منتظر شما هستند.</p><div class="flex gap-2"><a class="btn btn-primary" href="/shop">شروع خرید</a><a class="btn btn-secondary" href="/shop?sale=1">دیدن تخفیف‌ها</a></div></div>';
+      root.innerHTML = '<div class="state panel-soft"><span class="state-art">' + K.icon("bag", "size-10 !stroke-[1.4]") + '</span><h2 class="state-title">سبد خرید شما خالی است</h2><p class="state-text">لباس‌های تازه و تخفیف‌دار منتظر شما هستند. با یک لمس از روی کارت محصول، سایز را انتخاب و به سبد اضافه کنید.</p><div class="mt-2 flex flex-wrap justify-center gap-2"><a class="btn btn-dark" href="/shop?sort=newest">دیدن تازه‌ها</a><a class="btn btn-outline" href="/shop?sale=1">تخفیف‌ها</a></div></div>';
       var bar = $("[data-cart-bar]");
       if (bar) bar.remove();
       return;
     }
-    var issues = cart.issues.length ? '<div class="alert alert-warn mb-3" role="alert">' + K.icon("alert", "icon-sm mt-0.5 shrink-0") + '<div><b>برای ادامه، این موارد را اصلاح کنید:</b><ul class="mt-1 list-disc ps-4">' + cart.issues.map(function (i) { return "<li>" + K.esc(i) + "</li>"; }).join("") + "</ul></div></div>" : "";
-    root.innerHTML = issues + '<div class="grid gap-4 lg:grid-cols-[1fr_22rem] lg:gap-6 lg:items-start">' +
-      '<ul class="card divide-y divide-ink-100 px-3.5 sm:px-5" aria-label="کالاهای سبد">' + cart.items.map(itemHTML).join("") + "</ul>" +
-      "<div>" + summaryHTML(cart) + "</div></div>";
+    var issues = cart.issues.length ? '<div class="alert alert-warn mb-4" role="alert">' + K.icon("alert", "icon-sm mt-1 shrink-0") + '<div><b>برای ادامه، این موارد را اصلاح کنید:</b><ul class="mt-1 list-disc ps-4">' + cart.issues.map(function (i) { return "<li>" + K.esc(i) + "</li>"; }).join("") + "</ul></div></div>" : "";
+    root.innerHTML = issues + '<div class="grid gap-8 lg:grid-cols-[1fr_24rem] lg:items-start lg:gap-12">' +
+      '<ul class="divide-y divide-ink-200 border-b border-ink-200 lg:border-t lg:pt-5" aria-label="کالاهای سبد">' + cart.items.map(itemHTML).join("") + "</ul>" +
+      summaryHTML(cart) + "</div>";
     renderBar();
   }
 
@@ -74,14 +80,15 @@
       bar.setAttribute("data-cart-bar", "");
       document.body.appendChild(bar);
     }
-    bar.innerHTML = '<div class="flex items-center gap-3"><div><span class="block text-2xs text-ink-500">مبلغ قابل پرداخت</span><span class="price text-lg leading-6">' + T(cart.payable) + '</span></div><button type="button" class="btn btn-primary btn-lg flex-1" data-checkout ' + (cart.canCheckout ? "" : "disabled") + ">ادامه خرید " + K.icon("arrow-left", "icon-sm") + "</button></div>";
+    bar.innerHTML = '<div class="flex items-center gap-3"><div class="leading-tight"><span class="block text-xs text-ink-500">قابل پرداخت</span><span class="price text-lg">' + T(cart.payable) + '</span></div><button type="button" class="btn btn-primary btn-lg ms-auto flex-1 xs:max-w-60" data-checkout ' + (cart.canCheckout ? "" : "disabled") + ">ادامه خرید " + K.icon("arrow-left", "icon-sm") + "</button></div>";
   }
 
   function mutate(method, body) {
     if (busy) return Promise.resolve();
     busy = true;
     root.setAttribute("aria-busy", "true");
-    root.style.opacity = ".6";
+    root.style.transition = "opacity .15s";
+    root.style.opacity = ".55";
     return K.api("/api/cart/items", { method: method, body: body })
       .then(function (d) { cart = d.cart; render(); })
       .catch(function (e) { K.toast(e.message, "error"); return K.api("/api/cart").then(function (d) { cart = d.cart; render(); }); })

@@ -4,33 +4,38 @@
   const _off = discountPercent(_p);
   const _soldout = !(_p.countInStock > 0);
   const _low = !_soldout && _p.countInStock <= (settings.lowStockThreshold || 3);
-  const _img = img(_p);
-  const _sizes = (_p.sizes || []).map(function (s) { return s.size; }).filter(Boolean);
+  const _img = img(_p), _img2 = img(_p, 1);
+  const _sizes = (_p.sizes || []).filter(function (s) { return s && s.size; });
+  const _colors = (_p.colors || []).filter(function (c) { return c && c.name; });
+  const _qa = _soldout ? '' : JSON.stringify({ id: String(_p._id), name: _p.name, slug: _p.slug, image: _img ? thumb(_img, 400) : '', price: _p.price, final: _final, max: Math.min(_p.countInStock, 20),
+    sizes: _sizes.map(function (s) { return { size: s.size, usage: s.usage || '' }; }), colors: _colors.map(function (c) { return { name: c.name, rgb: c.rgb || '' }; }) });
+  const _sizes_attr = '(min-width: 1280px) 22vw, (min-width: 640px) 31vw, 48vw';
 %>
-<article class="p-card <%= _soldout ? 'is-soldout' : '' %>">
-  <a href="/productDetails/<%= _p.slug %>" class="p-card-img" tabindex="-1" aria-hidden="true">
+<article class="pcard <%= _soldout ? 'is-soldout' : '' %> <%= locals.cardClass || '' %>">
+  <div class="pcard-media">
     <% if (_img) { %>
-    <img src="<%= thumb(_img, 400) %>" <% if (srcset(_img)) { %>srcset="<%= srcset(_img) %>" sizes="(min-width: 1280px) 19vw, (min-width: 640px) 31vw, 46vw"<% } %> alt="" loading="<%= locals.eager ? 'eager' : 'lazy' %>" decoding="async" width="400" height="500">
+    <img src="<%= thumb(_img, 400) %>" <% if (srcset(_img)) { %>srcset="<%= srcset(_img) %>" sizes="<%= locals.imgSizes || _sizes_attr %>"<% } %> alt="" loading="<%= locals.eager ? 'eager' : 'lazy' %>" decoding="async" width="400" height="500">
+    <% if (_img2) { %><img class="pcard-alt" src="<%= thumb(_img2, 400) %>" alt="" loading="lazy" decoding="async" width="400" height="500"><% } %>
     <% } else { %>
-    <span class="flex size-full items-center justify-center text-brand-200"><%- icon('hanger','size-12') %></span>
+    <span class="absolute inset-0 flex items-center justify-center text-ink-300"><%- icon('hanger','size-14 !stroke-[1.25]') %></span>
     <% } %>
-    <span class="p-card-badges">
+    <span class="pcard-flags">
       <% if (_soldout) { %><span class="badge badge-soldout">ناموجود</span>
-      <% } else if (_off) { %><span class="badge badge-sale"><%= fa(_off) %>٪ تخفیف</span><% } %>
+      <% } else if (_off) { %><span class="badge badge-sale"><%= fa(_off) %>٪−</span><% } %>
       <% if (_p.isNewProduct && !_soldout) { %><span class="badge badge-new">جدید</span><% } %>
     </span>
-  </a>
-  <div class="p-card-body">
-    <h3 class="p-card-title"><a href="/productDetails/<%= _p.slug %>" title="<%= _p.name %>" class="after:absolute after:inset-0"><%= _p.name %></a></h3>
-    <% if (_sizes.length) { %>
-    <p class="truncate text-2xs text-ink-500" title="سایزها: <%= _sizes.join('، ') %>">سایز: <%= _sizes.slice(0, 5).join('، ') %><%= _sizes.length > 5 ? '…' : '' %></p>
+    <% if (_sizes.length) { %><span class="pcard-sizes" aria-hidden="true"><span class="text-ink-500">سایز</span> <span class="truncate"><%= _sizes.slice(0, 6).map(function (s) { return s.size; }).join('  ·  ') %></span></span><% } %>
+    <% if (!_soldout) { %>
+    <button type="button" class="pcard-add" data-quick-add="<%= _qa %>" aria-label="افزودن سریع «<%= _p.name %>» به سبد"><%- icon('bag-plus','icon-sm') %></button>
     <% } %>
-    <div class="mt-auto flex items-end justify-between gap-1 pt-1">
-      <div class="flex flex-col">
-        <% if (_off) { %><span class="price-old"><%= price(_p.price) %></span><% } %>
-        <span class="price text-[0.9375rem] <%= _soldout ? '!text-ink-500' : '' %>"><%= price(_final) %><span class="currency">تومان</span></span>
-      </div>
-      <% if (_low) { %><span class="badge badge-low shrink-0">فقط <%= fa(_p.countInStock) %> عدد</span><% } %>
+  </div>
+  <div class="pcard-body">
+    <h3 class="pcard-title"><a href="/productDetails/<%= _p.slug %>"><%= _p.name %></a></h3>
+    <div class="pcard-price">
+      <span class="price <%= _off ? 'price-sale' : '' %> <%= _soldout ? '!text-ink-500' : '' %>"><%= price(_final) %><span class="currency">تومان</span></span>
+      <% if (_off) { %><span class="price-old"><%= price(_p.price) %></span><% } %>
     </div>
+    <% if (_low) { %><p class="pcard-meta font-semibold !text-apricot-700">فقط <%= fa(_p.countInStock) %> عدد باقی مانده</p>
+    <% } else if (_sizes.length > 1) { %><p class="pcard-meta"><%= fa(_sizes.length) %> سایز<% if (_colors.length > 1) { %> · <%= fa(_colors.length) %> رنگ<% } %></p><% } %>
   </div>
 </article>
