@@ -58,3 +58,16 @@ Run against the skill's full rule set (`references/quick-reference.md`) and Pre-
   checkout error summary focus + links; checkout draft kept across reloads.
 - Purchase flow, admin flow and `npm test` (13/13) re-run after the change.
 - Product-card images now load 400/800px variants via `srcset` (e.g. 66 KB → 14 KB per card image).
+
+## "Atelier" redesign pass
+Environment: headless Chromium, local FerretDB (MongoDB wire protocol) with demo data, `PAYMENT_MOCK=1`.
+- **Viewports:** 320, 375, 390, 414, 768, 1024, 1280, 1440 px × 14 storefront screens → no horizontal overflow, no JS errors.
+- **Flows:** quick add (validation → size/colour → added), cart edit, guest → checkout → OTP (wrong code, then right code)
+  → checkout validation summary → mock gateway → success → account / orders / order detail, at 375 and 1440 px.
+- **Accessibility (axe-core, WCAG 2.0/2.1/2.2 A+AA):** 0 violations on all storefront pages, open overlays (login, search,
+  filters, size guide, quick add, menu drawer, mega menu) and logged-in pages (cart, checkout with errors, account, orders).
+  Keyboard: tabs (arrow keys), quick-add sheet focus trap + focus return, mega menu Enter/Escape.
+- **Performance (390px, 150ms RTT / 1.6 Mbps, 4× CPU):** FCP/LCP ≈ 1.2 s on home, shop and product; CLS ≤ 0.012.
+  CSS 18.9 KB gzip, `app.js` 10 KB gzip, one 12 KB display font preloaded.
+- **Integration tests:** 12/13 pass on FerretDB; the reviews test fails only because FerretDB does not implement the
+  `$avg` aggregation used for ratings (no backend code changed) — run against real MongoDB before release.

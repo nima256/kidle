@@ -7,32 +7,36 @@
     mainEntityOfPage: canonical };
 %>
 <%- include('../partials/layout-top') %>
-<article class="container-app max-w-3xl py-4">
-  <%- include('../partials/breadcrumbs', { crumbs: [{ name: 'مجله کیدل', url: '/weblog' }, { name: post.title }], crumbClass: 'pb-2' }) %>
-  <header>
-    <% if (post.categories && post.categories.length) { %><p class="text-xs font-bold text-brand-700"><%= post.categories.map(function (c) { return c.name; }).join('، ') %></p><% } %>
-    <h1 class="mt-1 text-2xl leading-10 font-extrabold sm:text-3xl"><%= post.title %></h1>
-    <p class="mt-2 flex flex-wrap items-center gap-3 text-xs text-ink-500">
-      <span><%= faDate(post.publishedAt || post.createdAt) %></span>
-      <span class="flex items-center gap-1"><%- icon('clock','icon-sm') %><%= fa(post.readingTime || 5) %> دقیقه مطالعه</span>
-    </p>
-  </header>
+<article class="pb-4">
+  <div class="wrap max-w-3xl">
+    <%- include('../partials/breadcrumbs', { crumbs: [{ name: 'مجله کیدل', url: '/weblog' }, { name: post.title }], crumbClass: 'pt-3 pb-2 lg:pt-5' }) %>
+    <header class="pt-2 pb-6 text-center lg:pt-6">
+      <% if (post.categories && post.categories.length) { %><p class="eyebrow no-rule justify-center"><%= post.categories.map(function (c) { return c.name; }).join('، ') %></p><% } %>
+      <h1 class="t-display mt-3 !text-[clamp(1.875rem,1.4rem+2vw,2.875rem)]"><%= post.title %></h1>
+      <p class="mt-4 flex flex-wrap items-center justify-center gap-3 text-sm text-ink-500">
+        <span><%= faDate(post.publishedAt || post.createdAt) %></span><span aria-hidden="true">·</span>
+        <span class="flex items-center gap-1"><%- icon('clock','icon-sm') %><%= fa(post.readingTime || 5) %> دقیقه مطالعه</span>
+      </p>
+    </header>
+  </div>
   <% if (post.images && post.images[0]) { %>
-  <figure class="mt-4 overflow-hidden rounded-xl bg-brand-50"><img src="<%= post.images[0].url %>" alt="<%= post.images[0].alt || post.title %>" class="w-full object-cover" fetchpriority="high"><% if (post.images[0].caption) { %><figcaption class="p-2 text-center text-xs text-ink-500"><%= post.images[0].caption %></figcaption><% } %></figure>
+  <figure class="wrap max-w-5xl"><div class="overflow-hidden rounded-xl bg-linen-100"><img src="<%= post.images[0].url %>" alt="<%= post.images[0].alt || post.title %>" class="max-h-[34rem] w-full object-cover" fetchpriority="high"></div><% if (post.images[0].caption) { %><figcaption class="p-2 text-center text-xs text-ink-500"><%= post.images[0].caption %></figcaption><% } %></figure>
   <% } %>
-  <% if (post.description) { %><p class="mt-5 rounded-lg border-s-4 border-brand-300 bg-brand-50/50 p-3 text-sm leading-7 text-ink-700"><%= post.description %></p><% } %>
-  <div class="prose-kid mt-5"><%- post.content %></div>
+  <div class="wrap max-w-2xl">
+    <% if (post.description) { %><p class="mt-8 font-display text-xl leading-9 text-ink-950"><%= post.description %></p><% } %>
+    <div class="prose-kid mt-6"><%- post.content %></div>
 
-  <aside class="mt-8 flex flex-col items-center gap-3 rounded-xl bg-gradient-to-l from-brand-50 to-butter-100/60 p-5 text-center sm:flex-row sm:text-start">
-    <span class="flex size-12 shrink-0 items-center justify-center rounded-full bg-surface text-brand-700"><%- icon('bag') %></span>
-    <p class="flex-1 text-sm font-semibold">لباس‌های نرم و باکیفیت برای فرزندتان را در فروشگاه کیدل ببینید.</p>
-    <a class="btn btn-primary" href="/shop">رفتن به فروشگاه</a>
-  </aside>
+    <aside class="mt-10 flex flex-col items-center gap-4 rounded-xl bg-brand-50 p-6 text-center sm:flex-row sm:text-start">
+      <span class="arch flex h-16 w-14 shrink-0 items-center justify-center bg-brand-600 text-white"><%- icon('bag') %></span>
+      <p class="flex-1"><b class="block font-display text-lg text-ink-950">وقت خرید است؟</b><span class="text-sm text-ink-700">لباس‌های نرم و باکیفیت برای فرزندتان را در کیدل ببینید.</span></p>
+      <a class="btn btn-primary shrink-0" href="/shop">رفتن به فروشگاه</a>
+    </aside>
+  </div>
 
   <% if (related.length) { %>
-  <section class="mt-10" aria-labelledby="rp-title">
-    <h2 id="rp-title" class="section-title mb-3">مقاله‌های مرتبط</h2>
-    <div class="grid gap-3 sm:grid-cols-3"><% related.forEach(function (w) { %><%- include('../partials/post-card', { w: w, cls: '' }) %><% }) %></div>
+  <section class="wrap section" aria-labelledby="rp-title">
+    <div class="sec-head"><div><p class="eyebrow">ادامه مطالعه</p><h2 id="rp-title" class="t-section mt-1">مقاله‌های مرتبط</h2></div></div>
+    <div class="grid gap-x-6 gap-y-10 sm:grid-cols-3"><% related.forEach(function (w) { %><%- include('../partials/post-card', { w: w, cls: '' }) %><% }) %></div>
   </section>
   <% } %>
 </article>

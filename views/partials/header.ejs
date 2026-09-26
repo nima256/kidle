@@ -1,62 +1,79 @@
-<a href="#main" class="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:right-2 focus:z-[100] btn btn-dark">رفتن به محتوای اصلی</a>
-<% if (settings.announcement && !locals.minimalHeader) { %>
-<div class="bg-brand-600 px-4 py-1.5 text-center text-xs font-medium text-white"><%= settings.announcement %></div>
+<a href="#main" class="btn btn-dark sr-only focus:not-sr-only focus:fixed focus:top-2 focus:right-2 focus:z-[100]">رفتن به محتوای اصلی</a>
+<div class="nav-progress" data-nav-progress aria-hidden="true"></div>
+<% if (!locals.minimalHeader) { %>
+<div class="announce">
+  <div class="wrap announce-inner">
+    <span class="hidden items-center gap-1.5 text-cream/75 lg:flex"><%- icon('truck','icon-sm') %> ارسال به سراسر ایران</span>
+    <p class="font-medium"><%= settings.announcement || 'پرداخت امن با زرین‌پال · ۷ روز ضمانت بازگشت کالا' %></p>
+    <span class="hidden items-center gap-1.5 text-cream/75 lg:flex"><%- icon('refresh','icon-sm') %> ۷ روز ضمانت بازگشت</span>
+  </div>
+</div>
 <% } %>
-<header class="site-header" id="site-header">
-  <div class="container-app flex items-center gap-2 lg:gap-6" style="height: var(--header-h)">
+<header class="site-header" id="site-header" data-site-header>
+  <div class="wrap header-row">
     <% if (!locals.minimalHeader) { %>
-    <button type="button" class="btn-icon -ms-2 lg:hidden" data-open-drawer aria-label="باز کردن منو" aria-controls="menu-drawer" aria-expanded="false"><%- icon('menu') %></button>
-    <% } %>
+    <!-- Start: menu & search on phones, primary navigation on desktop -->
+    <div class="flex items-center gap-0.5 justify-self-start">
+      <button type="button" class="icon-btn -ms-2.5 lg:hidden" data-open-drawer aria-label="باز کردن منو" aria-controls="menu-drawer" aria-expanded="false"><%- icon('menu') %></button>
+      <button type="button" class="icon-btn lg:hidden" data-open-search aria-label="جستجو"><%- icon('search') %></button>
+      <nav class="-ms-3 hidden items-center lg:flex" aria-label="منوی اصلی">
+        <div data-dropdown>
+          <button type="button" class="nav-link" aria-expanded="false" aria-haspopup="true" aria-controls="mega-menu" data-dropdown-trigger>دسته‌بندی‌ها <%- icon('chevron-down','icon-sm opacity-60') %></button>
+          <div class="mega hidden" id="mega-menu" data-dropdown-panel>
+            <div class="wrap grid grid-cols-[1fr_17rem] gap-10 py-8">
+              <% if (menu.length) { %>
+              <div class="grid grid-cols-4 gap-x-8 gap-y-6">
+                <% menu.forEach(function (c) { %>
+                <div>
+                  <a href="/category/<%= c.slug %>" class="font-display text-lg font-bold text-ink-950 hover:text-brand-700"><%= c.name %></a>
+                  <% if (c.children.length) { %>
+                  <ul class="mt-2 space-y-1">
+                    <% c.children.slice(0, 6).forEach(function (ch) { %><li><a href="/category/<%= ch.slug %>" class="block py-0.5 text-sm text-ink-600 hover:text-ink-950"><%= ch.name %></a></li><% }) %>
+                  </ul>
+                  <% } %>
+                </div>
+                <% }) %>
+              </div>
+              <% } else { %><p class="text-sm text-ink-500">هنوز دسته‌بندی‌ای ثبت نشده است.</p><% } %>
+              <div class="grid gap-3">
+                <a href="/shop?sort=newest" class="group flex items-end justify-between rounded-lg bg-sage-100 p-5">
+                  <span><span class="block text-xs font-bold text-sage-700">تازه رسیده</span><span class="font-display text-xl font-bold text-ink-950">کالکشن جدید</span></span>
+                  <%- icon('arrow-up-left','text-ink-950 transition group-hover:-translate-x-1') %>
+                </a>
+                <a href="/shop?sale=1&sort=discount" class="group flex items-end justify-between rounded-lg bg-brand-600 p-5 text-white">
+                  <span><span class="block text-xs font-bold text-brand-100">تا موجودی هست</span><span class="font-display text-xl font-bold text-white">تخفیف‌های ویژه</span></span>
+                  <%- icon('arrow-up-left','transition group-hover:-translate-x-1') %>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <a href="/shop?sort=newest" class="nav-link">تازه‌ها</a>
+        <a href="/shop" class="nav-link <%= path === '/shop' ? 'is-active' : '' %>" <%- path === '/shop' ? 'aria-current="page"' : '' %>>فروشگاه</a>
+        <a href="/shop?sale=1" class="nav-link is-sale">تخفیف‌ها</a>
+        <a href="/weblog" class="nav-link <%= path.startsWith('/weblog') ? 'is-active' : '' %>" <%- path.startsWith('/weblog') ? 'aria-current="page"' : '' %>>مجله</a>
+      </nav>
+    </div>
+
     <%- include('logo') %>
 
-    <% if (!locals.minimalHeader) { %>
-    <nav class="hidden items-center gap-0.5 lg:flex" aria-label="منوی اصلی">
-      <div class="relative" data-dropdown>
-        <button type="button" class="nav-link" aria-expanded="false" aria-haspopup="true" data-dropdown-trigger>
-          <%- icon('grid','icon-sm') %> دسته‌بندی‌ها <%- icon('chevron-down','icon-sm opacity-60') %>
-        </button>
-        <div class="absolute top-full start-0 z-50 mt-1 hidden w-[36rem] rounded-xl border border-ink-200 bg-surface p-4 shadow-lg" data-dropdown-panel>
-          <% if (menu.length) { %>
-          <div class="grid grid-cols-3 gap-x-4 gap-y-3">
-            <% menu.forEach(function (c) { %>
-            <div>
-              <a href="/category/<%= c.slug %>" class="block rounded-md px-2 py-1.5 text-sm font-bold text-ink-900 hover:bg-brand-50 hover:text-brand-700"><%= c.name %></a>
-              <% c.children.slice(0, 6).forEach(function (ch) { %>
-              <a href="/category/<%= ch.slug %>" class="block rounded-md px-2 py-1 text-sm text-ink-600 hover:text-brand-700"><%= ch.name %></a>
-              <% }) %>
-            </div>
-            <% }) %>
-          </div>
-          <% } else { %><p class="text-sm text-ink-500">هنوز دسته‌بندی‌ای ثبت نشده است.</p><% } %>
-          <a href="/shop" class="mt-3 flex items-center justify-between rounded-md bg-brand-50 px-3 py-2 text-sm font-semibold text-brand-700">دیدن همه محصولات <%- icon('arrow-left','icon-sm') %></a>
-        </div>
-      </div>
-      <a href="/shop" class="nav-link <%= path === '/shop' ? 'is-active' : '' %>">فروشگاه</a>
-      <a href="/shop?sale=1" class="nav-link">تخفیف‌ها</a>
-      <a href="/weblog" class="nav-link <%= path.startsWith('/weblog') ? 'is-active' : '' %>">مجله</a>
-    </nav>
-
-    <form action="/search" method="get" role="search" class="relative ms-auto hidden max-w-sm flex-1 md:block" data-search-form>
-      <label for="header-search" class="sr-only">جستجوی محصولات</label>
-      <input id="header-search" name="q" type="search" autocomplete="off" placeholder="جستجوی لباس، سایز، دسته…" class="input h-10 !min-h-10 rounded-full !border-ink-200 bg-ink-50 ps-10 !text-sm" data-search-input value="<%= locals.query && query.q ? query.q : '' %>">
-      <span class="pointer-events-none absolute inset-y-0 start-3 flex items-center text-ink-400"><%- icon('search','icon-sm') %></span>
-      <div class="absolute inset-x-0 top-full z-50 mt-1 hidden overflow-hidden rounded-lg border border-ink-200 bg-surface shadow-lg" data-search-results aria-live="polite"></div>
-    </form>
-
-    <div class="ms-auto flex items-center gap-0.5 md:ms-0">
-      <button type="button" class="btn-icon md:hidden" data-open-search aria-label="جستجو"><%- icon('search') %></button>
+    <!-- End: search, account, cart -->
+    <div class="flex items-center gap-0.5 justify-self-end lg:gap-1.5">
+      <button type="button" class="header-search hidden lg:flex" data-open-search aria-label="جستجوی محصولات"><%- icon('search','icon-sm') %><span>جستجوی لباس، سایز…</span></button>
       <% if (user) { %>
-      <a href="/account" class="btn-icon hidden lg:inline-flex" aria-label="حساب کاربری"><%- icon('user') %></a>
+      <a href="/account" class="icon-btn hidden lg:inline-flex" aria-label="حساب کاربری" <%- path.startsWith('/account') ? 'aria-current="page"' : '' %>><%- icon('user') %></a>
       <% } else { %>
-      <button type="button" class="btn btn-secondary btn-sm hidden lg:inline-flex" data-open-auth><%- icon('user','icon-sm') %> ورود | ثبت‌نام</button>
+      <button type="button" class="btn btn-ghost btn-sm hidden lg:inline-flex" data-open-auth><%- icon('user','icon-sm') %> ورود</button>
       <% } %>
-      <a href="/cart" class="btn-icon relative" aria-label="سبد خرید، <%= cartCount %> کالا" data-cart-link>
+      <a href="/cart" class="icon-btn -me-2.5 lg:me-0" aria-label="سبد خرید، <%= cartCount %> کالا" data-cart-link>
         <%- icon('bag') %>
-        <span class="count-badge" data-cart-count <%= cartCount ? '' : 'hidden' %>><%= cartCount %></span>
+        <span class="count-badge" data-cart-count <%= cartCount ? '' : 'hidden' %>><%= fa(cartCount) %></span>
       </a>
     </div>
     <% } else { %>
-    <div class="ms-auto flex items-center gap-1.5 text-xs text-ink-500"><%- icon('lock','icon-sm text-mint-600') %> پرداخت امن</div>
+    <a href="/cart" class="btn btn-ghost btn-sm -ms-3 justify-self-start"><%- icon('arrow-right','icon-sm') %><span class="hidden sm:inline">بازگشت به سبد</span><span class="sm:hidden">سبد</span></a>
+    <%- include('logo', { logoCompact: true }) %>
+    <p class="flex items-center gap-1.5 justify-self-end text-xs font-medium text-ink-600"><%- icon('lock','icon-sm text-sage-700') %><span>پرداخت امن</span></p>
     <% } %>
   </div>
 </header>

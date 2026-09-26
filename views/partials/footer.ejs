@@ -1,54 +1,60 @@
-<footer class="mt-12 border-t border-ink-200 bg-surface">
-  <div class="container-app">
-    <ul class="grid grid-cols-2 gap-3 border-b border-ink-100 py-6 sm:grid-cols-4">
-      <li class="flex items-center gap-2.5"><span class="flex size-10 shrink-0 items-center justify-center rounded-full bg-brand-50 text-brand-700"><%- icon('lock') %></span><span class="text-xs leading-5"><b class="block text-sm text-ink-900">پرداخت امن</b>درگاه رسمی زرین‌پال</span></li>
-      <li class="flex items-center gap-2.5"><span class="flex size-10 shrink-0 items-center justify-center rounded-full bg-butter-100 text-butter-700"><%- icon('truck') %></span><span class="text-xs leading-5"><b class="block text-sm text-ink-900">ارسال به سراسر ایران</b>هزینه ارسال پس‌کرایه</span></li>
-      <li class="flex items-center gap-2.5"><span class="flex size-10 shrink-0 items-center justify-center rounded-full bg-mint-50 text-mint-700"><%- icon('refresh') %></span><span class="text-xs leading-5"><b class="block text-sm text-ink-900">۷ روز ضمانت بازگشت</b>برای کالای معیوب</span></li>
-      <li class="flex items-center gap-2.5"><span class="flex size-10 shrink-0 items-center justify-center rounded-full bg-sky-100 text-info-700"><%- icon('message') %></span><span class="text-xs leading-5"><b class="block text-sm text-ink-900">پشتیبانی واقعی</b><%= settings.workingHours %></span></li>
+<footer class="mt-[var(--section-y)] bg-linen-100 text-ink-800">
+  <div class="wrap">
+    <ul class="grid grid-cols-2 gap-x-4 gap-y-5 border-b border-linen-300 py-7 lg:grid-cols-4 lg:py-8">
+      <% [['lock','پرداخت امن','درگاه رسمی زرین‌پال'],['truck','ارسال به سراسر ایران','هزینه ارسال پس‌کرایه'],['refresh','۷ روز ضمانت بازگشت','برای کالای معیوب یا مغایر'],['message','پشتیبانی واقعی', settings.workingHours]].forEach(function (t) { %>
+      <li class="flex items-start gap-3">
+        <span class="mt-0.5 flex size-10 shrink-0 items-center justify-center rounded-full bg-cream text-ink-950"><%- icon(t[0]) %></span>
+        <span class="text-xs leading-6 text-ink-600"><b class="block text-sm font-bold text-ink-950"><%= t[1] %></b><%= t[2] %></span>
+      </li>
+      <% }) %>
     </ul>
 
-    <div class="grid gap-8 py-8 md:grid-cols-12">
-      <div class="md:col-span-4">
+    <div class="grid gap-10 py-10 lg:grid-cols-12 lg:py-14">
+      <div class="lg:col-span-4">
         <%- include('logo') %>
-        <p class="mt-3 max-w-xs text-sm leading-7 text-ink-600">فروشگاه تخصصی پوشاک نوزاد، کودک و نوجوان؛ با پارچه‌های نرم، رنگ‌های ثابت و قیمت منصفانه.</p>
-        <div class="mt-4 flex gap-2">
-          <% if (settings.instagram) { %><a class="btn-icon bg-ink-50" href="https://instagram.com/<%= settings.instagram %>" target="_blank" rel="noopener" aria-label="اینستاگرام کیدل"><%- icon('instagram') %></a><% } %>
-          <% if (settings.telegram) { %><a class="btn-icon bg-ink-50" href="https://t.me/<%= settings.telegram %>" target="_blank" rel="noopener" aria-label="تلگرام کیدل"><%- icon('send') %></a><% } %>
-          <% if (settings.whatsapp) { %><a class="btn-icon bg-ink-50" href="https://wa.me/98<%= String(settings.whatsapp).replace(/^0/, '') %>" target="_blank" rel="noopener" aria-label="واتساپ کیدل"><%- icon('message') %></a><% } %>
+        <p class="mt-4 max-w-sm text-sm leading-7 text-ink-600">کیدل، پوشاک نوزاد، کودک و نوجوان را با حوصله انتخاب می‌کند: پارچه‌های نرم، رنگ‌های ماندگار، سایزبندی دقیق و قیمت منصفانه.</p>
+        <div class="mt-5 flex gap-2">
+          <% if (settings.instagram) { %><a class="icon-btn bg-cream hover:!bg-ink-950 hover:!text-cream" href="https://instagram.com/<%= settings.instagram %>" target="_blank" rel="noopener" aria-label="اینستاگرام کیدل"><%- icon('instagram') %></a><% } %>
+          <% if (settings.telegram) { %><a class="icon-btn bg-cream hover:!bg-ink-950 hover:!text-cream" href="https://t.me/<%= settings.telegram %>" target="_blank" rel="noopener" aria-label="تلگرام کیدل"><%- icon('send') %></a><% } %>
+          <% if (settings.whatsapp) { %><a class="icon-btn bg-cream hover:!bg-ink-950 hover:!text-cream" href="https://wa.me/98<%= String(settings.whatsapp).replace(/^0/, '') %>" target="_blank" rel="noopener" aria-label="واتساپ کیدل"><%- icon('message') %></a><% } %>
         </div>
       </div>
-      <div class="grid grid-cols-2 gap-6 md:col-span-5">
+      <div class="grid grid-cols-2 gap-6 lg:col-span-5">
         <div>
-          <h2 class="mb-3 text-sm font-bold">دسته‌بندی‌ها</h2>
-          <ul class="space-y-2 text-sm text-ink-600">
-            <% menu.slice(0, 6).forEach(function (c) { %><li><a class="hover:text-brand-700" href="/category/<%= c.slug %>"><%= c.name %></a></li><% }) %>
-            <li><a class="hover:text-brand-700" href="/shop">همه محصولات</a></li>
+          <h2 class="mb-3 font-display text-base font-bold">فروشگاه</h2>
+          <ul class="space-y-0.5 text-sm text-ink-600">
+            <% menu.slice(0, 6).forEach(function (c) { %><li><a class="inline-flex min-h-9 items-center hover:text-ink-950" href="/category/<%= c.slug %>"><%= c.name %></a></li><% }) %>
+            <li><a class="inline-flex min-h-9 items-center hover:text-ink-950" href="/shop?sale=1">تخفیف‌ها</a></li>
+            <li><a class="inline-flex min-h-9 items-center font-semibold text-ink-950 hover:text-brand-700" href="/shop">همه محصولات</a></li>
           </ul>
         </div>
         <div>
-          <h2 class="mb-3 text-sm font-bold">راهنما</h2>
-          <ul class="space-y-2 text-sm text-ink-600">
-            <li><a class="hover:text-brand-700" href="/about-us">درباره ما</a></li>
-            <li><a class="hover:text-brand-700" href="/contact-us">تماس با ما</a></li>
-            <li><a class="hover:text-brand-700" href="/connect-us">همکاری و پیشنهاد</a></li>
-            <li><a class="hover:text-brand-700" href="/terms-and-conditions">قوانین و بازگشت کالا</a></li>
-            <li><a class="hover:text-brand-700" href="/privacy-policy">حریم خصوصی</a></li>
-            <li><a class="hover:text-brand-700" href="/weblog">مجله کیدل</a></li>
+          <h2 class="mb-3 font-display text-base font-bold">راهنما</h2>
+          <ul class="space-y-0.5 text-sm text-ink-600">
+            <li><a class="inline-flex min-h-9 items-center hover:text-ink-950" href="/about-us">درباره کیدل</a></li>
+            <li><a class="inline-flex min-h-9 items-center hover:text-ink-950" href="/contact-us">تماس با ما</a></li>
+            <li><a class="inline-flex min-h-9 items-center hover:text-ink-950" href="/terms-and-conditions">قوانین و بازگشت کالا</a></li>
+            <li><a class="inline-flex min-h-9 items-center hover:text-ink-950" href="/privacy-policy">حریم خصوصی</a></li>
+            <li><a class="inline-flex min-h-9 items-center hover:text-ink-950" href="/connect-us">همکاری و پیشنهاد</a></li>
+            <li><a class="inline-flex min-h-9 items-center hover:text-ink-950" href="/weblog">مجله کیدل</a></li>
           </ul>
         </div>
       </div>
-      <div class="md:col-span-3">
-        <h2 class="mb-3 text-sm font-bold">ارتباط با ما</h2>
-        <ul class="space-y-2.5 text-sm text-ink-600">
-          <li class="flex items-center gap-2"><%- icon('phone','icon-sm text-brand-500') %><a class="ltr hover:text-brand-700" href="tel:<%= settings.phone %>"><%= settings.phone %></a></li>
-          <li class="flex items-center gap-2"><%- icon('mail','icon-sm text-brand-500') %><a class="hover:text-brand-700" href="mailto:<%= settings.email %>"><%= settings.email %></a></li>
-          <li class="flex items-start gap-2"><%- icon('pin','icon-sm mt-1 text-brand-500') %><span><%= settings.address %></span></li>
+      <div class="lg:col-span-3">
+        <h2 class="mb-3 font-display text-base font-bold">ارتباط با ما</h2>
+        <ul class="space-y-3 text-sm text-ink-600">
+          <li class="flex items-center gap-2.5"><%- icon('phone','icon-sm text-ink-400') %><a class="ltr font-semibold text-ink-900 hover:text-brand-700" href="tel:<%= settings.phone %>"><%= settings.phone %></a></li>
+          <li class="flex items-center gap-2.5"><%- icon('mail','icon-sm text-ink-400') %><a class="break-anywhere hover:text-ink-950" href="mailto:<%= settings.email %>"><%= settings.email %></a></li>
+          <li class="flex items-start gap-2.5"><%- icon('pin','icon-sm mt-1.5 text-ink-400') %><span class="leading-7"><%= settings.address %></span></li>
         </ul>
-        <a referrerpolicy="origin" target="_blank" rel="noopener" href="https://trustseal.enamad.ir/?id=731837&Code=jSMW53UKTzbJlysi5bIKHLWgBO1HddCW" class="mt-4 inline-block rounded-lg border border-ink-200 bg-surface p-1.5">
+        <a referrerpolicy="origin" target="_blank" rel="noopener" href="https://trustseal.enamad.ir/?id=731837&Code=jSMW53UKTzbJlysi5bIKHLWgBO1HddCW" class="mt-5 inline-block rounded-md bg-surface p-1.5" aria-label="نماد اعتماد الکترونیکی">
           <img referrerpolicy="origin" loading="lazy" width="84" height="84" src="https://trustseal.enamad.ir/logo.aspx?id=731837&Code=jSMW53UKTzbJlysi5bIKHLWgBO1HddCW" alt="نماد اعتماد الکترونیکی" code="jSMW53UKTzbJlysi5bIKHLWgBO1HddCW">
         </a>
       </div>
     </div>
-    <p class="border-t border-ink-100 py-4 text-center text-xs text-ink-500">© <%= fa(new Date().toLocaleDateString('fa-IR-u-nu-latn', { year: 'numeric' })) %> کیدل — تمامی حقوق محفوظ است.</p>
+    <div class="flex flex-col items-center justify-between gap-2 border-t border-linen-300 py-5 text-xs text-ink-500 sm:flex-row">
+      <p>© <%= fa(new Date().toLocaleDateString('fa-IR-u-nu-latn', { year: 'numeric' })) %> کیدل — تمامی حقوق محفوظ است.</p>
+      <p>ساخته‌شده با حوصله، برای روزهای بازی.</p>
+    </div>
   </div>
 </footer>

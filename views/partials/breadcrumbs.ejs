@@ -1,11 +1,11 @@
 <% const _items = [{ name: 'خانه', url: '/' }].concat(crumbs || []); %>
 <nav aria-label="مسیر صفحه" class="<%= locals.crumbClass || 'py-3' %>">
-  <ol class="flex items-center gap-1 overflow-x-auto whitespace-nowrap text-xs text-ink-500" style="scrollbar-width:none">
+  <ol class="flex items-center gap-1.5 overflow-x-auto whitespace-nowrap text-xs text-ink-500" style="scrollbar-width:none">
     <% _items.forEach(function (c, i) { %>
-    <li class="flex items-center gap-1">
-      <% if (i > 0) { %><%- icon('chevron-left','icon-sm text-ink-300') %><% } %>
-      <% if (c.url && i < _items.length - 1) { %><a class="hover:text-brand-700" href="<%= c.url %>"><%= c.name %></a>
-      <% } else { %><span aria-current="page" class="font-medium text-ink-700"><%= c.name %></span><% } %>
+    <li class="flex items-center gap-1.5">
+      <% if (i > 0) { %><span class="text-ink-300" aria-hidden="true">/</span><% } %>
+      <% if (c.url && i < _items.length - 1) { %><a class="inline-flex min-h-8 items-center hover:text-ink-950" href="<%= c.url %>"><%= c.name %></a>
+      <% } else { %><span aria-current="page" class="font-semibold text-ink-800"><%= c.name %></span><% } %>
     </li>
     <% }) %>
   </ol>

@@ -251,7 +251,7 @@
     if (empty) {
       var recent = K.recentSearches();
       if (recent.length) {
-        emptyHTML = '<div class="border-b border-ink-100 p-4"><div class="mb-2 flex items-center justify-between"><p class="text-xs font-bold text-ink-500">جستجوهای اخیر</p><button type="button" class="link text-xs" data-clear-recent>پاک کردن</button></div><div class="flex flex-wrap gap-2">' +
+        emptyHTML = '<div class="border-b border-ink-100 px-5 pt-5 pb-4"><div class="mb-3 flex items-center justify-between"><p class="text-xs font-bold text-ink-500">جستجوهای اخیر</p><button type="button" class="link text-xs" data-clear-recent>پاک کردن</button></div><div class="flex flex-wrap gap-2">' +
           recent.map(function (q) { return '<a class="chip" href="/search?q=' + encodeURIComponent(q) + '">' + K.icon("clock", "icon-sm text-ink-400") + K.esc(q) + "</a>"; }).join("") + "</div></div>" + emptyHTML;
         box.innerHTML = emptyHTML;
       }
@@ -270,20 +270,20 @@
     }
     function render(q, data) {
       if (!data.products.length && !data.categories.length) {
-        return show('<div class="p-4 text-sm text-ink-600">نتیجه‌ای برای «' + K.esc(q) + '» پیدا نشد. املای دیگری را امتحان کنید یا <a class="link" href="/shop">همه محصولات</a> را ببینید.</div>');
+        return show('<div class="flex flex-col items-center gap-2 px-5 py-8 text-center"><span class="flex size-12 items-center justify-center rounded-full bg-linen-100 text-ink-700">' + K.icon("search") + '</span><p class="font-bold text-ink-950">نتیجه‌ای برای «' + K.esc(q) + '» پیدا نشد</p><p class="text-sm text-ink-600">املای دیگری را امتحان کنید یا <a class="link" href="/shop">همه محصولات</a> را ببینید.</p></div>');
       }
       var h = "";
       if (data.categories.length) {
-        h += '<div class="flex flex-wrap gap-2 border-b border-ink-100 p-3">';
-        data.categories.forEach(function (c) { h += '<a class="chip" href="/category/' + encodeURIComponent(c.slug) + '">' + K.icon("grid", "icon-sm text-brand-500") + K.esc(c.name) + "</a>"; });
+        h += '<div class="flex flex-wrap gap-2 border-b border-ink-100 px-4 py-3">';
+        data.categories.forEach(function (c) { h += '<a class="chip" href="/category/' + encodeURIComponent(c.slug) + '">' + K.icon("grid", "icon-sm text-ink-400") + K.esc(c.name) + "</a>"; });
         h += "</div>";
       }
       data.products.forEach(function (p) {
-        h += '<a class="flex items-center gap-3 px-3 py-2 hover:bg-brand-50 focus:bg-brand-50 focus:outline-none" href="' + K.esc(p.url) + '">' +
-          (p.image ? '<img src="' + K.esc(p.image) + '" alt="" width="44" height="55" class="h-[3.4rem] w-11 shrink-0 rounded-md bg-ink-100 object-cover" loading="lazy">' : '<span class="h-[3.4rem] w-11 shrink-0 rounded-md bg-ink-100"></span>') +
-          '<span class="min-w-0 flex-1"><span class="block truncate text-sm font-medium">' + K.esc(p.name) + '</span><span class="text-xs ' + (p.inStock ? "text-ink-600" : "text-ink-400") + '">' + (p.inStock ? K.price(p.price) + " تومان" : "ناموجود") + "</span></span></a>";
+        h += '<a class="flex items-center gap-3 px-4 py-2.5 hover:bg-linen-100 focus:bg-linen-100 focus:outline-none" href="' + K.esc(p.url) + '">' +
+          (p.image ? '<img src="' + K.esc(p.image) + '" alt="" width="44" height="55" class="h-14 w-11 shrink-0 rounded-sm bg-linen-100 object-cover" loading="lazy">' : '<span class="h-14 w-11 shrink-0 rounded-sm bg-linen-100"></span>') +
+          '<span class="min-w-0 flex-1"><span class="block truncate text-sm font-semibold text-ink-950">' + K.esc(p.name) + '</span><span class="text-xs ' + (p.inStock ? "font-bold text-ink-700" : "text-ink-500") + '">' + (p.inStock ? K.price(p.price) + " تومان" : "ناموجود") + "</span></span>" + K.icon("arrow-up-left", "icon-sm text-ink-300") + "</a>";
       });
-      h += '<a class="flex items-center justify-center gap-1 border-t border-ink-100 p-3 text-sm font-semibold text-brand-700 hover:bg-brand-50" href="/search?q=' + encodeURIComponent(q) + '">دیدن همه نتایج ' + K.icon("arrow-left", "icon-sm") + "</a>";
+      h += '<a class="flex min-h-12 items-center justify-center gap-1.5 border-t border-ink-100 p-3 text-sm font-bold text-ink-950 hover:bg-linen-100" href="/search?q=' + encodeURIComponent(q) + '">دیدن همه نتایج «' + K.esc(q) + '» ' + K.icon("arrow-left", "icon-sm") + "</a>";
       show(h);
     }
 
@@ -293,10 +293,10 @@
       if (q.length < 2) { show(isDropdown ? "" : emptyHTML); return; }
       timer = setTimeout(function () {
         var my = ++seq;
-        if (!isDropdown || !box.innerHTML) show('<div class="space-y-2 p-3"><div class="skeleton h-12"></div><div class="skeleton h-12"></div></div>');
+        if (!isDropdown || !box.innerHTML) show('<div class="space-y-3 p-4">' + [1, 2, 3].map(function () { return '<div class="flex items-center gap-3"><div class="skeleton h-14 w-11"></div><div class="flex-1 space-y-2"><div class="skeleton h-3.5 w-2/3"></div><div class="skeleton h-3 w-1/3"></div></div></div>'; }).join("") + "</div>");
         K.api("/api/search/suggest?q=" + encodeURIComponent(q))
           .then(function (d) { if (my === seq) render(q, d); })
-          .catch(function () { if (my === seq) show('<div class="p-4 text-sm text-danger-700">جستجو انجام نشد. اتصال را بررسی کنید.</div>'); });
+          .catch(function () { if (my === seq) show('<div class="m-4 alert alert-danger">' + K.icon("alert", "icon-sm mt-1 shrink-0") + "<span>جستجو انجام نشد. اتصال اینترنت را بررسی کنید و دوباره بنویسید.</span></div>"); });
       }, 220);
     });
     input.addEventListener("keydown", function (e) {
@@ -343,6 +343,8 @@
 
   function showStep(step) {
     $$("[data-auth-step]").forEach(function (f) { f.hidden = f.getAttribute("data-auth-step") !== step; });
+    var hd = $("[data-auth-heading]");
+    if (hd) hd.textContent = step === "code" ? "کد تأیید را وارد کنید" : "ورود یا ثبت‌نام";
     $$("[data-auth-back]").forEach(function (b) {
       if (b.classList.contains("btn-icon")) b.classList.toggle("invisible", step === "phone");
     });
@@ -377,6 +379,7 @@
         showStep("code");
         var code = $("#auth-code");
         code.value = "";
+        if (K.syncOtp) K.syncOtp();
         fieldError("auth-code", "");
         code.focus();
         startCountdown(d.retryAfter || 60);
@@ -404,7 +407,7 @@
       var ac = new AbortController();
       setTimeout(function () { ac.abort(); }, 120000);
       navigator.credentials.get({ otp: { transport: ["sms"] }, signal: ac.signal }).then(function (otp) {
-        if (otp && otp.code) { var c = $("#auth-code"); c.value = otp.code; $('[data-auth-step="code"]').requestSubmit(); }
+        if (otp && otp.code) { var c = $("#auth-code"); c.value = otp.code; if (K.syncOtp) K.syncOtp(); $('[data-auth-step="code"]').requestSubmit(); }
       }).catch(function () {});
     } catch (e) {}
   }
@@ -423,9 +426,23 @@
 
     var codeForm = $('[data-auth-step="code"]');
     var codeInput = $("#auth-code");
+    var otpBox = $("[data-otp]"), cells = $$(".otp-cell", otpBox);
+    K.syncOtp = function () {
+      var v = codeInput.value;
+      cells.forEach(function (c, i) {
+        c.textContent = v[i] ? K.fa(v[i]) : "";
+        c.classList.toggle("is-filled", !!v[i]);
+        c.classList.toggle("is-current", i === Math.min(v.length, 4));
+      });
+      otpBox.removeAttribute("data-invalid");
+    };
     codeInput.addEventListener("input", function () {
       codeInput.value = K.toEn(codeInput.value).replace(/\D/g, "").slice(0, 5);
+      K.syncOtp();
       if (codeInput.value.length === 5) codeForm.requestSubmit();
+    });
+    ["focus", "click", "keyup"].forEach(function (ev) {
+      codeInput.addEventListener(ev, function () { codeInput.setSelectionRange(codeInput.value.length, codeInput.value.length); K.syncOtp(); });
     });
     codeForm.addEventListener("submit", function (e) {
       e.preventDefault();
@@ -436,7 +453,7 @@
       K.api("/api/auth/otp/verify", { method: "POST", body: { mobile: auth.mobile, code: codeInput.value } })
         .then(function (d) {
           clearInterval(auth.timer);
-          btn.querySelector(".btn-label-idle").textContent = "وارد شدید";
+          btn.querySelector(".btn-label-idle").textContent = "وارد شدید ✓";
           K.toast(d.message, "success");
           var next = auth.next || new URLSearchParams(location.search).get("next");
           setTimeout(function () {
@@ -452,7 +469,9 @@
         .catch(function (err) {
           K.setLoading(btn, false);
           fieldError("auth-code", err.message);
-          codeInput.select();
+          codeInput.value = "";
+          K.syncOtp();
+          otpBox.setAttribute("data-invalid", "");
           var c = err.data && err.data.code;
           if (c === "EXPIRED" || c === "LOCKED") {
             clearInterval(auth.timer);
@@ -505,6 +524,151 @@
     });
     wrap.appendChild(b);
   });
+
+  /* ───────── Header: hairline once the page scrolls ───────── */
+  var header = $("[data-site-header]");
+  if (header) {
+    var onScroll = function () { header.classList.toggle("is-scrolled", window.scrollY > 4); };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
+  }
+
+  /* ───────── Navigation progress bar (full page loads feel instant, not frozen) ───────── */
+  var bar = $("[data-nav-progress]");
+  function startProgress() { if (bar) { bar.classList.remove("is-active"); void bar.offsetWidth; bar.classList.add("is-active"); } }
+  document.addEventListener("click", function (e) {
+    var a = e.target.closest("a[href]");
+    if (!a || e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || a.target === "_blank" || a.hasAttribute("download")) return;
+    var u = new URL(a.href, location.href);
+    if (u.origin !== location.origin || (u.pathname === location.pathname && u.search === location.search)) return;
+    startProgress();
+  });
+  document.addEventListener("submit", function (e) { if (!e.defaultPrevented && e.target.method === "get") startProgress(); });
+  window.addEventListener("pageshow", function () { if (bar) bar.classList.remove("is-active"); });
+
+  /* ───────── Tabs (WAI-ARIA pattern: arrows move, Home/End jump) ───────── */
+  $$("[data-tabs]").forEach(function (box) {
+    var tabs = $$('[role="tab"]', box);
+    function select(t, focus) {
+      tabs.forEach(function (x) {
+        var on = x === t;
+        x.setAttribute("aria-selected", on ? "true" : "false");
+        x.tabIndex = on ? 0 : -1;
+        var panel = document.getElementById(x.getAttribute("aria-controls"));
+        if (panel) panel.hidden = !on;
+      });
+      if (focus) t.focus();
+    }
+    tabs.forEach(function (t, i) {
+      t.addEventListener("click", function () { select(t); });
+      t.addEventListener("keydown", function (e) {
+        var n = tabs.length, j = null;
+        if (e.key === "ArrowLeft") j = (i + 1) % n; // RTL: left moves forward
+        if (e.key === "ArrowRight") j = (i - 1 + n) % n;
+        if (e.key === "Home") j = 0;
+        if (e.key === "End") j = n - 1;
+        if (j !== null) { e.preventDefault(); select(tabs[j], true); }
+      });
+    });
+  });
+
+  /* ───────── Quick add from product cards ───────── */
+  var qa = { data: null, trigger: null };
+  var qaForm = $("[data-quick-form]"), qaBody = $("[data-quick-body]");
+
+  K.addToCart = function (body) {
+    return K.api("/api/cart/items", { method: "POST", body: body }).then(function (d) {
+      K.setCartCount(d.cartCount);
+      return d;
+    });
+  };
+
+  function qaAdded(btn) {
+    if (!btn) return;
+    btn.classList.add("is-added");
+    btn.innerHTML = K.icon("check", "icon-sm");
+    setTimeout(function () { btn.classList.remove("is-added"); btn.innerHTML = K.icon("bag-plus", "icon-sm"); }, 1800);
+  }
+
+  function qaRender(d) {
+    var sizes = d.sizes || [], colors = d.colors || [];
+    var off = d.final < d.price;
+    var h = '<div class="flex items-center gap-3">' +
+      (d.image ? '<img src="' + K.esc(d.image) + '" alt="" class="h-20 w-16 shrink-0 rounded-sm bg-linen-100 object-cover">' : "") +
+      '<div class="min-w-0"><p class="line-clamp-2 text-sm font-semibold leading-6 text-ink-950">' + K.esc(d.name) + "</p>" +
+      '<p class="mt-0.5 flex items-baseline gap-2"><span class="price ' + (off ? "price-sale" : "") + '">' + K.price(d.final) + '<span class="currency">تومان</span></span>' + (off ? '<span class="price-old">' + K.price(d.price) + "</span>" : "") + "</p>" +
+      '<a class="link text-xs" href="/productDetails/' + encodeURIComponent(d.slug) + '">جزئیات کامل محصول</a></div></div>';
+    if (colors.length > 1) {
+      h += '<fieldset><legend class="mb-2.5 text-sm font-bold">رنگ: <span class="font-medium text-ink-600" data-qa-color-label>انتخاب کنید</span></legend><div class="flex flex-wrap gap-3 ps-1">' +
+        colors.map(function (c) {
+          var bg = /^#[0-9a-f]{3,8}$/i.test(c.rgb) ? c.rgb : "#eee";
+          return '<label class="swatch" style="background:' + bg + '" title="' + K.esc(c.name) + '"><input type="radio" name="color" value="' + K.esc(c.name) + '"><span class="sr-only">' + K.esc(c.name) + "</span></label>";
+        }).join("") + '</div><p class="field-error mt-2" data-qa-err="color" hidden></p></fieldset>';
+    }
+    if (sizes.length > 1) {
+      h += '<fieldset><legend class="mb-2.5 text-sm font-bold">سایز: <span class="font-medium text-ink-600" data-qa-size-label>انتخاب کنید</span></legend><div class="grid grid-cols-3 gap-2 xs:grid-cols-4">' +
+        sizes.map(function (s) {
+          return '<label class="opt"><input type="radio" name="size" value="' + K.esc(s.size) + '" data-usage="' + K.esc(s.usage) + '"><span>' + K.esc(s.size) + "</span>" + (s.usage ? '<span class="opt-sub">' + K.esc(s.usage) + "</span>" : "") + "</label>";
+        }).join("") + '</div><p class="field-error mt-2" data-qa-err="size" hidden></p></fieldset>';
+    }
+    qaBody.innerHTML = h;
+    $("#qa-title").textContent = sizes.length > 1 ? "سایز را انتخاب کنید" : "انتخاب رنگ";
+  }
+
+  document.addEventListener("click", function (e) {
+    var b = e.target.closest("[data-quick-add]");
+    if (!b) return;
+    e.preventDefault();
+    var d;
+    try { d = JSON.parse(b.getAttribute("data-quick-add")); } catch (err) { return; }
+    qa.data = d; qa.trigger = b;
+    var needsChoice = (d.sizes || []).length > 1 || (d.colors || []).length > 1;
+    if (!needsChoice || !qaForm) {
+      K.setLoading(b, true);
+      K.addToCart({ productId: d.id, quantity: 1, size: (d.sizes[0] || {}).size || "", color: (d.colors[0] || {}).name || "" })
+        .then(function () { qaAdded(b); K.toast("«" + d.name + "» به سبد اضافه شد", "success", { action: { href: "/cart", label: "مشاهده سبد" } }); })
+        .catch(function (err) { K.toast(err.message, "error"); })
+        .finally(function () { K.setLoading(b, false); });
+      return;
+    }
+    qaRender(d);
+    K.open("quick-add", { focus: "input" });
+  });
+
+  if (qaForm) {
+    qaForm.addEventListener("change", function (e) {
+      if (e.target.name === "size") {
+        var u = e.target.getAttribute("data-usage");
+        $("[data-qa-size-label]", qaForm).textContent = e.target.value + (u ? " — " + u : "");
+        $('[data-qa-err="size"]', qaForm).hidden = true;
+      }
+      if (e.target.name === "color") { $("[data-qa-color-label]", qaForm).textContent = e.target.value; $('[data-qa-err="color"]', qaForm).hidden = true; }
+    });
+    qaForm.addEventListener("submit", function (e) {
+      e.preventDefault();
+      var d = qa.data, fd = new FormData(qaForm), bad = null;
+      if (!d) return;
+      [["color", "لطفاً رنگ را انتخاب کنید", d.colors], ["size", "لطفاً سایز را انتخاب کنید", d.sizes]].forEach(function (r) {
+        if ((r[2] || []).length > 1 && !fd.get(r[0])) {
+          var p = $('[data-qa-err="' + r[0] + '"]', qaForm);
+          p.hidden = false;
+          p.innerHTML = K.icon("alert", "icon-sm") + " " + r[1];
+          if (!bad) bad = $('input[name="' + r[0] + '"]', qaForm);
+        }
+      });
+      if (bad) { bad.focus(); return; }
+      var btn = $("[data-quick-submit]", qaForm);
+      K.setLoading(btn, true);
+      K.addToCart({ productId: d.id, quantity: 1, size: fd.get("size") || ((d.sizes[0] || {}).size || ""), color: fd.get("color") || ((d.colors[0] || {}).name || "") })
+        .then(function () {
+          K.close();
+          qaAdded(qa.trigger);
+          K.toast("«" + d.name + "» به سبد اضافه شد", "success", { action: { href: "/cart", label: "مشاهده سبد" } });
+        })
+        .catch(function (err) { K.toast(err.message, "error"); })
+        .finally(function () { K.setLoading(btn, false); });
+    });
+  }
 
   /* ───────── Boot ───────── */
   var params = new URLSearchParams(location.search);

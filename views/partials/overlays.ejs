@@ -1,64 +1,81 @@
-<%# Global overlays: category drawer, search, login sheet, toasts. Present on every storefront page. %>
+<%# Global overlays: menu drawer, search, login, quick add, toasts. Present on every storefront page. %>
 <div class="drawer-overlay" data-drawer-overlay hidden></div>
 <aside class="drawer" id="menu-drawer" role="dialog" aria-modal="true" aria-label="منو" hidden>
-  <div class="flex items-center justify-between border-b border-ink-100 px-4 py-3">
-    <%- include('logo') %>
-    <button type="button" class="btn-icon" data-close-drawer aria-label="بستن منو"><%- icon('x') %></button>
+  <div class="flex h-16 items-center justify-between border-b border-ink-200 ps-5 pe-3">
+    <%- include('logo', { logoCompact: true }) %>
+    <button type="button" class="icon-btn" data-close-drawer aria-label="بستن منو"><%- icon('x') %></button>
   </div>
   <div class="flex-1 overflow-y-auto overscroll-contain">
     <% if (!user) { %>
-    <div class="m-4 rounded-lg bg-brand-50 p-3">
-      <p class="text-sm font-semibold text-brand-800">با شماره موبایل وارد شوید</p>
-      <p class="mb-2 text-xs text-brand-700">بدون رمز عبور، فقط با یک کد پیامکی.</p>
-      <button type="button" class="btn btn-primary btn-sm" data-open-auth>ورود یا ثبت‌نام</button>
+    <div class="m-4 flex items-center gap-3 rounded-lg bg-surface p-4">
+      <span class="flex size-11 shrink-0 items-center justify-center rounded-full bg-brand-50 text-brand-700"><%- icon('smartphone') %></span>
+      <div class="min-w-0 flex-1">
+        <p class="text-sm font-bold text-ink-950">ورود با شماره موبایل</p>
+        <p class="text-xs text-ink-500">بدون رمز عبور، با یک کد پیامکی</p>
+      </div>
+      <button type="button" class="btn btn-dark btn-sm" data-open-auth>ورود</button>
     </div>
+    <% } else { %>
+    <a href="/account" class="m-4 flex items-center gap-3 rounded-lg bg-surface p-4">
+      <span class="flex size-11 shrink-0 items-center justify-center rounded-full bg-brand-100 font-display text-lg font-bold text-brand-700"><%= (user.fullName || 'ک').trim().charAt(0) %></span>
+      <span class="min-w-0 flex-1"><span class="block truncate text-sm font-bold text-ink-950"><%= user.fullName || 'حساب من' %></span><span class="text-xs text-ink-500">سفارش‌ها و اطلاعات حساب</span></span>
+      <%- icon('chevron-left','icon-sm text-ink-400') %>
+    </a>
     <% } %>
-    <p class="px-4 pt-4 pb-1 text-xs font-bold text-ink-500">دسته‌بندی‌ها</p>
-    <ul class="px-2">
-      <% menu.forEach(function (c, i) { %>
-      <li>
+
+    <p class="px-5 pt-2 pb-1 text-xs font-bold text-ink-500">دسته‌بندی‌ها</p>
+    <ul class="px-3">
+      <% menu.forEach(function (c) { %>
+      <li class="border-b border-ink-200/70 last:border-0">
         <% if (c.children.length) { %>
         <details class="group">
-          <summary class="flex h-12 cursor-pointer list-none items-center justify-between rounded-md px-2 text-[0.9375rem] font-semibold hover:bg-ink-50 [&::-webkit-details-marker]:hidden">
-            <%= c.name %> <%- icon('chevron-down','icon-sm text-ink-400 transition group-open:rotate-180') %>
+          <summary class="flex min-h-14 cursor-pointer list-none items-center justify-between gap-2 px-2 [&::-webkit-details-marker]:hidden">
+            <span class="font-display text-lg font-bold text-ink-950"><%= c.name %></span>
+            <span class="flex size-8 items-center justify-center rounded-full bg-linen-100 text-ink-700 transition group-open:rotate-45"><%- icon('plus','icon-sm') %></span>
           </summary>
-          <ul class="mb-2 ms-2 border-s-2 border-brand-100 ps-2">
-            <li><a class="flex h-10 items-center rounded-md px-2 text-sm font-semibold text-brand-700" href="/category/<%= c.slug %>">همه <%= c.name %></a></li>
-            <% c.children.forEach(function (ch) { %><li><a class="flex h-10 items-center rounded-md px-2 text-sm text-ink-700 hover:bg-ink-50" href="/category/<%= ch.slug %>"><%= ch.name %></a></li><% }) %>
+          <ul class="grid grid-cols-2 gap-1 px-2 pb-3">
+            <li class="col-span-2"><a class="flex min-h-11 items-center gap-1 rounded-md px-3 text-sm font-bold text-brand-700 hover:bg-surface" href="/category/<%= c.slug %>">همه <%= c.name %> <%- icon('arrow-left','icon-sm') %></a></li>
+            <% c.children.forEach(function (ch) { %><li><a class="flex min-h-11 items-center rounded-md bg-surface px-3 text-sm text-ink-800 hover:text-ink-950" href="/category/<%= ch.slug %>"><%= ch.name %></a></li><% }) %>
           </ul>
         </details>
         <% } else { %>
-        <a class="flex h-12 items-center rounded-md px-2 text-[0.9375rem] font-semibold hover:bg-ink-50" href="/category/<%= c.slug %>"><%= c.name %></a>
+        <a class="flex min-h-14 items-center justify-between px-2" href="/category/<%= c.slug %>"><span class="font-display text-lg font-bold text-ink-950"><%= c.name %></span><%- icon('chevron-left','icon-sm text-ink-400') %></a>
         <% } %>
       </li>
       <% }) %>
-      <li><a class="flex h-12 items-center gap-2 rounded-md px-2 text-[0.9375rem] font-semibold text-brand-700" href="/shop">همه محصولات <%- icon('arrow-left','icon-sm') %></a></li>
     </ul>
-    <p class="px-4 pt-4 pb-1 text-xs font-bold text-ink-500">بیشتر</p>
-    <ul class="px-2 pb-6 text-sm">
-      <li><a class="flex h-11 items-center gap-2.5 rounded-md px-2 hover:bg-ink-50" href="/shop?sale=1"><%- icon('tag','icon-sm text-brand-500') %> تخفیف‌ها</a></li>
-      <li><a class="flex h-11 items-center gap-2.5 rounded-md px-2 hover:bg-ink-50" href="/weblog"><%- icon('file','icon-sm text-brand-500') %> مجله کیدل</a></li>
-      <% if (user) { %><li><a class="flex h-11 items-center gap-2.5 rounded-md px-2 hover:bg-ink-50" href="/account/orders"><%- icon('package','icon-sm text-brand-500') %> سفارش‌های من</a></li><% } %>
-      <li><a class="flex h-11 items-center gap-2.5 rounded-md px-2 hover:bg-ink-50" href="/contact-us"><%- icon('phone','icon-sm text-brand-500') %> تماس با ما</a></li>
-      <li><a class="flex h-11 items-center gap-2.5 rounded-md px-2 hover:bg-ink-50" href="/about-us"><%- icon('heart','icon-sm text-brand-500') %> درباره کیدل</a></li>
+    <div class="grid grid-cols-2 gap-2 p-4">
+      <a class="flex min-h-20 flex-col justify-between rounded-lg bg-sage-100 p-3.5" href="/shop?sort=newest"><%- icon('sparkles','text-sage-700') %><span class="text-sm font-bold text-ink-950">تازه‌ها</span></a>
+      <a class="flex min-h-20 flex-col justify-between rounded-lg bg-brand-50 p-3.5" href="/shop?sale=1"><%- icon('tag','text-brand-700') %><span class="text-sm font-bold text-ink-950">تخفیف‌ها</span></a>
+    </div>
+    <ul class="px-3 pb-6 text-sm">
+      <li><a class="flex min-h-12 items-center gap-3 rounded-md px-2 text-ink-800 hover:bg-surface" href="/shop"><%- icon('store','icon-sm text-ink-400') %> همه محصولات</a></li>
+      <% if (user) { %><li><a class="flex min-h-12 items-center gap-3 rounded-md px-2 text-ink-800 hover:bg-surface" href="/account/orders"><%- icon('package','icon-sm text-ink-400') %> سفارش‌های من</a></li><% } %>
+      <li><a class="flex min-h-12 items-center gap-3 rounded-md px-2 text-ink-800 hover:bg-surface" href="/weblog"><%- icon('file','icon-sm text-ink-400') %> مجله کیدل</a></li>
+      <li><a class="flex min-h-12 items-center gap-3 rounded-md px-2 text-ink-800 hover:bg-surface" href="/about-us"><%- icon('heart','icon-sm text-ink-400') %> درباره کیدل</a></li>
+      <li><a class="flex min-h-12 items-center gap-3 rounded-md px-2 text-ink-800 hover:bg-surface" href="/contact-us"><%- icon('phone','icon-sm text-ink-400') %> تماس با ما</a></li>
     </ul>
   </div>
+  <a href="tel:<%= settings.phone %>" class="flex items-center justify-between border-t border-ink-200 px-5 py-4 text-sm">
+    <span class="text-ink-500">پشتیبانی</span><span class="ltr font-bold text-ink-950"><%= settings.phone %></span>
+  </a>
 </aside>
 
-<div class="overlay !items-start" id="search-overlay" role="dialog" aria-modal="true" aria-label="جستجو" hidden data-overlay>
-  <div class="sheet !max-w-2xl !rounded-none !rounded-b-xl sm:!rounded-xl !translate-y-0 sm:mt-16" style="max-height: 100dvh">
-    <form action="/search" method="get" role="search" class="flex items-center gap-2 border-b border-ink-100 p-3" data-search-form>
-      <%- icon('search','text-ink-400') %>
+<div class="overlay search-ov" id="search-overlay" role="dialog" aria-modal="true" aria-label="جستجو" hidden data-overlay>
+  <div class="sheet search-sheet">
+    <form action="/search" method="get" role="search" class="flex items-center gap-2 border-b border-ink-200 px-3 py-2 sm:px-4" data-search-form>
+      <%- icon('search','ms-1 text-ink-500') %>
       <label for="overlay-search" class="sr-only">جستجوی محصولات</label>
-      <input id="overlay-search" name="q" type="search" enterkeyhint="search" autocomplete="off" placeholder="دنبال چه می‌گردید؟" class="h-11 flex-1 bg-transparent text-base outline-none" data-search-input>
+      <input id="overlay-search" name="q" type="search" enterkeyhint="search" autocomplete="off" placeholder="دنبال چه می‌گردید؟ مثلاً «سرهمی»" class="h-14 min-w-0 flex-1 bg-transparent text-lg text-ink-950 outline-none placeholder:text-ink-400" data-search-input>
       <button type="button" class="btn btn-ghost btn-sm" data-close-overlay>بستن</button>
     </form>
     <div class="max-h-[70dvh] overflow-y-auto" data-search-results aria-live="polite">
-      <div class="p-4" data-search-empty>
-        <p class="mb-2 text-xs font-bold text-ink-500">دسته‌های پرطرفدار</p>
+      <div class="p-5" data-search-empty>
+        <p class="mb-3 text-xs font-bold text-ink-500">دسته‌های پرطرفدار</p>
         <div class="flex flex-wrap gap-2">
           <% menu.slice(0, 8).forEach(function (c) { %><a class="chip" href="/category/<%= c.slug %>"><%= c.name %></a><% }) %>
-          <a class="chip" href="/shop?sale=1"><%- icon('tag','icon-sm text-brand-500') %> تخفیف‌دارها</a>
+          <a class="chip" href="/shop?sale=1"><%- icon('tag','icon-sm text-brand-600') %> تخفیف‌دارها</a>
+          <a class="chip" href="/shop?sort=newest"><%- icon('sparkles','icon-sm text-sage-700') %> تازه‌ها</a>
         </div>
       </div>
     </div>
@@ -68,53 +85,68 @@
 <% if (!user) { %>
 <div class="overlay" id="auth-overlay" role="dialog" aria-modal="true" aria-labelledby="auth-title" hidden data-overlay>
   <div class="sheet">
-    <div class="sheet-grip"></div>
-    <div class="flex items-center justify-between px-4 pt-3">
-      <button type="button" class="btn-icon -ms-2 invisible" data-auth-back aria-label="تغییر شماره"><%- icon('arrow-right') %></button>
-      <button type="button" class="btn-icon -me-2" data-close-overlay aria-label="بستن"><%- icon('x') %></button>
+    <div class="relative overflow-hidden bg-brand-50 px-5 pt-4 pb-6 sm:px-7">
+      <div class="sheet-grip !mt-0 !mb-2 bg-brand-200"></div>
+      <div class="flex items-center justify-between">
+        <button type="button" class="icon-btn -ms-2.5 invisible hover:!bg-brand-100" data-auth-back aria-label="تغییر شماره"><%- icon('arrow-right') %></button>
+        <button type="button" class="icon-btn -me-2.5 hover:!bg-brand-100" data-close-overlay aria-label="بستن"><%- icon('x') %></button>
+      </div>
+      <svg viewBox="0 0 120 80" class="pointer-events-none absolute -bottom-3 end-4 h-24 opacity-90" aria-hidden="true"><path d="M20 80V42a22 22 0 0 1 44 0v38Z" fill="#f2b8c8"/><path d="M58 80V30a26 26 0 0 1 52 0v50Z" fill="#b02a58"/><circle cx="84" cy="36" r="6" fill="#faf6f1"/><circle cx="42" cy="50" r="4" fill="#faf6f1"/></svg>
+      <div class="relative max-w-[70%]">
+        <p class="eyebrow no-rule text-xs">حساب کیدل</p>
+        <h2 id="auth-title" class="mt-1 font-display text-2xl font-bold" data-auth-heading>ورود یا ثبت‌نام</h2>
+      </div>
     </div>
-    <div class="px-5 pb-6 sm:px-6">
+    <div class="px-5 pt-5 pb-6 sm:px-7">
       <form data-auth-step="phone" novalidate>
-        <div class="mb-5 text-center">
-          <span class="mx-auto mb-3 flex size-14 items-center justify-center rounded-full bg-brand-50 text-brand-700"><%- icon('smartphone','icon-lg') %></span>
-          <h2 id="auth-title" class="text-lg font-extrabold">ورود یا ثبت‌نام</h2>
-          <p class="mt-1 text-sm text-ink-600">شماره موبایلتان را وارد کنید تا کد تأیید پیامک شود.</p>
-        </div>
+        <p class="mb-4 text-sm leading-7 text-ink-600">شماره موبایلتان را وارد کنید؛ یک کد ۵ رقمی برایتان پیامک می‌شود. رمز عبور لازم نیست.</p>
         <div class="field">
           <label class="label" for="auth-mobile">شماره موبایل</label>
-          <input id="auth-mobile" name="mobile" class="input ltr text-center text-lg tracking-wider" type="tel" inputmode="numeric" autocomplete="tel" placeholder="۰۹۱۲ ۳۴۵ ۶۷۸۹" maxlength="14" required aria-describedby="auth-mobile-error">
+          <input id="auth-mobile" name="mobile" class="input ltr !h-14 text-center text-xl font-bold tracking-[0.15em]" type="tel" inputmode="numeric" autocomplete="tel" placeholder="09xx xxx xxxx" maxlength="14" required aria-describedby="auth-mobile-error">
           <p class="field-error" id="auth-mobile-error" hidden></p>
         </div>
-        <button type="submit" class="btn btn-primary btn-lg btn-block mt-4">
-          <span class="spinner"></span><span class="btn-label-idle">دریافت کد تأیید</span>
+        <button type="submit" class="btn btn-dark btn-lg btn-block mt-4">
+          <span class="spinner"></span><span class="btn-label-idle flex items-center gap-2">دریافت کد تأیید <%- icon('arrow-left','icon-sm') %></span>
         </button>
-        <p class="mt-3 text-center text-xs leading-5 text-ink-500">ورود شما به معنای پذیرش <a class="link" href="/terms-and-conditions" target="_blank">قوانین کیدل</a> است.</p>
+        <p class="mt-4 flex items-start gap-2 text-xs leading-6 text-ink-500"><%- icon('shield','icon-sm mt-1 shrink-0 text-sage-700') %><span>شماره شما فقط برای ورود و اطلاع‌رسانی سفارش استفاده می‌شود. ورود به معنای پذیرش <a class="link" href="/terms-and-conditions" target="_blank">قوانین کیدل</a> است.</span></p>
       </form>
 
       <form data-auth-step="code" novalidate hidden>
-        <div class="mb-5 text-center">
-          <span class="mx-auto mb-3 flex size-14 items-center justify-center rounded-full bg-mint-50 text-mint-600"><%- icon('message','icon-lg') %></span>
-          <h2 class="text-lg font-extrabold">کد تأیید را وارد کنید</h2>
-          <p class="mt-1 text-sm text-ink-600">کد ۵ رقمی به <b class="ltr inline-block" data-auth-mobile></b> پیامک شد.
-            <button type="button" class="link text-sm" data-auth-back>ویرایش شماره</button></p>
-        </div>
+        <p class="mb-4 text-sm leading-7 text-ink-600">کد ۵ رقمی به <b class="ltr inline-block text-ink-950" data-auth-mobile></b> پیامک شد. <button type="button" class="link text-sm" data-auth-back>ویرایش شماره</button></p>
         <div class="field">
-          <label class="label sr-only" for="auth-code">کد تأیید</label>
-          <input id="auth-code" name="code" class="input ltr text-center text-2xl font-bold tracking-[0.6em]" type="text" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9۰-۹]*" maxlength="5" placeholder="•••••" required aria-describedby="auth-code-error">
+          <label class="label" for="auth-code">کد تأیید</label>
+          <div class="otp" data-otp>
+            <input id="auth-code" name="code" type="text" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9۰-۹]*" maxlength="5" required aria-describedby="auth-code-error">
+            <span class="otp-cell" aria-hidden="true"></span><span class="otp-cell" aria-hidden="true"></span><span class="otp-cell" aria-hidden="true"></span><span class="otp-cell" aria-hidden="true"></span><span class="otp-cell" aria-hidden="true"></span>
+          </div>
           <p class="field-error justify-center" id="auth-code-error" role="alert" hidden></p>
         </div>
-        <button type="submit" class="btn btn-primary btn-lg btn-block mt-4">
+        <button type="submit" class="btn btn-dark btn-lg btn-block mt-4">
           <span class="spinner"></span><span class="btn-label-idle">تأیید و ورود</span>
         </button>
-        <div class="mt-4 flex items-center justify-center gap-2 text-sm text-ink-600" aria-live="polite">
-          <span data-auth-timer>ارسال دوباره کد تا <b class="tabular-nums" data-auth-seconds>۶۰</b> ثانیه دیگر</span>
-          <button type="button" class="btn btn-soft btn-sm" data-auth-resend hidden>ارسال دوباره کد</button>
+        <div class="mt-4 flex min-h-11 items-center justify-center gap-2 text-sm text-ink-600" aria-live="polite">
+          <span data-auth-timer class="flex items-center gap-1.5"><%- icon('clock','icon-sm text-ink-400') %> ارسال دوباره تا <b class="tabular-nums text-ink-950" data-auth-seconds>۶۰</b> ثانیه</span>
+          <button type="button" class="btn btn-outline btn-sm" data-auth-resend hidden><%- icon('refresh','icon-sm') %> ارسال دوباره کد</button>
         </div>
       </form>
     </div>
   </div>
 </div>
 <% } %>
+
+<div class="overlay" id="quick-add" role="dialog" aria-modal="true" aria-labelledby="qa-title" hidden data-overlay>
+  <form class="sheet" data-quick-form novalidate>
+    <div class="sheet-grip"></div>
+    <div class="sheet-head">
+      <h2 id="qa-title" class="sheet-title">انتخاب سایز</h2>
+      <button type="button" class="icon-btn" data-close-overlay aria-label="بستن"><%- icon('x') %></button>
+    </div>
+    <div class="sheet-body space-y-5" data-quick-body></div>
+    <div class="sheet-foot">
+      <button type="submit" class="btn btn-primary btn-lg flex-1" data-quick-submit><span class="spinner"></span><span class="btn-label-idle flex items-center gap-2"><%- icon('bag','icon-sm') %> افزودن به سبد</span></button>
+    </div>
+  </form>
+</div>
 
 <div class="toast-region" id="toasts" aria-live="polite" aria-atomic="false"></div>
 <div id="sr-status" class="sr-only" role="status" aria-live="polite" aria-atomic="true"></div>

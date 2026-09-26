@@ -3,58 +3,104 @@
     { '@context': 'https://schema.org', '@type': 'OnlineStore', name: 'کیدل', url: siteUrl, logo: siteUrl + '/favicon.svg', telephone: settings.phone, email: settings.email, address: { '@type': 'PostalAddress', streetAddress: settings.address, addressCountry: 'IR' } },
     { '@context': 'https://schema.org', '@type': 'WebSite', name: 'کیدل', url: siteUrl, potentialAction: { '@type': 'SearchAction', target: { '@type': 'EntryPoint', urlTemplate: siteUrl + '/search?q={q}' }, 'query-input': 'required name=q' } }
   ];
-  var palette = ['#ffe4ee', '#fff5d9', '#d9f3e8', '#e3f1ff', '#efe8ff', '#ffeede'];
-%>
-<% locals.jsonld = jsonld; %>
-<%- include('../partials/layout-top') %>
-<style>
-  @keyframes swing { 0%,100% { transform: rotate(-2.5deg) } 50% { transform: rotate(2.5deg) } }
-  .hero-swing { animation: swing 5s ease-in-out 2; transform-box: view-box; }
-</style>
+  locals.jsonld = jsonld;
 
-<section class="container-app pt-3 sm:pt-5" aria-labelledby="hero-title">
-  <div class="relative overflow-hidden rounded-2xl bg-gradient-to-bl from-brand-100 via-brand-50 to-butter-100/60">
-    <div class="grid items-center md:grid-cols-2">
-      <div class="order-1 md:order-2">
-        <%- include('../partials/hero-art', { cls: 'block w-full h-auto max-h-40 xs:max-h-44 md:max-h-none px-2 pt-2 md:p-6' }) %>
-      </div>
-      <div class="order-2 px-5 pt-1 pb-5 text-center md:order-1 md:py-10 md:ps-10 md:pe-4 md:text-start lg:ps-14">
-        <p class="mb-2 inline-flex items-center gap-1.5 rounded-full bg-surface/80 px-3 py-1 text-xs font-bold text-brand-700 shadow-xs"><%- icon('sparkle','icon-sm') %> کالکشن جدید رسید</p>
-        <h1 id="hero-title" class="text-[1.625rem] leading-tight font-black text-ink-950 sm:text-3xl lg:text-4xl">لباس‌هایی به نرمیِ <span class="text-brand-700">کودکی</span></h1>
-        <p class="mx-auto mt-2 max-w-md text-sm leading-7 text-ink-700 md:mx-0 sm:text-base">از نوزادی تا نوجوانی؛ پارچه‌های نرم، رنگ‌های شاد و سایزبندی دقیق — با پرداخت امن و ارسال به سراسر ایران.</p>
-        <div class="mt-4 flex justify-center gap-2 md:justify-start">
-          <a href="/shop" class="btn btn-primary btn-lg">خرید لباس‌ها <%- icon('arrow-left','icon-sm') %></a>
-          <a href="/shop?sale=1" class="btn btn-secondary btn-lg">تخفیف‌ها</a>
+  // Hero uses real catalogue photos: featured first, then newest/popular.
+  var seen = {}, heroPicks = [];
+  [].concat(featured, newest, popular).forEach(function (p) {
+    if (p && !seen[p._id] && img(p) && heroPicks.length < 3) { seen[p._id] = 1; heroPicks.push(p); }
+  });
+  var h0 = heroPicks[0], h1 = heroPicks[1], h2 = heroPicks[2];
+  if (h0) locals.preloadImage = thumb(img(h0), 800);
+
+  var tones = ['#f9dce4', '#dde7db', '#e9dfd4', '#e3ecf3', '#fce7d8', '#ece6f1'];
+  var toneFor = function (c, i) { var v = (c.color || '').toLowerCase(); return v && v !== '#ffffff' && v !== '#fff' ? v : tones[i % tones.length]; };
+  var maxOff = onSale.reduce(function (m, p) { return Math.max(m, discountPercent(p)); }, 0);
+  var babyCat = categories.find(function (c) { return /نوزاد/.test(c.name); });
+  var tabs = [
+    { id: 'new', label: 'تازه‌ها', items: newest, href: '/shop?sort=newest' },
+    { id: 'pop', label: 'پرفروش‌ها', items: popular, href: '/shop?sort=popular' },
+    { id: 'sale', label: 'تخفیف‌دار', items: onSale, href: '/shop?sale=1&sort=discount' }
+  ].filter(function (t) { return t.items && t.items.length; });
+  var picks = (featured.length ? featured : popular).slice(0, 5);
+%>
+<%- include('../partials/layout-top') %>
+
+<!-- ═══ Hero ═══ -->
+<section class="relative overflow-hidden" aria-labelledby="hero-title">
+  <div class="wrap grid items-center gap-6 pt-4 pb-8 lg:grid-cols-12 lg:gap-10 lg:pt-10 lg:pb-16">
+    <!-- Visual: arch-framed catalogue photos -->
+    <div class="relative order-1 min-w-0 lg:order-2 lg:col-span-6" aria-hidden="true">
+      <div class="relative mx-auto grid max-w-[21rem] grid-cols-[1fr_0.62fr] sm:max-w-[30rem] items-end gap-3 sm:gap-4 lg:max-w-none">
+        <span class="absolute -top-2 end-[18%] size-16 rounded-full bg-brand-200 sm:size-24"></span>
+        <span class="absolute bottom-6 -start-3 h-2/3 w-2/3 rounded-full bg-sage-100 lg:-start-6"></span>
+        <div class="arch relative z-10 aspect-[4/5] bg-linen-200 shadow-md">
+          <% if (h0) { %><img src="<%= thumb(img(h0), 800) %>" alt="" class="size-full object-cover" width="800" height="1000" fetchpriority="high"><% } else { %><span class="flex size-full items-center justify-center text-ink-300"><%- icon('hanger','size-24 !stroke-1') %></span><% } %>
         </div>
-        <ul class="mt-4 flex flex-wrap justify-center gap-x-4 gap-y-1 text-xs text-ink-600 md:justify-start">
-          <li class="flex items-center gap-1"><%- icon('check','icon-sm text-mint-600') %> پارچه نخی و نرم</li>
-          <li class="flex items-center gap-1"><%- icon('check','icon-sm text-mint-600') %> راهنمای سایز</li>
-          <li class="flex items-center gap-1"><%- icon('check','icon-sm text-mint-600') %> ۷ روز ضمانت بازگشت</li>
-        </ul>
+        <div class="relative z-10 flex flex-col gap-3 sm:gap-4">
+          <div class="aspect-square overflow-hidden rounded-full bg-brand-100">
+            <% if (h1) { %><img src="<%= thumb(img(h1), 400) %>" alt="" class="size-full object-cover" width="400" height="400"><% } %>
+          </div>
+          <div class="aspect-[4/5] overflow-hidden rounded-lg bg-sage-100">
+            <% if (h2) { %><img src="<%= thumb(img(h2), 400) %>" alt="" class="size-full object-cover" width="400" height="500"><% } %>
+          </div>
+        </div>
       </div>
+    </div>
+    <% if (h0) { %>
+    <a href="/productDetails/<%= h0.slug %>" class="absolute z-20 hidden items-center gap-3 rounded-full bg-surface py-2 ps-2 pe-5 shadow-md transition hover:-translate-y-0.5 lg:flex" style="inset-inline-end: calc(var(--gutter) + 30%); bottom: 4.5rem">
+      <% if (img(h0)) { %><img src="<%= thumb(img(h0), 400) %>" alt="" class="size-11 rounded-full object-cover" width="44" height="44"><% } %>
+      <span class="text-xs leading-5"><span class="block max-w-44 truncate font-bold text-ink-950"><%= h0.name %></span><span class="price text-brand-700"><%= price(finalPrice(h0)) %></span> <span class="text-ink-500">تومان</span></span>
+    </a>
+    <% } %>
+
+    <!-- Copy -->
+    <div class="order-2 min-w-0 lg:order-1 lg:col-span-6 xl:ps-6">
+      <p class="eyebrow rise">کالکشن تازه · نوزاد تا ۱۴ سال</p>
+      <h1 id="hero-title" class="t-display mt-3 rise" style="animation-delay:.05s">نرم برای بازی،<br><span class="text-brand-600">خوش‌دوخت</span> برای هر&nbsp;روز</h1>
+      <p class="lead mt-4 max-w-md rise" style="animation-delay:.1s">پوشاکی که پوست کودک را اذیت نمی‌کند، با شستشو رنگ نمی‌بازد و سایزش همان است که انتظار دارید.</p>
+      <div class="mt-6 flex flex-wrap gap-2.5 rise" style="animation-delay:.15s">
+        <a href="/shop?sort=newest" class="btn btn-primary btn-lg">خرید کالکشن <%- icon('arrow-left','icon-sm') %></a>
+        <a href="/shop?sale=1" class="btn btn-outline btn-lg">تخفیف‌ها</a>
+      </div>
+      <% if (categories.length) { %>
+      <div class="mt-7 rise" style="animation-delay:.2s">
+        <p class="mb-2.5 text-xs font-bold text-ink-500">خرید سریع</p>
+        <div class="scroller bleed lg:mx-0 lg:flex-wrap lg:px-0">
+          <% categories.slice(0, 5).forEach(function (c) { %><a class="chip" href="/category/<%= c.slug %>"><%= c.name %></a><% }) %>
+        </div>
+      </div>
+      <% } %>
     </div>
   </div>
 </section>
 
+<!-- ═══ Trust ribbon ═══ -->
+<div class="border-y border-ink-200 bg-surface">
+  <ul class="wrap grid grid-cols-2 gap-x-4 gap-y-2 py-3.5 text-xs font-medium text-ink-700 sm:text-sm lg:flex lg:justify-center lg:gap-14">
+    <li class="flex shrink-0 items-center gap-2"><%- icon('leaf','icon-sm text-sage-700') %> پارچه نخی و نرم</li>
+    <li class="flex shrink-0 items-center gap-2"><%- icon('ruler','icon-sm text-sage-700') %> سایزبندی دقیق</li>
+    <li class="flex shrink-0 items-center gap-2"><%- icon('truck','icon-sm text-sage-700') %> ارسال به سراسر ایران</li>
+    <li class="flex shrink-0 items-center gap-2"><%- icon('shield','icon-sm text-sage-700') %> پرداخت امن زرین‌پال</li>
+  </ul>
+</div>
+
+<!-- ═══ Categories ═══ -->
 <% if (categories.length) { %>
-<section class="container-app mt-7 sm:mt-10" aria-labelledby="cats-title">
-  <div class="section-head">
-    <div><h2 id="cats-title" class="section-title">خرید بر اساس دسته‌بندی</h2><p class="section-sub">هر چیزی که فرزندتان لازم دارد</p></div>
-    <a href="/shop" class="btn btn-ghost btn-sm text-brand-700">همه <%- icon('chevron-left','icon-sm') %></a>
+<section class="wrap section" aria-labelledby="cats-title">
+  <div class="sec-head">
+    <div><p class="eyebrow">دسته‌بندی‌ها</p><h2 id="cats-title" class="t-section mt-1">برای هر سن، هر روز</h2></div>
+    <a href="/shop" class="see-all"><span>همه محصولات</span><%- icon('arrow-left','icon-sm') %></a>
   </div>
-  <ul class="scroller bleed sm:grid sm:grid-cols-4 sm:gap-3 sm:overflow-visible md:grid-cols-6 lg:grid-cols-8">
-    <% categories.forEach(function (c, i) {
-         var bg = c.color && c.color.toLowerCase() !== '#ffffff' && c.color.toLowerCase() !== '#fff' ? c.color : palette[i % palette.length];
-         var image = (c.images && c.images[0]) || '';
-    %>
-    <li class="w-[5.75rem] shrink-0 sm:w-auto">
-      <a href="/category/<%= c.slug %>" class="group flex flex-col items-center gap-1.5 text-center">
-        <span class="tile relative flex aspect-square w-full items-center justify-center overflow-hidden rounded-2xl transition group-hover:-translate-y-0.5" style="--tile: <%= bg %>">
-          <% if (image) { %><img src="<%= image %>" alt="" loading="lazy" width="200" height="200" class="size-full object-cover">
-          <% } else { %><span class="flex size-[58%] items-center justify-center rounded-full bg-surface/70 text-brand-700 shadow-xs"><%- icon(catIcon(c),'size-[55%] !stroke-[1.6]') %></span><% } %>
+  <ul class="scroller bleed !gap-3 sm:!gap-4 lg:grid lg:grid-cols-6 lg:overflow-visible lg:mx-0 lg:px-0">
+    <% categories.forEach(function (c, i) { var image = (c.images && c.images[0]) || ''; %>
+    <li class="w-[38%] shrink-0 xs:w-[31%] sm:w-[22%] lg:w-auto">
+      <a href="/category/<%= c.slug %>" class="cat-card">
+        <span class="cat-art arch tile" style="--tile: <%= toneFor(c, i) %>">
+          <% if (image) { %><img src="<%= image %>" alt="" loading="lazy" width="300" height="375">
+          <% } else { %><span class="mb-[18%] text-ink-950/80"><%- icon(catIcon(c),'size-16 !stroke-[1.25] sm:size-20') %></span><% } %>
         </span>
-        <span class="line-clamp-1 text-[0.8125rem] font-bold text-ink-900 group-hover:text-brand-700"><%= c.name %></span>
-        <span class="-mt-1.5 text-2xs text-ink-500"><%= fa(c.productCount) %> محصول</span>
+        <span><span class="cat-name block"><%= c.name %></span><span class="text-xs text-ink-500"><%= fa(c.productCount) %> محصول</span></span>
       </a>
     </li>
     <% }) %>
@@ -62,68 +108,121 @@
 </section>
 <% } %>
 
-<% function rail(id, title, sub, items, href, tone) { if (!items || !items.length) return; %>
-<section class="<%= tone ? 'mt-8 bg-brand-50/70 py-6 sm:py-8' : 'mt-8 sm:mt-10' %>" aria-labelledby="<%= id %>">
-  <div class="container-app">
-    <div class="section-head">
-      <div><h2 id="<%= id %>" class="section-title"><%= title %></h2><% if (sub) { %><p class="section-sub"><%= sub %></p><% } %></div>
-      <a href="<%= href %>" class="btn btn-ghost btn-sm text-brand-700">مشاهده همه <%- icon('chevron-left','icon-sm') %></a>
-    </div>
-    <div class="scroller bleed sm:grid sm:grid-cols-3 sm:overflow-visible lg:grid-cols-5">
-      <% items.slice(0, 10).forEach(function (p, i) { %>
-      <div class="w-[44%] shrink-0 xs:w-[40%] sm:w-auto <%= i >= 6 ? 'sm:hidden lg:block' : '' %>"><%- include('../partials/product-card', { p: p, eager: false }) %></div>
-      <% }) %>
+<!-- ═══ Tabbed discovery ═══ -->
+<% if (tabs.length) { %>
+<section class="wrap section !pt-0" aria-labelledby="disc-title" data-tabs>
+  <div class="mb-5 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between lg:mb-7">
+    <div><p class="eyebrow">ویترین</p><h2 id="disc-title" class="t-section mt-1">این هفته در کیدل</h2></div>
+    <div class="seg self-start" role="tablist" aria-label="نمایش محصولات">
+      <% tabs.forEach(function (t, i) { %><button type="button" role="tab" id="tab-<%= t.id %>" aria-controls="panel-<%= t.id %>" aria-selected="<%= i === 0 %>" tabindex="<%= i === 0 ? 0 : -1 %>"><%= t.label %></button><% }) %>
     </div>
   </div>
+  <% tabs.forEach(function (t, i) { %>
+  <div role="tabpanel" id="panel-<%= t.id %>" aria-labelledby="tab-<%= t.id %>" <%= i ? 'hidden' : '' %>>
+    <div class="pgrid pgrid-4">
+      <% t.items.slice(0, 8).forEach(function (p, j) { %><div class="<%= j >= 6 ? 'hidden xl:block' : '' %>"><%- include('../partials/product-card', { p: p, eager: i === 0 && j < 2 }) %></div><% }) %>
+    </div>
+    <div class="mt-8 flex justify-center"><a href="<%= t.href %>" class="btn btn-outline">مشاهده همه <%= t.label %> <%- icon('arrow-left','icon-sm') %></a></div>
+  </div>
+  <% }) %>
 </section>
 <% } %>
 
-<% rail('new-title', 'تازه‌ها', 'جدیدترین لباس‌های رسیده', newest, '/shop?sort=newest', false) %>
-<section class="container-app mt-8 grid gap-3 sm:grid-cols-2" aria-label="پیشنهادهای ویژه">
-  <a href="/shop?sale=1&sort=discount" class="group relative flex min-h-36 items-center overflow-hidden rounded-2xl bg-brand-600 p-5 text-white transition hover:bg-brand-press sm:min-h-44 sm:p-7">
-    <span class="relative z-10 max-w-[65%]">
-      <span class="text-xs font-bold text-white/85">تا موجودی هست</span>
-      <span class="mt-1 block text-xl font-black leading-8 sm:text-2xl">تخفیف‌های این هفته</span>
-      <span class="mt-3 inline-flex items-center gap-1 rounded-full bg-surface px-3 py-1.5 text-sm font-bold text-brand-700 transition group-hover:gap-2">دیدن تخفیف‌ها <%- icon('arrow-left','icon-sm') %></span>
-    </span>
-    <span class="absolute -bottom-6 -end-4 size-40 rounded-full bg-brand-500 sm:size-52" aria-hidden="true"></span>
-    <span class="absolute end-5 top-1/2 -translate-y-1/2 text-white/90 sm:end-8" aria-hidden="true"><%- icon('tag','size-20 sm:size-24 !stroke-[1.4]') %></span>
-  </a>
-  <a href="/shop?sort=newest" class="group relative flex min-h-36 items-center overflow-hidden rounded-2xl bg-butter-400 p-5 text-night-950 transition hover:bg-butter-500 sm:min-h-44 sm:p-7">
-    <span class="relative z-10 max-w-[65%]">
-      <span class="text-xs font-bold text-night-800">تازه رسیده</span>
-      <span class="mt-1 block text-xl font-black leading-8 sm:text-2xl">کالکشن جدید فصل</span>
-      <span class="mt-3 inline-flex items-center gap-1 rounded-full bg-night-950 px-3 py-1.5 text-sm font-bold text-white transition group-hover:gap-2">دیدن تازه‌ها <%- icon('arrow-left','icon-sm') %></span>
-    </span>
-    <span class="absolute -bottom-6 -end-4 size-40 rounded-full bg-white/35 sm:size-52" aria-hidden="true"></span>
-    <span class="absolute end-5 top-1/2 -translate-y-1/2 text-night-900/85 sm:end-8" aria-hidden="true"><%- icon('c-dress','size-20 sm:size-24 !stroke-[1.4]') %></span>
-  </a>
-</section>
-
-<% rail('sale-title', 'تخفیف‌های ویژه', 'قیمت‌های به‌صرفه، تا موجودی هست', onSale, '/shop?sale=1&sort=discount', true) %>
-<% rail('feat-title', 'پیشنهاد کیدل', 'انتخاب‌های محبوب مامان‌ها', featured, '/shop?sort=popular', false) %>
-<% rail('pop-title', 'پرفروش‌ها', '', popular, '/shop?sort=popular', false) %>
-
-<section class="container-app mt-10">
-  <div class="grid gap-3 rounded-2xl border border-ink-200 bg-surface p-4 sm:grid-cols-3 sm:p-6">
-    <div class="flex items-start gap-3"><span class="flex size-11 shrink-0 items-center justify-center rounded-xl bg-brand-50 text-brand-700"><%- icon('ruler') %></span><div><h3 class="text-sm font-bold">سایز مناسب را پیدا کنید</h3><p class="text-xs leading-6 text-ink-600">در صفحه هر محصول، راهنمای سایز بر اساس سن و قد کودک را ببینید.</p></div></div>
-    <div class="flex items-start gap-3"><span class="flex size-11 shrink-0 items-center justify-center rounded-xl bg-butter-100 text-butter-700"><%- icon('truck') %></span><div><h3 class="text-sm font-bold">ارسال پس‌کرایه</h3><p class="text-xs leading-6 text-ink-600">فقط مبلغ کالا را آنلاین می‌پردازید؛ هزینه ارسال هنگام تحویل.</p></div></div>
-    <div class="flex items-start gap-3"><span class="flex size-11 shrink-0 items-center justify-center rounded-xl bg-mint-50 text-mint-700"><%- icon('shield') %></span><div><h3 class="text-sm font-bold">خرید بدون نگرانی</h3><p class="text-xs leading-6 text-ink-600">پرداخت امن زرین‌پال و ۷ روز ضمانت بازگشت کالای معیوب.</p></div></div>
+<!-- ═══ Editorial promos ═══ -->
+<section class="wrap" aria-label="پیشنهادهای ویژه">
+  <div class="grid gap-3 sm:gap-4 lg:grid-cols-[1.35fr_1fr]">
+    <a href="/shop?sale=1&sort=discount" class="group relative flex min-h-72 overflow-hidden rounded-xl bg-brand-700 p-6 text-white sm:min-h-80 sm:p-9">
+      <div class="relative z-10 flex max-w-[64%] flex-col sm:max-w-[58%]">
+        <p class="text-sm font-bold text-brand-200">تا موجودی هست</p>
+        <h2 class="mt-2 font-display text-3xl leading-tight font-bold text-white sm:text-4xl"><% if (maxOff) { %>تا <%= fa(maxOff) %>٪ تخفیف<% } else { %>تخفیف‌های فصل<% } %></h2>
+        <p class="mt-2 text-sm leading-7 text-brand-100">روی لباس‌های منتخب؛ همان کیفیت، قیمت بهتر.</p>
+        <span class="btn btn-light mt-auto self-start">دیدن تخفیف‌ها <%- icon('arrow-left','icon-sm transition group-hover:-translate-x-1') %></span>
+      </div>
+      <div class="absolute inset-y-6 end-5 flex w-[28%] items-end justify-end sm:end-9 sm:inset-y-9 sm:w-[36%]" aria-hidden="true">
+        <span class="absolute -end-16 -bottom-20 size-72 rounded-full bg-brand-600"></span>
+        <% var s0 = onSale.find(function (p) { return img(p); }); %>
+        <% if (s0) { %><span class="arch relative block aspect-[4/5] w-full bg-brand-100 transition duration-500 group-hover:-translate-y-1"><img src="<%= thumb(img(s0), 400) %>" alt="" loading="lazy" class="size-full object-cover"></span>
+        <% } else { %><span class="relative text-white/90"><%- icon('tag','size-24 !stroke-1') %></span><% } %>
+      </div>
+    </a>
+    <a href="<%= babyCat ? '/category/' + babyCat.slug : '/shop?sort=newest' %>" class="group relative flex min-h-60 flex-col overflow-hidden rounded-xl bg-sage-100 p-6 sm:min-h-80 sm:p-9">
+      <p class="text-sm font-bold text-sage-700"><%= babyCat ? 'از روز اول' : 'تازه رسیده' %></p>
+      <h2 class="mt-2 max-w-[70%] font-display text-3xl leading-tight font-bold sm:text-4xl"><%= babyCat ? babyCat.name : 'کالکشن جدید فصل' %></h2>
+      <p class="mt-2 max-w-[62%] text-sm leading-7 text-ink-700"><%= babyCat ? 'نرم‌ترین پارچه‌ها برای حساس‌ترین پوست‌ها.' : 'رنگ‌های تازه برای روزهای بازی.' %></p>
+      <span class="see-all mt-auto self-start"><span>مشاهده</span><%- icon('arrow-left','icon-sm') %></span>
+      <span class="absolute -end-12 -bottom-14 flex size-44 items-center justify-center rounded-full bg-sage-200 text-sage-700 transition duration-500 group-hover:scale-105 sm:-end-10 sm:-bottom-12 sm:size-64" aria-hidden="true"><%- icon(babyCat ? catIcon(babyCat) : 'sparkles','size-14 !stroke-1 -translate-x-4 -translate-y-4 sm:size-20') %></span>
+    </a>
   </div>
 </section>
 
-<% if (posts.length) { %>
-<section class="container-app mt-10" aria-labelledby="blog-title">
-  <div class="section-head">
-    <div><h2 id="blog-title" class="section-title">مجله کیدل</h2><p class="section-sub">راهنمای خرید و نگهداری لباس کودک</p></div>
-    <a href="/weblog" class="btn btn-ghost btn-sm text-brand-700">همه مقاله‌ها <%- icon('chevron-left','icon-sm') %></a>
+<!-- ═══ Curated picks (bento) ═══ -->
+<% if (picks.length >= 3) { %>
+<section class="wrap section" aria-labelledby="picks-title">
+  <div class="sec-head">
+    <div><p class="eyebrow">انتخاب کیدل</p><h2 id="picks-title" class="t-section mt-1">محبوب مامان‌ها و باباها</h2></div>
+    <a href="/shop?sort=popular" class="see-all"><span>مشاهده همه</span><%- icon('arrow-left','icon-sm') %></a>
   </div>
-  <div class="scroller bleed md:grid md:grid-cols-3 md:overflow-visible">
-    <% posts.forEach(function (w) { %>
-    <%- include('../partials/post-card', { w: w, cls: 'w-[78%] shrink-0 md:w-auto' }) %>
+  <div class="grid grid-cols-2 gap-x-3 gap-y-7 sm:grid-cols-3 sm:gap-x-4 lg:grid-cols-4">
+    <% picks.forEach(function (p, i) { %>
+    <div class="<%= i === 0 ? 'col-span-2 sm:row-span-2' : '' %> <%= i === 4 ? 'sm:hidden lg:block' : '' %>"><%- include('../partials/product-card', { p: p, cardClass: i === 0 ? 'pcard-lg' : '', imgSizes: i === 0 ? '(min-width: 1024px) 45vw, 100vw' : undefined }) %></div>
     <% }) %>
   </div>
 </section>
 <% } %>
+
+<!-- ═══ Brand values ═══ -->
+<section class="bg-ink-950 text-cream" aria-labelledby="values-title">
+  <div class="wrap section grid gap-10 lg:grid-cols-12 lg:items-center">
+    <div class="lg:col-span-5">
+      <p class="eyebrow !text-brand-200">چرا کیدل؟</p>
+      <h2 id="values-title" class="mt-2 font-display text-3xl leading-snug font-bold !text-cream sm:text-4xl">لباس کودک را<br>با حوصله انتخاب می‌کنیم</h2>
+      <p class="mt-4 max-w-md text-sm leading-8 text-cream/75">هر لباس پیش از رسیدن به ویترین کیدل از نظر جنس پارچه، دوخت و ثبات رنگ بررسی می‌شود؛ تا شما فقط سایز را انتخاب کنید.</p>
+    </div>
+    <ul class="grid grid-cols-1 gap-px overflow-hidden rounded-xl bg-cream/15 xs:grid-cols-2 lg:col-span-7">
+      <% [['leaf','پارچه دوستدار پوست','نخ پنبه و الیاف نرم برای پوست حساس کودک.'],['ruler','سایزبندی واقعی','راهنمای سن، قد و وزن برای هر محصول.'],['truck','ارسال سراسری','پرداخت آنلاین کالا؛ هزینه ارسال هنگام تحویل.'],['refresh','۷ روز ضمانت بازگشت','برای کالای معیوب یا مغایر با توضیحات.']].forEach(function (v) { %>
+      <li class="bg-ink-950 p-5 sm:p-7">
+        <span class="flex size-11 items-center justify-center rounded-full bg-cream/10 text-brand-200"><%- icon(v[0]) %></span>
+        <h3 class="mt-4 font-display text-lg font-bold !text-cream"><%= v[1] %></h3>
+        <p class="mt-1 text-xs leading-6 text-cream/70 sm:text-sm sm:leading-7"><%= v[2] %></p>
+      </li>
+      <% }) %>
+    </ul>
+  </div>
+</section>
+
+<!-- ═══ Journal ═══ -->
+<% if (posts.length) { %>
+<section class="wrap section" aria-labelledby="blog-title">
+  <div class="sec-head">
+    <div><p class="eyebrow">مجله کیدل</p><h2 id="blog-title" class="t-section mt-1">راهنمای والدین</h2></div>
+    <a href="/weblog" class="see-all"><span>همه مقاله‌ها</span><%- icon('arrow-left','icon-sm') %></a>
+  </div>
+  <div class="scroller bleed !gap-5 md:grid md:grid-cols-3 md:overflow-visible md:mx-0 md:px-0">
+    <% posts.forEach(function (w) { %><%- include('../partials/post-card', { w: w, cls: 'w-[80%] shrink-0 md:w-auto' }) %><% }) %>
+  </div>
+</section>
+<% } %>
+
+<!-- ═══ Final discovery ═══ -->
+<section class="wrap <%= posts.length ? '' : 'section' %>" aria-labelledby="find-title">
+  <div class="relative overflow-hidden rounded-xl bg-linen-100 px-5 py-10 text-center sm:px-10 sm:py-14">
+    <span class="absolute -top-10 -start-10 size-40 rounded-full bg-brand-100" aria-hidden="true"></span>
+    <span class="absolute -bottom-14 -end-8 size-44 rounded-full bg-sage-100" aria-hidden="true"></span>
+    <div class="relative mx-auto max-w-xl">
+      <h2 id="find-title" class="t-section">دنبال چیز خاصی هستید؟</h2>
+      <p class="mt-2 text-sm text-ink-600">اسم لباس، سایز یا سن کودک را بنویسید.</p>
+      <form action="/search" method="get" role="search" class="mt-5 flex gap-2">
+        <label for="home-q" class="sr-only">جستجوی محصولات</label>
+        <input id="home-q" name="q" type="search" class="input !rounded-full !border-transparent ps-5" placeholder="مثلاً: سرهمی نوزادی" enterkeyhint="search">
+        <button class="btn btn-dark !h-12 shrink-0" aria-label="جستجو"><%- icon('search','icon-sm') %><span class="hidden sm:inline">جستجو</span></button>
+      </form>
+      <% if (categories.length) { %>
+      <div class="mt-4 flex flex-wrap justify-center gap-2">
+        <% categories.slice(0, 6).forEach(function (c) { %><a class="chip !h-9 !border-transparent" href="/category/<%= c.slug %>"><%= c.name %></a><% }) %>
+      </div>
+      <% } %>
+    </div>
+  </div>
+</section>
 
 <%- include('../partials/layout-bottom') %>

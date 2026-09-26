@@ -67,4 +67,8 @@
 <symbol id="c-hat" viewBox="0 0 24 24"><path d="M5 17a7 7 0 0 1 14 0"/><path d="M3 17h18v2H3z"/><circle cx="12" cy="7.5" r="1.5"/></symbol>
 <symbol id="c-shoe" viewBox="0 0 24 24"><path d="M3 17V8h5l2 3 5 1.5a5 5 0 0 1 6 4.5v1H3Z"/><path d="M3 20h18"/></symbol>
 <symbol id="c-set" viewBox="0 0 24 24"><path d="M5 3a2 2 0 0 0 4 0l3 2-1.5 2.5L9 7v5H5V7l-1.5.5L2 5l3-2Z"/><path d="M14 11h7l.5 10h-3l-1-5-1 5h-3l.5-10Z"/></symbol>
+<symbol id="bag-plus" viewBox="0 0 24 24"><path d="M6 7h12l.6 7.5"/><path d="M6 7 5 20a1 1 0 0 0 1 1h7"/><path d="M9 10V6a3 3 0 0 1 6 0v4"/><path d="M18 16v6M15 19h6"/></symbol>
+<symbol id="leaf" viewBox="0 0 24 24"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.5 19 2c1 2 2 4.2 2 8 0 5.5-4.8 10-10 10Z"/><path d="M2 21c0-3 1.9-5.4 5.1-6C9.5 14.5 12 13 13 12"/></symbol>
+<symbol id="sparkles" viewBox="0 0 24 24"><path d="M9.9 3.6 11.4 8a2 2 0 0 0 1.3 1.3l4.4 1.5-4.4 1.5a2 2 0 0 0-1.3 1.3L9.9 18l-1.5-4.4a2 2 0 0 0-1.3-1.3L2.7 10.8l4.4-1.5A2 2 0 0 0 8.4 8Z"/><path d="M19 3v4M17 5h4M19 17v4M17 19h4"/></symbol>
+<symbol id="arrow-up-left" viewBox="0 0 24 24"><path d="M17 17 7 7"/><path d="M7 17V7h10"/></symbol>
 </svg>

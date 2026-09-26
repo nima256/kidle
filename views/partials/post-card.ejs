@@ -1,14 +1,11 @@
-<article class="card group relative flex flex-col overflow-hidden <%= locals.cls || '' %>">
-  <div class="aspect-[16/9] overflow-hidden bg-brand-50">
-    <% if (w.images && w.images[0]) { %><img src="<%= w.images[0].url %>" alt="" loading="lazy" class="size-full object-cover transition duration-500 group-hover:scale-105">
-    <% } else { %><span class="flex size-full items-center justify-center text-brand-200"><%- icon('file','size-10') %></span><% } %>
+<article class="group relative flex flex-col gap-3 <%= locals.cls || '' %>">
+  <div class="aspect-[4/3] overflow-hidden rounded-md bg-linen-100">
+    <% if (w.images && w.images[0]) { %><img src="<%= w.images[0].url %>" alt="" loading="lazy" class="size-full object-cover transition duration-700 group-hover:scale-[1.04]">
+    <% } else { %><span class="flex size-full items-center justify-center text-ink-300"><%- icon('file','size-10 !stroke-[1.25]') %></span><% } %>
   </div>
-  <div class="flex flex-1 flex-col gap-1.5 p-3.5">
-    <h3 class="line-clamp-2 text-[0.9375rem] font-bold leading-7"><a href="/weblog/<%= w.slug %>" class="after:absolute after:inset-0 group-hover:text-brand-700"><%= w.title %></a></h3>
-    <% if (w.description) { %><p class="line-clamp-2 text-xs leading-6 text-ink-600"><%= w.description %></p><% } %>
-    <p class="mt-auto flex items-center gap-3 pt-1 text-2xs text-ink-500">
-      <span><%= faDate(w.publishedAt || w.createdAt) %></span>
-      <span class="flex items-center gap-1"><%- icon('clock','icon-sm') %><%= fa(w.readingTime || 5) %> دقیقه</span>
-    </p>
+  <div class="flex flex-1 flex-col gap-1.5">
+    <p class="flex items-center gap-2 text-xs text-ink-500"><span><%= faDate(w.publishedAt || w.createdAt) %></span><span aria-hidden="true">·</span><span><%= fa(w.readingTime || 5) %> دقیقه مطالعه</span></p>
+    <h3 class="font-display text-lg leading-8 font-bold"><a href="/weblog/<%= w.slug %>" class="after:absolute after:inset-0 group-hover:text-brand-700"><%= w.title %></a></h3>
+    <% if (w.description) { %><p class="line-clamp-2 text-sm leading-7 text-ink-600"><%= w.description %></p><% } %>
   </div>
 </article>

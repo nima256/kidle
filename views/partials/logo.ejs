@@ -1,7 +1,7 @@
-<a href="/" class="flex shrink-0 items-center gap-2" aria-label="کیدل — صفحه اصلی">
-  <svg viewBox="0 0 64 64" class="size-8 sm:size-9" aria-hidden="true"><rect width="64" height="64" rx="18" fill="#e84a82"/><path d="M23 15h18l3 8 9 4.5-5 9-4-2V50H20V34.5l-4 2-5-9 9-4.5 3-8Z" fill="#fff"/><path d="M26.5 15a5.5 5.5 0 0 0 11 0" fill="#ffc9dc"/><circle cx="32" cy="36" r="4" fill="#ffc95c"/></svg>
+<a href="/" class="group inline-flex shrink-0 items-center gap-2 <%= locals.logoClass || '' %>" aria-label="کیدل — صفحه اصلی">
+  <svg viewBox="0 0 40 48" class="h-8 w-auto lg:h-9" aria-hidden="true"><path d="M0 20a20 20 0 0 1 40 0v24a4 4 0 0 1-4 4H4a4 4 0 0 1-4-4Z" fill="#b02a58"/><path d="M12 30q8 8 16 0" fill="none" stroke="#faf6f1" stroke-width="3.2" stroke-linecap="round"/><circle cx="14" cy="21" r="2.4" fill="#faf6f1"/><circle cx="26" cy="21" r="2.4" fill="#faf6f1"/><circle cx="31" cy="9" r="4" fill="#f2b8c8"/></svg>
   <span class="leading-none">
-    <span class="block text-xl font-black tracking-tight text-brand-700 sm:text-[1.375rem]">کیدل</span>
-    <span class="mt-0.5 hidden text-2xs font-medium text-ink-500 sm:block">لباس بچگانه</span>
+    <span class="block font-display text-[1.625rem] font-bold leading-none text-ink-950 lg:text-[1.875rem]">کیدل</span>
+    <% if (!locals.logoCompact) { %><span class="mt-1 hidden text-2xs font-medium text-ink-500 lg:block">پوشاک کودک و نوزاد</span><% } %>
   </span>
 </a>
